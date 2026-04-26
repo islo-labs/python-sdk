@@ -1,0 +1,5 @@
+# Custom client extending the generated base
+client.py
+
+# Custom extensions
+custom/
