@@ -16,8 +16,9 @@ scripts/
 # Project tests (Fern would replace tests/ with its own scaffolding)
 tests/
 
-# Auto-tag workflow that fires after a Fern PR merges so ci.yml publishes
-.github/workflows/auto-tag.yml
+# Release workflow that fires after a Fern PR merges: lints, tests, builds,
+# publishes to PyPI via Trusted Publishing, and pushes the v<version> tag.
+.github/workflows/release.yml
 
 # Own toolchain. Fern's Python generator emits a Poetry-flavored project
 # (pyproject.toml [build-system] = poetry-core, ci.yml runs poetry publish).
