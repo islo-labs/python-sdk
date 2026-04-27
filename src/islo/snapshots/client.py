@@ -30,9 +30,9 @@ class SnapshotsClient:
     def list_snapshots(
         self,
         *,
-        limit: int | None = None,
-        offset: int | None = None,
-        request_options: RequestOptions | None = None,
+        limit: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> PaginatedSnapshotResponse:
         """
         List all snapshots for the current tenant.
@@ -70,8 +70,8 @@ class SnapshotsClient:
         self,
         *,
         sandbox_id: str,
-        name: str | None = OMIT,
-        request_options: RequestOptions | None = None,
+        name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> SnapshotResponse:
         """
         Create a snapshot from a running sandbox.
@@ -107,7 +107,7 @@ class SnapshotsClient:
         _response = self._raw_client.create_snapshot(sandbox_id=sandbox_id, name=name, request_options=request_options)
         return _response.data
 
-    def get_snapshot(self, name: str, *, request_options: RequestOptions | None = None) -> SnapshotResponse:
+    def get_snapshot(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> SnapshotResponse:
         """
         Get snapshot details by name.
 
@@ -140,7 +140,7 @@ class SnapshotsClient:
         _response = self._raw_client.get_snapshot(name, request_options=request_options)
         return _response.data
 
-    def delete_snapshot(self, name: str, *, request_options: RequestOptions | None = None) -> None:
+    def delete_snapshot(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
         Delete a snapshot by name.
 
@@ -191,9 +191,9 @@ class AsyncSnapshotsClient:
     async def list_snapshots(
         self,
         *,
-        limit: int | None = None,
-        offset: int | None = None,
-        request_options: RequestOptions | None = None,
+        limit: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> PaginatedSnapshotResponse:
         """
         List all snapshots for the current tenant.
@@ -239,8 +239,8 @@ class AsyncSnapshotsClient:
         self,
         *,
         sandbox_id: str,
-        name: str | None = OMIT,
-        request_options: RequestOptions | None = None,
+        name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> SnapshotResponse:
         """
         Create a snapshot from a running sandbox.
@@ -286,7 +286,9 @@ class AsyncSnapshotsClient:
         )
         return _response.data
 
-    async def get_snapshot(self, name: str, *, request_options: RequestOptions | None = None) -> SnapshotResponse:
+    async def get_snapshot(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> SnapshotResponse:
         """
         Get snapshot details by name.
 
@@ -327,7 +329,7 @@ class AsyncSnapshotsClient:
         _response = await self._raw_client.get_snapshot(name, request_options=request_options)
         return _response.data
 
-    async def delete_snapshot(self, name: str, *, request_options: RequestOptions | None = None) -> None:
+    async def delete_snapshot(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
         Delete a snapshot by name.
 
