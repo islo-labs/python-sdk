@@ -9,7 +9,6 @@ from .core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .core.logging import LogConfig, Logger
 
 if typing.TYPE_CHECKING:
-    from .auth.client import AsyncAuthClient, AuthClient
     from .gateway_profiles.client import AsyncGatewayProfilesClient, GatewayProfilesClient
     from .integrations.client import AsyncIntegrationsClient, IntegrationsClient
     from .sandboxes.client import AsyncSandboxesClient, SandboxesClient
@@ -85,19 +84,10 @@ class BaseIslo:
             timeout=_defaulted_timeout,
             logging=logging,
         )
-        self._auth: typing.Optional[AuthClient] = None
         self._sandboxes: typing.Optional[SandboxesClient] = None
         self._snapshots: typing.Optional[SnapshotsClient] = None
         self._integrations: typing.Optional[IntegrationsClient] = None
         self._gateway_profiles: typing.Optional[GatewayProfilesClient] = None
-
-    @property
-    def auth(self):
-        if self._auth is None:
-            from .auth.client import AuthClient  # noqa: E402
-
-            self._auth = AuthClient(client_wrapper=self._client_wrapper)
-        return self._auth
 
     @property
     def sandboxes(self):
@@ -206,19 +196,10 @@ class AsyncBaseIslo:
             timeout=_defaulted_timeout,
             logging=logging,
         )
-        self._auth: typing.Optional[AsyncAuthClient] = None
         self._sandboxes: typing.Optional[AsyncSandboxesClient] = None
         self._snapshots: typing.Optional[AsyncSnapshotsClient] = None
         self._integrations: typing.Optional[AsyncIntegrationsClient] = None
         self._gateway_profiles: typing.Optional[AsyncGatewayProfilesClient] = None
-
-    @property
-    def auth(self):
-        if self._auth is None:
-            from .auth.client import AsyncAuthClient  # noqa: E402
-
-            self._auth = AsyncAuthClient(client_wrapper=self._client_wrapper)
-        return self._auth
 
     @property
     def sandboxes(self):

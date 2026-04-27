@@ -1,0 +1,24 @@
+{
+  "cliVersion": "4.97.0",
+  "generatorName": "fernapi/fern-python-sdk",
+  "generatorVersion": "5.2.1",
+  "generatorConfig": {
+    "package_name": "islo",
+    "client": {
+      "class_name": "BaseIslo",
+      "filename": "base_client.py",
+      "exported_class_name": "Islo",
+      "exported_filename": "client.py"
+    },
+    "timeout_in_seconds": 60,
+    "inline_request_params": true,
+    "pydantic_config": {
+      "version": "v2",
+      "skip_validation": false,
+      "use_str_enums": true,
+      "extra_fields": "allow"
+    }
+  },
+  "originGitCommit": "8bc87800165eb1b8b4d98b5ee4af7496f9880832",
+  "sdkVersion": "0.2.3"
+}

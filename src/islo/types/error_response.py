@@ -15,6 +15,7 @@ class ErrorResponse(UniversalBaseModel):
     code: IsloErrorCode
     message: str
     hint: typing.Optional[str] = None
+    details: typing.Optional[typing.Dict[str, typing.Any]] = None
     request_id: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

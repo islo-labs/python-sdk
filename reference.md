@@ -1,77 +1,4 @@
 # Reference
-## auth
-<details><summary><code>client.auth.<a href="src/islo/auth/client.py">exchange_access_key</a>(...) -> TokenResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Exchange a Descope access key for a session JWT. No authentication required.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    token="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.auth.exchange_access_key(
-    access_key="access_key",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**access_key:** `str` — Descope access key to exchange for a session JWT
-
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
 ## sandboxes
 <details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">list_sandboxes</a>(...) -> PaginatedSandboxResponse</code></summary>
 <dl>
@@ -124,7 +51,7 @@ client.sandboxes.list_sandboxes()
 <dd>
 
 **search:** `typing.Optional[str]` — Search by sandbox name (case-insensitive)
-
+    
 </dd>
 </dl>
 
@@ -132,7 +59,7 @@ client.sandboxes.list_sandboxes()
 <dd>
 
 **status:** `typing.Optional[typing.List[str]]` — Filter by status (e.g., ?status=running&status=unknown&status=deleted)
-
+    
 </dd>
 </dl>
 
@@ -140,7 +67,7 @@ client.sandboxes.list_sandboxes()
 <dd>
 
 **date_from:** `typing.Optional[datetime.datetime]` — Filter sandboxes created on or after this date
-
+    
 </dd>
 </dl>
 
@@ -148,7 +75,7 @@ client.sandboxes.list_sandboxes()
 <dd>
 
 **date_to:** `typing.Optional[datetime.datetime]` — Filter sandboxes created on or before this date
-
+    
 </dd>
 </dl>
 
@@ -156,7 +83,7 @@ client.sandboxes.list_sandboxes()
 <dd>
 
 **created_by:** `typing.Optional[str]` — Filter by creator. Use 'me' for your own sandboxes.
-
+    
 </dd>
 </dl>
 
@@ -164,7 +91,7 @@ client.sandboxes.list_sandboxes()
 <dd>
 
 **limit:** `typing.Optional[int]` — Max items per page
-
+    
 </dd>
 </dl>
 
@@ -172,7 +99,7 @@ client.sandboxes.list_sandboxes()
 <dd>
 
 **offset:** `typing.Optional[int]` — Number of items to skip
-
+    
 </dd>
 </dl>
 
@@ -180,7 +107,7 @@ client.sandboxes.list_sandboxes()
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -242,7 +169,7 @@ client.sandboxes.create_sandbox()
 <dd>
 
 **name:** `typing.Optional[str]` — User-friendly sandbox name. If omitted, a random slug is generated.
-
+    
 </dd>
 </dl>
 
@@ -250,7 +177,7 @@ client.sandboxes.create_sandbox()
 <dd>
 
 **image:** `typing.Optional[str]` — Container image to use
-
+    
 </dd>
 </dl>
 
@@ -258,7 +185,7 @@ client.sandboxes.create_sandbox()
 <dd>
 
 **vcpus:** `typing.Optional[int]` — Number of vCPUs
-
+    
 </dd>
 </dl>
 
@@ -266,7 +193,7 @@ client.sandboxes.create_sandbox()
 <dd>
 
 **memory_mb:** `typing.Optional[int]` — Memory in MB
-
+    
 </dd>
 </dl>
 
@@ -274,7 +201,7 @@ client.sandboxes.create_sandbox()
 <dd>
 
 **disk_gb:** `typing.Optional[int]` — Disk size in GB
-
+    
 </dd>
 </dl>
 
@@ -282,7 +209,7 @@ client.sandboxes.create_sandbox()
 <dd>
 
 **cache_key:** `typing.Optional[str]` — Tool cache key for golden cache lookup (computed by CLI)
-
+    
 </dd>
 </dl>
 
@@ -290,7 +217,7 @@ client.sandboxes.create_sandbox()
 <dd>
 
 **env:** `typing.Optional[typing.Dict[str, typing.Optional[str]]]` — Environment variables to inject into the sandbox
-
+    
 </dd>
 </dl>
 
@@ -298,7 +225,7 @@ client.sandboxes.create_sandbox()
 <dd>
 
 **workdir:** `typing.Optional[str]` — Working directory relative to /workspace (e.g. 'my-project')
-
+    
 </dd>
 </dl>
 
@@ -306,7 +233,7 @@ client.sandboxes.create_sandbox()
 <dd>
 
 **init_capabilities:** `typing.Optional[typing.List[str]]` — Init capabilities to enable (in addition to Core which always runs). None = all capabilities (default, backward compatible), [] = Core only (minimal init), ['ssh', 'devtools'] = Core + specified capabilities. Valid values: ssh, terminal, devtools, docker.
-
+    
 </dd>
 </dl>
 
@@ -314,7 +241,7 @@ client.sandboxes.create_sandbox()
 <dd>
 
 **gateway_profile:** `typing.Optional[str]` — Gateway profile name or ID to apply. Uses tenant default if omitted.
-
+    
 </dd>
 </dl>
 
@@ -322,7 +249,7 @@ client.sandboxes.create_sandbox()
 <dd>
 
 **snapshot_name:** `typing.Optional[str]` — Name of a snapshot to restore from. When set, the VM is created from the snapshot's filesystem.
-
+    
 </dd>
 </dl>
 
@@ -330,7 +257,7 @@ client.sandboxes.create_sandbox()
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -393,8 +320,8 @@ client.sandboxes.get_sandbox_by_id_sandboxes_by_id_sandbox_id_get(
 <dl>
 <dd>
 
-**sandbox_id:** `str`
-
+**sandbox_id:** `str` 
+    
 </dd>
 </dl>
 
@@ -402,7 +329,7 @@ client.sandboxes.get_sandbox_by_id_sandboxes_by_id_sandbox_id_get(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -465,8 +392,8 @@ client.sandboxes.get_sandbox(
 <dl>
 <dd>
 
-**sandbox_name:** `str`
-
+**sandbox_name:** `str` 
+    
 </dd>
 </dl>
 
@@ -474,7 +401,7 @@ client.sandboxes.get_sandbox(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -537,8 +464,8 @@ client.sandboxes.delete_sandbox(
 <dl>
 <dd>
 
-**sandbox_name:** `str`
-
+**sandbox_name:** `str` 
+    
 </dd>
 </dl>
 
@@ -546,7 +473,7 @@ client.sandboxes.delete_sandbox(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -609,8 +536,8 @@ client.sandboxes.stop_sandbox(
 <dl>
 <dd>
 
-**sandbox_name:** `str`
-
+**sandbox_name:** `str` 
+    
 </dd>
 </dl>
 
@@ -618,7 +545,7 @@ client.sandboxes.stop_sandbox(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -681,8 +608,8 @@ client.sandboxes.promote_sandbox_cache(
 <dl>
 <dd>
 
-**sandbox_name:** `str`
-
+**sandbox_name:** `str` 
+    
 </dd>
 </dl>
 
@@ -690,7 +617,7 @@ client.sandboxes.promote_sandbox_cache(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -753,8 +680,8 @@ client.sandboxes.list_exec_sessions(
 <dl>
 <dd>
 
-**sandbox_id:** `str`
-
+**sandbox_id:** `str` 
+    
 </dd>
 </dl>
 
@@ -762,7 +689,7 @@ client.sandboxes.list_exec_sessions(
 <dd>
 
 **since:** `typing.Optional[datetime.datetime]` — Only return sessions with activity at or after this timestamp
-
+    
 </dd>
 </dl>
 
@@ -770,7 +697,7 @@ client.sandboxes.list_exec_sessions(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -834,16 +761,16 @@ client.sandboxes.get_exec_session_asciinema(
 <dl>
 <dd>
 
-**sandbox_id:** `str`
-
+**sandbox_id:** `str` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**exec_id:** `str`
-
+**exec_id:** `str` 
+    
 </dd>
 </dl>
 
@@ -851,7 +778,7 @@ client.sandboxes.get_exec_session_asciinema(
 <dd>
 
 **limit:** `typing.Optional[int]` — Maximum number of log lines
-
+    
 </dd>
 </dl>
 
@@ -859,7 +786,7 @@ client.sandboxes.get_exec_session_asciinema(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -923,16 +850,16 @@ client.sandboxes.get_exec_session_logs(
 <dl>
 <dd>
 
-**sandbox_id:** `str`
-
+**sandbox_id:** `str` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**exec_id:** `str`
-
+**exec_id:** `str` 
+    
 </dd>
 </dl>
 
@@ -940,7 +867,7 @@ client.sandboxes.get_exec_session_logs(
 <dd>
 
 **limit:** `typing.Optional[int]` — Maximum number of log lines
-
+    
 </dd>
 </dl>
 
@@ -948,7 +875,7 @@ client.sandboxes.get_exec_session_logs(
 <dd>
 
 **since:** `typing.Optional[datetime.datetime]` — Only return logs after this timestamp
-
+    
 </dd>
 </dl>
 
@@ -956,7 +883,7 @@ client.sandboxes.get_exec_session_logs(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -1019,8 +946,8 @@ client.sandboxes.list_agent_sessions(
 <dl>
 <dd>
 
-**sandbox_id:** `str`
-
+**sandbox_id:** `str` 
+    
 </dd>
 </dl>
 
@@ -1028,7 +955,7 @@ client.sandboxes.list_agent_sessions(
 <dd>
 
 **since:** `typing.Optional[datetime.datetime]` — Only return sessions with activity at or after this timestamp
-
+    
 </dd>
 </dl>
 
@@ -1036,7 +963,7 @@ client.sandboxes.list_agent_sessions(
 <dd>
 
 **include_subagents:** `typing.Optional[bool]` — Include child/subagent sessions in addition to root sessions
-
+    
 </dd>
 </dl>
 
@@ -1044,7 +971,7 @@ client.sandboxes.list_agent_sessions(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -1108,16 +1035,16 @@ client.sandboxes.get_agent_session_events(
 <dl>
 <dd>
 
-**sandbox_id:** `str`
-
+**sandbox_id:** `str` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**session_name:** `str`
-
+**session_name:** `str` 
+    
 </dd>
 </dl>
 
@@ -1125,7 +1052,7 @@ client.sandboxes.get_agent_session_events(
 <dd>
 
 **session_path:** `typing.Optional[str]` — Stable unique session path from the session list response. Use this to disambiguate duplicate session names.
-
+    
 </dd>
 </dl>
 
@@ -1133,7 +1060,7 @@ client.sandboxes.get_agent_session_events(
 <dd>
 
 **include_descendants:** `typing.Optional[bool]` — When true, include descendant subagent sessions under the requested session
-
+    
 </dd>
 </dl>
 
@@ -1141,7 +1068,7 @@ client.sandboxes.get_agent_session_events(
 <dd>
 
 **limit:** `typing.Optional[int]` — Page size — number of events to return
-
+    
 </dd>
 </dl>
 
@@ -1149,7 +1076,7 @@ client.sandboxes.get_agent_session_events(
 <dd>
 
 **offset:** `typing.Optional[int]` — Number of events to skip (for pagination)
-
+    
 </dd>
 </dl>
 
@@ -1157,7 +1084,7 @@ client.sandboxes.get_agent_session_events(
 <dd>
 
 **since:** `typing.Optional[datetime.datetime]` — Only return events after this timestamp (exclusive). Applied before offset.
-
+    
 </dd>
 </dl>
 
@@ -1165,7 +1092,7 @@ client.sandboxes.get_agent_session_events(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -1229,8 +1156,8 @@ client.sandboxes.download_file(
 <dl>
 <dd>
 
-**sandbox_name:** `str`
-
+**sandbox_name:** `str` 
+    
 </dd>
 </dl>
 
@@ -1238,7 +1165,7 @@ client.sandboxes.download_file(
 <dd>
 
 **path:** `str` — Absolute source path in the sandbox
-
+    
 </dd>
 </dl>
 
@@ -1246,7 +1173,7 @@ client.sandboxes.download_file(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -1310,8 +1237,8 @@ client.sandboxes.upload_file(
 <dl>
 <dd>
 
-**sandbox_name:** `str`
-
+**sandbox_name:** `str` 
+    
 </dd>
 </dl>
 
@@ -1319,7 +1246,7 @@ client.sandboxes.upload_file(
 <dd>
 
 **path:** `str` — Absolute target path in the sandbox
-
+    
 </dd>
 </dl>
 
@@ -1327,7 +1254,7 @@ client.sandboxes.upload_file(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -1391,8 +1318,8 @@ client.sandboxes.download_archive(
 <dl>
 <dd>
 
-**sandbox_name:** `str`
-
+**sandbox_name:** `str` 
+    
 </dd>
 </dl>
 
@@ -1400,7 +1327,7 @@ client.sandboxes.download_archive(
 <dd>
 
 **path:** `str` — Absolute source directory in the sandbox
-
+    
 </dd>
 </dl>
 
@@ -1408,7 +1335,7 @@ client.sandboxes.download_archive(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -1472,8 +1399,8 @@ client.sandboxes.upload_archive(
 <dl>
 <dd>
 
-**sandbox_name:** `str`
-
+**sandbox_name:** `str` 
+    
 </dd>
 </dl>
 
@@ -1481,7 +1408,7 @@ client.sandboxes.upload_archive(
 <dd>
 
 **path:** `str` — Absolute target directory in the sandbox
-
+    
 </dd>
 </dl>
 
@@ -1489,7 +1416,7 @@ client.sandboxes.upload_archive(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -1555,16 +1482,16 @@ client.sandboxes.exec_in_sandbox(
 <dl>
 <dd>
 
-**sandbox_name:** `str`
-
+**sandbox_name:** `str` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**request:** `ExecRequest`
-
+**request:** `ExecRequest` 
+    
 </dd>
 </dl>
 
@@ -1572,7 +1499,7 @@ client.sandboxes.exec_in_sandbox(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -1636,16 +1563,16 @@ client.sandboxes.get_exec_result(
 <dl>
 <dd>
 
-**sandbox_name:** `str`
-
+**sandbox_name:** `str` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**exec_id:** `str`
-
+**exec_id:** `str` 
+    
 </dd>
 </dl>
 
@@ -1653,7 +1580,7 @@ client.sandboxes.get_exec_result(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -1719,16 +1646,16 @@ client.sandboxes.exec_in_sandbox_stream(
 <dl>
 <dd>
 
-**sandbox_name:** `str`
-
+**sandbox_name:** `str` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**request:** `ExecRequest`
-
+**request:** `ExecRequest` 
+    
 </dd>
 </dl>
 
@@ -1736,7 +1663,7 @@ client.sandboxes.exec_in_sandbox_stream(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -1798,16 +1725,16 @@ client.snapshots.list_snapshots()
 <dl>
 <dd>
 
-**limit:** `typing.Optional[int]`
-
+**limit:** `typing.Optional[int]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**offset:** `typing.Optional[int]`
-
+**offset:** `typing.Optional[int]` 
+    
 </dd>
 </dl>
 
@@ -1815,7 +1742,7 @@ client.snapshots.list_snapshots()
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -1878,16 +1805,16 @@ client.snapshots.create_snapshot(
 <dl>
 <dd>
 
-**sandbox_id:** `str`
-
+**sandbox_id:** `str` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**name:** `typing.Optional[str]`
-
+**name:** `typing.Optional[str]` 
+    
 </dd>
 </dl>
 
@@ -1895,7 +1822,7 @@ client.snapshots.create_snapshot(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -1958,8 +1885,8 @@ client.snapshots.get_snapshot(
 <dl>
 <dd>
 
-**name:** `str`
-
+**name:** `str` 
+    
 </dd>
 </dl>
 
@@ -1967,7 +1894,7 @@ client.snapshots.get_snapshot(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -2030,8 +1957,8 @@ client.snapshots.delete_snapshot(
 <dl>
 <dd>
 
-**name:** `str`
-
+**name:** `str` 
+    
 </dd>
 </dl>
 
@@ -2039,7 +1966,7 @@ client.snapshots.delete_snapshot(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -2104,7 +2031,7 @@ client.integrations.list_integration_providers()
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -2169,7 +2096,7 @@ client.integrations.list_integrations()
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -2234,8 +2161,8 @@ client.integrations.get_integration_status(
 <dl>
 <dd>
 
-**provider:** `str`
-
+**provider:** `str` 
+    
 </dd>
 </dl>
 
@@ -2243,7 +2170,7 @@ client.integrations.get_integration_status(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -2310,16 +2237,16 @@ client.integrations.disconnect_integration(
 <dl>
 <dd>
 
-**provider:** `str`
-
+**provider:** `str` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**level:** `typing.Optional[IntegrationLevel]`
-
+**level:** `typing.Optional[IntegrationLevel]` 
+    
 </dd>
 </dl>
 
@@ -2327,7 +2254,7 @@ client.integrations.disconnect_integration(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -2376,7 +2303,7 @@ client.gateway_profiles.list_gateway_profiles()
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -2425,40 +2352,40 @@ client.gateway_profiles.create_gateway_profile(
 <dl>
 <dd>
 
-**name:** `str`
-
+**name:** `str` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**description:** `typing.Optional[str]`
-
+**description:** `typing.Optional[str]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**default_action:** `typing.Optional[GatewayAction]`
-
+**default_action:** `typing.Optional[GatewayAction]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**internet_enabled:** `typing.Optional[bool]`
-
+**internet_enabled:** `typing.Optional[bool]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**is_default:** `typing.Optional[bool]`
-
+**is_default:** `typing.Optional[bool]` 
+    
 </dd>
 </dl>
 
@@ -2466,7 +2393,7 @@ client.gateway_profiles.create_gateway_profile(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -2515,8 +2442,8 @@ client.gateway_profiles.get_gateway_profile(
 <dl>
 <dd>
 
-**profile_id:** `str`
-
+**profile_id:** `str` 
+    
 </dd>
 </dl>
 
@@ -2524,7 +2451,7 @@ client.gateway_profiles.get_gateway_profile(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -2573,8 +2500,8 @@ client.gateway_profiles.delete_gateway_profile(
 <dl>
 <dd>
 
-**profile_id:** `str`
-
+**profile_id:** `str` 
+    
 </dd>
 </dl>
 
@@ -2582,7 +2509,7 @@ client.gateway_profiles.delete_gateway_profile(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -2631,48 +2558,48 @@ client.gateway_profiles.update_gateway_profile(
 <dl>
 <dd>
 
-**profile_id:** `str`
-
+**profile_id:** `str` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**name:** `typing.Optional[str]`
-
+**name:** `typing.Optional[str]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**description:** `typing.Optional[str]`
-
+**description:** `typing.Optional[str]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**default_action:** `typing.Optional[GatewayAction]`
-
+**default_action:** `typing.Optional[GatewayAction]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**internet_enabled:** `typing.Optional[bool]`
-
+**internet_enabled:** `typing.Optional[bool]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**is_default:** `typing.Optional[bool]`
-
+**is_default:** `typing.Optional[bool]` 
+    
 </dd>
 </dl>
 
@@ -2680,7 +2607,7 @@ client.gateway_profiles.update_gateway_profile(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -2730,80 +2657,80 @@ client.gateway_profiles.create_gateway_rule(
 <dl>
 <dd>
 
-**profile_id:** `str`
-
+**profile_id:** `str` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**host_pattern:** `str`
-
+**host_pattern:** `str` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**priority:** `typing.Optional[int]`
-
+**priority:** `typing.Optional[int]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**path_pattern:** `typing.Optional[str]`
-
+**path_pattern:** `typing.Optional[str]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**methods:** `typing.Optional[typing.List[str]]`
-
+**methods:** `typing.Optional[typing.List[str]]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**action:** `typing.Optional[GatewayAction]`
-
+**action:** `typing.Optional[GatewayAction]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**rate_limit_rpm:** `typing.Optional[int]`
-
+**rate_limit_rpm:** `typing.Optional[int]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**provider_key:** `typing.Optional[str]`
-
+**provider_key:** `typing.Optional[str]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**auth_strategy:** `typing.Optional[AuthStrategySchema]`
-
+**auth_strategy:** `typing.Optional[AuthStrategySchema]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**content_filter:** `typing.Optional[ContentFilterSchema]`
-
+**content_filter:** `typing.Optional[ContentFilterSchema]` 
+    
 </dd>
 </dl>
 
@@ -2811,7 +2738,7 @@ client.gateway_profiles.create_gateway_rule(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -2861,16 +2788,16 @@ client.gateway_profiles.delete_gateway_rule(
 <dl>
 <dd>
 
-**profile_id:** `str`
-
+**profile_id:** `str` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**rule_id:** `str`
-
+**rule_id:** `str` 
+    
 </dd>
 </dl>
 
@@ -2878,7 +2805,7 @@ client.gateway_profiles.delete_gateway_rule(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -2928,88 +2855,88 @@ client.gateway_profiles.update_gateway_rule(
 <dl>
 <dd>
 
-**profile_id:** `str`
-
+**profile_id:** `str` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**rule_id:** `str`
-
+**rule_id:** `str` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**priority:** `typing.Optional[int]`
-
+**priority:** `typing.Optional[int]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**host_pattern:** `typing.Optional[str]`
-
+**host_pattern:** `typing.Optional[str]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**path_pattern:** `typing.Optional[str]`
-
+**path_pattern:** `typing.Optional[str]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**methods:** `typing.Optional[typing.List[str]]`
-
+**methods:** `typing.Optional[typing.List[str]]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**action:** `typing.Optional[GatewayAction]`
-
+**action:** `typing.Optional[GatewayAction]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**rate_limit_rpm:** `typing.Optional[int]`
-
+**rate_limit_rpm:** `typing.Optional[int]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**provider_key:** `typing.Optional[str]`
-
+**provider_key:** `typing.Optional[str]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**auth_strategy:** `typing.Optional[AuthStrategySchema]`
-
+**auth_strategy:** `typing.Optional[AuthStrategySchema]` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**content_filter:** `typing.Optional[ContentFilterSchema]`
-
+**content_filter:** `typing.Optional[ContentFilterSchema]` 
+    
 </dd>
 </dl>
 
@@ -3017,7 +2944,7 @@ client.gateway_profiles.update_gateway_rule(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -3072,16 +2999,16 @@ client.gateway_profiles.reorder_gateway_rules(
 <dl>
 <dd>
 
-**profile_id:** `str`
-
+**profile_id:** `str` 
+    
 </dd>
 </dl>
 
 <dl>
 <dd>
 
-**rules:** `typing.List[RuleReorderItem]`
-
+**rules:** `typing.List[RuleReorderItem]` 
+    
 </dd>
 </dl>
 
@@ -3089,7 +3016,7 @@ client.gateway_profiles.reorder_gateway_rules(
 <dd>
 
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-
+    
 </dd>
 </dl>
 </dd>
@@ -3099,3 +3026,4 @@ client.gateway_profiles.reorder_gateway_rules(
 </dd>
 </dl>
 </details>
+
