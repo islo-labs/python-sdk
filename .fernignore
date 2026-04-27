@@ -18,3 +18,11 @@ tests/
 
 # Auto-tag workflow that fires after a Fern PR merges so ci.yml publishes
 .github/workflows/auto-tag.yml
+
+# Own toolchain. Fern's Python generator emits a Poetry-flavored project
+# (pyproject.toml [build-system] = poetry-core, ci.yml runs poetry publish).
+# We want uv as the actual toolchain, so we keep these under our control
+# and tell Fern to leave them alone on every regen.
+pyproject.toml
+uv.lock
+.github/workflows/ci.yml
