@@ -3,7 +3,6 @@ name: CI
 on:
   push:
     branches: [main]
-    tags: ["v*"]
   pull_request:
     branches: [main]
 
@@ -57,24 +56,3 @@ jobs:
         with:
           name: dist
           path: dist/
-
-  publish:
-    name: Publish to PyPI
-    needs: [lint, test, build]
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write   # Required for PyPI Trusted Publishing (OIDC)
-    environment: pypi
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.14"
-      - uses: astral-sh/setup-uv@v7
-        with:
-          version: "latest"
-          enable-cache: true
-      - run: uv build --no-sources
-      - uses: pypa/gh-action-pypi-publish@release/v1
