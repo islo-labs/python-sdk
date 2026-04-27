@@ -13,8 +13,3 @@ build/
 .astro/
 node_modules/
 .DS_Store
-
-# Poetry artifacts — this project uses uv; Fern's Python generator emits
-# these on every regen. Keep them out of git so they don't pollute PRs.
-poetry.lock
-requirements.txt
