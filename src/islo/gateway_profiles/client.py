@@ -32,7 +32,9 @@ class GatewayProfilesClient:
         """
         return self._raw_client
 
-    def list_gateway_profiles(self, *, request_options: RequestOptions | None = None) -> list[GatewayProfileResponse]:
+    def list_gateway_profiles(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.List[GatewayProfileResponse]:
         """
         Parameters
         ----------
@@ -63,11 +65,11 @@ class GatewayProfilesClient:
         self,
         *,
         name: str,
-        description: str | None = OMIT,
-        default_action: GatewayAction | None = OMIT,
-        internet_enabled: bool | None = OMIT,
-        is_default: bool | None = OMIT,
-        request_options: RequestOptions | None = None,
+        description: typing.Optional[str] = OMIT,
+        default_action: typing.Optional[GatewayAction] = OMIT,
+        internet_enabled: typing.Optional[bool] = OMIT,
+        is_default: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayProfileResponse:
         """
         Parameters
@@ -115,7 +117,7 @@ class GatewayProfilesClient:
         return _response.data
 
     def get_gateway_profile(
-        self, profile_id: str, *, request_options: RequestOptions | None = None
+        self, profile_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> GatewayProfileDetailResponse:
         """
         Parameters
@@ -147,7 +149,9 @@ class GatewayProfilesClient:
         _response = self._raw_client.get_gateway_profile(profile_id, request_options=request_options)
         return _response.data
 
-    def delete_gateway_profile(self, profile_id: str, *, request_options: RequestOptions | None = None) -> None:
+    def delete_gateway_profile(
+        self, profile_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
         """
         Parameters
         ----------
@@ -181,12 +185,12 @@ class GatewayProfilesClient:
         self,
         profile_id: str,
         *,
-        name: str | None = OMIT,
-        description: str | None = OMIT,
-        default_action: GatewayAction | None = OMIT,
-        internet_enabled: bool | None = OMIT,
-        is_default: bool | None = OMIT,
-        request_options: RequestOptions | None = None,
+        name: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        default_action: typing.Optional[GatewayAction] = OMIT,
+        internet_enabled: typing.Optional[bool] = OMIT,
+        is_default: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayProfileResponse:
         """
         Parameters
@@ -241,15 +245,15 @@ class GatewayProfilesClient:
         profile_id: str,
         *,
         host_pattern: str,
-        priority: int | None = OMIT,
-        path_pattern: str | None = OMIT,
-        methods: typing.Sequence[str] | None = OMIT,
-        action: GatewayAction | None = OMIT,
-        rate_limit_rpm: int | None = OMIT,
-        provider_key: str | None = OMIT,
-        auth_strategy: AuthStrategySchema | None = OMIT,
-        content_filter: ContentFilterSchema | None = OMIT,
-        request_options: RequestOptions | None = None,
+        priority: typing.Optional[int] = OMIT,
+        path_pattern: typing.Optional[str] = OMIT,
+        methods: typing.Optional[typing.Sequence[str]] = OMIT,
+        action: typing.Optional[GatewayAction] = OMIT,
+        rate_limit_rpm: typing.Optional[int] = OMIT,
+        provider_key: typing.Optional[str] = OMIT,
+        auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
+        content_filter: typing.Optional[ContentFilterSchema] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayRuleResponse:
         """
         Parameters
@@ -313,7 +317,7 @@ class GatewayProfilesClient:
         return _response.data
 
     def delete_gateway_rule(
-        self, profile_id: str, rule_id: str, *, request_options: RequestOptions | None = None
+        self, profile_id: str, rule_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
         Parameters
@@ -352,16 +356,16 @@ class GatewayProfilesClient:
         profile_id: str,
         rule_id: str,
         *,
-        priority: int | None = OMIT,
-        host_pattern: str | None = OMIT,
-        path_pattern: str | None = OMIT,
-        methods: typing.Sequence[str] | None = OMIT,
-        action: GatewayAction | None = OMIT,
-        rate_limit_rpm: int | None = OMIT,
-        provider_key: str | None = OMIT,
-        auth_strategy: AuthStrategySchema | None = OMIT,
-        content_filter: ContentFilterSchema | None = OMIT,
-        request_options: RequestOptions | None = None,
+        priority: typing.Optional[int] = OMIT,
+        host_pattern: typing.Optional[str] = OMIT,
+        path_pattern: typing.Optional[str] = OMIT,
+        methods: typing.Optional[typing.Sequence[str]] = OMIT,
+        action: typing.Optional[GatewayAction] = OMIT,
+        rate_limit_rpm: typing.Optional[int] = OMIT,
+        provider_key: typing.Optional[str] = OMIT,
+        auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
+        content_filter: typing.Optional[ContentFilterSchema] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayRuleResponse:
         """
         Parameters
@@ -432,8 +436,8 @@ class GatewayProfilesClient:
         profile_id: str,
         *,
         rules: typing.Sequence[RuleReorderItem],
-        request_options: RequestOptions | None = None,
-    ) -> list[GatewayRuleResponse]:
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> typing.List[GatewayRuleResponse]:
         """
         Parameters
         ----------
@@ -489,8 +493,8 @@ class AsyncGatewayProfilesClient:
         return self._raw_client
 
     async def list_gateway_profiles(
-        self, *, request_options: RequestOptions | None = None
-    ) -> list[GatewayProfileResponse]:
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.List[GatewayProfileResponse]:
         """
         Parameters
         ----------
@@ -529,11 +533,11 @@ class AsyncGatewayProfilesClient:
         self,
         *,
         name: str,
-        description: str | None = OMIT,
-        default_action: GatewayAction | None = OMIT,
-        internet_enabled: bool | None = OMIT,
-        is_default: bool | None = OMIT,
-        request_options: RequestOptions | None = None,
+        description: typing.Optional[str] = OMIT,
+        default_action: typing.Optional[GatewayAction] = OMIT,
+        internet_enabled: typing.Optional[bool] = OMIT,
+        is_default: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayProfileResponse:
         """
         Parameters
@@ -589,7 +593,7 @@ class AsyncGatewayProfilesClient:
         return _response.data
 
     async def get_gateway_profile(
-        self, profile_id: str, *, request_options: RequestOptions | None = None
+        self, profile_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> GatewayProfileDetailResponse:
         """
         Parameters
@@ -629,7 +633,9 @@ class AsyncGatewayProfilesClient:
         _response = await self._raw_client.get_gateway_profile(profile_id, request_options=request_options)
         return _response.data
 
-    async def delete_gateway_profile(self, profile_id: str, *, request_options: RequestOptions | None = None) -> None:
+    async def delete_gateway_profile(
+        self, profile_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
         """
         Parameters
         ----------
@@ -671,12 +677,12 @@ class AsyncGatewayProfilesClient:
         self,
         profile_id: str,
         *,
-        name: str | None = OMIT,
-        description: str | None = OMIT,
-        default_action: GatewayAction | None = OMIT,
-        internet_enabled: bool | None = OMIT,
-        is_default: bool | None = OMIT,
-        request_options: RequestOptions | None = None,
+        name: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        default_action: typing.Optional[GatewayAction] = OMIT,
+        internet_enabled: typing.Optional[bool] = OMIT,
+        is_default: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayProfileResponse:
         """
         Parameters
@@ -739,15 +745,15 @@ class AsyncGatewayProfilesClient:
         profile_id: str,
         *,
         host_pattern: str,
-        priority: int | None = OMIT,
-        path_pattern: str | None = OMIT,
-        methods: typing.Sequence[str] | None = OMIT,
-        action: GatewayAction | None = OMIT,
-        rate_limit_rpm: int | None = OMIT,
-        provider_key: str | None = OMIT,
-        auth_strategy: AuthStrategySchema | None = OMIT,
-        content_filter: ContentFilterSchema | None = OMIT,
-        request_options: RequestOptions | None = None,
+        priority: typing.Optional[int] = OMIT,
+        path_pattern: typing.Optional[str] = OMIT,
+        methods: typing.Optional[typing.Sequence[str]] = OMIT,
+        action: typing.Optional[GatewayAction] = OMIT,
+        rate_limit_rpm: typing.Optional[int] = OMIT,
+        provider_key: typing.Optional[str] = OMIT,
+        auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
+        content_filter: typing.Optional[ContentFilterSchema] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayRuleResponse:
         """
         Parameters
@@ -819,7 +825,7 @@ class AsyncGatewayProfilesClient:
         return _response.data
 
     async def delete_gateway_rule(
-        self, profile_id: str, rule_id: str, *, request_options: RequestOptions | None = None
+        self, profile_id: str, rule_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
         Parameters
@@ -866,16 +872,16 @@ class AsyncGatewayProfilesClient:
         profile_id: str,
         rule_id: str,
         *,
-        priority: int | None = OMIT,
-        host_pattern: str | None = OMIT,
-        path_pattern: str | None = OMIT,
-        methods: typing.Sequence[str] | None = OMIT,
-        action: GatewayAction | None = OMIT,
-        rate_limit_rpm: int | None = OMIT,
-        provider_key: str | None = OMIT,
-        auth_strategy: AuthStrategySchema | None = OMIT,
-        content_filter: ContentFilterSchema | None = OMIT,
-        request_options: RequestOptions | None = None,
+        priority: typing.Optional[int] = OMIT,
+        host_pattern: typing.Optional[str] = OMIT,
+        path_pattern: typing.Optional[str] = OMIT,
+        methods: typing.Optional[typing.Sequence[str]] = OMIT,
+        action: typing.Optional[GatewayAction] = OMIT,
+        rate_limit_rpm: typing.Optional[int] = OMIT,
+        provider_key: typing.Optional[str] = OMIT,
+        auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
+        content_filter: typing.Optional[ContentFilterSchema] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayRuleResponse:
         """
         Parameters
@@ -954,8 +960,8 @@ class AsyncGatewayProfilesClient:
         profile_id: str,
         *,
         rules: typing.Sequence[RuleReorderItem],
-        request_options: RequestOptions | None = None,
-    ) -> list[GatewayRuleResponse]:
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> typing.List[GatewayRuleResponse]:
         """
         Parameters
         ----------

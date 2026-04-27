@@ -31,10 +31,12 @@ class BaseClientWrapper:
         import platform
 
         headers: typing.Dict[str, str] = {
-            "User-Agent": "islo/0.2.1",
+            "User-Agent": "islo/0.2.3",
             "X-Fern-Language": "Python",
             "X-Fern-Runtime": f"python/{platform.python_version()}",
             "X-Fern-Platform": f"{platform.system().lower()}/{platform.release()}",
+            "X-Fern-SDK-Name": "islo",
+            "X-Fern-SDK-Version": "0.2.3",
             **(self.get_custom_headers() or {}),
         }
         if self._public_tenant_id is not None:
