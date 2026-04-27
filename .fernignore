@@ -2,6 +2,11 @@
 # the list below with an empty template, losing all preservation rules.
 .fernignore
 
+# Project uses uv, not Poetry. Fern's Python generator would otherwise
+# overwrite pyproject.toml with a Poetry-flavored one and rewrite uv.lock.
+pyproject.toml
+uv.lock
+
 # Hand-written client extending the generated base
 src/islo/client.py
 
