@@ -1,0 +1,20 @@
+# This file itself — without this entry, Fern's next regen would replace
+# the list below with an empty template, losing all preservation rules.
+.fernignore
+
+# Hand-written client extending the generated base
+src/islo/client.py
+
+# Hand-written extensions: token providers, exec helpers, file helpers
+src/islo/custom/
+
+# Project-level tooling that lives outside the generated SDK
+Justfile
+.pre-commit-config.yaml
+scripts/
+
+# Project tests (Fern would replace tests/ with its own scaffolding)
+tests/
+
+# Auto-tag workflow that fires after a Fern PR merges so ci.yml publishes
+.github/workflows/auto-tag.yml
