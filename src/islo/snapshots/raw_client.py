@@ -3,8 +3,6 @@
 import typing
 from json.decoder import JSONDecodeError
 
-from pydantic import ValidationError
-
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
@@ -20,6 +18,7 @@ from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.error_response import ErrorResponse
 from ..types.paginated_snapshot_response import PaginatedSnapshotResponse
 from ..types.snapshot_response import SnapshotResponse
+from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -32,9 +31,9 @@ class RawSnapshotsClient:
     def list_snapshots(
         self,
         *,
-        limit: int | None = None,
-        offset: int | None = None,
-        request_options: RequestOptions | None = None,
+        limit: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[PaginatedSnapshotResponse]:
         """
         List all snapshots for the current tenant.
@@ -107,8 +106,8 @@ class RawSnapshotsClient:
         self,
         *,
         sandbox_id: str,
-        name: str | None = OMIT,
-        request_options: RequestOptions | None = None,
+        name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[SnapshotResponse]:
         """
         Create a snapshot from a running sandbox.
@@ -215,7 +214,7 @@ class RawSnapshotsClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
     def get_snapshot(
-        self, name: str, *, request_options: RequestOptions | None = None
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[SnapshotResponse]:
         """
         Get snapshot details by name.
@@ -289,7 +288,9 @@ class RawSnapshotsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def delete_snapshot(self, name: str, *, request_options: RequestOptions | None = None) -> HttpResponse[None]:
+    def delete_snapshot(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[None]:
         """
         Delete a snapshot by name.
 
@@ -362,9 +363,9 @@ class AsyncRawSnapshotsClient:
     async def list_snapshots(
         self,
         *,
-        limit: int | None = None,
-        offset: int | None = None,
-        request_options: RequestOptions | None = None,
+        limit: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[PaginatedSnapshotResponse]:
         """
         List all snapshots for the current tenant.
@@ -437,8 +438,8 @@ class AsyncRawSnapshotsClient:
         self,
         *,
         sandbox_id: str,
-        name: str | None = OMIT,
-        request_options: RequestOptions | None = None,
+        name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[SnapshotResponse]:
         """
         Create a snapshot from a running sandbox.
@@ -545,7 +546,7 @@ class AsyncRawSnapshotsClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
     async def get_snapshot(
-        self, name: str, *, request_options: RequestOptions | None = None
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[SnapshotResponse]:
         """
         Get snapshot details by name.
@@ -620,7 +621,7 @@ class AsyncRawSnapshotsClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
     async def delete_snapshot(
-        self, name: str, *, request_options: RequestOptions | None = None
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[None]:
         """
         Delete a snapshot by name.

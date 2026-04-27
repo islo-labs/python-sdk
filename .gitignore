@@ -1,20 +1,5 @@
-__pycache__/
-*.py[cod]
-*.egg-info/
-dist/
-build/
-.venv/
-.eggs/
-*.egg
 .mypy_cache/
 .ruff_cache/
-.fern/
-.pytest_cache/
-.astro/
-node_modules/
-.DS_Store
-
-# Poetry artifacts — this project uses uv; Fern's Python generator emits
-# these on every regen. Keep them out of git so they don't pollute PRs.
-poetry.lock
-requirements.txt
+__pycache__/
+dist/
+poetry.toml

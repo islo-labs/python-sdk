@@ -41,6 +41,7 @@ if typing.TYPE_CHECKING:
     from .sandbox_response import SandboxResponse
     from .sandbox_spec import SandboxSpec
     from .snapshot_response import SnapshotResponse
+    from .token_request import TokenRequest
     from .token_response import TokenResponse
     from .validation_error import ValidationError
     from .validation_error_loc_item import ValidationErrorLocItem
@@ -80,6 +81,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SandboxResponse": ".sandbox_response",
     "SandboxSpec": ".sandbox_spec",
     "SnapshotResponse": ".snapshot_response",
+    "TokenRequest": ".token_request",
     "TokenResponse": ".token_response",
     "ValidationError": ".validation_error",
     "ValidationErrorLocItem": ".validation_error_loc_item",
@@ -143,6 +145,7 @@ __all__ = [
     "SandboxResponse",
     "SandboxSpec",
     "SnapshotResponse",
+    "TokenRequest",
     "TokenResponse",
     "ValidationError",
     "ValidationErrorLocItem",

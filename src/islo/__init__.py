@@ -42,6 +42,7 @@ if typing.TYPE_CHECKING:
         SandboxResponse,
         SandboxSpec,
         SnapshotResponse,
+        TokenRequest,
         TokenResponse,
         ValidationError,
         ValidationErrorLocItem,
@@ -55,8 +56,9 @@ if typing.TYPE_CHECKING:
         UnauthorizedError,
         UnprocessableEntityError,
     )
-    from . import auth, gateway_profiles, integrations, sandboxes, snapshots
+    from . import gateway_profiles, integrations, sandboxes, snapshots
     from .client import AsyncIslo, Islo
+    from .version import __version__
 _dynamic_imports: typing.Dict[str, str] = {
     "AgentSessionEventResponse": ".types",
     "AgentSessionResponse": ".types",
@@ -99,13 +101,14 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SandboxSpec": ".types",
     "ServiceUnavailableError": ".errors",
     "SnapshotResponse": ".types",
+    "TokenRequest": ".types",
     "TokenResponse": ".types",
     "TooManyRequestsError": ".errors",
     "UnauthorizedError": ".errors",
     "UnprocessableEntityError": ".errors",
     "ValidationError": ".types",
     "ValidationErrorLocItem": ".types",
-    "auth": ".auth",
+    "__version__": ".version",
     "gateway_profiles": ".gateway_profiles",
     "integrations": ".integrations",
     "sandboxes": ".sandboxes",
@@ -176,13 +179,14 @@ __all__ = [
     "SandboxSpec",
     "ServiceUnavailableError",
     "SnapshotResponse",
+    "TokenRequest",
     "TokenResponse",
     "TooManyRequestsError",
     "UnauthorizedError",
     "UnprocessableEntityError",
     "ValidationError",
     "ValidationErrorLocItem",
-    "auth",
+    "__version__",
     "gateway_profiles",
     "integrations",
     "sandboxes",
