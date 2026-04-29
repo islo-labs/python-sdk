@@ -85,9 +85,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.list_sandboxes()
@@ -171,9 +169,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.create_sandbox()
@@ -217,9 +213,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.get_sandbox_by_id_sandboxes_by_id_sandbox_id_get(
@@ -254,9 +248,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.get_sandbox(
@@ -286,9 +278,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.delete_sandbox(
@@ -318,9 +308,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.stop_sandbox(
@@ -328,6 +316,72 @@ class SandboxesClient:
         )
         """
         _response = self._raw_client.stop_sandbox(sandbox_name, request_options=request_options)
+        return _response.data
+
+    def pause_sandbox(
+        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> SandboxResponse:
+        """
+        Snapshot the sandbox VM state to disk and free CPU/memory. The sandbox can be resumed later.
+
+        Parameters
+        ----------
+        sandbox_name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SandboxResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+        client.sandboxes.pause_sandbox(
+            sandbox_name="sandbox_name",
+        )
+        """
+        _response = self._raw_client.pause_sandbox(sandbox_name, request_options=request_options)
+        return _response.data
+
+    def resume_sandbox(
+        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> SandboxResponse:
+        """
+        Resume a paused sandbox from its local snapshot.
+
+        Parameters
+        ----------
+        sandbox_name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SandboxResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+        client.sandboxes.resume_sandbox(
+            sandbox_name="sandbox_name",
+        )
+        """
+        _response = self._raw_client.resume_sandbox(sandbox_name, request_options=request_options)
         return _response.data
 
     def promote_sandbox_cache(
@@ -352,9 +406,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.promote_sandbox_cache(
@@ -362,6 +414,114 @@ class SandboxesClient:
         )
         """
         _response = self._raw_client.promote_sandbox_cache(sandbox_name, request_options=request_options)
+        return _response.data
+
+    def list_sessions(
+        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.Any:
+        """
+        List active persistent sessions (shpool) in a sandbox.
+
+        Parameters
+        ----------
+        sandbox_name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.Any
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+        client.sandboxes.list_sessions(
+            sandbox_name="sandbox_name",
+        )
+        """
+        _response = self._raw_client.list_sessions(sandbox_name, request_options=request_options)
+        return _response.data
+
+    def create_session(
+        self,
+        sandbox_name: str,
+        *,
+        request: typing.Dict[str, typing.Any],
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> typing.Any:
+        """
+        Create a persistent session in a sandbox.
+
+        Parameters
+        ----------
+        sandbox_name : str
+
+        request : typing.Dict[str, typing.Any]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.Any
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+        client.sandboxes.create_session(
+            sandbox_name="sandbox_name",
+            request={"key": "value"},
+        )
+        """
+        _response = self._raw_client.create_session(sandbox_name, request=request, request_options=request_options)
+        return _response.data
+
+    def kill_session(
+        self, sandbox_name: str, session_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Kill a persistent session in a sandbox.
+
+        Parameters
+        ----------
+        sandbox_name : str
+
+        session_name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+        client.sandboxes.kill_session(
+            sandbox_name="sandbox_name",
+            session_name="session_name",
+        )
+        """
+        _response = self._raw_client.kill_session(sandbox_name, session_name, request_options=request_options)
         return _response.data
 
     def list_exec_sessions(
@@ -394,9 +554,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.list_exec_sessions(
@@ -439,9 +597,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.get_exec_session_asciinema(
@@ -491,9 +647,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.get_exec_session_logs(
@@ -540,9 +694,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.list_agent_sessions(
@@ -603,9 +755,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.get_agent_session_events(
@@ -651,9 +801,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.download_file(
@@ -690,9 +838,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.upload_file(
@@ -729,9 +875,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.download_archive(
@@ -768,9 +912,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.upload_archive(
@@ -827,9 +969,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.exec_in_sandbox(
@@ -873,9 +1013,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.get_exec_result(
@@ -932,9 +1070,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.sandboxes.exec_in_sandbox_stream(
@@ -1022,9 +1158,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1116,9 +1250,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1170,9 +1302,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1215,9 +1345,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1257,9 +1385,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1297,9 +1423,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1313,6 +1437,88 @@ class AsyncSandboxesClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.stop_sandbox(sandbox_name, request_options=request_options)
+        return _response.data
+
+    async def pause_sandbox(
+        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> SandboxResponse:
+        """
+        Snapshot the sandbox VM state to disk and free CPU/memory. The sandbox can be resumed later.
+
+        Parameters
+        ----------
+        sandbox_name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SandboxResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.pause_sandbox(
+                sandbox_name="sandbox_name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.pause_sandbox(sandbox_name, request_options=request_options)
+        return _response.data
+
+    async def resume_sandbox(
+        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> SandboxResponse:
+        """
+        Resume a paused sandbox from its local snapshot.
+
+        Parameters
+        ----------
+        sandbox_name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SandboxResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.resume_sandbox(
+                sandbox_name="sandbox_name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.resume_sandbox(sandbox_name, request_options=request_options)
         return _response.data
 
     async def promote_sandbox_cache(
@@ -1339,9 +1545,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1355,6 +1559,140 @@ class AsyncSandboxesClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.promote_sandbox_cache(sandbox_name, request_options=request_options)
+        return _response.data
+
+    async def list_sessions(
+        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.Any:
+        """
+        List active persistent sessions (shpool) in a sandbox.
+
+        Parameters
+        ----------
+        sandbox_name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.Any
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.list_sessions(
+                sandbox_name="sandbox_name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_sessions(sandbox_name, request_options=request_options)
+        return _response.data
+
+    async def create_session(
+        self,
+        sandbox_name: str,
+        *,
+        request: typing.Dict[str, typing.Any],
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> typing.Any:
+        """
+        Create a persistent session in a sandbox.
+
+        Parameters
+        ----------
+        sandbox_name : str
+
+        request : typing.Dict[str, typing.Any]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.Any
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.create_session(
+                sandbox_name="sandbox_name",
+                request={"key": "value"},
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.create_session(
+            sandbox_name, request=request, request_options=request_options
+        )
+        return _response.data
+
+    async def kill_session(
+        self, sandbox_name: str, session_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Kill a persistent session in a sandbox.
+
+        Parameters
+        ----------
+        sandbox_name : str
+
+        session_name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.kill_session(
+                sandbox_name="sandbox_name",
+                session_name="session_name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.kill_session(sandbox_name, session_name, request_options=request_options)
         return _response.data
 
     async def list_exec_sessions(
@@ -1389,9 +1727,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1442,9 +1778,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1502,9 +1836,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1559,9 +1891,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1630,9 +1960,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1686,9 +2014,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1733,9 +2059,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1780,9 +2104,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1827,9 +2149,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1894,9 +2214,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -1948,9 +2266,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -2015,9 +2331,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 

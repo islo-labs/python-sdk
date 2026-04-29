@@ -49,9 +49,7 @@ class IntegrationsClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.integrations.list_integration_providers()
@@ -81,9 +79,7 @@ class IntegrationsClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.integrations.list_integrations()
@@ -116,9 +112,7 @@ class IntegrationsClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.integrations.get_integration_status(
@@ -161,9 +155,7 @@ class IntegrationsClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.integrations.disconnect_integration(
@@ -214,9 +206,7 @@ class AsyncIntegrationsClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -256,9 +246,7 @@ class AsyncIntegrationsClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -299,9 +287,7 @@ class AsyncIntegrationsClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -352,9 +338,7 @@ class AsyncIntegrationsClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
