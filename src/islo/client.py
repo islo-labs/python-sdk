@@ -76,8 +76,6 @@ class Islo(BaseIslo):
         api_key: str | None = None,
         base_url: str | None = None,
         token: str | typing.Callable[[], str] | None = None,
-        public_tenant_id: str | None = None,
-        public_user_id: str | None = None,
         headers: dict[str, str] | None = None,
         timeout: float | None = None,
         follow_redirects: bool | None = True,
@@ -89,8 +87,6 @@ class Islo(BaseIslo):
 
         super().__init__(
             base_url=resolved_base_url,
-            public_tenant_id=public_tenant_id,
-            public_user_id=public_user_id,
             token=resolved_token,
             headers=headers,
             timeout=timeout,
@@ -133,8 +129,6 @@ class AsyncIslo(AsyncBaseIslo):
         base_url: str | None = None,
         token: str | typing.Callable[[], str] | None = None,
         async_token: typing.Callable[[], typing.Awaitable[str]] | None = None,
-        public_tenant_id: str | None = None,
-        public_user_id: str | None = None,
         headers: dict[str, str] | None = None,
         timeout: float | None = None,
         follow_redirects: bool | None = True,
@@ -146,8 +140,6 @@ class AsyncIslo(AsyncBaseIslo):
 
         super().__init__(
             base_url=resolved_base_url,
-            public_tenant_id=public_tenant_id,
-            public_user_id=public_user_id,
             token=resolved_token,
             headers=headers,
             async_token=resolved_async_token,
