@@ -87,7 +87,7 @@ class Islo(BaseIslo):
 
         super().__init__(
             base_url=resolved_base_url,
-            token=resolved_token,
+            api_key=resolved_token,
             headers=headers,
             timeout=timeout,
             follow_redirects=follow_redirects,
@@ -140,7 +140,7 @@ class AsyncIslo(AsyncBaseIslo):
 
         super().__init__(
             base_url=resolved_base_url,
-            token=resolved_token,
+            api_key=resolved_token,
             headers=headers,
             async_token=resolved_async_token,
             timeout=timeout,
