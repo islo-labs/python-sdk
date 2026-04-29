@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import typing
 
 import httpx
@@ -24,9 +25,7 @@ class BaseIslo:
     base_url : str
         The base url to use for requests from the client.
 
-    public_tenant_id : typing.Optional[str]
-    public_user_id : typing.Optional[str]
-    token : typing.Optional[typing.Union[str, typing.Callable[[], str]]]
+    api_key : typing.Optional[typing.Union[str, typing.Callable[[], str]]]
     headers : typing.Optional[typing.Dict[str, str]]
         Additional headers to send with every request.
 
@@ -47,9 +46,7 @@ class BaseIslo:
     from islo import Islo
 
     client = Islo(
-        public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-        public_user_id="YOUR_PUBLIC_USER_ID",
-        token="YOUR_TOKEN",
+        api_key="YOUR_API_KEY",
         base_url="https://yourhost.com/path/to/api",
     )
     """
@@ -58,9 +55,7 @@ class BaseIslo:
         self,
         *,
         base_url: str,
-        public_tenant_id: typing.Optional[str] = None,
-        public_user_id: typing.Optional[str] = None,
-        token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
+        api_key: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = os.getenv("ISLO_API_KEY"),
         headers: typing.Optional[typing.Dict[str, str]] = None,
         timeout: typing.Optional[float] = None,
         follow_redirects: typing.Optional[bool] = True,
@@ -72,9 +67,7 @@ class BaseIslo:
         )
         self._client_wrapper = SyncClientWrapper(
             base_url=base_url,
-            public_tenant_id=public_tenant_id,
-            public_user_id=public_user_id,
-            token=token,
+            api_key=api_key,
             headers=headers,
             httpx_client=httpx_client
             if httpx_client is not None
@@ -131,9 +124,7 @@ class AsyncBaseIslo:
     base_url : str
         The base url to use for requests from the client.
 
-    public_tenant_id : typing.Optional[str]
-    public_user_id : typing.Optional[str]
-    token : typing.Optional[typing.Union[str, typing.Callable[[], str]]]
+    api_key : typing.Optional[typing.Union[str, typing.Callable[[], str]]]
     headers : typing.Optional[typing.Dict[str, str]]
         Additional headers to send with every request.
 
@@ -157,9 +148,7 @@ class AsyncBaseIslo:
     from islo import AsyncIslo
 
     client = AsyncIslo(
-        public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-        public_user_id="YOUR_PUBLIC_USER_ID",
-        token="YOUR_TOKEN",
+        api_key="YOUR_API_KEY",
         base_url="https://yourhost.com/path/to/api",
     )
     """
@@ -168,9 +157,7 @@ class AsyncBaseIslo:
         self,
         *,
         base_url: str,
-        public_tenant_id: typing.Optional[str] = None,
-        public_user_id: typing.Optional[str] = None,
-        token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
+        api_key: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = os.getenv("ISLO_API_KEY"),
         headers: typing.Optional[typing.Dict[str, str]] = None,
         async_token: typing.Optional[typing.Callable[[], typing.Awaitable[str]]] = None,
         timeout: typing.Optional[float] = None,
@@ -183,9 +170,7 @@ class AsyncBaseIslo:
         )
         self._client_wrapper = AsyncClientWrapper(
             base_url=base_url,
-            public_tenant_id=public_tenant_id,
-            public_user_id=public_user_id,
-            token=token,
+            api_key=api_key,
             headers=headers,
             async_token=async_token,
             httpx_client=httpx_client

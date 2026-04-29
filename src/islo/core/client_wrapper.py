@@ -11,17 +11,13 @@ class BaseClientWrapper:
     def __init__(
         self,
         *,
-        public_tenant_id: typing.Optional[str] = None,
-        public_user_id: typing.Optional[str] = None,
-        token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
+        api_key: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
         headers: typing.Optional[typing.Dict[str, str]] = None,
         base_url: str,
         timeout: typing.Optional[float] = None,
         logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
     ):
-        self._public_tenant_id = public_tenant_id
-        self._public_user_id = public_user_id
-        self._token = token
+        self._api_key = api_key
         self._headers = headers
         self._base_url = base_url
         self._timeout = timeout
@@ -31,28 +27,24 @@ class BaseClientWrapper:
         import platform
 
         headers: typing.Dict[str, str] = {
-            "User-Agent": "islo/0.2.3",
+            "User-Agent": "islo/0.2.4",
             "X-Fern-Language": "Python",
             "X-Fern-Runtime": f"python/{platform.python_version()}",
             "X-Fern-Platform": f"{platform.system().lower()}/{platform.release()}",
             "X-Fern-SDK-Name": "islo",
-            "X-Fern-SDK-Version": "0.2.3",
+            "X-Fern-SDK-Version": "0.2.4",
             **(self.get_custom_headers() or {}),
         }
-        if self._public_tenant_id is not None:
-            headers["x-public-tenant-id"] = self._public_tenant_id
-        if self._public_user_id is not None:
-            headers["x-public-user-id"] = self._public_user_id
-        token = self._get_token()
-        if token is not None:
-            headers["Authorization"] = f"Bearer {token}"
+        api_key = self._get_api_key()
+        if api_key is not None:
+            headers["Authorization"] = f"Bearer {api_key}"
         return headers
 
-    def _get_token(self) -> typing.Optional[str]:
-        if isinstance(self._token, str) or self._token is None:
-            return self._token
+    def _get_api_key(self) -> typing.Optional[str]:
+        if isinstance(self._api_key, str) or self._api_key is None:
+            return self._api_key
         else:
-            return self._token()
+            return self._api_key()
 
     def get_custom_headers(self) -> typing.Optional[typing.Dict[str, str]]:
         return self._headers
@@ -68,24 +60,14 @@ class SyncClientWrapper(BaseClientWrapper):
     def __init__(
         self,
         *,
-        public_tenant_id: typing.Optional[str] = None,
-        public_user_id: typing.Optional[str] = None,
-        token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
+        api_key: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
         headers: typing.Optional[typing.Dict[str, str]] = None,
         base_url: str,
         timeout: typing.Optional[float] = None,
         logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
         httpx_client: httpx.Client,
     ):
-        super().__init__(
-            public_tenant_id=public_tenant_id,
-            public_user_id=public_user_id,
-            token=token,
-            headers=headers,
-            base_url=base_url,
-            timeout=timeout,
-            logging=logging,
-        )
+        super().__init__(api_key=api_key, headers=headers, base_url=base_url, timeout=timeout, logging=logging)
         self.httpx_client = HttpClient(
             httpx_client=httpx_client,
             base_headers=self.get_headers,
@@ -99,9 +81,7 @@ class AsyncClientWrapper(BaseClientWrapper):
     def __init__(
         self,
         *,
-        public_tenant_id: typing.Optional[str] = None,
-        public_user_id: typing.Optional[str] = None,
-        token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
+        api_key: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
         headers: typing.Optional[typing.Dict[str, str]] = None,
         base_url: str,
         timeout: typing.Optional[float] = None,
@@ -109,15 +89,7 @@ class AsyncClientWrapper(BaseClientWrapper):
         async_token: typing.Optional[typing.Callable[[], typing.Awaitable[str]]] = None,
         httpx_client: httpx.AsyncClient,
     ):
-        super().__init__(
-            public_tenant_id=public_tenant_id,
-            public_user_id=public_user_id,
-            token=token,
-            headers=headers,
-            base_url=base_url,
-            timeout=timeout,
-            logging=logging,
-        )
+        super().__init__(api_key=api_key, headers=headers, base_url=base_url, timeout=timeout, logging=logging)
         self._async_token = async_token
         self.httpx_client = AsyncHttpClient(
             httpx_client=httpx_client,
