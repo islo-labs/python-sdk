@@ -28,22 +28,13 @@ class TestIsloClient:
         monkeypatch.delenv("ISLO_API_KEY", raising=False)
         monkeypatch.delenv("ISLO_BASE_URL", raising=False)
         client = Islo(api_key="ak_test_key")
-        assert isinstance(client._client_wrapper._token, SyncTokenProvider)
+        assert isinstance(client._client_wrapper._api_key, SyncTokenProvider)
 
     def test_env_api_key_creates_token_provider(self, monkeypatch):
         monkeypatch.setenv("ISLO_API_KEY", "ak_env_key")
         monkeypatch.delenv("ISLO_BASE_URL", raising=False)
         client = Islo()
-        assert isinstance(client._client_wrapper._token, SyncTokenProvider)
-
-    def test_explicit_token_bypasses_exchange(self, monkeypatch):
-        monkeypatch.setenv("ISLO_API_KEY", "ak_should_be_ignored")
-        client = Islo(token="pre-existing-jwt")
-        assert client._client_wrapper._token == "pre-existing-jwt"
-
-    def test_token_takes_precedence_over_api_key(self):
-        client = Islo(api_key="ak_ignored", token="jwt-wins")
-        assert client._client_wrapper._token == "jwt-wins"
+        assert isinstance(client._client_wrapper._api_key, SyncTokenProvider)
 
     def test_resource_clients_available(self, monkeypatch):
         monkeypatch.delenv("ISLO_API_KEY", raising=False)
@@ -103,5 +94,5 @@ class TestTokenProviderIntegration:
         )
 
         client = Islo(api_key="ak_test")
-        token = client._client_wrapper._token()
+        token = client._client_wrapper._api_key()
         assert token == "jwt-from-exchange"
