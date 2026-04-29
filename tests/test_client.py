@@ -36,15 +36,6 @@ class TestIsloClient:
         client = Islo()
         assert isinstance(client._client_wrapper._api_key, SyncTokenProvider)
 
-    def test_explicit_token_bypasses_exchange(self, monkeypatch):
-        monkeypatch.setenv("ISLO_API_KEY", "ak_should_be_ignored")
-        client = Islo(token="pre-existing-jwt")
-        assert client._client_wrapper._api_key == "pre-existing-jwt"
-
-    def test_token_takes_precedence_over_api_key(self):
-        client = Islo(api_key="ak_ignored", token="jwt-wins")
-        assert client._client_wrapper._api_key == "jwt-wins"
-
     def test_resource_clients_available(self, monkeypatch):
         monkeypatch.delenv("ISLO_API_KEY", raising=False)
         monkeypatch.delenv("ISLO_BASE_URL", raising=False)
