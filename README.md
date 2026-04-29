@@ -141,7 +141,7 @@ Instantiate and use the client with the following:
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -158,7 +158,7 @@ import asyncio
 from islo import AsyncIslo
 
 client = AsyncIslo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 

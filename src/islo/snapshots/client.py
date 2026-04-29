@@ -56,9 +56,7 @@ class SnapshotsClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.snapshots.list_snapshots()
@@ -95,9 +93,7 @@ class SnapshotsClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.snapshots.create_snapshot(
@@ -128,9 +124,7 @@ class SnapshotsClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.snapshots.get_snapshot(
@@ -160,9 +154,7 @@ class SnapshotsClient:
         from islo import Islo
 
         client = Islo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
         client.snapshots.delete_snapshot(
@@ -219,9 +211,7 @@ class AsyncSnapshotsClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -266,9 +256,7 @@ class AsyncSnapshotsClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -311,9 +299,7 @@ class AsyncSnapshotsClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 
@@ -351,9 +337,7 @@ class AsyncSnapshotsClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            public_tenant_id="YOUR_PUBLIC_TENANT_ID",
-            public_user_id="YOUR_PUBLIC_USER_ID",
-            token="YOUR_TOKEN",
+            api_key="YOUR_API_KEY",
             base_url="https://yourhost.com/path/to/api",
         )
 

@@ -30,7 +30,7 @@ List and filter sandboxes for the authenticated tenant.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -148,7 +148,7 @@ Create a new sandbox with the specified configuration.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -298,7 +298,7 @@ Get details of a specific sandbox by stable public ID, including deleted sandbox
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -370,7 +370,7 @@ Get details of a specific sandbox by name.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -442,7 +442,7 @@ Stop and permanently remove a sandbox.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -514,11 +514,155 @@ Stop a sandbox (destroy VM) but keep the record visible.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
 client.sandboxes.stop_sandbox(
+    sandbox_name="sandbox_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">pause_sandbox</a>(...) -> SandboxResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Snapshot the sandbox VM state to disk and free CPU/memory. The sandbox can be resumed later.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.sandboxes.pause_sandbox(
+    sandbox_name="sandbox_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">resume_sandbox</a>(...) -> SandboxResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Resume a paused sandbox from its local snapshot.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.sandboxes.resume_sandbox(
     sandbox_name="sandbox_name",
 )
 
@@ -586,7 +730,7 @@ Promote the sandbox's tool cache to golden cache for reuse.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -609,6 +753,242 @@ client.sandboxes.promote_sandbox_cache(
 <dd>
 
 **sandbox_name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">list_sessions</a>(...) -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List active persistent sessions (shpool) in a sandbox.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.sandboxes.list_sessions(
+    sandbox_name="sandbox_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">create_session</a>(...) -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a persistent session in a sandbox.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.sandboxes.create_session(
+    sandbox_name="sandbox_name",
+    request={
+        "key": "value"
+    },
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `typing.Dict[str, typing.Any]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">kill_session</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Kill a persistent session in a sandbox.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.sandboxes.kill_session(
+    sandbox_name="sandbox_name",
+    session_name="session_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**session_name:** `str` 
     
 </dd>
 </dl>
@@ -658,7 +1038,7 @@ List all exec sessions for a sandbox.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -738,7 +1118,7 @@ Return logs for a specific exec session in asciinema v2 format for playback.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -827,7 +1207,7 @@ Return raw logs for a specific exec session.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -924,7 +1304,7 @@ List all Claude agent sessions for a sandbox, ordered by most recent first.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -1012,7 +1392,7 @@ Return all trace events for a specific agent session, ordered by timestamp.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -1133,7 +1513,7 @@ Download a single file from a sandbox.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -1214,7 +1594,7 @@ Upload a single file into a sandbox.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -1295,7 +1675,7 @@ Download a directory from a sandbox as a tar.gz archive.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -1376,7 +1756,7 @@ Upload a tar.gz archive and extract it into a sandbox directory.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -1457,7 +1837,7 @@ Execute a command inside a sandbox by name.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -1540,7 +1920,7 @@ Poll the result of a previously started exec command.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -1621,7 +2001,7 @@ Execute a command inside a sandbox and stream stdout/stderr as SSE.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -1705,7 +2085,7 @@ List all snapshots for the current tenant.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -1783,7 +2163,7 @@ Create a snapshot from a running sandbox.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -1863,7 +2243,7 @@ Get snapshot details by name.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -1935,7 +2315,7 @@ Delete a snapshot by name.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -2010,7 +2390,7 @@ Returns provider names and their supported hosts.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -2075,7 +2455,7 @@ User-level integrations take precedence in display.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -2139,7 +2519,7 @@ Returns both user-level and tenant-level connection status independently.
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -2215,7 +2595,7 @@ Args:
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -2282,7 +2662,7 @@ client.integrations.disconnect_integration(
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -2330,7 +2710,7 @@ client.gateway_profiles.list_gateway_profiles()
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -2420,7 +2800,7 @@ client.gateway_profiles.create_gateway_profile(
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -2478,7 +2858,7 @@ client.gateway_profiles.get_gateway_profile(
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -2536,7 +2916,7 @@ client.gateway_profiles.delete_gateway_profile(
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -2634,7 +3014,7 @@ client.gateway_profiles.update_gateway_profile(
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -2765,7 +3145,7 @@ client.gateway_profiles.create_gateway_rule(
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -2832,7 +3212,7 @@ client.gateway_profiles.delete_gateway_rule(
 from islo import Islo
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
@@ -2971,7 +3351,7 @@ client.gateway_profiles.update_gateway_rule(
 from islo import Islo, RuleReorderItem
 
 client = Islo(
-    token="<token>",
+    api_key="<token>",
     base_url="https://yourhost.com/path/to/api",
 )
 
