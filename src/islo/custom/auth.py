@@ -21,7 +21,7 @@ def exchange_access_key(
     *,
     timeout: float = 10.0,
 ) -> dict[str, typing.Any]:
-    """Exchange an Islo API key (Descope access key) for a short-lived JWT.
+    """Exchange an Islo API key for a short-lived JWT.
 
     Returns the JSON response containing ``session_jwt``, ``refresh_jwt``,
     ``cookie_domain``, ``cookie_path``, ``cookie_max_age``, and ``cookie_expiration``.
