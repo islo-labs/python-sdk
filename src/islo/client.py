@@ -60,7 +60,7 @@ class Islo(BaseIslo):
     Parameters
     ----------
     api_key : str, optional
-        Islo API key (Descope access key). Exchanged for a short-lived JWT
+        Islo API key. Exchanged for a short-lived JWT
         automatically. Falls back to the ``ISLO_API_KEY`` environment variable.
     token : str or callable, optional
         Pre-existing JWT or callable returning a JWT. When provided,
@@ -111,7 +111,7 @@ class AsyncIslo(AsyncBaseIslo):
     Parameters
     ----------
     api_key : str, optional
-        Islo API key (Descope access key). Exchanged for a short-lived JWT
+        Islo API key. Exchanged for a short-lived JWT
         automatically. Falls back to the ``ISLO_API_KEY`` environment variable.
     token : str or callable, optional
         Pre-existing JWT. When provided, ``api_key`` is ignored.
