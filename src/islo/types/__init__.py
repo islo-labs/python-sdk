@@ -8,12 +8,19 @@ from importlib import import_module
 if typing.TYPE_CHECKING:
     from .agent_session_event_response import AgentSessionEventResponse
     from .agent_session_response import AgentSessionResponse
+    from .auth_method import AuthMethod
     from .auth_strategy_schema import AuthStrategySchema
     from .auth_strategy_schema_mode import AuthStrategySchemaMode
     from .connection_status import ConnectionStatus
     from .content_filter_schema import ContentFilterSchema
     from .content_filter_schema_direction import ContentFilterSchemaDirection
     from .content_filter_schema_filter_type import ContentFilterSchemaFilterType
+    from .create_checkout_response import CreateCheckoutResponse
+    from .credit_balance import CreditBalance
+    from .custom_integration import CustomIntegration
+    from .custom_service import CustomService
+    from .custom_service_create_response import CustomServiceCreateResponse
+    from .custom_services_response import CustomServicesResponse
     from .error_response import ErrorResponse
     from .exec_log_line_response import ExecLogLineResponse
     from .exec_log_line_response_stream import ExecLogLineResponseStream
@@ -26,6 +33,8 @@ if typing.TYPE_CHECKING:
     from .gateway_profile_detail_response import GatewayProfileDetailResponse
     from .gateway_profile_response import GatewayProfileResponse
     from .gateway_rule_response import GatewayRuleResponse
+    from .git_source import GitSource
+    from .git_source_type import GitSourceType
     from .http_validation_error import HttpValidationError
     from .integration_detail_response import IntegrationDetailResponse
     from .integration_level import IntegrationLevel
@@ -36,10 +45,13 @@ if typing.TYPE_CHECKING:
     from .islo_error_code import IsloErrorCode
     from .paginated_sandbox_response import PaginatedSandboxResponse
     from .paginated_snapshot_response import PaginatedSnapshotResponse
+    from .provider_app import ProviderApp
     from .rule_reorder_item import RuleReorderItem
     from .sandbox_network import SandboxNetwork
     from .sandbox_response import SandboxResponse
     from .sandbox_spec import SandboxSpec
+    from .setup_script import SetupScript
+    from .setup_step_result import SetupStepResult
     from .snapshot_response import SnapshotResponse
     from .token_request import TokenRequest
     from .token_response import TokenResponse
@@ -48,12 +60,19 @@ if typing.TYPE_CHECKING:
 _dynamic_imports: typing.Dict[str, str] = {
     "AgentSessionEventResponse": ".agent_session_event_response",
     "AgentSessionResponse": ".agent_session_response",
+    "AuthMethod": ".auth_method",
     "AuthStrategySchema": ".auth_strategy_schema",
     "AuthStrategySchemaMode": ".auth_strategy_schema_mode",
     "ConnectionStatus": ".connection_status",
     "ContentFilterSchema": ".content_filter_schema",
     "ContentFilterSchemaDirection": ".content_filter_schema_direction",
     "ContentFilterSchemaFilterType": ".content_filter_schema_filter_type",
+    "CreateCheckoutResponse": ".create_checkout_response",
+    "CreditBalance": ".credit_balance",
+    "CustomIntegration": ".custom_integration",
+    "CustomService": ".custom_service",
+    "CustomServiceCreateResponse": ".custom_service_create_response",
+    "CustomServicesResponse": ".custom_services_response",
     "ErrorResponse": ".error_response",
     "ExecLogLineResponse": ".exec_log_line_response",
     "ExecLogLineResponseStream": ".exec_log_line_response_stream",
@@ -66,6 +85,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "GatewayProfileDetailResponse": ".gateway_profile_detail_response",
     "GatewayProfileResponse": ".gateway_profile_response",
     "GatewayRuleResponse": ".gateway_rule_response",
+    "GitSource": ".git_source",
+    "GitSourceType": ".git_source_type",
     "HttpValidationError": ".http_validation_error",
     "IntegrationDetailResponse": ".integration_detail_response",
     "IntegrationLevel": ".integration_level",
@@ -76,10 +97,13 @@ _dynamic_imports: typing.Dict[str, str] = {
     "IsloErrorCode": ".islo_error_code",
     "PaginatedSandboxResponse": ".paginated_sandbox_response",
     "PaginatedSnapshotResponse": ".paginated_snapshot_response",
+    "ProviderApp": ".provider_app",
     "RuleReorderItem": ".rule_reorder_item",
     "SandboxNetwork": ".sandbox_network",
     "SandboxResponse": ".sandbox_response",
     "SandboxSpec": ".sandbox_spec",
+    "SetupScript": ".setup_script",
+    "SetupStepResult": ".setup_step_result",
     "SnapshotResponse": ".snapshot_response",
     "TokenRequest": ".token_request",
     "TokenResponse": ".token_response",
@@ -112,12 +136,19 @@ def __dir__():
 __all__ = [
     "AgentSessionEventResponse",
     "AgentSessionResponse",
+    "AuthMethod",
     "AuthStrategySchema",
     "AuthStrategySchemaMode",
     "ConnectionStatus",
     "ContentFilterSchema",
     "ContentFilterSchemaDirection",
     "ContentFilterSchemaFilterType",
+    "CreateCheckoutResponse",
+    "CreditBalance",
+    "CustomIntegration",
+    "CustomService",
+    "CustomServiceCreateResponse",
+    "CustomServicesResponse",
     "ErrorResponse",
     "ExecLogLineResponse",
     "ExecLogLineResponseStream",
@@ -130,6 +161,8 @@ __all__ = [
     "GatewayProfileDetailResponse",
     "GatewayProfileResponse",
     "GatewayRuleResponse",
+    "GitSource",
+    "GitSourceType",
     "HttpValidationError",
     "IntegrationDetailResponse",
     "IntegrationLevel",
@@ -140,10 +173,13 @@ __all__ = [
     "IsloErrorCode",
     "PaginatedSandboxResponse",
     "PaginatedSnapshotResponse",
+    "ProviderApp",
     "RuleReorderItem",
     "SandboxNetwork",
     "SandboxResponse",
     "SandboxSpec",
+    "SetupScript",
+    "SetupStepResult",
     "SnapshotResponse",
     "TokenRequest",
     "TokenResponse",

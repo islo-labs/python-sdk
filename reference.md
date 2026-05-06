@@ -256,6 +256,22 @@ client.sandboxes.create_sandbox()
 <dl>
 <dd>
 
+**sources:** `typing.Optional[typing.List[GitSource]]` — Repository sources to clone into /workspace after VM init.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**setup_scripts:** `typing.Optional[typing.List[SetupScript]]` — Named setup script steps to execute sequentially after git clones.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -412,7 +428,7 @@ client.sandboxes.get_sandbox(
 </dl>
 </details>
 
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">delete_sandbox</a>(...)</code></summary>
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">delete_sandbox</a>(...) -> typing.Any</code></summary>
 <dl>
 <dd>
 
@@ -424,7 +440,7 @@ client.sandboxes.get_sandbox(
 <dl>
 <dd>
 
-Stop and permanently remove a sandbox.
+Mark a sandbox for deletion. VM teardown happens asynchronously.
 </dd>
 </dl>
 </dd>
@@ -484,7 +500,7 @@ client.sandboxes.delete_sandbox(
 </dl>
 </details>
 
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">stop_sandbox</a>(...)</code></summary>
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">stop_sandbox</a>(...) -> typing.Any</code></summary>
 <dl>
 <dd>
 
@@ -496,7 +512,7 @@ client.sandboxes.delete_sandbox(
 <dl>
 <dd>
 
-Stop a sandbox (destroy VM) but keep the record visible.
+Stop a sandbox. VM teardown happens asynchronously; the record stays visible.
 </dd>
 </dl>
 </dd>
@@ -784,7 +800,7 @@ client.sandboxes.promote_sandbox_cache(
 <dl>
 <dd>
 
-List active persistent sessions (shpool) in a sandbox.
+List active persistent sessions in a sandbox.
 </dd>
 </dl>
 </dd>
@@ -2357,6 +2373,180 @@ client.snapshots.delete_snapshot(
 </dl>
 </details>
 
+## Credits
+<details><summary><code>client.credits.<a href="src/islo/credits/client.py">get_credit_balance</a>() -> CreditBalance</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.credits.get_credit_balance()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.credits.<a href="src/islo/credits/client.py">create_credit_checkout</a>(...) -> CreateCheckoutResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.credits.create_credit_checkout(
+    amount_cents=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**amount_cents:** `int` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.credits.<a href="src/islo/credits/client.py">handle_paddle_webhook</a>(...) -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.credits.handle_paddle_webhook(
+    paddle_signature="paddleSignature",
+    request={"key": "value"},
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**paddle_signature:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `typing.Any` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## integrations
 <details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">list_integration_providers</a>() -> IntegrationProvidersResponse</code></summary>
 <dl>
@@ -2370,9 +2560,11 @@ client.snapshots.delete_snapshot(
 <dl>
 <dd>
 
-List available integration providers.
+List available preset providers and their pre-provisioned Descope apps.
 
-Returns provider names and their supported hosts.
+The ``apps`` array carries every (auth_method, scope) -> app_id combo a
+preset supports, so the modal can resolve the right ``app_id`` locally
+and skip a server round-trip on the connect path.
 </dd>
 </dl>
 </dd>
@@ -2434,10 +2626,15 @@ client.integrations.list_integration_providers()
 <dl>
 <dd>
 
-List all integrations for the current user and tenant.
+List the integrations the user/tenant has connected.
 
-Shows both user-level and tenant-level integrations.
-User-level integrations take precedence in display.
+Includes preset providers (from the PROVIDERS registry) and tenant-scoped
+custom outbound apps (filtered out of Descope's load_all_applications).
+Returns one entry per connected (provider, scope, auth_type) slot, so a
+provider with both a personal api_key and a personal oauth token will
+appear twice. Disconnected slots are not emitted; clients that need a
+list of available-but-not-connected providers should call
+``GET /integrations/providers`` instead.
 </dd>
 </dl>
 </dd>
@@ -2471,6 +2668,248 @@ client.integrations.list_integrations()
 
 <dl>
 <dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">list_custom_services</a>() -> CustomServicesResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List custom service definitions in the current tenant (catalog view).
+
+Returns every custom Descope app belonging to the tenant regardless of
+connection status, so the Add Integration picker can surface them for
+any tenant member to connect to. Connection state (per-user/per-workspace
+tokens) lives on ``GET /integrations``; this endpoint is purely the
+service catalog.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.integrations.list_custom_services()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">create_custom_service</a>(...) -> CustomServiceCreateResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a tenant-scoped custom Descope outbound app.
+
+Returns the ``app_id`` so the frontend can immediately kick off the
+connect flow (OAuth) or surface the API key form. Presets do not pass
+through this endpoint -- their app ids come straight from
+``GET /integrations/providers``.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo, CustomIntegration
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.integrations.create_custom_service(
+    custom=CustomIntegration(
+        name="name",
+        slug="slug",
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**custom:** `CustomIntegration` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">disconnect_custom_integration</a>(...) -> typing.Dict[str, typing.Any]</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Disconnect a custom integration by its Descope app ID.
+
+Authorization is by deterministic-ID prefix: only apps whose ID matches
+``cust-{tenant-prefix}-`` are accepted, which scopes the operation to the
+caller's workspace without a DB lookup. ``scope`` selects which side's
+tokens to revoke (per-user vs tenant-wide); ``delete_app=true`` removes
+the Descope app entirely (affects every user in the workspace).
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.integrations.disconnect_custom_integration(
+    descope_app_id="descope_app_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**descope_app_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**scope:** `typing.Optional[IntegrationLevel]` — Which token to revoke: 'user' (this user's personal) or 'tenant' (workspace)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**delete_app:** `typing.Optional[bool]` — Also remove the Descope outbound app entirely (affects every user in this workspace)
+    
+</dd>
+</dl>
 
 <dl>
 <dd>
@@ -2578,6 +3017,7 @@ Disconnect/revoke an integration.
 Args:
     provider: Provider name
     level: Which level to disconnect (USER or TENANT)
+    auth_type: Optional. Defaults to provider's primary type.
 </dd>
 </dl>
 </dd>
@@ -2626,6 +3066,14 @@ client.integrations.disconnect_integration(
 <dd>
 
 **level:** `typing.Optional[IntegrationLevel]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**auth_type:** `typing.Optional[AuthMethod]` — oauth or api_key
     
 </dd>
 </dl>

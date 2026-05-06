@@ -12,8 +12,10 @@ from ..core.jsonable_encoder import jsonable_encoder
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
+from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.conflict_error import ConflictError
 from ..errors.not_found_error import NotFoundError
+from ..errors.payment_required_error import PaymentRequiredError
 from ..errors.service_unavailable_error import ServiceUnavailableError
 from ..errors.too_many_requests_error import TooManyRequestsError
 from ..errors.unauthorized_error import UnauthorizedError
@@ -25,8 +27,10 @@ from ..types.exec_logs_response import ExecLogsResponse
 from ..types.exec_response import ExecResponse
 from ..types.exec_result_response import ExecResultResponse
 from ..types.exec_session_response import ExecSessionResponse
+from ..types.git_source import GitSource
 from ..types.paginated_sandbox_response import PaginatedSandboxResponse
 from ..types.sandbox_response import SandboxResponse
+from ..types.setup_script import SetupScript
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -152,6 +156,8 @@ class RawSandboxesClient:
         init_capabilities: typing.Optional[typing.Sequence[str]] = OMIT,
         gateway_profile: typing.Optional[str] = OMIT,
         snapshot_name: typing.Optional[str] = OMIT,
+        sources: typing.Optional[typing.Sequence[GitSource]] = OMIT,
+        setup_scripts: typing.Optional[typing.Sequence[SetupScript]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[SandboxResponse]:
         """
@@ -192,6 +198,12 @@ class RawSandboxesClient:
         snapshot_name : typing.Optional[str]
             Name of a snapshot to restore from. When set, the VM is created from the snapshot's filesystem.
 
+        sources : typing.Optional[typing.Sequence[GitSource]]
+            Repository sources to clone into /workspace after VM init.
+
+        setup_scripts : typing.Optional[typing.Sequence[SetupScript]]
+            Named setup script steps to execute sequentially after git clones.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -215,6 +227,12 @@ class RawSandboxesClient:
                 "init_capabilities": init_capabilities,
                 "gateway_profile": gateway_profile,
                 "snapshot_name": snapshot_name,
+                "sources": convert_and_respect_annotation_metadata(
+                    object_=sources, annotation=typing.Optional[typing.Sequence[GitSource]], direction="write"
+                ),
+                "setup_scripts": convert_and_respect_annotation_metadata(
+                    object_=setup_scripts, annotation=typing.Optional[typing.Sequence[SetupScript]], direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -234,6 +252,17 @@ class RawSandboxesClient:
                 return HttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 402:
+                raise PaymentRequiredError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -426,9 +455,9 @@ class RawSandboxesClient:
 
     def delete_sandbox(
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[None]:
+    ) -> HttpResponse[typing.Any]:
         """
-        Stop and permanently remove a sandbox.
+        Mark a sandbox for deletion. VM teardown happens asynchronously.
 
         Parameters
         ----------
@@ -439,7 +468,8 @@ class RawSandboxesClient:
 
         Returns
         -------
-        HttpResponse[None]
+        HttpResponse[typing.Any]
+            Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sandboxes/{jsonable_encoder(sandbox_name)}",
@@ -447,8 +477,17 @@ class RawSandboxesClient:
             request_options=request_options,
         )
         try:
-            if 200 <= _response.status_code < 300:
+            if _response is None or not _response.text.strip():
                 return HttpResponse(response=_response, data=None)
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    typing.Any,
+                    parse_obj_as(
+                        type_=typing.Any,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
                     headers=dict(_response.headers),
@@ -493,9 +532,9 @@ class RawSandboxesClient:
 
     def stop_sandbox(
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[None]:
+    ) -> HttpResponse[typing.Any]:
         """
-        Stop a sandbox (destroy VM) but keep the record visible.
+        Stop a sandbox. VM teardown happens asynchronously; the record stays visible.
 
         Parameters
         ----------
@@ -506,7 +545,8 @@ class RawSandboxesClient:
 
         Returns
         -------
-        HttpResponse[None]
+        HttpResponse[typing.Any]
+            Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sandboxes/{jsonable_encoder(sandbox_name)}/stop",
@@ -514,8 +554,17 @@ class RawSandboxesClient:
             request_options=request_options,
         )
         try:
-            if 200 <= _response.status_code < 300:
+            if _response is None or not _response.text.strip():
                 return HttpResponse(response=_response, data=None)
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    typing.Any,
+                    parse_obj_as(
+                        type_=typing.Any,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
                     headers=dict(_response.headers),
@@ -699,6 +748,17 @@ class RawSandboxesClient:
                         ),
                     ),
                 )
+            if _response.status_code == 402:
+                raise PaymentRequiredError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -812,7 +872,7 @@ class RawSandboxesClient:
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[typing.Any]:
         """
-        List active persistent sessions (shpool) in a sandbox.
+        List active persistent sessions in a sandbox.
 
         Parameters
         ----------
@@ -1847,7 +1907,7 @@ class RawSandboxesClient:
         command: typing.Sequence[str],
         workdir: typing.Optional[str] = OMIT,
         env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
-        session: typing.Optional[str] = OMIT,
+        timeout_secs: typing.Optional[int] = OMIT,
         user: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ExecResponse]:
@@ -1867,8 +1927,8 @@ class RawSandboxesClient:
         env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
             Environment variables to inject into this execution session
 
-        session : typing.Optional[str]
-            Tmux session name. For POST /exec, creates a detached tmux session (replace semantics - kills any existing session with the same name). For WebSocket /exec, uses attach-or-create semantics (interactive). Ignored for POST /exec/stream.
+        timeout_secs : typing.Optional[int]
+            Optional client-side timeout hint. Currently accepted for API compatibility.
 
         user : typing.Optional[str]
             User to run the command as (e.g., 'islo'). If not provided, uses image default.
@@ -1888,7 +1948,7 @@ class RawSandboxesClient:
                 "command": command,
                 "workdir": workdir,
                 "env": env,
-                "session": session,
+                "timeout_secs": timeout_secs,
                 "user": user,
             },
             headers={
@@ -2033,7 +2093,7 @@ class RawSandboxesClient:
         command: typing.Sequence[str],
         workdir: typing.Optional[str] = OMIT,
         env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
-        session: typing.Optional[str] = OMIT,
+        timeout_secs: typing.Optional[int] = OMIT,
         user: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[typing.Any]:
@@ -2053,8 +2113,8 @@ class RawSandboxesClient:
         env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
             Environment variables to inject into this execution session
 
-        session : typing.Optional[str]
-            Tmux session name. For POST /exec, creates a detached tmux session (replace semantics - kills any existing session with the same name). For WebSocket /exec, uses attach-or-create semantics (interactive). Ignored for POST /exec/stream.
+        timeout_secs : typing.Optional[int]
+            Optional client-side timeout hint. Currently accepted for API compatibility.
 
         user : typing.Optional[str]
             User to run the command as (e.g., 'islo'). If not provided, uses image default.
@@ -2074,7 +2134,7 @@ class RawSandboxesClient:
                 "command": command,
                 "workdir": workdir,
                 "env": env,
-                "session": session,
+                "timeout_secs": timeout_secs,
                 "user": user,
             },
             headers={
@@ -2257,6 +2317,8 @@ class AsyncRawSandboxesClient:
         init_capabilities: typing.Optional[typing.Sequence[str]] = OMIT,
         gateway_profile: typing.Optional[str] = OMIT,
         snapshot_name: typing.Optional[str] = OMIT,
+        sources: typing.Optional[typing.Sequence[GitSource]] = OMIT,
+        setup_scripts: typing.Optional[typing.Sequence[SetupScript]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[SandboxResponse]:
         """
@@ -2297,6 +2359,12 @@ class AsyncRawSandboxesClient:
         snapshot_name : typing.Optional[str]
             Name of a snapshot to restore from. When set, the VM is created from the snapshot's filesystem.
 
+        sources : typing.Optional[typing.Sequence[GitSource]]
+            Repository sources to clone into /workspace after VM init.
+
+        setup_scripts : typing.Optional[typing.Sequence[SetupScript]]
+            Named setup script steps to execute sequentially after git clones.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -2320,6 +2388,12 @@ class AsyncRawSandboxesClient:
                 "init_capabilities": init_capabilities,
                 "gateway_profile": gateway_profile,
                 "snapshot_name": snapshot_name,
+                "sources": convert_and_respect_annotation_metadata(
+                    object_=sources, annotation=typing.Optional[typing.Sequence[GitSource]], direction="write"
+                ),
+                "setup_scripts": convert_and_respect_annotation_metadata(
+                    object_=setup_scripts, annotation=typing.Optional[typing.Sequence[SetupScript]], direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -2339,6 +2413,17 @@ class AsyncRawSandboxesClient:
                 return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 402:
+                raise PaymentRequiredError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -2531,9 +2616,9 @@ class AsyncRawSandboxesClient:
 
     async def delete_sandbox(
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[None]:
+    ) -> AsyncHttpResponse[typing.Any]:
         """
-        Stop and permanently remove a sandbox.
+        Mark a sandbox for deletion. VM teardown happens asynchronously.
 
         Parameters
         ----------
@@ -2544,7 +2629,8 @@ class AsyncRawSandboxesClient:
 
         Returns
         -------
-        AsyncHttpResponse[None]
+        AsyncHttpResponse[typing.Any]
+            Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sandboxes/{jsonable_encoder(sandbox_name)}",
@@ -2552,8 +2638,17 @@ class AsyncRawSandboxesClient:
             request_options=request_options,
         )
         try:
-            if 200 <= _response.status_code < 300:
+            if _response is None or not _response.text.strip():
                 return AsyncHttpResponse(response=_response, data=None)
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    typing.Any,
+                    parse_obj_as(
+                        type_=typing.Any,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
                     headers=dict(_response.headers),
@@ -2598,9 +2693,9 @@ class AsyncRawSandboxesClient:
 
     async def stop_sandbox(
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[None]:
+    ) -> AsyncHttpResponse[typing.Any]:
         """
-        Stop a sandbox (destroy VM) but keep the record visible.
+        Stop a sandbox. VM teardown happens asynchronously; the record stays visible.
 
         Parameters
         ----------
@@ -2611,7 +2706,8 @@ class AsyncRawSandboxesClient:
 
         Returns
         -------
-        AsyncHttpResponse[None]
+        AsyncHttpResponse[typing.Any]
+            Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sandboxes/{jsonable_encoder(sandbox_name)}/stop",
@@ -2619,8 +2715,17 @@ class AsyncRawSandboxesClient:
             request_options=request_options,
         )
         try:
-            if 200 <= _response.status_code < 300:
+            if _response is None or not _response.text.strip():
                 return AsyncHttpResponse(response=_response, data=None)
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    typing.Any,
+                    parse_obj_as(
+                        type_=typing.Any,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
                     headers=dict(_response.headers),
@@ -2804,6 +2909,17 @@ class AsyncRawSandboxesClient:
                         ),
                     ),
                 )
+            if _response.status_code == 402:
+                raise PaymentRequiredError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -2917,7 +3033,7 @@ class AsyncRawSandboxesClient:
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[typing.Any]:
         """
-        List active persistent sessions (shpool) in a sandbox.
+        List active persistent sessions in a sandbox.
 
         Parameters
         ----------
@@ -3952,7 +4068,7 @@ class AsyncRawSandboxesClient:
         command: typing.Sequence[str],
         workdir: typing.Optional[str] = OMIT,
         env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
-        session: typing.Optional[str] = OMIT,
+        timeout_secs: typing.Optional[int] = OMIT,
         user: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ExecResponse]:
@@ -3972,8 +4088,8 @@ class AsyncRawSandboxesClient:
         env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
             Environment variables to inject into this execution session
 
-        session : typing.Optional[str]
-            Tmux session name. For POST /exec, creates a detached tmux session (replace semantics - kills any existing session with the same name). For WebSocket /exec, uses attach-or-create semantics (interactive). Ignored for POST /exec/stream.
+        timeout_secs : typing.Optional[int]
+            Optional client-side timeout hint. Currently accepted for API compatibility.
 
         user : typing.Optional[str]
             User to run the command as (e.g., 'islo'). If not provided, uses image default.
@@ -3993,7 +4109,7 @@ class AsyncRawSandboxesClient:
                 "command": command,
                 "workdir": workdir,
                 "env": env,
-                "session": session,
+                "timeout_secs": timeout_secs,
                 "user": user,
             },
             headers={
@@ -4138,7 +4254,7 @@ class AsyncRawSandboxesClient:
         command: typing.Sequence[str],
         workdir: typing.Optional[str] = OMIT,
         env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
-        session: typing.Optional[str] = OMIT,
+        timeout_secs: typing.Optional[int] = OMIT,
         user: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[typing.Any]:
@@ -4158,8 +4274,8 @@ class AsyncRawSandboxesClient:
         env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
             Environment variables to inject into this execution session
 
-        session : typing.Optional[str]
-            Tmux session name. For POST /exec, creates a detached tmux session (replace semantics - kills any existing session with the same name). For WebSocket /exec, uses attach-or-create semantics (interactive). Ignored for POST /exec/stream.
+        timeout_secs : typing.Optional[int]
+            Optional client-side timeout hint. Currently accepted for API compatibility.
 
         user : typing.Optional[str]
             User to run the command as (e.g., 'islo'). If not provided, uses image default.
@@ -4179,7 +4295,7 @@ class AsyncRawSandboxesClient:
                 "command": command,
                 "workdir": workdir,
                 "env": env,
-                "session": session,
+                "timeout_secs": timeout_secs,
                 "user": user,
             },
             headers={

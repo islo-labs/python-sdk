@@ -17,6 +17,7 @@ IsloErrorCode = typing.Union[
         "RESOURCE_NOT_FOUND",
         "CACHE_CONFLICT",
         "RATE_LIMITED",
+        "INSUFFICIENT_CREDITS",
         "VALIDATION_ERROR",
         "INVALID_REQUEST",
         "UPSTREAM_ERROR",

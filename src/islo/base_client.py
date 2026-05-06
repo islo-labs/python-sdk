@@ -10,6 +10,7 @@ from .core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .core.logging import LogConfig, Logger
 
 if typing.TYPE_CHECKING:
+    from .credits.client import AsyncCreditsClient, CreditsClient
     from .gateway_profiles.client import AsyncGatewayProfilesClient, GatewayProfilesClient
     from .integrations.client import AsyncIntegrationsClient, IntegrationsClient
     from .sandboxes.client import AsyncSandboxesClient, SandboxesClient
@@ -79,6 +80,7 @@ class BaseIslo:
         )
         self._sandboxes: typing.Optional[SandboxesClient] = None
         self._snapshots: typing.Optional[SnapshotsClient] = None
+        self._credits: typing.Optional[CreditsClient] = None
         self._integrations: typing.Optional[IntegrationsClient] = None
         self._gateway_profiles: typing.Optional[GatewayProfilesClient] = None
 
@@ -97,6 +99,14 @@ class BaseIslo:
 
             self._snapshots = SnapshotsClient(client_wrapper=self._client_wrapper)
         return self._snapshots
+
+    @property
+    def credits(self):
+        if self._credits is None:
+            from .credits.client import CreditsClient  # noqa: E402
+
+            self._credits = CreditsClient(client_wrapper=self._client_wrapper)
+        return self._credits
 
     @property
     def integrations(self):
@@ -183,6 +193,7 @@ class AsyncBaseIslo:
         )
         self._sandboxes: typing.Optional[AsyncSandboxesClient] = None
         self._snapshots: typing.Optional[AsyncSnapshotsClient] = None
+        self._credits: typing.Optional[AsyncCreditsClient] = None
         self._integrations: typing.Optional[AsyncIntegrationsClient] = None
         self._gateway_profiles: typing.Optional[AsyncGatewayProfilesClient] = None
 
@@ -201,6 +212,14 @@ class AsyncBaseIslo:
 
             self._snapshots = AsyncSnapshotsClient(client_wrapper=self._client_wrapper)
         return self._snapshots
+
+    @property
+    def credits(self):
+        if self._credits is None:
+            from .credits.client import AsyncCreditsClient  # noqa: E402
+
+            self._credits = AsyncCreditsClient(client_wrapper=self._client_wrapper)
+        return self._credits
 
     @property
     def integrations(self):

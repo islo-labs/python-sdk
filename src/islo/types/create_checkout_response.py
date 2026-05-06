@@ -4,16 +4,9 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
-from .provider_app import ProviderApp
 
 
-class IntegrationProvider(UniversalBaseModel):
-    """
-    Information about an available provider.
-    """
-
-    name: str
-    hosts: typing.List[str]
-    apps: typing.List[ProviderApp]
+class CreateCheckoutResponse(UniversalBaseModel):
+    transaction_id: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

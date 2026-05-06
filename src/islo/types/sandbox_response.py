@@ -7,6 +7,7 @@ import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
 from .sandbox_network import SandboxNetwork
 from .sandbox_spec import SandboxSpec
+from .setup_step_result import SetupStepResult
 
 
 class SandboxResponse(UniversalBaseModel):
@@ -21,8 +22,10 @@ class SandboxResponse(UniversalBaseModel):
     network: typing.Optional[SandboxNetwork] = None
     spec: SandboxSpec
     workdir: typing.Optional[str] = None
+    setup_steps: typing.Optional[typing.List[SetupStepResult]] = None
     created_at: typing.Optional[dt.datetime] = None
     created_by: typing.Optional[str] = None
+    created_by_entity: typing.Optional[str] = None
     deleted_at: typing.Optional[dt.datetime] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
