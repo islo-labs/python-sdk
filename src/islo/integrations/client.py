@@ -4,11 +4,18 @@ import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
+from ..types.auth_method import AuthMethod
+from ..types.custom_integration import CustomIntegration
+from ..types.custom_service_create_response import CustomServiceCreateResponse
+from ..types.custom_services_response import CustomServicesResponse
 from ..types.integration_detail_response import IntegrationDetailResponse
 from ..types.integration_level import IntegrationLevel
 from ..types.integration_list_response import IntegrationListResponse
 from ..types.integration_providers_response import IntegrationProvidersResponse
 from .raw_client import AsyncRawIntegrationsClient, RawIntegrationsClient
+
+# this is used as the default value for optional parameters
+OMIT = typing.cast(typing.Any, ...)
 
 
 class IntegrationsClient:
@@ -30,9 +37,11 @@ class IntegrationsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> IntegrationProvidersResponse:
         """
-        List available integration providers.
+        List available preset providers and their pre-provisioned Descope apps.
 
-        Returns provider names and their supported hosts.
+        The ``apps`` array carries every (auth_method, scope) -> app_id combo a
+        preset supports, so the modal can resolve the right ``app_id`` locally
+        and skip a server round-trip on the connect path.
 
         Parameters
         ----------
@@ -59,10 +68,15 @@ class IntegrationsClient:
 
     def list_integrations(self, *, request_options: typing.Optional[RequestOptions] = None) -> IntegrationListResponse:
         """
-        List all integrations for the current user and tenant.
+        List the integrations the user/tenant has connected.
 
-        Shows both user-level and tenant-level integrations.
-        User-level integrations take precedence in display.
+        Includes preset providers (from the PROVIDERS registry) and tenant-scoped
+        custom outbound apps (filtered out of Descope's load_all_applications).
+        Returns one entry per connected (provider, scope, auth_type) slot, so a
+        provider with both a personal api_key and a personal oauth token will
+        appear twice. Disconnected slots are not emitted; clients that need a
+        list of available-but-not-connected providers should call
+        ``GET /integrations/providers`` instead.
 
         Parameters
         ----------
@@ -85,6 +99,134 @@ class IntegrationsClient:
         client.integrations.list_integrations()
         """
         _response = self._raw_client.list_integrations(request_options=request_options)
+        return _response.data
+
+    def list_custom_services(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> CustomServicesResponse:
+        """
+        List custom service definitions in the current tenant (catalog view).
+
+        Returns every custom Descope app belonging to the tenant regardless of
+        connection status, so the Add Integration picker can surface them for
+        any tenant member to connect to. Connection state (per-user/per-workspace
+        tokens) lives on ``GET /integrations``; this endpoint is purely the
+        service catalog.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CustomServicesResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+        client.integrations.list_custom_services()
+        """
+        _response = self._raw_client.list_custom_services(request_options=request_options)
+        return _response.data
+
+    def create_custom_service(
+        self, *, custom: CustomIntegration, request_options: typing.Optional[RequestOptions] = None
+    ) -> CustomServiceCreateResponse:
+        """
+        Create a tenant-scoped custom Descope outbound app.
+
+        Returns the ``app_id`` so the frontend can immediately kick off the
+        connect flow (OAuth) or surface the API key form. Presets do not pass
+        through this endpoint -- their app ids come straight from
+        ``GET /integrations/providers``.
+
+        Parameters
+        ----------
+        custom : CustomIntegration
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CustomServiceCreateResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import CustomIntegration, Islo
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+        client.integrations.create_custom_service(
+            custom=CustomIntegration(
+                name="name",
+                slug="slug",
+            ),
+        )
+        """
+        _response = self._raw_client.create_custom_service(custom=custom, request_options=request_options)
+        return _response.data
+
+    def disconnect_custom_integration(
+        self,
+        descope_app_id: str,
+        *,
+        scope: typing.Optional[IntegrationLevel] = None,
+        delete_app: typing.Optional[bool] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> typing.Dict[str, typing.Any]:
+        """
+        Disconnect a custom integration by its Descope app ID.
+
+        Authorization is by deterministic-ID prefix: only apps whose ID matches
+        ``cust-{tenant-prefix}-`` are accepted, which scopes the operation to the
+        caller's workspace without a DB lookup. ``scope`` selects which side's
+        tokens to revoke (per-user vs tenant-wide); ``delete_app=true`` removes
+        the Descope app entirely (affects every user in the workspace).
+
+        Parameters
+        ----------
+        descope_app_id : str
+
+        scope : typing.Optional[IntegrationLevel]
+            Which token to revoke: 'user' (this user's personal) or 'tenant' (workspace)
+
+        delete_app : typing.Optional[bool]
+            Also remove the Descope outbound app entirely (affects every user in this workspace)
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.Dict[str, typing.Any]
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+        client.integrations.disconnect_custom_integration(
+            descope_app_id="descope_app_id",
+        )
+        """
+        _response = self._raw_client.disconnect_custom_integration(
+            descope_app_id, scope=scope, delete_app=delete_app, request_options=request_options
+        )
         return _response.data
 
     def get_integration_status(
@@ -127,6 +269,7 @@ class IntegrationsClient:
         provider: str,
         *,
         level: typing.Optional[IntegrationLevel] = None,
+        auth_type: typing.Optional[AuthMethod] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Dict[str, typing.Any]:
         """
@@ -135,12 +278,16 @@ class IntegrationsClient:
         Args:
             provider: Provider name
             level: Which level to disconnect (USER or TENANT)
+            auth_type: Optional. Defaults to provider's primary type.
 
         Parameters
         ----------
         provider : str
 
         level : typing.Optional[IntegrationLevel]
+
+        auth_type : typing.Optional[AuthMethod]
+            oauth or api_key
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -162,7 +309,9 @@ class IntegrationsClient:
             provider="provider",
         )
         """
-        _response = self._raw_client.disconnect_integration(provider, level=level, request_options=request_options)
+        _response = self._raw_client.disconnect_integration(
+            provider, level=level, auth_type=auth_type, request_options=request_options
+        )
         return _response.data
 
 
@@ -185,9 +334,11 @@ class AsyncIntegrationsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> IntegrationProvidersResponse:
         """
-        List available integration providers.
+        List available preset providers and their pre-provisioned Descope apps.
 
-        Returns provider names and their supported hosts.
+        The ``apps`` array carries every (auth_method, scope) -> app_id combo a
+        preset supports, so the modal can resolve the right ``app_id`` locally
+        and skip a server round-trip on the connect path.
 
         Parameters
         ----------
@@ -224,10 +375,15 @@ class AsyncIntegrationsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> IntegrationListResponse:
         """
-        List all integrations for the current user and tenant.
+        List the integrations the user/tenant has connected.
 
-        Shows both user-level and tenant-level integrations.
-        User-level integrations take precedence in display.
+        Includes preset providers (from the PROVIDERS registry) and tenant-scoped
+        custom outbound apps (filtered out of Descope's load_all_applications).
+        Returns one entry per connected (provider, scope, auth_type) slot, so a
+        provider with both a personal api_key and a personal oauth token will
+        appear twice. Disconnected slots are not emitted; clients that need a
+        list of available-but-not-connected providers should call
+        ``GET /integrations/providers`` instead.
 
         Parameters
         ----------
@@ -258,6 +414,158 @@ class AsyncIntegrationsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.list_integrations(request_options=request_options)
+        return _response.data
+
+    async def list_custom_services(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> CustomServicesResponse:
+        """
+        List custom service definitions in the current tenant (catalog view).
+
+        Returns every custom Descope app belonging to the tenant regardless of
+        connection status, so the Add Integration picker can surface them for
+        any tenant member to connect to. Connection state (per-user/per-workspace
+        tokens) lives on ``GET /integrations``; this endpoint is purely the
+        service catalog.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CustomServicesResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+
+
+        async def main() -> None:
+            await client.integrations.list_custom_services()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_custom_services(request_options=request_options)
+        return _response.data
+
+    async def create_custom_service(
+        self, *, custom: CustomIntegration, request_options: typing.Optional[RequestOptions] = None
+    ) -> CustomServiceCreateResponse:
+        """
+        Create a tenant-scoped custom Descope outbound app.
+
+        Returns the ``app_id`` so the frontend can immediately kick off the
+        connect flow (OAuth) or surface the API key form. Presets do not pass
+        through this endpoint -- their app ids come straight from
+        ``GET /integrations/providers``.
+
+        Parameters
+        ----------
+        custom : CustomIntegration
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CustomServiceCreateResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo, CustomIntegration
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+
+
+        async def main() -> None:
+            await client.integrations.create_custom_service(
+                custom=CustomIntegration(
+                    name="name",
+                    slug="slug",
+                ),
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.create_custom_service(custom=custom, request_options=request_options)
+        return _response.data
+
+    async def disconnect_custom_integration(
+        self,
+        descope_app_id: str,
+        *,
+        scope: typing.Optional[IntegrationLevel] = None,
+        delete_app: typing.Optional[bool] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> typing.Dict[str, typing.Any]:
+        """
+        Disconnect a custom integration by its Descope app ID.
+
+        Authorization is by deterministic-ID prefix: only apps whose ID matches
+        ``cust-{tenant-prefix}-`` are accepted, which scopes the operation to the
+        caller's workspace without a DB lookup. ``scope`` selects which side's
+        tokens to revoke (per-user vs tenant-wide); ``delete_app=true`` removes
+        the Descope app entirely (affects every user in the workspace).
+
+        Parameters
+        ----------
+        descope_app_id : str
+
+        scope : typing.Optional[IntegrationLevel]
+            Which token to revoke: 'user' (this user's personal) or 'tenant' (workspace)
+
+        delete_app : typing.Optional[bool]
+            Also remove the Descope outbound app entirely (affects every user in this workspace)
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.Dict[str, typing.Any]
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+
+
+        async def main() -> None:
+            await client.integrations.disconnect_custom_integration(
+                descope_app_id="descope_app_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.disconnect_custom_integration(
+            descope_app_id, scope=scope, delete_app=delete_app, request_options=request_options
+        )
         return _response.data
 
     async def get_integration_status(
@@ -308,6 +616,7 @@ class AsyncIntegrationsClient:
         provider: str,
         *,
         level: typing.Optional[IntegrationLevel] = None,
+        auth_type: typing.Optional[AuthMethod] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Dict[str, typing.Any]:
         """
@@ -316,12 +625,16 @@ class AsyncIntegrationsClient:
         Args:
             provider: Provider name
             level: Which level to disconnect (USER or TENANT)
+            auth_type: Optional. Defaults to provider's primary type.
 
         Parameters
         ----------
         provider : str
 
         level : typing.Optional[IntegrationLevel]
+
+        auth_type : typing.Optional[AuthMethod]
+            oauth or api_key
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -352,6 +665,6 @@ class AsyncIntegrationsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.disconnect_integration(
-            provider, level=level, request_options=request_options
+            provider, level=level, auth_type=auth_type, request_options=request_options
         )
         return _response.data

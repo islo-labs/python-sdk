@@ -11,8 +11,10 @@ from ..types.exec_logs_response import ExecLogsResponse
 from ..types.exec_response import ExecResponse
 from ..types.exec_result_response import ExecResultResponse
 from ..types.exec_session_response import ExecSessionResponse
+from ..types.git_source import GitSource
 from ..types.paginated_sandbox_response import PaginatedSandboxResponse
 from ..types.sandbox_response import SandboxResponse
+from ..types.setup_script import SetupScript
 from .raw_client import AsyncRawSandboxesClient, RawSandboxesClient
 
 # this is used as the default value for optional parameters
@@ -116,6 +118,8 @@ class SandboxesClient:
         init_capabilities: typing.Optional[typing.Sequence[str]] = OMIT,
         gateway_profile: typing.Optional[str] = OMIT,
         snapshot_name: typing.Optional[str] = OMIT,
+        sources: typing.Optional[typing.Sequence[GitSource]] = OMIT,
+        setup_scripts: typing.Optional[typing.Sequence[SetupScript]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SandboxResponse:
         """
@@ -156,6 +160,12 @@ class SandboxesClient:
         snapshot_name : typing.Optional[str]
             Name of a snapshot to restore from. When set, the VM is created from the snapshot's filesystem.
 
+        sources : typing.Optional[typing.Sequence[GitSource]]
+            Repository sources to clone into /workspace after VM init.
+
+        setup_scripts : typing.Optional[typing.Sequence[SetupScript]]
+            Named setup script steps to execute sequentially after git clones.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -186,6 +196,8 @@ class SandboxesClient:
             init_capabilities=init_capabilities,
             gateway_profile=gateway_profile,
             snapshot_name=snapshot_name,
+            sources=sources,
+            setup_scripts=setup_scripts,
             request_options=request_options,
         )
         return _response.data
@@ -258,9 +270,11 @@ class SandboxesClient:
         _response = self._raw_client.get_sandbox(sandbox_name, request_options=request_options)
         return _response.data
 
-    def delete_sandbox(self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
+    def delete_sandbox(
+        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.Any:
         """
-        Stop and permanently remove a sandbox.
+        Mark a sandbox for deletion. VM teardown happens asynchronously.
 
         Parameters
         ----------
@@ -271,7 +285,8 @@ class SandboxesClient:
 
         Returns
         -------
-        None
+        typing.Any
+            Successful Response
 
         Examples
         --------
@@ -288,9 +303,9 @@ class SandboxesClient:
         _response = self._raw_client.delete_sandbox(sandbox_name, request_options=request_options)
         return _response.data
 
-    def stop_sandbox(self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
+    def stop_sandbox(self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None) -> typing.Any:
         """
-        Stop a sandbox (destroy VM) but keep the record visible.
+        Stop a sandbox. VM teardown happens asynchronously; the record stays visible.
 
         Parameters
         ----------
@@ -301,7 +316,8 @@ class SandboxesClient:
 
         Returns
         -------
-        None
+        typing.Any
+            Successful Response
 
         Examples
         --------
@@ -420,7 +436,7 @@ class SandboxesClient:
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> typing.Any:
         """
-        List active persistent sessions (shpool) in a sandbox.
+        List active persistent sessions in a sandbox.
 
         Parameters
         ----------
@@ -930,7 +946,7 @@ class SandboxesClient:
         command: typing.Sequence[str],
         workdir: typing.Optional[str] = OMIT,
         env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
-        session: typing.Optional[str] = OMIT,
+        timeout_secs: typing.Optional[int] = OMIT,
         user: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ExecResponse:
@@ -950,8 +966,8 @@ class SandboxesClient:
         env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
             Environment variables to inject into this execution session
 
-        session : typing.Optional[str]
-            Tmux session name. For POST /exec, creates a detached tmux session (replace semantics - kills any existing session with the same name). For WebSocket /exec, uses attach-or-create semantics (interactive). Ignored for POST /exec/stream.
+        timeout_secs : typing.Optional[int]
+            Optional client-side timeout hint. Currently accepted for API compatibility.
 
         user : typing.Optional[str]
             User to run the command as (e.g., 'islo'). If not provided, uses image default.
@@ -982,7 +998,7 @@ class SandboxesClient:
             command=command,
             workdir=workdir,
             env=env,
-            session=session,
+            timeout_secs=timeout_secs,
             user=user,
             request_options=request_options,
         )
@@ -1031,7 +1047,7 @@ class SandboxesClient:
         command: typing.Sequence[str],
         workdir: typing.Optional[str] = OMIT,
         env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
-        session: typing.Optional[str] = OMIT,
+        timeout_secs: typing.Optional[int] = OMIT,
         user: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Any:
@@ -1051,8 +1067,8 @@ class SandboxesClient:
         env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
             Environment variables to inject into this execution session
 
-        session : typing.Optional[str]
-            Tmux session name. For POST /exec, creates a detached tmux session (replace semantics - kills any existing session with the same name). For WebSocket /exec, uses attach-or-create semantics (interactive). Ignored for POST /exec/stream.
+        timeout_secs : typing.Optional[int]
+            Optional client-side timeout hint. Currently accepted for API compatibility.
 
         user : typing.Optional[str]
             User to run the command as (e.g., 'islo'). If not provided, uses image default.
@@ -1083,7 +1099,7 @@ class SandboxesClient:
             command=command,
             workdir=workdir,
             env=env,
-            session=session,
+            timeout_secs=timeout_secs,
             user=user,
             request_options=request_options,
         )
@@ -1195,6 +1211,8 @@ class AsyncSandboxesClient:
         init_capabilities: typing.Optional[typing.Sequence[str]] = OMIT,
         gateway_profile: typing.Optional[str] = OMIT,
         snapshot_name: typing.Optional[str] = OMIT,
+        sources: typing.Optional[typing.Sequence[GitSource]] = OMIT,
+        setup_scripts: typing.Optional[typing.Sequence[SetupScript]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SandboxResponse:
         """
@@ -1235,6 +1253,12 @@ class AsyncSandboxesClient:
         snapshot_name : typing.Optional[str]
             Name of a snapshot to restore from. When set, the VM is created from the snapshot's filesystem.
 
+        sources : typing.Optional[typing.Sequence[GitSource]]
+            Repository sources to clone into /workspace after VM init.
+
+        setup_scripts : typing.Optional[typing.Sequence[SetupScript]]
+            Named setup script steps to execute sequentially after git clones.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -1273,6 +1297,8 @@ class AsyncSandboxesClient:
             init_capabilities=init_capabilities,
             gateway_profile=gateway_profile,
             snapshot_name=snapshot_name,
+            sources=sources,
+            setup_scripts=setup_scripts,
             request_options=request_options,
         )
         return _response.data
@@ -1363,9 +1389,9 @@ class AsyncSandboxesClient:
 
     async def delete_sandbox(
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> None:
+    ) -> typing.Any:
         """
-        Stop and permanently remove a sandbox.
+        Mark a sandbox for deletion. VM teardown happens asynchronously.
 
         Parameters
         ----------
@@ -1376,7 +1402,8 @@ class AsyncSandboxesClient:
 
         Returns
         -------
-        None
+        typing.Any
+            Successful Response
 
         Examples
         --------
@@ -1401,9 +1428,11 @@ class AsyncSandboxesClient:
         _response = await self._raw_client.delete_sandbox(sandbox_name, request_options=request_options)
         return _response.data
 
-    async def stop_sandbox(self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
+    async def stop_sandbox(
+        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.Any:
         """
-        Stop a sandbox (destroy VM) but keep the record visible.
+        Stop a sandbox. VM teardown happens asynchronously; the record stays visible.
 
         Parameters
         ----------
@@ -1414,7 +1443,8 @@ class AsyncSandboxesClient:
 
         Returns
         -------
-        None
+        typing.Any
+            Successful Response
 
         Examples
         --------
@@ -1565,7 +1595,7 @@ class AsyncSandboxesClient:
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> typing.Any:
         """
-        List active persistent sessions (shpool) in a sandbox.
+        List active persistent sessions in a sandbox.
 
         Parameters
         ----------
@@ -2173,7 +2203,7 @@ class AsyncSandboxesClient:
         command: typing.Sequence[str],
         workdir: typing.Optional[str] = OMIT,
         env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
-        session: typing.Optional[str] = OMIT,
+        timeout_secs: typing.Optional[int] = OMIT,
         user: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ExecResponse:
@@ -2193,8 +2223,8 @@ class AsyncSandboxesClient:
         env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
             Environment variables to inject into this execution session
 
-        session : typing.Optional[str]
-            Tmux session name. For POST /exec, creates a detached tmux session (replace semantics - kills any existing session with the same name). For WebSocket /exec, uses attach-or-create semantics (interactive). Ignored for POST /exec/stream.
+        timeout_secs : typing.Optional[int]
+            Optional client-side timeout hint. Currently accepted for API compatibility.
 
         user : typing.Optional[str]
             User to run the command as (e.g., 'islo'). If not provided, uses image default.
@@ -2233,7 +2263,7 @@ class AsyncSandboxesClient:
             command=command,
             workdir=workdir,
             env=env,
-            session=session,
+            timeout_secs=timeout_secs,
             user=user,
             request_options=request_options,
         )
@@ -2290,7 +2320,7 @@ class AsyncSandboxesClient:
         command: typing.Sequence[str],
         workdir: typing.Optional[str] = OMIT,
         env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
-        session: typing.Optional[str] = OMIT,
+        timeout_secs: typing.Optional[int] = OMIT,
         user: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Any:
@@ -2310,8 +2340,8 @@ class AsyncSandboxesClient:
         env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
             Environment variables to inject into this execution session
 
-        session : typing.Optional[str]
-            Tmux session name. For POST /exec, creates a detached tmux session (replace semantics - kills any existing session with the same name). For WebSocket /exec, uses attach-or-create semantics (interactive). Ignored for POST /exec/stream.
+        timeout_secs : typing.Optional[int]
+            Optional client-side timeout hint. Currently accepted for API compatibility.
 
         user : typing.Optional[str]
             User to run the command as (e.g., 'islo'). If not provided, uses image default.
@@ -2350,7 +2380,7 @@ class AsyncSandboxesClient:
             command=command,
             workdir=workdir,
             env=env,
-            session=session,
+            timeout_secs=timeout_secs,
             user=user,
             request_options=request_options,
         )

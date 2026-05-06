@@ -4,16 +4,14 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
-from .provider_app import ProviderApp
+from .custom_service import CustomService
 
 
-class IntegrationProvider(UniversalBaseModel):
+class CustomServicesResponse(UniversalBaseModel):
     """
-    Information about an available provider.
+    List of custom services defined in the current tenant.
     """
 
-    name: str
-    hosts: typing.List[str]
-    apps: typing.List[ProviderApp]
+    services: typing.List[CustomService]
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

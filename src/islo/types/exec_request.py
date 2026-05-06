@@ -29,9 +29,9 @@ class ExecRequest(UniversalBaseModel):
     Environment variables to inject into this execution session
     """
 
-    session: typing.Optional[str] = pydantic.Field(default=None)
+    timeout_secs: typing.Optional[int] = pydantic.Field(default=None)
     """
-    Tmux session name. For POST /exec, creates a detached tmux session (replace semantics - kills any existing session with the same name). For WebSocket /exec, uses attach-or-create semantics (interactive). Ignored for POST /exec/stream.
+    Optional client-side timeout hint. Currently accepted for API compatibility.
     """
 
     user: typing.Optional[str] = pydantic.Field(default=None)

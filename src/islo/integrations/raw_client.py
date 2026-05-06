@@ -10,16 +10,24 @@ from ..core.jsonable_encoder import jsonable_encoder
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
+from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.bad_request_error import BadRequestError
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
+from ..types.auth_method import AuthMethod
+from ..types.custom_integration import CustomIntegration
+from ..types.custom_service_create_response import CustomServiceCreateResponse
+from ..types.custom_services_response import CustomServicesResponse
 from ..types.error_response import ErrorResponse
 from ..types.integration_detail_response import IntegrationDetailResponse
 from ..types.integration_level import IntegrationLevel
 from ..types.integration_list_response import IntegrationListResponse
 from ..types.integration_providers_response import IntegrationProvidersResponse
 from pydantic import ValidationError
+
+# this is used as the default value for optional parameters
+OMIT = typing.cast(typing.Any, ...)
 
 
 class RawIntegrationsClient:
@@ -30,9 +38,11 @@ class RawIntegrationsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[IntegrationProvidersResponse]:
         """
-        List available integration providers.
+        List available preset providers and their pre-provisioned Descope apps.
 
-        Returns provider names and their supported hosts.
+        The ``apps`` array carries every (auth_method, scope) -> app_id combo a
+        preset supports, so the modal can resolve the right ``app_id`` locally
+        and skip a server round-trip on the connect path.
 
         Parameters
         ----------
@@ -72,10 +82,15 @@ class RawIntegrationsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[IntegrationListResponse]:
         """
-        List all integrations for the current user and tenant.
+        List the integrations the user/tenant has connected.
 
-        Shows both user-level and tenant-level integrations.
-        User-level integrations take precedence in display.
+        Includes preset providers (from the PROVIDERS registry) and tenant-scoped
+        custom outbound apps (filtered out of Descope's load_all_applications).
+        Returns one entry per connected (provider, scope, auth_type) slot, so a
+        provider with both a personal api_key and a personal oauth token will
+        appear twice. Disconnected slots are not emitted; clients that need a
+        list of available-but-not-connected providers should call
+        ``GET /integrations/providers`` instead.
 
         Parameters
         ----------
@@ -104,6 +119,270 @@ class RawIntegrationsClient:
                 return HttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def list_custom_services(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[CustomServicesResponse]:
+        """
+        List custom service definitions in the current tenant (catalog view).
+
+        Returns every custom Descope app belonging to the tenant regardless of
+        connection status, so the Add Integration picker can surface them for
+        any tenant member to connect to. Connection state (per-user/per-workspace
+        tokens) lives on ``GET /integrations``; this endpoint is purely the
+        service catalog.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[CustomServicesResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "integrations/custom-services",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    CustomServicesResponse,
+                    parse_obj_as(
+                        type_=CustomServicesResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def create_custom_service(
+        self, *, custom: CustomIntegration, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[CustomServiceCreateResponse]:
+        """
+        Create a tenant-scoped custom Descope outbound app.
+
+        Returns the ``app_id`` so the frontend can immediately kick off the
+        connect flow (OAuth) or surface the API key form. Presets do not pass
+        through this endpoint -- their app ids come straight from
+        ``GET /integrations/providers``.
+
+        Parameters
+        ----------
+        custom : CustomIntegration
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[CustomServiceCreateResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "integrations/custom-services",
+            method="POST",
+            json={
+                "custom": convert_and_respect_annotation_metadata(
+                    object_=custom, annotation=CustomIntegration, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    CustomServiceCreateResponse,
+                    parse_obj_as(
+                        type_=CustomServiceCreateResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def disconnect_custom_integration(
+        self,
+        descope_app_id: str,
+        *,
+        scope: typing.Optional[IntegrationLevel] = None,
+        delete_app: typing.Optional[bool] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[typing.Dict[str, typing.Any]]:
+        """
+        Disconnect a custom integration by its Descope app ID.
+
+        Authorization is by deterministic-ID prefix: only apps whose ID matches
+        ``cust-{tenant-prefix}-`` are accepted, which scopes the operation to the
+        caller's workspace without a DB lookup. ``scope`` selects which side's
+        tokens to revoke (per-user vs tenant-wide); ``delete_app=true`` removes
+        the Descope app entirely (affects every user in the workspace).
+
+        Parameters
+        ----------
+        descope_app_id : str
+
+        scope : typing.Optional[IntegrationLevel]
+            Which token to revoke: 'user' (this user's personal) or 'tenant' (workspace)
+
+        delete_app : typing.Optional[bool]
+            Also remove the Descope outbound app entirely (affects every user in this workspace)
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[typing.Dict[str, typing.Any]]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"integrations/custom/{jsonable_encoder(descope_app_id)}",
+            method="DELETE",
+            params={
+                "scope": scope,
+                "delete_app": delete_app,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    typing.Dict[str, typing.Any],
+                    parse_obj_as(
+                        type_=typing.Dict[str, typing.Any],  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -215,6 +494,7 @@ class RawIntegrationsClient:
         provider: str,
         *,
         level: typing.Optional[IntegrationLevel] = None,
+        auth_type: typing.Optional[AuthMethod] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[typing.Dict[str, typing.Any]]:
         """
@@ -223,12 +503,16 @@ class RawIntegrationsClient:
         Args:
             provider: Provider name
             level: Which level to disconnect (USER or TENANT)
+            auth_type: Optional. Defaults to provider's primary type.
 
         Parameters
         ----------
         provider : str
 
         level : typing.Optional[IntegrationLevel]
+
+        auth_type : typing.Optional[AuthMethod]
+            oauth or api_key
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -243,6 +527,7 @@ class RawIntegrationsClient:
             method="DELETE",
             params={
                 "level": level,
+                "auth_type": auth_type,
             },
             request_options=request_options,
         )
@@ -318,9 +603,11 @@ class AsyncRawIntegrationsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[IntegrationProvidersResponse]:
         """
-        List available integration providers.
+        List available preset providers and their pre-provisioned Descope apps.
 
-        Returns provider names and their supported hosts.
+        The ``apps`` array carries every (auth_method, scope) -> app_id combo a
+        preset supports, so the modal can resolve the right ``app_id`` locally
+        and skip a server round-trip on the connect path.
 
         Parameters
         ----------
@@ -360,10 +647,15 @@ class AsyncRawIntegrationsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[IntegrationListResponse]:
         """
-        List all integrations for the current user and tenant.
+        List the integrations the user/tenant has connected.
 
-        Shows both user-level and tenant-level integrations.
-        User-level integrations take precedence in display.
+        Includes preset providers (from the PROVIDERS registry) and tenant-scoped
+        custom outbound apps (filtered out of Descope's load_all_applications).
+        Returns one entry per connected (provider, scope, auth_type) slot, so a
+        provider with both a personal api_key and a personal oauth token will
+        appear twice. Disconnected slots are not emitted; clients that need a
+        list of available-but-not-connected providers should call
+        ``GET /integrations/providers`` instead.
 
         Parameters
         ----------
@@ -392,6 +684,270 @@ class AsyncRawIntegrationsClient:
                 return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def list_custom_services(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[CustomServicesResponse]:
+        """
+        List custom service definitions in the current tenant (catalog view).
+
+        Returns every custom Descope app belonging to the tenant regardless of
+        connection status, so the Add Integration picker can surface them for
+        any tenant member to connect to. Connection state (per-user/per-workspace
+        tokens) lives on ``GET /integrations``; this endpoint is purely the
+        service catalog.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[CustomServicesResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "integrations/custom-services",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    CustomServicesResponse,
+                    parse_obj_as(
+                        type_=CustomServicesResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def create_custom_service(
+        self, *, custom: CustomIntegration, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[CustomServiceCreateResponse]:
+        """
+        Create a tenant-scoped custom Descope outbound app.
+
+        Returns the ``app_id`` so the frontend can immediately kick off the
+        connect flow (OAuth) or surface the API key form. Presets do not pass
+        through this endpoint -- their app ids come straight from
+        ``GET /integrations/providers``.
+
+        Parameters
+        ----------
+        custom : CustomIntegration
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[CustomServiceCreateResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "integrations/custom-services",
+            method="POST",
+            json={
+                "custom": convert_and_respect_annotation_metadata(
+                    object_=custom, annotation=CustomIntegration, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    CustomServiceCreateResponse,
+                    parse_obj_as(
+                        type_=CustomServiceCreateResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def disconnect_custom_integration(
+        self,
+        descope_app_id: str,
+        *,
+        scope: typing.Optional[IntegrationLevel] = None,
+        delete_app: typing.Optional[bool] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[typing.Dict[str, typing.Any]]:
+        """
+        Disconnect a custom integration by its Descope app ID.
+
+        Authorization is by deterministic-ID prefix: only apps whose ID matches
+        ``cust-{tenant-prefix}-`` are accepted, which scopes the operation to the
+        caller's workspace without a DB lookup. ``scope`` selects which side's
+        tokens to revoke (per-user vs tenant-wide); ``delete_app=true`` removes
+        the Descope app entirely (affects every user in the workspace).
+
+        Parameters
+        ----------
+        descope_app_id : str
+
+        scope : typing.Optional[IntegrationLevel]
+            Which token to revoke: 'user' (this user's personal) or 'tenant' (workspace)
+
+        delete_app : typing.Optional[bool]
+            Also remove the Descope outbound app entirely (affects every user in this workspace)
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[typing.Dict[str, typing.Any]]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"integrations/custom/{jsonable_encoder(descope_app_id)}",
+            method="DELETE",
+            params={
+                "scope": scope,
+                "delete_app": delete_app,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    typing.Dict[str, typing.Any],
+                    parse_obj_as(
+                        type_=typing.Dict[str, typing.Any],  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -503,6 +1059,7 @@ class AsyncRawIntegrationsClient:
         provider: str,
         *,
         level: typing.Optional[IntegrationLevel] = None,
+        auth_type: typing.Optional[AuthMethod] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[typing.Dict[str, typing.Any]]:
         """
@@ -511,12 +1068,16 @@ class AsyncRawIntegrationsClient:
         Args:
             provider: Provider name
             level: Which level to disconnect (USER or TENANT)
+            auth_type: Optional. Defaults to provider's primary type.
 
         Parameters
         ----------
         provider : str
 
         level : typing.Optional[IntegrationLevel]
+
+        auth_type : typing.Optional[AuthMethod]
+            oauth or api_key
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -531,6 +1092,7 @@ class AsyncRawIntegrationsClient:
             method="DELETE",
             params={
                 "level": level,
+                "auth_type": auth_type,
             },
             request_options=request_options,
         )
