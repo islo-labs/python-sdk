@@ -59,25 +59,7 @@ asyncio_mode = "auto"
 [tool.ruff]
 line-length = 120
 src = ["src"]
-extend-exclude = [
-    "src/islo/__init__.py",
-    "src/islo/base_client.py",
-    "src/islo/core/",
-    "src/islo/errors/",
-    "src/islo/types/",
-    "src/islo/api_keys/",
-    "src/islo/auth/",
-    "src/islo/certificate_authority/",
-    "src/islo/integrations/",
-    "src/islo/models/",
-    "src/islo/sandboxes/",
-    "src/islo/shares/",
-    "src/islo/tenants/",
-    "src/islo/usage/",
-    "src/islo/users/",
-    "src/islo/gateway_profiles/",
-    "src/islo/snapshots/",
-]
+include = ["src/islo/client.py", "src/islo/custom/**", "tests/**", "scripts/**"]
 
 [tool.ruff.lint]
 select = ["F", "I", "UP"]
