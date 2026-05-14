@@ -12,6 +12,9 @@ if typing.TYPE_CHECKING:
         AuthMethod,
         AuthStrategySchema,
         AuthStrategySchemaMode,
+        CloudProvider,
+        CloudRoleRef,
+        CloudRoleResponse,
         ConnectionStatus,
         ContentFilterSchema,
         ContentFilterSchemaDirection,
@@ -69,7 +72,7 @@ if typing.TYPE_CHECKING:
         UnauthorizedError,
         UnprocessableEntityError,
     )
-    from . import credits, gateway_profiles, integrations, sandboxes, snapshots
+    from . import cloud_roles, credits, gateway_internal, gateway_profiles, integrations, sandboxes, snapshots
     from .client import AsyncIslo, Islo
     from .version import __version__
 _dynamic_imports: typing.Dict[str, str] = {
@@ -80,6 +83,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "AuthStrategySchema": ".types",
     "AuthStrategySchemaMode": ".types",
     "BadRequestError": ".errors",
+    "CloudProvider": ".types",
+    "CloudRoleRef": ".types",
+    "CloudRoleResponse": ".types",
     "ConflictError": ".errors",
     "ConnectionStatus": ".types",
     "ContentFilterSchema": ".types",
@@ -135,7 +141,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ValidationError": ".types",
     "ValidationErrorLocItem": ".types",
     "__version__": ".version",
+    "cloud_roles": ".cloud_roles",
     "credits": ".credits",
+    "gateway_internal": ".gateway_internal",
     "gateway_profiles": ".gateway_profiles",
     "integrations": ".integrations",
     "sandboxes": ".sandboxes",
@@ -172,6 +180,9 @@ __all__ = [
     "AuthStrategySchema",
     "AuthStrategySchemaMode",
     "BadRequestError",
+    "CloudProvider",
+    "CloudRoleRef",
+    "CloudRoleResponse",
     "ConflictError",
     "ConnectionStatus",
     "ContentFilterSchema",
@@ -227,7 +238,9 @@ __all__ = [
     "ValidationError",
     "ValidationErrorLocItem",
     "__version__",
+    "cloud_roles",
     "credits",
+    "gateway_internal",
     "gateway_profiles",
     "integrations",
     "sandboxes",

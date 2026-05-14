@@ -5,18 +5,15 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
-from .cloud_role_ref import CloudRoleRef
 
 
-class GatewayProfileResponse(UniversalBaseModel):
+class CloudRoleResponse(UniversalBaseModel):
     id: str
-    name: str
-    description: typing.Optional[str] = None
-    default_action: str
-    internet_enabled: bool
-    is_default: bool
-    cloud_role: typing.Optional[CloudRoleRef] = None
-    rule_count: typing.Optional[int] = None
+    provider: str
+    role_arn: str
+    external_id: str
+    session_duration_seconds: int
+    is_enabled: bool
     created_at: typing.Optional[dt.datetime] = None
     updated_at: typing.Optional[dt.datetime] = None
 

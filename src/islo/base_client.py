@@ -10,7 +10,9 @@ from .core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .core.logging import LogConfig, Logger
 
 if typing.TYPE_CHECKING:
+    from .cloud_roles.client import AsyncCloudRolesClient, CloudRolesClient
     from .credits.client import AsyncCreditsClient, CreditsClient
+    from .gateway_internal.client import AsyncGatewayInternalClient, GatewayInternalClient
     from .gateway_profiles.client import AsyncGatewayProfilesClient, GatewayProfilesClient
     from .integrations.client import AsyncIntegrationsClient, IntegrationsClient
     from .sandboxes.client import AsyncSandboxesClient, SandboxesClient
@@ -83,6 +85,8 @@ class BaseIslo:
         self._credits: typing.Optional[CreditsClient] = None
         self._integrations: typing.Optional[IntegrationsClient] = None
         self._gateway_profiles: typing.Optional[GatewayProfilesClient] = None
+        self._cloud_roles: typing.Optional[CloudRolesClient] = None
+        self._gateway_internal: typing.Optional[GatewayInternalClient] = None
 
     @property
     def sandboxes(self):
@@ -123,6 +127,22 @@ class BaseIslo:
 
             self._gateway_profiles = GatewayProfilesClient(client_wrapper=self._client_wrapper)
         return self._gateway_profiles
+
+    @property
+    def cloud_roles(self):
+        if self._cloud_roles is None:
+            from .cloud_roles.client import CloudRolesClient  # noqa: E402
+
+            self._cloud_roles = CloudRolesClient(client_wrapper=self._client_wrapper)
+        return self._cloud_roles
+
+    @property
+    def gateway_internal(self):
+        if self._gateway_internal is None:
+            from .gateway_internal.client import GatewayInternalClient  # noqa: E402
+
+            self._gateway_internal = GatewayInternalClient(client_wrapper=self._client_wrapper)
+        return self._gateway_internal
 
 
 class AsyncBaseIslo:
@@ -196,6 +216,8 @@ class AsyncBaseIslo:
         self._credits: typing.Optional[AsyncCreditsClient] = None
         self._integrations: typing.Optional[AsyncIntegrationsClient] = None
         self._gateway_profiles: typing.Optional[AsyncGatewayProfilesClient] = None
+        self._cloud_roles: typing.Optional[AsyncCloudRolesClient] = None
+        self._gateway_internal: typing.Optional[AsyncGatewayInternalClient] = None
 
     @property
     def sandboxes(self):
@@ -236,3 +258,19 @@ class AsyncBaseIslo:
 
             self._gateway_profiles = AsyncGatewayProfilesClient(client_wrapper=self._client_wrapper)
         return self._gateway_profiles
+
+    @property
+    def cloud_roles(self):
+        if self._cloud_roles is None:
+            from .cloud_roles.client import AsyncCloudRolesClient  # noqa: E402
+
+            self._cloud_roles = AsyncCloudRolesClient(client_wrapper=self._client_wrapper)
+        return self._cloud_roles
+
+    @property
+    def gateway_internal(self):
+        if self._gateway_internal is None:
+            from .gateway_internal.client import AsyncGatewayInternalClient  # noqa: E402
+
+            self._gateway_internal = AsyncGatewayInternalClient(client_wrapper=self._client_wrapper)
+        return self._gateway_internal
