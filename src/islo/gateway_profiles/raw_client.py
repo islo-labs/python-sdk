@@ -101,6 +101,7 @@ class RawGatewayProfilesClient:
         default_action: typing.Optional[GatewayAction] = OMIT,
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
+        cloud_role: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[GatewayProfileResponse]:
         """
@@ -115,6 +116,9 @@ class RawGatewayProfilesClient:
         internet_enabled : typing.Optional[bool]
 
         is_default : typing.Optional[bool]
+
+        cloud_role : typing.Optional[str]
+            Cloud role name or public_id
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -133,6 +137,7 @@ class RawGatewayProfilesClient:
                 "default_action": default_action,
                 "internet_enabled": internet_enabled,
                 "is_default": is_default,
+                "cloud_role": cloud_role,
             },
             headers={
                 "content-type": "application/json",
@@ -350,6 +355,7 @@ class RawGatewayProfilesClient:
         default_action: typing.Optional[GatewayAction] = OMIT,
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
+        cloud_role: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[GatewayProfileResponse]:
         """
@@ -366,6 +372,9 @@ class RawGatewayProfilesClient:
         internet_enabled : typing.Optional[bool]
 
         is_default : typing.Optional[bool]
+
+        cloud_role : typing.Optional[str]
+            Cloud role name or public_id, empty string to unset
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -384,6 +393,7 @@ class RawGatewayProfilesClient:
                 "default_action": default_action,
                 "internet_enabled": internet_enabled,
                 "is_default": is_default,
+                "cloud_role": cloud_role,
             },
             headers={
                 "content-type": "application/json",
@@ -929,6 +939,7 @@ class AsyncRawGatewayProfilesClient:
         default_action: typing.Optional[GatewayAction] = OMIT,
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
+        cloud_role: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[GatewayProfileResponse]:
         """
@@ -943,6 +954,9 @@ class AsyncRawGatewayProfilesClient:
         internet_enabled : typing.Optional[bool]
 
         is_default : typing.Optional[bool]
+
+        cloud_role : typing.Optional[str]
+            Cloud role name or public_id
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -961,6 +975,7 @@ class AsyncRawGatewayProfilesClient:
                 "default_action": default_action,
                 "internet_enabled": internet_enabled,
                 "is_default": is_default,
+                "cloud_role": cloud_role,
             },
             headers={
                 "content-type": "application/json",
@@ -1178,6 +1193,7 @@ class AsyncRawGatewayProfilesClient:
         default_action: typing.Optional[GatewayAction] = OMIT,
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
+        cloud_role: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[GatewayProfileResponse]:
         """
@@ -1194,6 +1210,9 @@ class AsyncRawGatewayProfilesClient:
         internet_enabled : typing.Optional[bool]
 
         is_default : typing.Optional[bool]
+
+        cloud_role : typing.Optional[str]
+            Cloud role name or public_id, empty string to unset
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1212,6 +1231,7 @@ class AsyncRawGatewayProfilesClient:
                 "default_action": default_action,
                 "internet_enabled": internet_enabled,
                 "is_default": is_default,
+                "cloud_role": cloud_role,
             },
             headers={
                 "content-type": "application/json",

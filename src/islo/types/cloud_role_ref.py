@@ -6,15 +6,9 @@ import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
 
 
-class SetupStepResult(UniversalBaseModel):
-    """
-    Result of a single setup step execution.
-    """
-
-    name: str
-    status: str
-    stderr: typing.Optional[str] = None
-    stdout: typing.Optional[str] = None
-    script: typing.Optional[str] = None
+class CloudRoleRef(UniversalBaseModel):
+    id: str
+    provider: str
+    role_arn: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

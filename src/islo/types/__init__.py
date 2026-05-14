@@ -11,6 +11,9 @@ if typing.TYPE_CHECKING:
     from .auth_method import AuthMethod
     from .auth_strategy_schema import AuthStrategySchema
     from .auth_strategy_schema_mode import AuthStrategySchemaMode
+    from .cloud_provider import CloudProvider
+    from .cloud_role_ref import CloudRoleRef
+    from .cloud_role_response import CloudRoleResponse
     from .connection_status import ConnectionStatus
     from .content_filter_schema import ContentFilterSchema
     from .content_filter_schema_direction import ContentFilterSchemaDirection
@@ -63,6 +66,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "AuthMethod": ".auth_method",
     "AuthStrategySchema": ".auth_strategy_schema",
     "AuthStrategySchemaMode": ".auth_strategy_schema_mode",
+    "CloudProvider": ".cloud_provider",
+    "CloudRoleRef": ".cloud_role_ref",
+    "CloudRoleResponse": ".cloud_role_response",
     "ConnectionStatus": ".connection_status",
     "ContentFilterSchema": ".content_filter_schema",
     "ContentFilterSchemaDirection": ".content_filter_schema_direction",
@@ -139,6 +145,9 @@ __all__ = [
     "AuthMethod",
     "AuthStrategySchema",
     "AuthStrategySchemaMode",
+    "CloudProvider",
+    "CloudRoleRef",
+    "CloudRoleResponse",
     "ConnectionStatus",
     "ContentFilterSchema",
     "ContentFilterSchemaDirection",

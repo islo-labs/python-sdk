@@ -19,6 +19,6 @@
       "extra_fields": "allow"
     }
   },
-  "originGitCommit": "8e48d2703933506d89cdf80d930693dd00f96ef0",
-  "sdkVersion": "0.2.5"
+  "originGitCommit": "bf66a357f78a55fffb0f9c241f593f42ec98210b",
+  "sdkVersion": "0.3.1"
 }
