@@ -5,6 +5,7 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .cloud_role_ref import CloudRoleRef
 from .gateway_rule_response import GatewayRuleResponse
 
 
@@ -15,6 +16,7 @@ class GatewayProfileDetailResponse(UniversalBaseModel):
     default_action: str
     internet_enabled: bool
     is_default: bool
+    cloud_role: typing.Optional[CloudRoleRef] = None
     rule_count: typing.Optional[int] = None
     created_at: typing.Optional[dt.datetime] = None
     updated_at: typing.Optional[dt.datetime] = None

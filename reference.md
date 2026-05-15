@@ -3220,6 +3220,14 @@ client.gateway_profiles.create_gateway_profile(
 <dl>
 <dd>
 
+**cloud_role:** `typing.Optional[str]` — Cloud role name or public_id
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -3427,6 +3435,14 @@ client.gateway_profiles.update_gateway_profile(
 <dd>
 
 **is_default:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cloud_role:** `typing.Optional[str]` — Cloud role name or public_id, empty string to unset
     
 </dd>
 </dl>
@@ -3836,6 +3852,328 @@ client.gateway_profiles.reorder_gateway_rules(
 <dd>
 
 **rules:** `typing.List[RuleReorderItem]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## CloudRoles
+<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">list_cloud_roles</a>() -> typing.List[CloudRoleResponse]</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.cloud_roles.list_cloud_roles()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">create_cloud_role</a>(...) -> CloudRoleResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.cloud_roles.create_cloud_role(
+    provider="aws",
+    role_arn="role_arn",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**provider:** `CloudProvider` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**role_arn:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**session_duration_seconds:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">get_cloud_role</a>(...) -> CloudRoleResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.cloud_roles.get_cloud_role(
+    role_id="role_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**role_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">delete_cloud_role</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.cloud_roles.delete_cloud_role(
+    role_id="role_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**role_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">update_cloud_role</a>(...) -> CloudRoleResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.cloud_roles.update_cloud_role(
+    role_id="role_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**role_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**role_arn:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**session_duration_seconds:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_enabled:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
