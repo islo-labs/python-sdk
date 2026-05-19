@@ -72,7 +72,7 @@ if typing.TYPE_CHECKING:
         UnauthorizedError,
         UnprocessableEntityError,
     )
-    from . import cloud_roles, credits, gateway_profiles, integrations, sandboxes, snapshots
+    from . import cloud_roles, credits, gateway_internal, gateway_profiles, integrations, sandboxes, snapshots
     from .client import AsyncIslo, Islo
     from .version import __version__
 _dynamic_imports: typing.Dict[str, str] = {
@@ -143,6 +143,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "__version__": ".version",
     "cloud_roles": ".cloud_roles",
     "credits": ".credits",
+    "gateway_internal": ".gateway_internal",
     "gateway_profiles": ".gateway_profiles",
     "integrations": ".integrations",
     "sandboxes": ".sandboxes",
@@ -239,6 +240,7 @@ __all__ = [
     "__version__",
     "cloud_roles",
     "credits",
+    "gateway_internal",
     "gateway_profiles",
     "integrations",
     "sandboxes",

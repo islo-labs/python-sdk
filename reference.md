@@ -4193,3 +4193,115 @@ client.cloud_roles.update_cloud_role(
 </dl>
 </details>
 
+## GatewayInternal
+<details><summary><code>client.gateway_internal.<a href="src/islo/gateway_internal/client.py">get_gateway_policy_by_key</a>(...) -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Policy endpoint keyed by (tenant_id, profile_key) instead of sandbox lookup.
+
+Eliminates the race where vm_id isn't yet committed to Postgres.
+``x_sandbox_id`` is accepted for tracing but not used for policy resolution.
+
+Returns 404 (not a permissive default) when the profile is not found — this is
+intentional: a missing key means something is misconfigured, so the gateway should
+fail closed (503) rather than silently allow traffic.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.gateway_internal.get_gateway_policy_by_key(
+    profile_key="profile_key",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**profile_key:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sandbox_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**if_none_match:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**public_tenant_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**public_user_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
