@@ -19,7 +19,6 @@ if typing.TYPE_CHECKING:
         ContentFilterSchema,
         ContentFilterSchemaDirection,
         ContentFilterSchemaFilterType,
-        CreateCheckoutResponse,
         CreditBalance,
         CustomIntegration,
         CustomService,
@@ -56,6 +55,7 @@ if typing.TYPE_CHECKING:
         SandboxSpec,
         SetupScript,
         SetupStepResult,
+        ShareResponse,
         SnapshotResponse,
         TokenRequest,
         TokenResponse,
@@ -72,7 +72,7 @@ if typing.TYPE_CHECKING:
         UnauthorizedError,
         UnprocessableEntityError,
     )
-    from . import cloud_roles, credits, gateway_profiles, integrations, sandboxes, snapshots
+    from . import cloud_roles, credits, gateway_profiles, integrations, sandboxes, shares, snapshots
     from .client import AsyncIslo, Islo
     from .version import __version__
 _dynamic_imports: typing.Dict[str, str] = {
@@ -91,7 +91,6 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ContentFilterSchema": ".types",
     "ContentFilterSchemaDirection": ".types",
     "ContentFilterSchemaFilterType": ".types",
-    "CreateCheckoutResponse": ".types",
     "CreditBalance": ".types",
     "CustomIntegration": ".types",
     "CustomService": ".types",
@@ -132,6 +131,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ServiceUnavailableError": ".errors",
     "SetupScript": ".types",
     "SetupStepResult": ".types",
+    "ShareResponse": ".types",
     "SnapshotResponse": ".types",
     "TokenRequest": ".types",
     "TokenResponse": ".types",
@@ -146,6 +146,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "gateway_profiles": ".gateway_profiles",
     "integrations": ".integrations",
     "sandboxes": ".sandboxes",
+    "shares": ".shares",
     "snapshots": ".snapshots",
 }
 
@@ -187,7 +188,6 @@ __all__ = [
     "ContentFilterSchema",
     "ContentFilterSchemaDirection",
     "ContentFilterSchemaFilterType",
-    "CreateCheckoutResponse",
     "CreditBalance",
     "CustomIntegration",
     "CustomService",
@@ -228,6 +228,7 @@ __all__ = [
     "ServiceUnavailableError",
     "SetupScript",
     "SetupStepResult",
+    "ShareResponse",
     "SnapshotResponse",
     "TokenRequest",
     "TokenResponse",
@@ -242,5 +243,6 @@ __all__ = [
     "gateway_profiles",
     "integrations",
     "sandboxes",
+    "shares",
     "snapshots",
 ]
