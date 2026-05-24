@@ -6,14 +6,9 @@ import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
 
 
-class TokenRequest(UniversalBaseModel):
-    """
-    Request to exchange a Descope access key for a session token.
-    """
-
-    access_key: str = pydantic.Field()
-    """
-    Descope access key to exchange for a session JWT
-    """
+class PromoteCacheResponse(UniversalBaseModel):
+    cache_key: str
+    status: str
+    tenant_id: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

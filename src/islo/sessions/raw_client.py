@@ -10,69 +10,67 @@ from ..core.jsonable_encoder import jsonable_encoder
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
-from ..errors.conflict_error import ConflictError
 from ..errors.not_found_error import NotFoundError
-from ..errors.service_unavailable_error import ServiceUnavailableError
 from ..errors.unauthorized_error import UnauthorizedError
+from ..types.create_session_response import CreateSessionResponse
 from ..types.error_response import ErrorResponse
-from ..types.paginated_snapshot_response import PaginatedSnapshotResponse
-from ..types.snapshot_response import SnapshotResponse
+from ..types.list_sessions_response import ListSessionsResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
 
-class RawSnapshotsClient:
+class RawSessionsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list_snapshots(
-        self,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PaginatedSnapshotResponse]:
+    def sandbox_list_sessions(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[ListSessionsResponse]:
         """
-        List all snapshots for the current tenant.
-
         Parameters
         ----------
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
+        name : str
+            Sandbox name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[PaginatedSnapshotResponse]
-            Successful Response
+        HttpResponse[ListSessionsResponse]
+            Session list
         """
         _response = self._client_wrapper.httpx_client.request(
-            "snapshots/",
+            f"sandboxes/{jsonable_encoder(name)}/sessions",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
-            params={
-                "limit": limit,
-                "offset": offset,
-            },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PaginatedSnapshotResponse,
+                    ListSessionsResponse,
                     parse_obj_as(
-                        type_=PaginatedSnapshotResponse,  # type: ignore
+                        type_=ListSessionsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -91,37 +89,55 @@ class RawSnapshotsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def create_snapshot(
+    def sandbox_create_session(
         self,
+        name: str,
         *,
-        sandbox_id: str,
-        name: typing.Optional[str] = OMIT,
+        create_session_request_name: str,
+        command: typing.Optional[typing.Sequence[str]] = OMIT,
+        env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
+        ttl: typing.Optional[str] = OMIT,
+        user: typing.Optional[str] = OMIT,
+        workdir: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[SnapshotResponse]:
+    ) -> HttpResponse[CreateSessionResponse]:
         """
-        Create a snapshot from a running sandbox.
-
         Parameters
         ----------
-        sandbox_id : str
+        name : str
+            Sandbox name
 
-        name : typing.Optional[str]
+        create_session_request_name : str
+
+        command : typing.Optional[typing.Sequence[str]]
+
+        env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+
+        ttl : typing.Optional[str]
+
+        user : typing.Optional[str]
+
+        workdir : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[SnapshotResponse]
-            Successful Response
+        HttpResponse[CreateSessionResponse]
+            Session created
         """
         _response = self._client_wrapper.httpx_client.request(
-            "snapshots/",
+            f"sandboxes/{jsonable_encoder(name)}/sessions",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             json={
-                "name": name,
-                "sandbox_id": sandbox_id,
+                "command": command,
+                "env": env,
+                "name": create_session_request_name,
+                "ttl": ttl,
+                "user": user,
+                "workdir": workdir,
             },
             headers={
                 "content-type": "application/json",
@@ -132,97 +148,9 @@ class RawSnapshotsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SnapshotResponse,
+                    CreateSessionResponse,
                     parse_obj_as(
-                        type_=SnapshotResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 503:
-                raise ServiceUnavailableError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def get_snapshot(
-        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[SnapshotResponse]:
-        """
-        Get snapshot details by name.
-
-        Parameters
-        ----------
-        name : str
-            Name
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[SnapshotResponse]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"snapshots/{jsonable_encoder(name)}",
-            base_url=self._client_wrapper.get_environment().compute,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    SnapshotResponse,
-                    parse_obj_as(
-                        type_=SnapshotResponse,  # type: ignore
+                        type_=CreateSessionResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -258,16 +186,17 @@ class RawSnapshotsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def delete_snapshot(
-        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    def sandbox_kill_session(
+        self, name: str, session: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[None]:
         """
-        Delete a snapshot by name.
-
         Parameters
         ----------
         name : str
-            Name
+            Sandbox name
+
+        session : str
+            Session name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -277,7 +206,7 @@ class RawSnapshotsClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"snapshots/{jsonable_encoder(name)}",
+            f"sandboxes/{jsonable_encoder(name)}/sessions/{jsonable_encoder(session)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="DELETE",
             request_options=request_options,
@@ -316,57 +245,47 @@ class RawSnapshotsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-
-class AsyncRawSnapshotsClient:
-    def __init__(self, *, client_wrapper: AsyncClientWrapper):
-        self._client_wrapper = client_wrapper
-
-    async def list_snapshots(
-        self,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PaginatedSnapshotResponse]:
+    def sandbox_attach_session(
+        self, name: str, session: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[None]:
         """
-        List all snapshots for the current tenant.
-
         Parameters
         ----------
-        limit : typing.Optional[int]
+        name : str
+            Sandbox name
 
-        offset : typing.Optional[int]
+        session : str
+            Session name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[PaginatedSnapshotResponse]
-            Successful Response
+        HttpResponse[None]
         """
-        _response = await self._client_wrapper.httpx_client.request(
-            "snapshots/",
+        _response = self._client_wrapper.httpx_client.request(
+            f"sandboxes/{jsonable_encoder(name)}/sessions/{jsonable_encoder(session)}/attach",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
-            params={
-                "limit": limit,
-                "offset": offset,
-            },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    PaginatedSnapshotResponse,
-                    parse_obj_as(
-                        type_=PaginatedSnapshotResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
+                return HttpResponse(response=_response, data=None)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -385,37 +304,124 @@ class AsyncRawSnapshotsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def create_snapshot(
-        self,
-        *,
-        sandbox_id: str,
-        name: typing.Optional[str] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[SnapshotResponse]:
-        """
-        Create a snapshot from a running sandbox.
 
+class AsyncRawSessionsClient:
+    def __init__(self, *, client_wrapper: AsyncClientWrapper):
+        self._client_wrapper = client_wrapper
+
+    async def sandbox_list_sessions(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[ListSessionsResponse]:
+        """
         Parameters
         ----------
-        sandbox_id : str
-
-        name : typing.Optional[str]
+        name : str
+            Sandbox name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[SnapshotResponse]
-            Successful Response
+        AsyncHttpResponse[ListSessionsResponse]
+            Session list
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "snapshots/",
+            f"sandboxes/{jsonable_encoder(name)}/sessions",
+            base_url=self._client_wrapper.get_environment().compute,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ListSessionsResponse,
+                    parse_obj_as(
+                        type_=ListSessionsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def sandbox_create_session(
+        self,
+        name: str,
+        *,
+        create_session_request_name: str,
+        command: typing.Optional[typing.Sequence[str]] = OMIT,
+        env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
+        ttl: typing.Optional[str] = OMIT,
+        user: typing.Optional[str] = OMIT,
+        workdir: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[CreateSessionResponse]:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        create_session_request_name : str
+
+        command : typing.Optional[typing.Sequence[str]]
+
+        env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+
+        ttl : typing.Optional[str]
+
+        user : typing.Optional[str]
+
+        workdir : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[CreateSessionResponse]
+            Session created
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"sandboxes/{jsonable_encoder(name)}/sessions",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             json={
-                "name": name,
-                "sandbox_id": sandbox_id,
+                "command": command,
+                "env": env,
+                "name": create_session_request_name,
+                "ttl": ttl,
+                "user": user,
+                "workdir": workdir,
             },
             headers={
                 "content-type": "application/json",
@@ -426,97 +432,9 @@ class AsyncRawSnapshotsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SnapshotResponse,
+                    CreateSessionResponse,
                     parse_obj_as(
-                        type_=SnapshotResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 503:
-                raise ServiceUnavailableError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def get_snapshot(
-        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[SnapshotResponse]:
-        """
-        Get snapshot details by name.
-
-        Parameters
-        ----------
-        name : str
-            Name
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[SnapshotResponse]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"snapshots/{jsonable_encoder(name)}",
-            base_url=self._client_wrapper.get_environment().compute,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    SnapshotResponse,
-                    parse_obj_as(
-                        type_=SnapshotResponse,  # type: ignore
+                        type_=CreateSessionResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -552,16 +470,17 @@ class AsyncRawSnapshotsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def delete_snapshot(
-        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    async def sandbox_kill_session(
+        self, name: str, session: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[None]:
         """
-        Delete a snapshot by name.
-
         Parameters
         ----------
         name : str
-            Name
+            Sandbox name
+
+        session : str
+            Session name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -571,9 +490,68 @@ class AsyncRawSnapshotsClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"snapshots/{jsonable_encoder(name)}",
+            f"sandboxes/{jsonable_encoder(name)}/sessions/{jsonable_encoder(session)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="DELETE",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return AsyncHttpResponse(response=_response, data=None)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def sandbox_attach_session(
+        self, name: str, session: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[None]:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        session : str
+            Session name
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[None]
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"sandboxes/{jsonable_encoder(name)}/sessions/{jsonable_encoder(session)}/attach",
+            base_url=self._client_wrapper.get_environment().compute,
+            method="GET",
             request_options=request_options,
         )
         try:

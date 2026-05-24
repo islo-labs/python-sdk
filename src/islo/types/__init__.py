@@ -18,12 +18,13 @@ if typing.TYPE_CHECKING:
     from .content_filter_schema import ContentFilterSchema
     from .content_filter_schema_direction import ContentFilterSchemaDirection
     from .content_filter_schema_filter_type import ContentFilterSchemaFilterType
-    from .create_checkout_response import CreateCheckoutResponse
+    from .create_session_response import CreateSessionResponse
     from .credit_balance import CreditBalance
     from .custom_integration import CustomIntegration
     from .custom_service import CustomService
     from .custom_service_create_response import CustomServiceCreateResponse
     from .custom_services_response import CustomServicesResponse
+    from .error_code import ErrorCode
     from .error_response import ErrorResponse
     from .exec_log_line_response import ExecLogLineResponse
     from .exec_log_line_response_stream import ExecLogLineResponseStream
@@ -32,13 +33,14 @@ if typing.TYPE_CHECKING:
     from .exec_response import ExecResponse
     from .exec_result_response import ExecResultResponse
     from .exec_session_response import ExecSessionResponse
+    from .file_upload_status_response import FileUploadStatusResponse
     from .gateway_action import GatewayAction
     from .gateway_profile_detail_response import GatewayProfileDetailResponse
     from .gateway_profile_response import GatewayProfileResponse
     from .gateway_rule_response import GatewayRuleResponse
     from .git_source import GitSource
-    from .git_source_type import GitSourceType
     from .http_validation_error import HttpValidationError
+    from .init_capability import InitCapability
     from .integration_detail_response import IntegrationDetailResponse
     from .integration_level import IntegrationLevel
     from .integration_list_response import IntegrationListResponse
@@ -46,17 +48,25 @@ if typing.TYPE_CHECKING:
     from .integration_providers_response import IntegrationProvidersResponse
     from .integration_status import IntegrationStatus
     from .islo_error_code import IsloErrorCode
+    from .list_sandboxes_query import ListSandboxesQuery
+    from .list_sessions_response import ListSessionsResponse
+    from .list_snapshots_query import ListSnapshotsQuery
     from .paginated_sandbox_response import PaginatedSandboxResponse
     from .paginated_snapshot_response import PaginatedSnapshotResponse
+    from .promote_cache_response import PromoteCacheResponse
     from .provider_app import ProviderApp
     from .rule_reorder_item import RuleReorderItem
+    from .sandbox_create import SandboxCreate
     from .sandbox_network import SandboxNetwork
     from .sandbox_response import SandboxResponse
     from .sandbox_spec import SandboxSpec
+    from .save_snapshot_response import SaveSnapshotResponse
+    from .session_info import SessionInfo
+    from .session_status import SessionStatus
     from .setup_script import SetupScript
     from .setup_step_result import SetupStepResult
+    from .share_response import ShareResponse
     from .snapshot_response import SnapshotResponse
-    from .token_request import TokenRequest
     from .token_response import TokenResponse
     from .validation_error import ValidationError
     from .validation_error_loc_item import ValidationErrorLocItem
@@ -73,12 +83,13 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ContentFilterSchema": ".content_filter_schema",
     "ContentFilterSchemaDirection": ".content_filter_schema_direction",
     "ContentFilterSchemaFilterType": ".content_filter_schema_filter_type",
-    "CreateCheckoutResponse": ".create_checkout_response",
+    "CreateSessionResponse": ".create_session_response",
     "CreditBalance": ".credit_balance",
     "CustomIntegration": ".custom_integration",
     "CustomService": ".custom_service",
     "CustomServiceCreateResponse": ".custom_service_create_response",
     "CustomServicesResponse": ".custom_services_response",
+    "ErrorCode": ".error_code",
     "ErrorResponse": ".error_response",
     "ExecLogLineResponse": ".exec_log_line_response",
     "ExecLogLineResponseStream": ".exec_log_line_response_stream",
@@ -87,13 +98,14 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ExecResponse": ".exec_response",
     "ExecResultResponse": ".exec_result_response",
     "ExecSessionResponse": ".exec_session_response",
+    "FileUploadStatusResponse": ".file_upload_status_response",
     "GatewayAction": ".gateway_action",
     "GatewayProfileDetailResponse": ".gateway_profile_detail_response",
     "GatewayProfileResponse": ".gateway_profile_response",
     "GatewayRuleResponse": ".gateway_rule_response",
     "GitSource": ".git_source",
-    "GitSourceType": ".git_source_type",
     "HttpValidationError": ".http_validation_error",
+    "InitCapability": ".init_capability",
     "IntegrationDetailResponse": ".integration_detail_response",
     "IntegrationLevel": ".integration_level",
     "IntegrationListResponse": ".integration_list_response",
@@ -101,17 +113,25 @@ _dynamic_imports: typing.Dict[str, str] = {
     "IntegrationProvidersResponse": ".integration_providers_response",
     "IntegrationStatus": ".integration_status",
     "IsloErrorCode": ".islo_error_code",
+    "ListSandboxesQuery": ".list_sandboxes_query",
+    "ListSessionsResponse": ".list_sessions_response",
+    "ListSnapshotsQuery": ".list_snapshots_query",
     "PaginatedSandboxResponse": ".paginated_sandbox_response",
     "PaginatedSnapshotResponse": ".paginated_snapshot_response",
+    "PromoteCacheResponse": ".promote_cache_response",
     "ProviderApp": ".provider_app",
     "RuleReorderItem": ".rule_reorder_item",
+    "SandboxCreate": ".sandbox_create",
     "SandboxNetwork": ".sandbox_network",
     "SandboxResponse": ".sandbox_response",
     "SandboxSpec": ".sandbox_spec",
+    "SaveSnapshotResponse": ".save_snapshot_response",
+    "SessionInfo": ".session_info",
+    "SessionStatus": ".session_status",
     "SetupScript": ".setup_script",
     "SetupStepResult": ".setup_step_result",
+    "ShareResponse": ".share_response",
     "SnapshotResponse": ".snapshot_response",
-    "TokenRequest": ".token_request",
     "TokenResponse": ".token_response",
     "ValidationError": ".validation_error",
     "ValidationErrorLocItem": ".validation_error_loc_item",
@@ -152,12 +172,13 @@ __all__ = [
     "ContentFilterSchema",
     "ContentFilterSchemaDirection",
     "ContentFilterSchemaFilterType",
-    "CreateCheckoutResponse",
+    "CreateSessionResponse",
     "CreditBalance",
     "CustomIntegration",
     "CustomService",
     "CustomServiceCreateResponse",
     "CustomServicesResponse",
+    "ErrorCode",
     "ErrorResponse",
     "ExecLogLineResponse",
     "ExecLogLineResponseStream",
@@ -166,13 +187,14 @@ __all__ = [
     "ExecResponse",
     "ExecResultResponse",
     "ExecSessionResponse",
+    "FileUploadStatusResponse",
     "GatewayAction",
     "GatewayProfileDetailResponse",
     "GatewayProfileResponse",
     "GatewayRuleResponse",
     "GitSource",
-    "GitSourceType",
     "HttpValidationError",
+    "InitCapability",
     "IntegrationDetailResponse",
     "IntegrationLevel",
     "IntegrationListResponse",
@@ -180,17 +202,25 @@ __all__ = [
     "IntegrationProvidersResponse",
     "IntegrationStatus",
     "IsloErrorCode",
+    "ListSandboxesQuery",
+    "ListSessionsResponse",
+    "ListSnapshotsQuery",
     "PaginatedSandboxResponse",
     "PaginatedSnapshotResponse",
+    "PromoteCacheResponse",
     "ProviderApp",
     "RuleReorderItem",
+    "SandboxCreate",
     "SandboxNetwork",
     "SandboxResponse",
     "SandboxSpec",
+    "SaveSnapshotResponse",
+    "SessionInfo",
+    "SessionStatus",
     "SetupScript",
     "SetupStepResult",
+    "ShareResponse",
     "SnapshotResponse",
-    "TokenRequest",
     "TokenResponse",
     "ValidationError",
     "ValidationErrorLocItem",

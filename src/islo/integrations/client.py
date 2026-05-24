@@ -58,8 +58,7 @@ class IntegrationsClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.integrations.list_integration_providers()
         """
@@ -93,8 +92,7 @@ class IntegrationsClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.integrations.list_integrations()
         """
@@ -128,8 +126,7 @@ class IntegrationsClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.integrations.list_custom_services()
         """
@@ -164,8 +161,7 @@ class IntegrationsClient:
         from islo import CustomIntegration, Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.integrations.create_custom_service(
             custom=CustomIntegration(
@@ -217,8 +213,7 @@ class IntegrationsClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.integrations.disconnect_custom_integration(
             descope_app_id="descope_app_id",
@@ -254,8 +249,7 @@ class IntegrationsClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.integrations.get_integration_status(
             provider="provider",
@@ -302,8 +296,7 @@ class IntegrationsClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.integrations.disconnect_integration(
             provider="provider",
@@ -357,8 +350,7 @@ class AsyncIntegrationsClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -402,8 +394,7 @@ class AsyncIntegrationsClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -445,8 +436,7 @@ class AsyncIntegrationsClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -489,8 +479,7 @@ class AsyncIntegrationsClient:
         from islo import AsyncIslo, CustomIntegration
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -550,8 +539,7 @@ class AsyncIntegrationsClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -595,8 +583,7 @@ class AsyncIntegrationsClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -651,8 +638,7 @@ class AsyncIntegrationsClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 

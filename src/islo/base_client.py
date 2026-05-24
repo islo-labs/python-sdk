@@ -6,15 +6,21 @@ import os
 import typing
 
 import httpx
+from .core.api_error import ApiError
 from .core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .core.logging import LogConfig, Logger
+from .core.oauth_token_provider import AsyncOAuthTokenProvider, OAuthTokenProvider
+from .environment import IsloEnvironment
 
 if typing.TYPE_CHECKING:
+    from .auth.client import AsyncAuthClient, AuthClient
     from .cloud_roles.client import AsyncCloudRolesClient, CloudRolesClient
     from .credits.client import AsyncCreditsClient, CreditsClient
     from .gateway_profiles.client import AsyncGatewayProfilesClient, GatewayProfilesClient
     from .integrations.client import AsyncIntegrationsClient, IntegrationsClient
     from .sandboxes.client import AsyncSandboxesClient, SandboxesClient
+    from .sessions.client import AsyncSessionsClient, SessionsClient
+    from .shares.client import AsyncSharesClient, SharesClient
     from .snapshots.client import AsyncSnapshotsClient, SnapshotsClient
 
 
@@ -24,12 +30,12 @@ class BaseIslo:
 
     Parameters
     ----------
-    base_url : str
-        The base url to use for requests from the client.
 
-    api_key : typing.Optional[typing.Union[str, typing.Callable[[], str]]]
-    headers : typing.Optional[typing.Dict[str, str]]
-        Additional headers to send with every request.
+    client_id : str
+        The client identifier used for authentication.
+
+    client_secret : str
+        The client secret used for authentication.
 
     timeout : typing.Optional[float]
         The timeout to be used, in seconds, for requests. By default the timeout is 60 seconds, unless a custom httpx client is used, in which case this default is not enforced.
@@ -40,25 +46,72 @@ class BaseIslo:
     httpx_client : typing.Optional[httpx.Client]
         The httpx client to use for making requests, a preconfigured client is used by default, however this is useful should you want to pass in any custom httpx configuration.
 
-    logging : typing.Optional[typing.Union[LogConfig, Logger]]
-        Configure logging for the SDK. Accepts a LogConfig dict with 'level' (debug/info/warn/error), 'logger' (custom logger implementation), and 'silent' (boolean, defaults to True) fields. You can also pass a pre-configured Logger instance.
+    # or ...
+
+    token : typing.Callable[[], str]
+        Authenticate by providing a callable that returns a pre-generated bearer token. In this mode, OAuth client credentials are not required.
+
+    timeout : typing.Optional[float]
+        The timeout to be used, in seconds, for requests. By default the timeout is 60 seconds, unless a custom httpx client is used, in which case this default is not enforced.
+
+    follow_redirects : typing.Optional[bool]
+        Whether the default httpx client follows redirects or not, this is irrelevant if a custom httpx client is passed in.
+
+    httpx_client : typing.Optional[httpx.Client]
+        The httpx client to use for making requests, a preconfigured client is used by default, however this is useful should you want to pass in any custom httpx configuration.
 
     Examples
     --------
     from islo import Islo
 
     client = Islo(
-        api_key="YOUR_API_KEY",
+        environment="YOUR_ENVIRONMENT",
+    )
+
+    # or ...
+
+    from islo import Islo
+
+    client = Islo(
         base_url="https://yourhost.com/path/to/api",
+        token="YOUR_BEARER_TOKEN",
     )
     """
 
+    @typing.overload
     def __init__(
         self,
         *,
-        base_url: str,
-        api_key: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = os.getenv("ISLO_API_KEY"),
+        environment: IsloEnvironment,
         headers: typing.Optional[typing.Dict[str, str]] = None,
+        timeout: typing.Optional[float] = None,
+        follow_redirects: typing.Optional[bool] = True,
+        httpx_client: typing.Optional[httpx.Client] = None,
+        logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
+        client_id: typing.Optional[str] = os.getenv("ISLO_API_KEY"),
+        client_secret: str,
+    ): ...
+    @typing.overload
+    def __init__(
+        self,
+        *,
+        environment: IsloEnvironment,
+        headers: typing.Optional[typing.Dict[str, str]] = None,
+        timeout: typing.Optional[float] = None,
+        follow_redirects: typing.Optional[bool] = True,
+        httpx_client: typing.Optional[httpx.Client] = None,
+        logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
+        token: typing.Callable[[], str],
+    ): ...
+    def __init__(
+        self,
+        *,
+        environment: IsloEnvironment,
+        headers: typing.Optional[typing.Dict[str, str]] = None,
+        client_id: typing.Optional[str] = os.getenv("ISLO_API_KEY"),
+        client_secret: typing.Optional[str] = None,
+        token: typing.Optional[typing.Callable[[], str]] = None,
+        _token_getter_override: typing.Optional[typing.Callable[[], str]] = None,
         timeout: typing.Optional[float] = None,
         follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.Client] = None,
@@ -67,24 +120,68 @@ class BaseIslo:
         _defaulted_timeout = (
             timeout if timeout is not None else 60 if httpx_client is None else httpx_client.timeout.read
         )
-        self._client_wrapper = SyncClientWrapper(
-            base_url=base_url,
-            api_key=api_key,
-            headers=headers,
-            httpx_client=httpx_client
-            if httpx_client is not None
-            else httpx.Client(timeout=_defaulted_timeout, follow_redirects=follow_redirects)
-            if follow_redirects is not None
-            else httpx.Client(timeout=_defaulted_timeout),
-            timeout=_defaulted_timeout,
-            logging=logging,
-        )
+        if token is not None:
+            self._client_wrapper = SyncClientWrapper(
+                environment=environment,
+                headers=headers,
+                httpx_client=httpx_client
+                if httpx_client is not None
+                else httpx.Client(timeout=_defaulted_timeout, follow_redirects=follow_redirects)
+                if follow_redirects is not None
+                else httpx.Client(timeout=_defaulted_timeout),
+                timeout=_defaulted_timeout,
+                logging=logging,
+                token=_token_getter_override if _token_getter_override is not None else token,
+            )
+        elif client_id is not None and client_secret is not None:
+            oauth_token_provider = OAuthTokenProvider(
+                client_id=client_id,
+                client_secret=client_secret,
+                client_wrapper=SyncClientWrapper(
+                    environment=environment,
+                    headers=headers,
+                    httpx_client=httpx_client
+                    if httpx_client is not None
+                    else httpx.Client(timeout=_defaulted_timeout, follow_redirects=follow_redirects)
+                    if follow_redirects is not None
+                    else httpx.Client(timeout=_defaulted_timeout),
+                    timeout=_defaulted_timeout,
+                    logging=logging,
+                ),
+            )
+            self._client_wrapper = SyncClientWrapper(
+                environment=environment,
+                headers=headers,
+                token=_token_getter_override if _token_getter_override is not None else oauth_token_provider.get_token,
+                httpx_client=httpx_client
+                if httpx_client is not None
+                else httpx.Client(timeout=_defaulted_timeout, follow_redirects=follow_redirects)
+                if follow_redirects is not None
+                else httpx.Client(timeout=_defaulted_timeout),
+                timeout=_defaulted_timeout,
+                logging=logging,
+            )
+        else:
+            raise ApiError(
+                body="The client must be instantiated with either 'token' or both 'client_id' and 'client_secret'"
+            )
+        self._auth: typing.Optional[AuthClient] = None
         self._sandboxes: typing.Optional[SandboxesClient] = None
-        self._snapshots: typing.Optional[SnapshotsClient] = None
         self._credits: typing.Optional[CreditsClient] = None
         self._integrations: typing.Optional[IntegrationsClient] = None
         self._gateway_profiles: typing.Optional[GatewayProfilesClient] = None
         self._cloud_roles: typing.Optional[CloudRolesClient] = None
+        self._sessions: typing.Optional[SessionsClient] = None
+        self._shares: typing.Optional[SharesClient] = None
+        self._snapshots: typing.Optional[SnapshotsClient] = None
+
+    @property
+    def auth(self):
+        if self._auth is None:
+            from .auth.client import AuthClient  # noqa: E402
+
+            self._auth = AuthClient(client_wrapper=self._client_wrapper)
+        return self._auth
 
     @property
     def sandboxes(self):
@@ -93,14 +190,6 @@ class BaseIslo:
 
             self._sandboxes = SandboxesClient(client_wrapper=self._client_wrapper)
         return self._sandboxes
-
-    @property
-    def snapshots(self):
-        if self._snapshots is None:
-            from .snapshots.client import SnapshotsClient  # noqa: E402
-
-            self._snapshots = SnapshotsClient(client_wrapper=self._client_wrapper)
-        return self._snapshots
 
     @property
     def credits(self):
@@ -134,6 +223,30 @@ class BaseIslo:
             self._cloud_roles = CloudRolesClient(client_wrapper=self._client_wrapper)
         return self._cloud_roles
 
+    @property
+    def sessions(self):
+        if self._sessions is None:
+            from .sessions.client import SessionsClient  # noqa: E402
+
+            self._sessions = SessionsClient(client_wrapper=self._client_wrapper)
+        return self._sessions
+
+    @property
+    def shares(self):
+        if self._shares is None:
+            from .shares.client import SharesClient  # noqa: E402
+
+            self._shares = SharesClient(client_wrapper=self._client_wrapper)
+        return self._shares
+
+    @property
+    def snapshots(self):
+        if self._snapshots is None:
+            from .snapshots.client import SnapshotsClient  # noqa: E402
+
+            self._snapshots = SnapshotsClient(client_wrapper=self._client_wrapper)
+        return self._snapshots
+
 
 class AsyncBaseIslo:
     """
@@ -141,15 +254,12 @@ class AsyncBaseIslo:
 
     Parameters
     ----------
-    base_url : str
-        The base url to use for requests from the client.
 
-    api_key : typing.Optional[typing.Union[str, typing.Callable[[], str]]]
-    headers : typing.Optional[typing.Dict[str, str]]
-        Additional headers to send with every request.
+    client_id : str
+        The client identifier used for authentication.
 
-    async_token : typing.Optional[typing.Callable[[], typing.Awaitable[str]]]
-        An async callable that returns a bearer token. Use this when token acquisition involves async I/O (e.g., refreshing tokens via an async HTTP client). When provided, this is used instead of the synchronous token for async requests.
+    client_secret : str
+        The client secret used for authentication.
 
     timeout : typing.Optional[float]
         The timeout to be used, in seconds, for requests. By default the timeout is 60 seconds, unless a custom httpx client is used, in which case this default is not enforced.
@@ -160,26 +270,72 @@ class AsyncBaseIslo:
     httpx_client : typing.Optional[httpx.AsyncClient]
         The httpx client to use for making requests, a preconfigured client is used by default, however this is useful should you want to pass in any custom httpx configuration.
 
-    logging : typing.Optional[typing.Union[LogConfig, Logger]]
-        Configure logging for the SDK. Accepts a LogConfig dict with 'level' (debug/info/warn/error), 'logger' (custom logger implementation), and 'silent' (boolean, defaults to True) fields. You can also pass a pre-configured Logger instance.
+    # or ...
+
+    token : typing.Callable[[], str]
+        Authenticate by providing a callable that returns a pre-generated bearer token. In this mode, OAuth client credentials are not required.
+
+    timeout : typing.Optional[float]
+        The timeout to be used, in seconds, for requests. By default the timeout is 60 seconds, unless a custom httpx client is used, in which case this default is not enforced.
+
+    follow_redirects : typing.Optional[bool]
+        Whether the default httpx client follows redirects or not, this is irrelevant if a custom httpx client is passed in.
+
+    httpx_client : typing.Optional[httpx.AsyncClient]
+        The httpx client to use for making requests, a preconfigured client is used by default, however this is useful should you want to pass in any custom httpx configuration.
 
     Examples
     --------
     from islo import AsyncIslo
 
     client = AsyncIslo(
-        api_key="YOUR_API_KEY",
+        environment="YOUR_ENVIRONMENT",
+    )
+
+    # or ...
+
+    from islo import AsyncIslo
+
+    client = AsyncIslo(
         base_url="https://yourhost.com/path/to/api",
+        token="YOUR_BEARER_TOKEN",
     )
     """
 
+    @typing.overload
     def __init__(
         self,
         *,
-        base_url: str,
-        api_key: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = os.getenv("ISLO_API_KEY"),
+        environment: IsloEnvironment,
         headers: typing.Optional[typing.Dict[str, str]] = None,
-        async_token: typing.Optional[typing.Callable[[], typing.Awaitable[str]]] = None,
+        timeout: typing.Optional[float] = None,
+        follow_redirects: typing.Optional[bool] = True,
+        httpx_client: typing.Optional[httpx.AsyncClient] = None,
+        logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
+        client_id: typing.Optional[str] = os.getenv("ISLO_API_KEY"),
+        client_secret: str,
+    ): ...
+    @typing.overload
+    def __init__(
+        self,
+        *,
+        environment: IsloEnvironment,
+        headers: typing.Optional[typing.Dict[str, str]] = None,
+        timeout: typing.Optional[float] = None,
+        follow_redirects: typing.Optional[bool] = True,
+        httpx_client: typing.Optional[httpx.AsyncClient] = None,
+        logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
+        token: typing.Callable[[], str],
+    ): ...
+    def __init__(
+        self,
+        *,
+        environment: IsloEnvironment,
+        headers: typing.Optional[typing.Dict[str, str]] = None,
+        client_id: typing.Optional[str] = os.getenv("ISLO_API_KEY"),
+        client_secret: typing.Optional[str] = None,
+        token: typing.Optional[typing.Callable[[], str]] = None,
+        _token_getter_override: typing.Optional[typing.Callable[[], str]] = None,
         timeout: typing.Optional[float] = None,
         follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.AsyncClient] = None,
@@ -188,25 +344,69 @@ class AsyncBaseIslo:
         _defaulted_timeout = (
             timeout if timeout is not None else 60 if httpx_client is None else httpx_client.timeout.read
         )
-        self._client_wrapper = AsyncClientWrapper(
-            base_url=base_url,
-            api_key=api_key,
-            headers=headers,
-            async_token=async_token,
-            httpx_client=httpx_client
-            if httpx_client is not None
-            else httpx.AsyncClient(timeout=_defaulted_timeout, follow_redirects=follow_redirects)
-            if follow_redirects is not None
-            else httpx.AsyncClient(timeout=_defaulted_timeout),
-            timeout=_defaulted_timeout,
-            logging=logging,
-        )
+        if token is not None:
+            self._client_wrapper = AsyncClientWrapper(
+                environment=environment,
+                headers=headers,
+                httpx_client=httpx_client
+                if httpx_client is not None
+                else httpx.AsyncClient(timeout=_defaulted_timeout, follow_redirects=follow_redirects)
+                if follow_redirects is not None
+                else httpx.AsyncClient(timeout=_defaulted_timeout),
+                timeout=_defaulted_timeout,
+                logging=logging,
+                token=_token_getter_override if _token_getter_override is not None else token,
+            )
+        elif client_id is not None and client_secret is not None:
+            oauth_token_provider = AsyncOAuthTokenProvider(
+                client_id=client_id,
+                client_secret=client_secret,
+                client_wrapper=AsyncClientWrapper(
+                    environment=environment,
+                    headers=headers,
+                    httpx_client=httpx_client
+                    if httpx_client is not None
+                    else httpx.AsyncClient(timeout=_defaulted_timeout, follow_redirects=follow_redirects)
+                    if follow_redirects is not None
+                    else httpx.AsyncClient(timeout=_defaulted_timeout),
+                    timeout=_defaulted_timeout,
+                    logging=logging,
+                ),
+            )
+            self._client_wrapper = AsyncClientWrapper(
+                environment=environment,
+                headers=headers,
+                token=_token_getter_override,
+                async_token=oauth_token_provider.get_token,
+                httpx_client=httpx_client
+                if httpx_client is not None
+                else httpx.AsyncClient(timeout=_defaulted_timeout, follow_redirects=follow_redirects)
+                if follow_redirects is not None
+                else httpx.AsyncClient(timeout=_defaulted_timeout),
+                timeout=_defaulted_timeout,
+                logging=logging,
+            )
+        else:
+            raise ApiError(
+                body="The client must be instantiated with either 'token' or both 'client_id' and 'client_secret'"
+            )
+        self._auth: typing.Optional[AsyncAuthClient] = None
         self._sandboxes: typing.Optional[AsyncSandboxesClient] = None
-        self._snapshots: typing.Optional[AsyncSnapshotsClient] = None
         self._credits: typing.Optional[AsyncCreditsClient] = None
         self._integrations: typing.Optional[AsyncIntegrationsClient] = None
         self._gateway_profiles: typing.Optional[AsyncGatewayProfilesClient] = None
         self._cloud_roles: typing.Optional[AsyncCloudRolesClient] = None
+        self._sessions: typing.Optional[AsyncSessionsClient] = None
+        self._shares: typing.Optional[AsyncSharesClient] = None
+        self._snapshots: typing.Optional[AsyncSnapshotsClient] = None
+
+    @property
+    def auth(self):
+        if self._auth is None:
+            from .auth.client import AsyncAuthClient  # noqa: E402
+
+            self._auth = AsyncAuthClient(client_wrapper=self._client_wrapper)
+        return self._auth
 
     @property
     def sandboxes(self):
@@ -215,14 +415,6 @@ class AsyncBaseIslo:
 
             self._sandboxes = AsyncSandboxesClient(client_wrapper=self._client_wrapper)
         return self._sandboxes
-
-    @property
-    def snapshots(self):
-        if self._snapshots is None:
-            from .snapshots.client import AsyncSnapshotsClient  # noqa: E402
-
-            self._snapshots = AsyncSnapshotsClient(client_wrapper=self._client_wrapper)
-        return self._snapshots
 
     @property
     def credits(self):
@@ -255,3 +447,27 @@ class AsyncBaseIslo:
 
             self._cloud_roles = AsyncCloudRolesClient(client_wrapper=self._client_wrapper)
         return self._cloud_roles
+
+    @property
+    def sessions(self):
+        if self._sessions is None:
+            from .sessions.client import AsyncSessionsClient  # noqa: E402
+
+            self._sessions = AsyncSessionsClient(client_wrapper=self._client_wrapper)
+        return self._sessions
+
+    @property
+    def shares(self):
+        if self._shares is None:
+            from .shares.client import AsyncSharesClient  # noqa: E402
+
+            self._shares = AsyncSharesClient(client_wrapper=self._client_wrapper)
+        return self._shares
+
+    @property
+    def snapshots(self):
+        if self._snapshots is None:
+            from .snapshots.client import AsyncSnapshotsClient  # noqa: E402
+
+            self._snapshots = AsyncSnapshotsClient(client_wrapper=self._client_wrapper)
+        return self._snapshots

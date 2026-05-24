@@ -56,6 +56,7 @@ class RawIntegrationsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "integrations/providers",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -104,6 +105,7 @@ class RawIntegrationsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "integrations",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -172,6 +174,7 @@ class RawIntegrationsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "integrations/custom-services",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -241,6 +244,7 @@ class RawIntegrationsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "integrations/custom-services",
+            base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
                 "custom": convert_and_respect_annotation_metadata(
@@ -342,6 +346,7 @@ class RawIntegrationsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"integrations/custom/{jsonable_encoder(descope_app_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             params={
                 "scope": scope,
@@ -434,6 +439,7 @@ class RawIntegrationsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"integrations/{jsonable_encoder(provider)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -524,6 +530,7 @@ class RawIntegrationsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"integrations/{jsonable_encoder(provider)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             params={
                 "level": level,
@@ -621,6 +628,7 @@ class AsyncRawIntegrationsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "integrations/providers",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -669,6 +677,7 @@ class AsyncRawIntegrationsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "integrations",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -737,6 +746,7 @@ class AsyncRawIntegrationsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "integrations/custom-services",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -806,6 +816,7 @@ class AsyncRawIntegrationsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "integrations/custom-services",
+            base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
                 "custom": convert_and_respect_annotation_metadata(
@@ -907,6 +918,7 @@ class AsyncRawIntegrationsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"integrations/custom/{jsonable_encoder(descope_app_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             params={
                 "scope": scope,
@@ -999,6 +1011,7 @@ class AsyncRawIntegrationsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"integrations/{jsonable_encoder(provider)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -1089,6 +1102,7 @@ class AsyncRawIntegrationsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"integrations/{jsonable_encoder(provider)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             params={
                 "level": level,

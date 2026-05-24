@@ -51,8 +51,7 @@ class GatewayProfilesClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.gateway_profiles.list_gateway_profiles()
         """
@@ -99,8 +98,7 @@ class GatewayProfilesClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.gateway_profiles.create_gateway_profile(
             name="name",
@@ -138,8 +136,7 @@ class GatewayProfilesClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.gateway_profiles.get_gateway_profile(
             profile_id="profile_id",
@@ -168,8 +165,7 @@ class GatewayProfilesClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.gateway_profiles.delete_gateway_profile(
             profile_id="profile_id",
@@ -221,8 +217,7 @@ class GatewayProfilesClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.gateway_profiles.update_gateway_profile(
             profile_id="profile_id",
@@ -291,8 +286,7 @@ class GatewayProfilesClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.gateway_profiles.create_gateway_rule(
             profile_id="profile_id",
@@ -336,8 +330,7 @@ class GatewayProfilesClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.gateway_profiles.delete_gateway_rule(
             profile_id="profile_id",
@@ -401,8 +394,7 @@ class GatewayProfilesClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.gateway_profiles.update_gateway_rule(
             profile_id="profile_id",
@@ -452,8 +444,7 @@ class GatewayProfilesClient:
         from islo import Islo, RuleReorderItem
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.gateway_profiles.reorder_gateway_rules(
             profile_id="profile_id",
@@ -505,8 +496,7 @@ class AsyncGatewayProfilesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -561,8 +551,7 @@ class AsyncGatewayProfilesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -608,8 +597,7 @@ class AsyncGatewayProfilesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -646,8 +634,7 @@ class AsyncGatewayProfilesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -707,8 +694,7 @@ class AsyncGatewayProfilesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -785,8 +771,7 @@ class AsyncGatewayProfilesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -838,8 +823,7 @@ class AsyncGatewayProfilesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -911,8 +895,7 @@ class AsyncGatewayProfilesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -970,8 +953,7 @@ class AsyncGatewayProfilesClient:
         from islo import AsyncIslo, RuleReorderItem
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 

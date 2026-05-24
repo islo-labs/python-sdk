@@ -15,8 +15,10 @@ The Islo Python library provides convenient access to the Islo APIs from Python.
 - [Development](#development)
 - [Reference](#reference)
 - [Usage](#usage)
+- [Environments](#environments)
 - [Async Client](#async-client)
 - [Exception Handling](#exception-handling)
+- [Oauth Token Override](#oauth-token-override)
 - [Advanced](#advanced)
   - [Access Raw Response Data](#access-raw-response-data)
   - [Retries](#retries)
@@ -141,11 +143,26 @@ Instantiate and use the client with the following:
 from islo import Islo
 
 client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    client_id="<clientId>",
+    client_secret="<clientSecret>",
 )
 
-client.sandboxes.create_sandbox()
+client.auth.exchange_access_key(
+    access_key="access_key",
+)
+```
+
+## Environments
+
+This SDK allows you to configure different environments for API requests.
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    environment=IsloEnvironment.PRODUCTION,
+)
 ```
 
 ## Async Client
@@ -158,13 +175,15 @@ import asyncio
 from islo import AsyncIslo
 
 client = AsyncIslo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    client_id="<clientId>",
+    client_secret="<clientSecret>",
 )
 
 
 async def main() -> None:
-    await client.sandboxes.create_sandbox()
+    await client.auth.exchange_access_key(
+        access_key="access_key",
+    )
 
 
 asyncio.run(main())
@@ -179,10 +198,31 @@ will be thrown.
 from islo.core.api_error import ApiError
 
 try:
-    client.sandboxes.create_sandbox(...)
+    client.auth.exchange_access_key(...)
 except ApiError as e:
     print(e.status_code)
     print(e.body)
+```
+
+## Oauth Token Override
+
+This SDK supports two authentication methods: OAuth client credentials flow (automatic token management) or direct bearer token authentication. You can choose between these options when initializing the client:
+
+```python
+from islo import Islo
+
+# Option 1: Direct bearer token (bypass OAuth flow)
+client = Islo(
+    ...,
+    token="my-pre-generated-bearer-token",
+)
+
+# Option 2: OAuth client credentials flow (automatic token management)
+client = Islo(
+    ...,
+    client_id="your-client-id",
+    client_secret="your-client-secret",
+)
 ```
 
 ## Advanced
@@ -196,7 +236,7 @@ The `.with_raw_response` property returns a "raw" client that can be used to acc
 from islo import Islo
 
 client = Islo(...)
-response = client.sandboxes.with_raw_response.create_sandbox(...)
+response = client.auth.with_raw_response.exchange_access_key(...)
 print(response.headers)  # access the response headers
 print(response.status_code)  # access the response status code
 print(response.data)  # access the underlying object
@@ -217,7 +257,7 @@ A request is deemed retryable when any of the following HTTP status codes is ret
 Use the `max_retries` request option to configure this behavior.
 
 ```python
-client.sandboxes.create_sandbox(..., request_options={
+client.auth.exchange_access_key(..., request_options={
     "max_retries": 1
 })
 ```
@@ -232,7 +272,7 @@ from islo import Islo
 client = Islo(..., timeout=20.0)
 
 # Override timeout for a specific method
-client.sandboxes.create_sandbox(..., request_options={
+client.auth.exchange_access_key(..., request_options={
     "timeout_in_seconds": 1
 })
 ```

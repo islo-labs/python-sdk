@@ -8,12 +8,14 @@ from ..core.request_options import RequestOptions
 from ..types.agent_session_event_response import AgentSessionEventResponse
 from ..types.agent_session_response import AgentSessionResponse
 from ..types.exec_logs_response import ExecLogsResponse
-from ..types.exec_response import ExecResponse
-from ..types.exec_result_response import ExecResultResponse
 from ..types.exec_session_response import ExecSessionResponse
+from ..types.file_upload_status_response import FileUploadStatusResponse
 from ..types.git_source import GitSource
+from ..types.init_capability import InitCapability
 from ..types.paginated_sandbox_response import PaginatedSandboxResponse
+from ..types.promote_cache_response import PromoteCacheResponse
 from ..types.sandbox_response import SandboxResponse
+from ..types.save_snapshot_response import SaveSnapshotResponse
 from ..types.setup_script import SetupScript
 from .raw_client import AsyncRawSandboxesClient, RawSandboxesClient
 
@@ -35,510 +37,6 @@ class SandboxesClient:
         RawSandboxesClient
         """
         return self._raw_client
-
-    def list_sandboxes(
-        self,
-        *,
-        search: typing.Optional[str] = None,
-        status: typing.Optional[typing.Sequence[str]] = None,
-        date_from: typing.Optional[dt.datetime] = None,
-        date_to: typing.Optional[dt.datetime] = None,
-        created_by: typing.Optional[str] = None,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> PaginatedSandboxResponse:
-        """
-        List and filter sandboxes for the authenticated tenant.
-
-        Parameters
-        ----------
-        search : typing.Optional[str]
-            Search by sandbox name (case-insensitive)
-
-        status : typing.Optional[typing.Sequence[str]]
-            Filter by status (e.g., ?status=running&status=unknown&status=deleted)
-
-        date_from : typing.Optional[dt.datetime]
-            Filter sandboxes created on or after this date
-
-        date_to : typing.Optional[dt.datetime]
-            Filter sandboxes created on or before this date
-
-        created_by : typing.Optional[str]
-            Filter by creator. Use 'me' for your own sandboxes.
-
-        limit : typing.Optional[int]
-            Max items per page
-
-        offset : typing.Optional[int]
-            Number of items to skip
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        PaginatedSandboxResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.list_sandboxes()
-        """
-        _response = self._raw_client.list_sandboxes(
-            search=search,
-            status=status,
-            date_from=date_from,
-            date_to=date_to,
-            created_by=created_by,
-            limit=limit,
-            offset=offset,
-            request_options=request_options,
-        )
-        return _response.data
-
-    def create_sandbox(
-        self,
-        *,
-        name: typing.Optional[str] = OMIT,
-        image: typing.Optional[str] = OMIT,
-        vcpus: typing.Optional[int] = OMIT,
-        memory_mb: typing.Optional[int] = OMIT,
-        disk_gb: typing.Optional[int] = OMIT,
-        cache_key: typing.Optional[str] = OMIT,
-        env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
-        workdir: typing.Optional[str] = OMIT,
-        init_capabilities: typing.Optional[typing.Sequence[str]] = OMIT,
-        gateway_profile: typing.Optional[str] = OMIT,
-        snapshot_name: typing.Optional[str] = OMIT,
-        sources: typing.Optional[typing.Sequence[GitSource]] = OMIT,
-        setup_scripts: typing.Optional[typing.Sequence[SetupScript]] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> SandboxResponse:
-        """
-        Create a new sandbox with the specified configuration.
-
-        Parameters
-        ----------
-        name : typing.Optional[str]
-            User-friendly sandbox name. If omitted, a random slug is generated.
-
-        image : typing.Optional[str]
-            Container image to use
-
-        vcpus : typing.Optional[int]
-            Number of vCPUs
-
-        memory_mb : typing.Optional[int]
-            Memory in MB
-
-        disk_gb : typing.Optional[int]
-            Disk size in GB
-
-        cache_key : typing.Optional[str]
-            Tool cache key for golden cache lookup (computed by CLI)
-
-        env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
-            Environment variables to inject into the sandbox
-
-        workdir : typing.Optional[str]
-            Working directory relative to /workspace (e.g. 'my-project')
-
-        init_capabilities : typing.Optional[typing.Sequence[str]]
-            Init capabilities to enable (in addition to Core which always runs). None = all capabilities (default, backward compatible), [] = Core only (minimal init), ['ssh', 'devtools'] = Core + specified capabilities. Valid values: ssh, terminal, devtools, docker.
-
-        gateway_profile : typing.Optional[str]
-            Gateway profile name or ID to apply. Uses tenant default if omitted.
-
-        snapshot_name : typing.Optional[str]
-            Name of a snapshot to restore from. When set, the VM is created from the snapshot's filesystem.
-
-        sources : typing.Optional[typing.Sequence[GitSource]]
-            Repository sources to clone into /workspace after VM init.
-
-        setup_scripts : typing.Optional[typing.Sequence[SetupScript]]
-            Named setup script steps to execute sequentially after git clones.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        SandboxResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.create_sandbox()
-        """
-        _response = self._raw_client.create_sandbox(
-            name=name,
-            image=image,
-            vcpus=vcpus,
-            memory_mb=memory_mb,
-            disk_gb=disk_gb,
-            cache_key=cache_key,
-            env=env,
-            workdir=workdir,
-            init_capabilities=init_capabilities,
-            gateway_profile=gateway_profile,
-            snapshot_name=snapshot_name,
-            sources=sources,
-            setup_scripts=setup_scripts,
-            request_options=request_options,
-        )
-        return _response.data
-
-    def get_sandbox_by_id_sandboxes_by_id_sandbox_id_get(
-        self, sandbox_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> SandboxResponse:
-        """
-        Get details of a specific sandbox by stable public ID, including deleted sandboxes.
-
-        Parameters
-        ----------
-        sandbox_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        SandboxResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.get_sandbox_by_id_sandboxes_by_id_sandbox_id_get(
-            sandbox_id="sandbox_id",
-        )
-        """
-        _response = self._raw_client.get_sandbox_by_id_sandboxes_by_id_sandbox_id_get(
-            sandbox_id, request_options=request_options
-        )
-        return _response.data
-
-    def get_sandbox(
-        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> SandboxResponse:
-        """
-        Get details of a specific sandbox by name.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        SandboxResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.get_sandbox(
-            sandbox_name="sandbox_name",
-        )
-        """
-        _response = self._raw_client.get_sandbox(sandbox_name, request_options=request_options)
-        return _response.data
-
-    def delete_sandbox(
-        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
-        """
-        Mark a sandbox for deletion. VM teardown happens asynchronously.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.delete_sandbox(
-            sandbox_name="sandbox_name",
-        )
-        """
-        _response = self._raw_client.delete_sandbox(sandbox_name, request_options=request_options)
-        return _response.data
-
-    def stop_sandbox(self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None) -> typing.Any:
-        """
-        Stop a sandbox. VM teardown happens asynchronously; the record stays visible.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.stop_sandbox(
-            sandbox_name="sandbox_name",
-        )
-        """
-        _response = self._raw_client.stop_sandbox(sandbox_name, request_options=request_options)
-        return _response.data
-
-    def pause_sandbox(
-        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> SandboxResponse:
-        """
-        Snapshot the sandbox VM state to disk and free CPU/memory. The sandbox can be resumed later.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        SandboxResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.pause_sandbox(
-            sandbox_name="sandbox_name",
-        )
-        """
-        _response = self._raw_client.pause_sandbox(sandbox_name, request_options=request_options)
-        return _response.data
-
-    def resume_sandbox(
-        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> SandboxResponse:
-        """
-        Resume a paused sandbox from its local snapshot.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        SandboxResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.resume_sandbox(
-            sandbox_name="sandbox_name",
-        )
-        """
-        _response = self._raw_client.resume_sandbox(sandbox_name, request_options=request_options)
-        return _response.data
-
-    def promote_sandbox_cache(
-        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> None:
-        """
-        Promote the sandbox's tool cache to golden cache for reuse.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        None
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.promote_sandbox_cache(
-            sandbox_name="sandbox_name",
-        )
-        """
-        _response = self._raw_client.promote_sandbox_cache(sandbox_name, request_options=request_options)
-        return _response.data
-
-    def list_sessions(
-        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
-        """
-        List active persistent sessions in a sandbox.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.list_sessions(
-            sandbox_name="sandbox_name",
-        )
-        """
-        _response = self._raw_client.list_sessions(sandbox_name, request_options=request_options)
-        return _response.data
-
-    def create_session(
-        self,
-        sandbox_name: str,
-        *,
-        request: typing.Dict[str, typing.Any],
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.Any:
-        """
-        Create a persistent session in a sandbox.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        request : typing.Dict[str, typing.Any]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.create_session(
-            sandbox_name="sandbox_name",
-            request={"key": "value"},
-        )
-        """
-        _response = self._raw_client.create_session(sandbox_name, request=request, request_options=request_options)
-        return _response.data
-
-    def kill_session(
-        self, sandbox_name: str, session_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> None:
-        """
-        Kill a persistent session in a sandbox.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        session_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        None
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.kill_session(
-            sandbox_name="sandbox_name",
-            session_name="session_name",
-        )
-        """
-        _response = self._raw_client.kill_session(sandbox_name, session_name, request_options=request_options)
-        return _response.data
 
     def list_exec_sessions(
         self,
@@ -570,8 +68,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.sandboxes.list_exec_sessions(
             sandbox_id="sandbox_id",
@@ -613,8 +110,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.sandboxes.get_exec_session_asciinema(
             sandbox_id="sandbox_id",
@@ -663,8 +159,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.sandboxes.get_exec_session_logs(
             sandbox_id="sandbox_id",
@@ -710,8 +205,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.sandboxes.list_agent_sessions(
             sandbox_id="sandbox_id",
@@ -771,8 +265,7 @@ class SandboxesClient:
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
         client.sandboxes.get_agent_session_events(
             sandbox_id="sandbox_id",
@@ -791,318 +284,699 @@ class SandboxesClient:
         )
         return _response.data
 
-    def download_file(
-        self, sandbox_name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
-        """
-        Download a single file from a sandbox.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        path : str
-            Absolute source path in the sandbox
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.download_file(
-            sandbox_name="sandbox_name",
-            path="path",
-        )
-        """
-        _response = self._raw_client.download_file(sandbox_name, path=path, request_options=request_options)
-        return _response.data
-
-    def upload_file(
-        self, sandbox_name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
-        """
-        Upload a single file into a sandbox.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        path : str
-            Absolute target path in the sandbox
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.upload_file(
-            sandbox_name="sandbox_name",
-            path="path",
-        )
-        """
-        _response = self._raw_client.upload_file(sandbox_name, path=path, request_options=request_options)
-        return _response.data
-
-    def download_archive(
-        self, sandbox_name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
-        """
-        Download a directory from a sandbox as a tar.gz archive.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        path : str
-            Absolute source directory in the sandbox
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.download_archive(
-            sandbox_name="sandbox_name",
-            path="path",
-        )
-        """
-        _response = self._raw_client.download_archive(sandbox_name, path=path, request_options=request_options)
-        return _response.data
-
-    def upload_archive(
-        self, sandbox_name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
-        """
-        Upload a tar.gz archive and extract it into a sandbox directory.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        path : str
-            Absolute target directory in the sandbox
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.upload_archive(
-            sandbox_name="sandbox_name",
-            path="path",
-        )
-        """
-        _response = self._raw_client.upload_archive(sandbox_name, path=path, request_options=request_options)
-        return _response.data
-
-    def exec_in_sandbox(
+    def list_sandboxes(
         self,
-        sandbox_name: str,
         *,
-        command: typing.Sequence[str],
-        workdir: typing.Optional[str] = OMIT,
-        env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
-        timeout_secs: typing.Optional[int] = OMIT,
-        user: typing.Optional[str] = OMIT,
+        status: typing.Optional[str] = None,
+        name_prefix: typing.Optional[str] = None,
+        created_by: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ExecResponse:
+    ) -> PaginatedSandboxResponse:
         """
-        Execute a command inside a sandbox by name.
-
         Parameters
         ----------
-        sandbox_name : str
+        status : typing.Optional[str]
 
-        command : typing.Sequence[str]
-            Command to execute
+        name_prefix : typing.Optional[str]
 
-        workdir : typing.Optional[str]
-            Working directory for command execution inside the sandbox
+        created_by : typing.Optional[str]
 
-        env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
-            Environment variables to inject into this execution session
+        limit : typing.Optional[int]
 
-        timeout_secs : typing.Optional[int]
-            Optional client-side timeout hint. Currently accepted for API compatibility.
-
-        user : typing.Optional[str]
-            User to run the command as (e.g., 'islo'). If not provided, uses image default.
+        offset : typing.Optional[int]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        ExecResponse
-            Successful Response
+        PaginatedSandboxResponse
+            Paginated sandbox list
 
         Examples
         --------
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
-        client.sandboxes.exec_in_sandbox(
-            sandbox_name="sandbox_name",
-            command=["command"],
-        )
+        client.sandboxes.list_sandboxes()
         """
-        _response = self._raw_client.exec_in_sandbox(
-            sandbox_name,
-            command=command,
-            workdir=workdir,
-            env=env,
-            timeout_secs=timeout_secs,
-            user=user,
+        _response = self._raw_client.list_sandboxes(
+            status=status,
+            name_prefix=name_prefix,
+            created_by=created_by,
+            limit=limit,
+            offset=offset,
             request_options=request_options,
         )
         return _response.data
 
-    def get_exec_result(
-        self, sandbox_name: str, exec_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> ExecResultResponse:
-        """
-        Poll the result of a previously started exec command.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        exec_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        ExecResultResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.sandboxes.get_exec_result(
-            sandbox_name="sandbox_name",
-            exec_id="exec_id",
-        )
-        """
-        _response = self._raw_client.get_exec_result(sandbox_name, exec_id, request_options=request_options)
-        return _response.data
-
-    def exec_in_sandbox_stream(
+    def create_sandbox(
         self,
-        sandbox_name: str,
         *,
-        command: typing.Sequence[str],
-        workdir: typing.Optional[str] = OMIT,
+        cache_key: typing.Optional[str] = OMIT,
+        disk_gb: typing.Optional[int] = OMIT,
         env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
-        timeout_secs: typing.Optional[int] = OMIT,
-        user: typing.Optional[str] = OMIT,
+        gateway_profile: typing.Optional[str] = OMIT,
+        image: typing.Optional[str] = OMIT,
+        init_capabilities: typing.Optional[typing.Sequence[InitCapability]] = OMIT,
+        memory_mb: typing.Optional[int] = OMIT,
+        name: typing.Optional[str] = OMIT,
+        setup_scripts: typing.Optional[typing.Sequence[SetupScript]] = OMIT,
+        snapshot_name: typing.Optional[str] = OMIT,
+        snapshot_url: typing.Optional[str] = OMIT,
+        sources: typing.Optional[typing.Sequence[GitSource]] = OMIT,
+        vcpus: typing.Optional[int] = OMIT,
+        workdir: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.Any:
+    ) -> SandboxResponse:
         """
-        Execute a command inside a sandbox and stream stdout/stderr as SSE.
-
         Parameters
         ----------
-        sandbox_name : str
+        cache_key : typing.Optional[str]
 
-        command : typing.Sequence[str]
-            Command to execute
-
-        workdir : typing.Optional[str]
-            Working directory for command execution inside the sandbox
+        disk_gb : typing.Optional[int]
 
         env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
-            Environment variables to inject into this execution session
 
-        timeout_secs : typing.Optional[int]
-            Optional client-side timeout hint. Currently accepted for API compatibility.
+        gateway_profile : typing.Optional[str]
 
-        user : typing.Optional[str]
-            User to run the command as (e.g., 'islo'). If not provided, uses image default.
+        image : typing.Optional[str]
+
+        init_capabilities : typing.Optional[typing.Sequence[InitCapability]]
+
+        memory_mb : typing.Optional[int]
+
+        name : typing.Optional[str]
+
+        setup_scripts : typing.Optional[typing.Sequence[SetupScript]]
+
+        snapshot_name : typing.Optional[str]
+
+        snapshot_url : typing.Optional[str]
+
+        sources : typing.Optional[typing.Sequence[GitSource]]
+
+        vcpus : typing.Optional[int]
+
+        workdir : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.Any
-            Successful Response
+        SandboxResponse
+            Sandbox created
 
         Examples
         --------
         from islo import Islo
 
         client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
-        client.sandboxes.exec_in_sandbox_stream(
-            sandbox_name="sandbox_name",
-            command=["command"],
-        )
+        client.sandboxes.create_sandbox()
         """
-        _response = self._raw_client.exec_in_sandbox_stream(
-            sandbox_name,
-            command=command,
-            workdir=workdir,
+        _response = self._raw_client.create_sandbox(
+            cache_key=cache_key,
+            disk_gb=disk_gb,
             env=env,
-            timeout_secs=timeout_secs,
-            user=user,
+            gateway_profile=gateway_profile,
+            image=image,
+            init_capabilities=init_capabilities,
+            memory_mb=memory_mb,
+            name=name,
+            setup_scripts=setup_scripts,
+            snapshot_name=snapshot_name,
+            snapshot_url=snapshot_url,
+            sources=sources,
+            vcpus=vcpus,
+            workdir=workdir,
             request_options=request_options,
         )
+        return _response.data
+
+    def get_sandbox(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> SandboxResponse:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SandboxResponse
+            Sandbox details
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            environment="YOUR_ENVIRONMENT",
+        )
+        client.sandboxes.get_sandbox(
+            name="name",
+        )
+        """
+        _response = self._raw_client.get_sandbox(name, request_options=request_options)
+        return _response.data
+
+    def delete_sandbox(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            environment="YOUR_ENVIRONMENT",
+        )
+        client.sandboxes.delete_sandbox(
+            name="name",
+        )
+        """
+        _response = self._raw_client.delete_sandbox(name, request_options=request_options)
+        return _response.data
+
+    def sandbox_exec_interactive(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            environment="YOUR_ENVIRONMENT",
+        )
+        client.sandboxes.sandbox_exec_interactive(
+            name="name",
+        )
+        """
+        _response = self._raw_client.sandbox_exec_interactive(name, request_options=request_options)
+        return _response.data
+
+    def sandbox_exec_stream(
+        self,
+        name: str,
+        *,
+        args: typing.Sequence[str],
+        env_vars: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
+        timeout_secs: typing.Optional[int] = OMIT,
+        user: typing.Optional[str] = OMIT,
+        workdir: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        args : typing.Sequence[str]
+            Command and arguments to execute (e.g., ["/entrypoint.sh"])
+
+        env_vars : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+            Optional environment variables to pass to the command
+
+        timeout_secs : typing.Optional[int]
+            Accepted but ignored (CLI sends this field).
+
+        user : typing.Optional[str]
+            User to run the command as (e.g., "islo"). If not specified, uses image default.
+
+        workdir : typing.Optional[str]
+            Working directory for the command. If not specified, uses the image's WorkingDir (from Dockerfile).
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            environment="YOUR_ENVIRONMENT",
+        )
+        client.sandboxes.sandbox_exec_stream(
+            name="name",
+            args=["args"],
+        )
+        """
+        _response = self._raw_client.sandbox_exec_stream(
+            name,
+            args=args,
+            env_vars=env_vars,
+            timeout_secs=timeout_secs,
+            user=user,
+            workdir=workdir,
+            request_options=request_options,
+        )
+        return _response.data
+
+    def sandbox_download_file(
+        self, name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        path : str
+            File path inside the sandbox
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            environment="YOUR_ENVIRONMENT",
+        )
+        client.sandboxes.sandbox_download_file(
+            name="name",
+            path="path",
+        )
+        """
+        _response = self._raw_client.sandbox_download_file(name, path=path, request_options=request_options)
+        return _response.data
+
+    def sandbox_upload_file(
+        self, name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> FileUploadStatusResponse:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        path : str
+            Destination path inside the sandbox
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        FileUploadStatusResponse
+            File uploaded
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            environment="YOUR_ENVIRONMENT",
+        )
+        client.sandboxes.sandbox_upload_file(
+            name="name",
+            path="path",
+        )
+        """
+        _response = self._raw_client.sandbox_upload_file(name, path=path, request_options=request_options)
+        return _response.data
+
+    def sandbox_download_archive(
+        self, name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        path : str
+            Directory path to archive inside the sandbox
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            environment="YOUR_ENVIRONMENT",
+        )
+        client.sandboxes.sandbox_download_archive(
+            name="name",
+            path="path",
+        )
+        """
+        _response = self._raw_client.sandbox_download_archive(name, path=path, request_options=request_options)
+        return _response.data
+
+    def sandbox_upload_archive(
+        self, name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> FileUploadStatusResponse:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        path : str
+            Destination directory inside the sandbox
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        FileUploadStatusResponse
+            Archive uploaded and extracted
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            environment="YOUR_ENVIRONMENT",
+        )
+        client.sandboxes.sandbox_upload_archive(
+            name="name",
+            path="path",
+        )
+        """
+        _response = self._raw_client.sandbox_upload_archive(name, path=path, request_options=request_options)
+        return _response.data
+
+    def sandbox_pause(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> SandboxResponse:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SandboxResponse
+            Sandbox paused
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            environment="YOUR_ENVIRONMENT",
+        )
+        client.sandboxes.sandbox_pause(
+            name="name",
+        )
+        """
+        _response = self._raw_client.sandbox_pause(name, request_options=request_options)
+        return _response.data
+
+    def sandbox_port_forward(
+        self, name: str, *, port: int, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        port : int
+            Target port inside the sandbox VM
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            environment="YOUR_ENVIRONMENT",
+        )
+        client.sandboxes.sandbox_port_forward(
+            name="name",
+            port=1,
+        )
+        """
+        _response = self._raw_client.sandbox_port_forward(name, port=port, request_options=request_options)
+        return _response.data
+
+    def sandbox_promote_cache(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> PromoteCacheResponse:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        PromoteCacheResponse
+            Cache promoted
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            environment="YOUR_ENVIRONMENT",
+        )
+        client.sandboxes.sandbox_promote_cache(
+            name="name",
+        )
+        """
+        _response = self._raw_client.sandbox_promote_cache(name, request_options=request_options)
+        return _response.data
+
+    def sandbox_proxy_root(
+        self, name: str, port: int, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        port : int
+            Target port inside the sandbox VM
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            environment="YOUR_ENVIRONMENT",
+        )
+        client.sandboxes.sandbox_proxy_root(
+            name="name",
+            port=1,
+        )
+        """
+        _response = self._raw_client.sandbox_proxy_root(name, port, request_options=request_options)
+        return _response.data
+
+    def sandbox_proxy(
+        self, name: str, port: int, path: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        port : int
+            Target port inside the sandbox VM
+
+        path : str
+            Path suffix forwarded to the VM
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            environment="YOUR_ENVIRONMENT",
+        )
+        client.sandboxes.sandbox_proxy(
+            name="name",
+            port=1,
+            path="path",
+        )
+        """
+        _response = self._raw_client.sandbox_proxy(name, port, path, request_options=request_options)
+        return _response.data
+
+    def sandbox_resume(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> SandboxResponse:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SandboxResponse
+            Sandbox resumed
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            environment="YOUR_ENVIRONMENT",
+        )
+        client.sandboxes.sandbox_resume(
+            name="name",
+        )
+        """
+        _response = self._raw_client.sandbox_resume(name, request_options=request_options)
+        return _response.data
+
+    def sandbox_save_snapshot(
+        self, name: str, *, presigned_url: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> SaveSnapshotResponse:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        presigned_url : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SaveSnapshotResponse
+            Snapshot saved
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            environment="YOUR_ENVIRONMENT",
+        )
+        client.sandboxes.sandbox_save_snapshot(
+            name="name",
+            presigned_url="presigned_url",
+        )
+        """
+        _response = self._raw_client.sandbox_save_snapshot(
+            name, presigned_url=presigned_url, request_options=request_options
+        )
+        return _response.data
+
+    def sandbox_ws_proxy(
+        self,
+        name: str,
+        port: int,
+        path: typing.Optional[str],
+        *,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        port : int
+            Target port inside the sandbox VM
+
+        path : typing.Optional[str]
+            Optional path suffix forwarded to the VM
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            environment="YOUR_ENVIRONMENT",
+        )
+        client.sandboxes.sandbox_ws_proxy(
+            name="name",
+            port=1,
+            path="path",
+        )
+        """
+        _response = self._raw_client.sandbox_ws_proxy(name, port, path, request_options=request_options)
         return _response.data
 
 
@@ -1120,610 +994,6 @@ class AsyncSandboxesClient:
         AsyncRawSandboxesClient
         """
         return self._raw_client
-
-    async def list_sandboxes(
-        self,
-        *,
-        search: typing.Optional[str] = None,
-        status: typing.Optional[typing.Sequence[str]] = None,
-        date_from: typing.Optional[dt.datetime] = None,
-        date_to: typing.Optional[dt.datetime] = None,
-        created_by: typing.Optional[str] = None,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> PaginatedSandboxResponse:
-        """
-        List and filter sandboxes for the authenticated tenant.
-
-        Parameters
-        ----------
-        search : typing.Optional[str]
-            Search by sandbox name (case-insensitive)
-
-        status : typing.Optional[typing.Sequence[str]]
-            Filter by status (e.g., ?status=running&status=unknown&status=deleted)
-
-        date_from : typing.Optional[dt.datetime]
-            Filter sandboxes created on or after this date
-
-        date_to : typing.Optional[dt.datetime]
-            Filter sandboxes created on or before this date
-
-        created_by : typing.Optional[str]
-            Filter by creator. Use 'me' for your own sandboxes.
-
-        limit : typing.Optional[int]
-            Max items per page
-
-        offset : typing.Optional[int]
-            Number of items to skip
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        PaginatedSandboxResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.list_sandboxes()
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.list_sandboxes(
-            search=search,
-            status=status,
-            date_from=date_from,
-            date_to=date_to,
-            created_by=created_by,
-            limit=limit,
-            offset=offset,
-            request_options=request_options,
-        )
-        return _response.data
-
-    async def create_sandbox(
-        self,
-        *,
-        name: typing.Optional[str] = OMIT,
-        image: typing.Optional[str] = OMIT,
-        vcpus: typing.Optional[int] = OMIT,
-        memory_mb: typing.Optional[int] = OMIT,
-        disk_gb: typing.Optional[int] = OMIT,
-        cache_key: typing.Optional[str] = OMIT,
-        env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
-        workdir: typing.Optional[str] = OMIT,
-        init_capabilities: typing.Optional[typing.Sequence[str]] = OMIT,
-        gateway_profile: typing.Optional[str] = OMIT,
-        snapshot_name: typing.Optional[str] = OMIT,
-        sources: typing.Optional[typing.Sequence[GitSource]] = OMIT,
-        setup_scripts: typing.Optional[typing.Sequence[SetupScript]] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> SandboxResponse:
-        """
-        Create a new sandbox with the specified configuration.
-
-        Parameters
-        ----------
-        name : typing.Optional[str]
-            User-friendly sandbox name. If omitted, a random slug is generated.
-
-        image : typing.Optional[str]
-            Container image to use
-
-        vcpus : typing.Optional[int]
-            Number of vCPUs
-
-        memory_mb : typing.Optional[int]
-            Memory in MB
-
-        disk_gb : typing.Optional[int]
-            Disk size in GB
-
-        cache_key : typing.Optional[str]
-            Tool cache key for golden cache lookup (computed by CLI)
-
-        env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
-            Environment variables to inject into the sandbox
-
-        workdir : typing.Optional[str]
-            Working directory relative to /workspace (e.g. 'my-project')
-
-        init_capabilities : typing.Optional[typing.Sequence[str]]
-            Init capabilities to enable (in addition to Core which always runs). None = all capabilities (default, backward compatible), [] = Core only (minimal init), ['ssh', 'devtools'] = Core + specified capabilities. Valid values: ssh, terminal, devtools, docker.
-
-        gateway_profile : typing.Optional[str]
-            Gateway profile name or ID to apply. Uses tenant default if omitted.
-
-        snapshot_name : typing.Optional[str]
-            Name of a snapshot to restore from. When set, the VM is created from the snapshot's filesystem.
-
-        sources : typing.Optional[typing.Sequence[GitSource]]
-            Repository sources to clone into /workspace after VM init.
-
-        setup_scripts : typing.Optional[typing.Sequence[SetupScript]]
-            Named setup script steps to execute sequentially after git clones.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        SandboxResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.create_sandbox()
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.create_sandbox(
-            name=name,
-            image=image,
-            vcpus=vcpus,
-            memory_mb=memory_mb,
-            disk_gb=disk_gb,
-            cache_key=cache_key,
-            env=env,
-            workdir=workdir,
-            init_capabilities=init_capabilities,
-            gateway_profile=gateway_profile,
-            snapshot_name=snapshot_name,
-            sources=sources,
-            setup_scripts=setup_scripts,
-            request_options=request_options,
-        )
-        return _response.data
-
-    async def get_sandbox_by_id_sandboxes_by_id_sandbox_id_get(
-        self, sandbox_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> SandboxResponse:
-        """
-        Get details of a specific sandbox by stable public ID, including deleted sandboxes.
-
-        Parameters
-        ----------
-        sandbox_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        SandboxResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.get_sandbox_by_id_sandboxes_by_id_sandbox_id_get(
-                sandbox_id="sandbox_id",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.get_sandbox_by_id_sandboxes_by_id_sandbox_id_get(
-            sandbox_id, request_options=request_options
-        )
-        return _response.data
-
-    async def get_sandbox(
-        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> SandboxResponse:
-        """
-        Get details of a specific sandbox by name.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        SandboxResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.get_sandbox(
-                sandbox_name="sandbox_name",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.get_sandbox(sandbox_name, request_options=request_options)
-        return _response.data
-
-    async def delete_sandbox(
-        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
-        """
-        Mark a sandbox for deletion. VM teardown happens asynchronously.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.delete_sandbox(
-                sandbox_name="sandbox_name",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.delete_sandbox(sandbox_name, request_options=request_options)
-        return _response.data
-
-    async def stop_sandbox(
-        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
-        """
-        Stop a sandbox. VM teardown happens asynchronously; the record stays visible.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.stop_sandbox(
-                sandbox_name="sandbox_name",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.stop_sandbox(sandbox_name, request_options=request_options)
-        return _response.data
-
-    async def pause_sandbox(
-        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> SandboxResponse:
-        """
-        Snapshot the sandbox VM state to disk and free CPU/memory. The sandbox can be resumed later.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        SandboxResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.pause_sandbox(
-                sandbox_name="sandbox_name",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.pause_sandbox(sandbox_name, request_options=request_options)
-        return _response.data
-
-    async def resume_sandbox(
-        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> SandboxResponse:
-        """
-        Resume a paused sandbox from its local snapshot.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        SandboxResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.resume_sandbox(
-                sandbox_name="sandbox_name",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.resume_sandbox(sandbox_name, request_options=request_options)
-        return _response.data
-
-    async def promote_sandbox_cache(
-        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> None:
-        """
-        Promote the sandbox's tool cache to golden cache for reuse.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        None
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.promote_sandbox_cache(
-                sandbox_name="sandbox_name",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.promote_sandbox_cache(sandbox_name, request_options=request_options)
-        return _response.data
-
-    async def list_sessions(
-        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
-        """
-        List active persistent sessions in a sandbox.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.list_sessions(
-                sandbox_name="sandbox_name",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.list_sessions(sandbox_name, request_options=request_options)
-        return _response.data
-
-    async def create_session(
-        self,
-        sandbox_name: str,
-        *,
-        request: typing.Dict[str, typing.Any],
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.Any:
-        """
-        Create a persistent session in a sandbox.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        request : typing.Dict[str, typing.Any]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.create_session(
-                sandbox_name="sandbox_name",
-                request={"key": "value"},
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.create_session(
-            sandbox_name, request=request, request_options=request_options
-        )
-        return _response.data
-
-    async def kill_session(
-        self, sandbox_name: str, session_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> None:
-        """
-        Kill a persistent session in a sandbox.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        session_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        None
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.kill_session(
-                sandbox_name="sandbox_name",
-                session_name="session_name",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.kill_session(sandbox_name, session_name, request_options=request_options)
-        return _response.data
 
     async def list_exec_sessions(
         self,
@@ -1757,8 +1027,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -1808,8 +1077,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -1866,8 +1134,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -1921,8 +1188,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -1990,8 +1256,7 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
@@ -2016,226 +1281,36 @@ class AsyncSandboxesClient:
         )
         return _response.data
 
-    async def download_file(
-        self, sandbox_name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
-        """
-        Download a single file from a sandbox.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        path : str
-            Absolute source path in the sandbox
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.download_file(
-                sandbox_name="sandbox_name",
-                path="path",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.download_file(sandbox_name, path=path, request_options=request_options)
-        return _response.data
-
-    async def upload_file(
-        self, sandbox_name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
-        """
-        Upload a single file into a sandbox.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        path : str
-            Absolute target path in the sandbox
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.upload_file(
-                sandbox_name="sandbox_name",
-                path="path",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.upload_file(sandbox_name, path=path, request_options=request_options)
-        return _response.data
-
-    async def download_archive(
-        self, sandbox_name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
-        """
-        Download a directory from a sandbox as a tar.gz archive.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        path : str
-            Absolute source directory in the sandbox
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.download_archive(
-                sandbox_name="sandbox_name",
-                path="path",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.download_archive(sandbox_name, path=path, request_options=request_options)
-        return _response.data
-
-    async def upload_archive(
-        self, sandbox_name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
-        """
-        Upload a tar.gz archive and extract it into a sandbox directory.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        path : str
-            Absolute target directory in the sandbox
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.upload_archive(
-                sandbox_name="sandbox_name",
-                path="path",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.upload_archive(sandbox_name, path=path, request_options=request_options)
-        return _response.data
-
-    async def exec_in_sandbox(
+    async def list_sandboxes(
         self,
-        sandbox_name: str,
         *,
-        command: typing.Sequence[str],
-        workdir: typing.Optional[str] = OMIT,
-        env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
-        timeout_secs: typing.Optional[int] = OMIT,
-        user: typing.Optional[str] = OMIT,
+        status: typing.Optional[str] = None,
+        name_prefix: typing.Optional[str] = None,
+        created_by: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ExecResponse:
+    ) -> PaginatedSandboxResponse:
         """
-        Execute a command inside a sandbox by name.
-
         Parameters
         ----------
-        sandbox_name : str
+        status : typing.Optional[str]
 
-        command : typing.Sequence[str]
-            Command to execute
+        name_prefix : typing.Optional[str]
 
-        workdir : typing.Optional[str]
-            Working directory for command execution inside the sandbox
+        created_by : typing.Optional[str]
 
-        env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
-            Environment variables to inject into this execution session
+        limit : typing.Optional[int]
 
-        timeout_secs : typing.Optional[int]
-            Optional client-side timeout hint. Currently accepted for API compatibility.
-
-        user : typing.Optional[str]
-            User to run the command as (e.g., 'islo'). If not provided, uses image default.
+        offset : typing.Optional[int]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        ExecResponse
-            Successful Response
+        PaginatedSandboxResponse
+            Paginated sandbox list
 
         Examples
         --------
@@ -2244,115 +1319,83 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
         async def main() -> None:
-            await client.sandboxes.exec_in_sandbox(
-                sandbox_name="sandbox_name",
-                command=["command"],
-            )
+            await client.sandboxes.list_sandboxes()
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.exec_in_sandbox(
-            sandbox_name,
-            command=command,
-            workdir=workdir,
-            env=env,
-            timeout_secs=timeout_secs,
-            user=user,
+        _response = await self._raw_client.list_sandboxes(
+            status=status,
+            name_prefix=name_prefix,
+            created_by=created_by,
+            limit=limit,
+            offset=offset,
             request_options=request_options,
         )
         return _response.data
 
-    async def get_exec_result(
-        self, sandbox_name: str, exec_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> ExecResultResponse:
-        """
-        Poll the result of a previously started exec command.
-
-        Parameters
-        ----------
-        sandbox_name : str
-
-        exec_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        ExecResultResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.sandboxes.get_exec_result(
-                sandbox_name="sandbox_name",
-                exec_id="exec_id",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.get_exec_result(sandbox_name, exec_id, request_options=request_options)
-        return _response.data
-
-    async def exec_in_sandbox_stream(
+    async def create_sandbox(
         self,
-        sandbox_name: str,
         *,
-        command: typing.Sequence[str],
-        workdir: typing.Optional[str] = OMIT,
+        cache_key: typing.Optional[str] = OMIT,
+        disk_gb: typing.Optional[int] = OMIT,
         env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
-        timeout_secs: typing.Optional[int] = OMIT,
-        user: typing.Optional[str] = OMIT,
+        gateway_profile: typing.Optional[str] = OMIT,
+        image: typing.Optional[str] = OMIT,
+        init_capabilities: typing.Optional[typing.Sequence[InitCapability]] = OMIT,
+        memory_mb: typing.Optional[int] = OMIT,
+        name: typing.Optional[str] = OMIT,
+        setup_scripts: typing.Optional[typing.Sequence[SetupScript]] = OMIT,
+        snapshot_name: typing.Optional[str] = OMIT,
+        snapshot_url: typing.Optional[str] = OMIT,
+        sources: typing.Optional[typing.Sequence[GitSource]] = OMIT,
+        vcpus: typing.Optional[int] = OMIT,
+        workdir: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.Any:
+    ) -> SandboxResponse:
         """
-        Execute a command inside a sandbox and stream stdout/stderr as SSE.
-
         Parameters
         ----------
-        sandbox_name : str
+        cache_key : typing.Optional[str]
 
-        command : typing.Sequence[str]
-            Command to execute
-
-        workdir : typing.Optional[str]
-            Working directory for command execution inside the sandbox
+        disk_gb : typing.Optional[int]
 
         env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
-            Environment variables to inject into this execution session
 
-        timeout_secs : typing.Optional[int]
-            Optional client-side timeout hint. Currently accepted for API compatibility.
+        gateway_profile : typing.Optional[str]
 
-        user : typing.Optional[str]
-            User to run the command as (e.g., 'islo'). If not provided, uses image default.
+        image : typing.Optional[str]
+
+        init_capabilities : typing.Optional[typing.Sequence[InitCapability]]
+
+        memory_mb : typing.Optional[int]
+
+        name : typing.Optional[str]
+
+        setup_scripts : typing.Optional[typing.Sequence[SetupScript]]
+
+        snapshot_name : typing.Optional[str]
+
+        snapshot_url : typing.Optional[str]
+
+        sources : typing.Optional[typing.Sequence[GitSource]]
+
+        vcpus : typing.Optional[int]
+
+        workdir : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.Any
-            Successful Response
+        SandboxResponse
+            Sandbox created
 
         Examples
         --------
@@ -2361,27 +1404,726 @@ class AsyncSandboxesClient:
         from islo import AsyncIslo
 
         client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment="YOUR_ENVIRONMENT",
         )
 
 
         async def main() -> None:
-            await client.sandboxes.exec_in_sandbox_stream(
-                sandbox_name="sandbox_name",
-                command=["command"],
+            await client.sandboxes.create_sandbox()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.create_sandbox(
+            cache_key=cache_key,
+            disk_gb=disk_gb,
+            env=env,
+            gateway_profile=gateway_profile,
+            image=image,
+            init_capabilities=init_capabilities,
+            memory_mb=memory_mb,
+            name=name,
+            setup_scripts=setup_scripts,
+            snapshot_name=snapshot_name,
+            snapshot_url=snapshot_url,
+            sources=sources,
+            vcpus=vcpus,
+            workdir=workdir,
+            request_options=request_options,
+        )
+        return _response.data
+
+    async def get_sandbox(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> SandboxResponse:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SandboxResponse
+            Sandbox details
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            environment="YOUR_ENVIRONMENT",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.get_sandbox(
+                name="name",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.exec_in_sandbox_stream(
-            sandbox_name,
-            command=command,
-            workdir=workdir,
-            env=env,
+        _response = await self._raw_client.get_sandbox(name, request_options=request_options)
+        return _response.data
+
+    async def delete_sandbox(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            environment="YOUR_ENVIRONMENT",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.delete_sandbox(
+                name="name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.delete_sandbox(name, request_options=request_options)
+        return _response.data
+
+    async def sandbox_exec_interactive(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            environment="YOUR_ENVIRONMENT",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.sandbox_exec_interactive(
+                name="name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.sandbox_exec_interactive(name, request_options=request_options)
+        return _response.data
+
+    async def sandbox_exec_stream(
+        self,
+        name: str,
+        *,
+        args: typing.Sequence[str],
+        env_vars: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
+        timeout_secs: typing.Optional[int] = OMIT,
+        user: typing.Optional[str] = OMIT,
+        workdir: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        args : typing.Sequence[str]
+            Command and arguments to execute (e.g., ["/entrypoint.sh"])
+
+        env_vars : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+            Optional environment variables to pass to the command
+
+        timeout_secs : typing.Optional[int]
+            Accepted but ignored (CLI sends this field).
+
+        user : typing.Optional[str]
+            User to run the command as (e.g., "islo"). If not specified, uses image default.
+
+        workdir : typing.Optional[str]
+            Working directory for the command. If not specified, uses the image's WorkingDir (from Dockerfile).
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            environment="YOUR_ENVIRONMENT",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.sandbox_exec_stream(
+                name="name",
+                args=["args"],
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.sandbox_exec_stream(
+            name,
+            args=args,
+            env_vars=env_vars,
             timeout_secs=timeout_secs,
             user=user,
+            workdir=workdir,
             request_options=request_options,
         )
+        return _response.data
+
+    async def sandbox_download_file(
+        self, name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        path : str
+            File path inside the sandbox
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            environment="YOUR_ENVIRONMENT",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.sandbox_download_file(
+                name="name",
+                path="path",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.sandbox_download_file(name, path=path, request_options=request_options)
+        return _response.data
+
+    async def sandbox_upload_file(
+        self, name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> FileUploadStatusResponse:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        path : str
+            Destination path inside the sandbox
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        FileUploadStatusResponse
+            File uploaded
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            environment="YOUR_ENVIRONMENT",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.sandbox_upload_file(
+                name="name",
+                path="path",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.sandbox_upload_file(name, path=path, request_options=request_options)
+        return _response.data
+
+    async def sandbox_download_archive(
+        self, name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        path : str
+            Directory path to archive inside the sandbox
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            environment="YOUR_ENVIRONMENT",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.sandbox_download_archive(
+                name="name",
+                path="path",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.sandbox_download_archive(name, path=path, request_options=request_options)
+        return _response.data
+
+    async def sandbox_upload_archive(
+        self, name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> FileUploadStatusResponse:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        path : str
+            Destination directory inside the sandbox
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        FileUploadStatusResponse
+            Archive uploaded and extracted
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            environment="YOUR_ENVIRONMENT",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.sandbox_upload_archive(
+                name="name",
+                path="path",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.sandbox_upload_archive(name, path=path, request_options=request_options)
+        return _response.data
+
+    async def sandbox_pause(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> SandboxResponse:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SandboxResponse
+            Sandbox paused
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            environment="YOUR_ENVIRONMENT",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.sandbox_pause(
+                name="name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.sandbox_pause(name, request_options=request_options)
+        return _response.data
+
+    async def sandbox_port_forward(
+        self, name: str, *, port: int, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        port : int
+            Target port inside the sandbox VM
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            environment="YOUR_ENVIRONMENT",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.sandbox_port_forward(
+                name="name",
+                port=1,
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.sandbox_port_forward(name, port=port, request_options=request_options)
+        return _response.data
+
+    async def sandbox_promote_cache(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> PromoteCacheResponse:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        PromoteCacheResponse
+            Cache promoted
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            environment="YOUR_ENVIRONMENT",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.sandbox_promote_cache(
+                name="name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.sandbox_promote_cache(name, request_options=request_options)
+        return _response.data
+
+    async def sandbox_proxy_root(
+        self, name: str, port: int, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        port : int
+            Target port inside the sandbox VM
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            environment="YOUR_ENVIRONMENT",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.sandbox_proxy_root(
+                name="name",
+                port=1,
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.sandbox_proxy_root(name, port, request_options=request_options)
+        return _response.data
+
+    async def sandbox_proxy(
+        self, name: str, port: int, path: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        port : int
+            Target port inside the sandbox VM
+
+        path : str
+            Path suffix forwarded to the VM
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            environment="YOUR_ENVIRONMENT",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.sandbox_proxy(
+                name="name",
+                port=1,
+                path="path",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.sandbox_proxy(name, port, path, request_options=request_options)
+        return _response.data
+
+    async def sandbox_resume(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> SandboxResponse:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SandboxResponse
+            Sandbox resumed
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            environment="YOUR_ENVIRONMENT",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.sandbox_resume(
+                name="name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.sandbox_resume(name, request_options=request_options)
+        return _response.data
+
+    async def sandbox_save_snapshot(
+        self, name: str, *, presigned_url: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> SaveSnapshotResponse:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        presigned_url : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SaveSnapshotResponse
+            Snapshot saved
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            environment="YOUR_ENVIRONMENT",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.sandbox_save_snapshot(
+                name="name",
+                presigned_url="presigned_url",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.sandbox_save_snapshot(
+            name, presigned_url=presigned_url, request_options=request_options
+        )
+        return _response.data
+
+    async def sandbox_ws_proxy(
+        self,
+        name: str,
+        port: int,
+        path: typing.Optional[str],
+        *,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+            Sandbox name
+
+        port : int
+            Target port inside the sandbox VM
+
+        path : typing.Optional[str]
+            Optional path suffix forwarded to the VM
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            environment="YOUR_ENVIRONMENT",
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.sandbox_ws_proxy(
+                name="name",
+                port=1,
+                path="path",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.sandbox_ws_proxy(name, port, path, request_options=request_options)
         return _response.data
