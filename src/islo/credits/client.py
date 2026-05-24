@@ -84,14 +84,27 @@ class CreditsClient:
         return _response.data
 
     def handle_paddle_webhook(
-        self, *, paddle_signature: str, request: typing.Any, request_options: typing.Optional[RequestOptions] = None
+        self,
+        *,
+        paddle_signature: str,
+        event_id: str,
+        event_type: str,
+        data: typing.Dict[str, typing.Any],
+        occurred_at: str,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Any:
         """
         Parameters
         ----------
         paddle_signature : str
 
-        request : typing.Any
+        event_id : str
+
+        event_type : str
+
+        data : typing.Dict[str, typing.Any]
+
+        occurred_at : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -110,12 +123,20 @@ class CreditsClient:
             base_url="https://yourhost.com/path/to/api",
         )
         client.credits.handle_paddle_webhook(
-            paddle_signature="paddleSignature",
-            request={"key": "value"},
+            paddle_signature="paddle-signature",
+            event_id="event_id",
+            event_type="event_type",
+            data={"key": "value"},
+            occurred_at="occurred_at",
         )
         """
         _response = self._raw_client.handle_paddle_webhook(
-            paddle_signature=paddle_signature, request=request, request_options=request_options
+            paddle_signature=paddle_signature,
+            event_id=event_id,
+            event_type=event_type,
+            data=data,
+            occurred_at=occurred_at,
+            request_options=request_options,
         )
         return _response.data
 
@@ -210,14 +231,27 @@ class AsyncCreditsClient:
         return _response.data
 
     async def handle_paddle_webhook(
-        self, *, paddle_signature: str, request: typing.Any, request_options: typing.Optional[RequestOptions] = None
+        self,
+        *,
+        paddle_signature: str,
+        event_id: str,
+        event_type: str,
+        data: typing.Dict[str, typing.Any],
+        occurred_at: str,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Any:
         """
         Parameters
         ----------
         paddle_signature : str
 
-        request : typing.Any
+        event_id : str
+
+        event_type : str
+
+        data : typing.Dict[str, typing.Any]
+
+        occurred_at : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -241,14 +275,22 @@ class AsyncCreditsClient:
 
         async def main() -> None:
             await client.credits.handle_paddle_webhook(
-                paddle_signature="paddleSignature",
-                request={"key": "value"},
+                paddle_signature="paddle-signature",
+                event_id="event_id",
+                event_type="event_type",
+                data={"key": "value"},
+                occurred_at="occurred_at",
             )
 
 
         asyncio.run(main())
         """
         _response = await self._raw_client.handle_paddle_webhook(
-            paddle_signature=paddle_signature, request=request, request_options=request_options
+            paddle_signature=paddle_signature,
+            event_id=event_id,
+            event_type=event_type,
+            data=data,
+            occurred_at=occurred_at,
+            request_options=request_options,
         )
         return _response.data

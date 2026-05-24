@@ -6,51 +6,80 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
+from ..core.jsonable_encoder import jsonable_encoder
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
+from ..errors.not_found_error import NotFoundError
+from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
-from ..types.create_checkout_response import CreateCheckoutResponse
-from ..types.credit_balance import CreditBalance
+from ..types.error_response import ErrorResponse
+from ..types.share_response import ShareResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
 
-class RawCreditsClient:
+class RawSharesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get_credit_balance(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[CreditBalance]:
+    def list_shares(
+        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[typing.List[ShareResponse]]:
         """
+        List active shares for a sandbox.
+
         Parameters
         ----------
+        sandbox_name : str
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[CreditBalance]
+        HttpResponse[typing.List[ShareResponse]]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            "credits/balance",
+            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares",
             method="GET",
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CreditBalance,
+                    typing.List[ShareResponse],
                     parse_obj_as(
-                        type_=CreditBalance,  # type: ignore
+                        type_=typing.List[ShareResponse],  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -71,123 +100,149 @@ class RawCreditsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def create_credit_checkout(
-        self, *, amount_cents: int, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[CreateCheckoutResponse]:
-        """
-        Parameters
-        ----------
-        amount_cents : int
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[CreateCheckoutResponse]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "credits/checkout",
-            method="POST",
-            json={
-                "amount_cents": amount_cents,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CreateCheckoutResponse,
-                    parse_obj_as(
-                        type_=CreateCheckoutResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def handle_paddle_webhook(
+    def create_share(
         self,
+        sandbox_name: str,
         *,
-        paddle_signature: str,
-        event_id: str,
-        event_type: str,
-        data: typing.Dict[str, typing.Any],
-        occurred_at: str,
+        port: int,
+        ttl_seconds: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[typing.Any]:
+    ) -> HttpResponse[ShareResponse]:
         """
+        Create a shareable URL for a sandbox port.
+
         Parameters
         ----------
-        paddle_signature : str
+        sandbox_name : str
 
-        event_id : str
+        port : int
+            Port to share
 
-        event_type : str
-
-        data : typing.Dict[str, typing.Any]
-
-        occurred_at : str
+        ttl_seconds : typing.Optional[int]
+            Time-to-live in seconds (1 minute to 7 days). Defaults to 24h.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[typing.Any]
+        HttpResponse[ShareResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            "credits/paddle_webhook",
+            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares",
             method="POST",
             json={
-                "event_id": event_id,
-                "event_type": event_type,
-                "data": data,
-                "occurred_at": occurred_at,
+                "port": port,
+                "ttl_seconds": ttl_seconds,
             },
             headers={
                 "content-type": "application/json",
-                "paddle-signature": str(paddle_signature) if paddle_signature is not None else None,
             },
             request_options=request_options,
             omit=OMIT,
         )
         try:
-            if _response is None or not _response.text.strip():
-                return HttpResponse(response=_response, data=None)
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.Any,
+                    ShareResponse,
                     parse_obj_as(
-                        type_=typing.Any,  # type: ignore
+                        type_=ShareResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def revoke_share(
+        self, sandbox_name: str, share_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[None]:
+        """
+        Revoke a shareable URL.
+
+        Parameters
+        ----------
+        sandbox_name : str
+
+        share_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[None]
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares/{jsonable_encoder(share_id)}",
+            method="DELETE",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return HttpResponse(response=_response, data=None)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -209,39 +264,65 @@ class RawCreditsClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
 
-class AsyncRawCreditsClient:
+class AsyncRawSharesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get_credit_balance(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[CreditBalance]:
+    async def list_shares(
+        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[typing.List[ShareResponse]]:
         """
+        List active shares for a sandbox.
+
         Parameters
         ----------
+        sandbox_name : str
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[CreditBalance]
+        AsyncHttpResponse[typing.List[ShareResponse]]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "credits/balance",
+            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares",
             method="GET",
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CreditBalance,
+                    typing.List[ShareResponse],
                     parse_obj_as(
-                        type_=CreditBalance,  # type: ignore
+                        type_=typing.List[ShareResponse],  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -262,123 +343,149 @@ class AsyncRawCreditsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def create_credit_checkout(
-        self, *, amount_cents: int, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[CreateCheckoutResponse]:
-        """
-        Parameters
-        ----------
-        amount_cents : int
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[CreateCheckoutResponse]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "credits/checkout",
-            method="POST",
-            json={
-                "amount_cents": amount_cents,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CreateCheckoutResponse,
-                    parse_obj_as(
-                        type_=CreateCheckoutResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def handle_paddle_webhook(
+    async def create_share(
         self,
+        sandbox_name: str,
         *,
-        paddle_signature: str,
-        event_id: str,
-        event_type: str,
-        data: typing.Dict[str, typing.Any],
-        occurred_at: str,
+        port: int,
+        ttl_seconds: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[typing.Any]:
+    ) -> AsyncHttpResponse[ShareResponse]:
         """
+        Create a shareable URL for a sandbox port.
+
         Parameters
         ----------
-        paddle_signature : str
+        sandbox_name : str
 
-        event_id : str
+        port : int
+            Port to share
 
-        event_type : str
-
-        data : typing.Dict[str, typing.Any]
-
-        occurred_at : str
+        ttl_seconds : typing.Optional[int]
+            Time-to-live in seconds (1 minute to 7 days). Defaults to 24h.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[typing.Any]
+        AsyncHttpResponse[ShareResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "credits/paddle_webhook",
+            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares",
             method="POST",
             json={
-                "event_id": event_id,
-                "event_type": event_type,
-                "data": data,
-                "occurred_at": occurred_at,
+                "port": port,
+                "ttl_seconds": ttl_seconds,
             },
             headers={
                 "content-type": "application/json",
-                "paddle-signature": str(paddle_signature) if paddle_signature is not None else None,
             },
             request_options=request_options,
             omit=OMIT,
         )
         try:
-            if _response is None or not _response.text.strip():
-                return AsyncHttpResponse(response=_response, data=None)
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.Any,
+                    ShareResponse,
                     parse_obj_as(
-                        type_=typing.Any,  # type: ignore
+                        type_=ShareResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def revoke_share(
+        self, sandbox_name: str, share_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[None]:
+        """
+        Revoke a shareable URL.
+
+        Parameters
+        ----------
+        sandbox_name : str
+
+        share_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[None]
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares/{jsonable_encoder(share_id)}",
+            method="DELETE",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return AsyncHttpResponse(response=_response, data=None)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),

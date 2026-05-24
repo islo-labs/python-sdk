@@ -8,14 +8,24 @@ import typing
 import httpx
 from .core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .core.logging import LogConfig, Logger
+from .core.request_options import RequestOptions
+from .raw_base_client import AsyncRawBaseIslo, RawBaseIslo
 
 if typing.TYPE_CHECKING:
+    from .api_keys.client import ApiKeysClient, AsyncApiKeysClient
+    from .certificate_authority.client import AsyncCertificateAuthorityClient, CertificateAuthorityClient
     from .cloud_roles.client import AsyncCloudRolesClient, CloudRolesClient
     from .credits.client import AsyncCreditsClient, CreditsClient
+    from .gateway_internal.client import AsyncGatewayInternalClient, GatewayInternalClient
     from .gateway_profiles.client import AsyncGatewayProfilesClient, GatewayProfilesClient
     from .integrations.client import AsyncIntegrationsClient, IntegrationsClient
+    from .models.client import AsyncModelsClient, ModelsClient
     from .sandboxes.client import AsyncSandboxesClient, SandboxesClient
+    from .shares.client import AsyncSharesClient, SharesClient
     from .snapshots.client import AsyncSnapshotsClient, SnapshotsClient
+    from .tenants.client import AsyncTenantsClient, TenantsClient
+    from .usage.client import AsyncUsageClient, UsageClient
+    from .users.client import AsyncUsersClient, UsersClient
 
 
 class BaseIslo:
@@ -79,12 +89,81 @@ class BaseIslo:
             timeout=_defaulted_timeout,
             logging=logging,
         )
+        self._raw_client = RawBaseIslo(client_wrapper=self._client_wrapper)
+        self._api_keys: typing.Optional[ApiKeysClient] = None
+        self._users: typing.Optional[UsersClient] = None
+        self._tenants: typing.Optional[TenantsClient] = None
         self._sandboxes: typing.Optional[SandboxesClient] = None
         self._snapshots: typing.Optional[SnapshotsClient] = None
+        self._certificate_authority: typing.Optional[CertificateAuthorityClient] = None
+        self._shares: typing.Optional[SharesClient] = None
+        self._usage: typing.Optional[UsageClient] = None
         self._credits: typing.Optional[CreditsClient] = None
         self._integrations: typing.Optional[IntegrationsClient] = None
         self._gateway_profiles: typing.Optional[GatewayProfilesClient] = None
         self._cloud_roles: typing.Optional[CloudRolesClient] = None
+        self._models: typing.Optional[ModelsClient] = None
+        self._gateway_internal: typing.Optional[GatewayInternalClient] = None
+
+    @property
+    def with_raw_response(self) -> RawBaseIslo:
+        """
+        Retrieves a raw implementation of this client that returns raw responses.
+
+        Returns
+        -------
+        RawBaseIslo
+        """
+        return self._raw_client
+
+    def healthcheck(self, *, request_options: typing.Optional[RequestOptions] = None) -> typing.Any:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.Any
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+        client.healthcheck()
+        """
+        _response = self._raw_client.healthcheck(request_options=request_options)
+        return _response.data
+
+    @property
+    def api_keys(self):
+        if self._api_keys is None:
+            from .api_keys.client import ApiKeysClient  # noqa: E402
+
+            self._api_keys = ApiKeysClient(client_wrapper=self._client_wrapper)
+        return self._api_keys
+
+    @property
+    def users(self):
+        if self._users is None:
+            from .users.client import UsersClient  # noqa: E402
+
+            self._users = UsersClient(client_wrapper=self._client_wrapper)
+        return self._users
+
+    @property
+    def tenants(self):
+        if self._tenants is None:
+            from .tenants.client import TenantsClient  # noqa: E402
+
+            self._tenants = TenantsClient(client_wrapper=self._client_wrapper)
+        return self._tenants
 
     @property
     def sandboxes(self):
@@ -101,6 +180,30 @@ class BaseIslo:
 
             self._snapshots = SnapshotsClient(client_wrapper=self._client_wrapper)
         return self._snapshots
+
+    @property
+    def certificate_authority(self):
+        if self._certificate_authority is None:
+            from .certificate_authority.client import CertificateAuthorityClient  # noqa: E402
+
+            self._certificate_authority = CertificateAuthorityClient(client_wrapper=self._client_wrapper)
+        return self._certificate_authority
+
+    @property
+    def shares(self):
+        if self._shares is None:
+            from .shares.client import SharesClient  # noqa: E402
+
+            self._shares = SharesClient(client_wrapper=self._client_wrapper)
+        return self._shares
+
+    @property
+    def usage(self):
+        if self._usage is None:
+            from .usage.client import UsageClient  # noqa: E402
+
+            self._usage = UsageClient(client_wrapper=self._client_wrapper)
+        return self._usage
 
     @property
     def credits(self):
@@ -133,6 +236,22 @@ class BaseIslo:
 
             self._cloud_roles = CloudRolesClient(client_wrapper=self._client_wrapper)
         return self._cloud_roles
+
+    @property
+    def models(self):
+        if self._models is None:
+            from .models.client import ModelsClient  # noqa: E402
+
+            self._models = ModelsClient(client_wrapper=self._client_wrapper)
+        return self._models
+
+    @property
+    def gateway_internal(self):
+        if self._gateway_internal is None:
+            from .gateway_internal.client import GatewayInternalClient  # noqa: E402
+
+            self._gateway_internal = GatewayInternalClient(client_wrapper=self._client_wrapper)
+        return self._gateway_internal
 
 
 class AsyncBaseIslo:
@@ -201,12 +320,89 @@ class AsyncBaseIslo:
             timeout=_defaulted_timeout,
             logging=logging,
         )
+        self._raw_client = AsyncRawBaseIslo(client_wrapper=self._client_wrapper)
+        self._api_keys: typing.Optional[AsyncApiKeysClient] = None
+        self._users: typing.Optional[AsyncUsersClient] = None
+        self._tenants: typing.Optional[AsyncTenantsClient] = None
         self._sandboxes: typing.Optional[AsyncSandboxesClient] = None
         self._snapshots: typing.Optional[AsyncSnapshotsClient] = None
+        self._certificate_authority: typing.Optional[AsyncCertificateAuthorityClient] = None
+        self._shares: typing.Optional[AsyncSharesClient] = None
+        self._usage: typing.Optional[AsyncUsageClient] = None
         self._credits: typing.Optional[AsyncCreditsClient] = None
         self._integrations: typing.Optional[AsyncIntegrationsClient] = None
         self._gateway_profiles: typing.Optional[AsyncGatewayProfilesClient] = None
         self._cloud_roles: typing.Optional[AsyncCloudRolesClient] = None
+        self._models: typing.Optional[AsyncModelsClient] = None
+        self._gateway_internal: typing.Optional[AsyncGatewayInternalClient] = None
+
+    @property
+    def with_raw_response(self) -> AsyncRawBaseIslo:
+        """
+        Retrieves a raw implementation of this client that returns raw responses.
+
+        Returns
+        -------
+        AsyncRawBaseIslo
+        """
+        return self._raw_client
+
+    async def healthcheck(self, *, request_options: typing.Optional[RequestOptions] = None) -> typing.Any:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.Any
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            base_url="https://yourhost.com/path/to/api",
+        )
+
+
+        async def main() -> None:
+            await client.healthcheck()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.healthcheck(request_options=request_options)
+        return _response.data
+
+    @property
+    def api_keys(self):
+        if self._api_keys is None:
+            from .api_keys.client import AsyncApiKeysClient  # noqa: E402
+
+            self._api_keys = AsyncApiKeysClient(client_wrapper=self._client_wrapper)
+        return self._api_keys
+
+    @property
+    def users(self):
+        if self._users is None:
+            from .users.client import AsyncUsersClient  # noqa: E402
+
+            self._users = AsyncUsersClient(client_wrapper=self._client_wrapper)
+        return self._users
+
+    @property
+    def tenants(self):
+        if self._tenants is None:
+            from .tenants.client import AsyncTenantsClient  # noqa: E402
+
+            self._tenants = AsyncTenantsClient(client_wrapper=self._client_wrapper)
+        return self._tenants
 
     @property
     def sandboxes(self):
@@ -223,6 +419,30 @@ class AsyncBaseIslo:
 
             self._snapshots = AsyncSnapshotsClient(client_wrapper=self._client_wrapper)
         return self._snapshots
+
+    @property
+    def certificate_authority(self):
+        if self._certificate_authority is None:
+            from .certificate_authority.client import AsyncCertificateAuthorityClient  # noqa: E402
+
+            self._certificate_authority = AsyncCertificateAuthorityClient(client_wrapper=self._client_wrapper)
+        return self._certificate_authority
+
+    @property
+    def shares(self):
+        if self._shares is None:
+            from .shares.client import AsyncSharesClient  # noqa: E402
+
+            self._shares = AsyncSharesClient(client_wrapper=self._client_wrapper)
+        return self._shares
+
+    @property
+    def usage(self):
+        if self._usage is None:
+            from .usage.client import AsyncUsageClient  # noqa: E402
+
+            self._usage = AsyncUsageClient(client_wrapper=self._client_wrapper)
+        return self._usage
 
     @property
     def credits(self):
@@ -255,3 +475,19 @@ class AsyncBaseIslo:
 
             self._cloud_roles = AsyncCloudRolesClient(client_wrapper=self._client_wrapper)
         return self._cloud_roles
+
+    @property
+    def models(self):
+        if self._models is None:
+            from .models.client import AsyncModelsClient  # noqa: E402
+
+            self._models = AsyncModelsClient(client_wrapper=self._client_wrapper)
+        return self._models
+
+    @property
+    def gateway_internal(self):
+        if self._gateway_internal is None:
+            from .gateway_internal.client import AsyncGatewayInternalClient  # noqa: E402
+
+            self._gateway_internal = AsyncGatewayInternalClient(client_wrapper=self._client_wrapper)
+        return self._gateway_internal

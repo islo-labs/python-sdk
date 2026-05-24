@@ -6,151 +6,46 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
+from ..core.jsonable_encoder import jsonable_encoder
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
-from ..types.create_checkout_response import CreateCheckoutResponse
-from ..types.credit_balance import CreditBalance
 from pydantic import ValidationError
 
-# this is used as the default value for optional parameters
-OMIT = typing.cast(typing.Any, ...)
 
-
-class RawCreditsClient:
+class RawGatewayInternalClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get_credit_balance(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[CreditBalance]:
-        """
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[CreditBalance]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "credits/balance",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CreditBalance,
-                    parse_obj_as(
-                        type_=CreditBalance,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def create_credit_checkout(
-        self, *, amount_cents: int, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[CreateCheckoutResponse]:
-        """
-        Parameters
-        ----------
-        amount_cents : int
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[CreateCheckoutResponse]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "credits/checkout",
-            method="POST",
-            json={
-                "amount_cents": amount_cents,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CreateCheckoutResponse,
-                    parse_obj_as(
-                        type_=CreateCheckoutResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def handle_paddle_webhook(
+    def get_sandbox_policy(
         self,
+        sandbox_id_: str,
         *,
-        paddle_signature: str,
-        event_id: str,
-        event_type: str,
-        data: typing.Dict[str, typing.Any],
-        occurred_at: str,
+        if_none_match: typing.Optional[str] = None,
+        public_tenant_id: typing.Optional[str] = None,
+        public_user_id: typing.Optional[str] = None,
+        sandbox_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[typing.Any]:
         """
+        Stateless policy endpoint for the Rust gateway's ETag revalidation.
+
+        - Parses ``If-None-Match`` to extract profile_id, skipping PG on 304 path.
+        - Redis MGET only on revalidation (~0.5ms).
+        - Full PG load only on first request or version change.
+
         Parameters
         ----------
-        paddle_signature : str
+        sandbox_id_ : str
 
-        event_id : str
+        if_none_match : typing.Optional[str]
 
-        event_type : str
+        public_tenant_id : typing.Optional[str]
 
-        data : typing.Dict[str, typing.Any]
+        public_user_id : typing.Optional[str]
 
-        occurred_at : str
+        sandbox_id : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -161,20 +56,176 @@ class RawCreditsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            "credits/paddle_webhook",
-            method="POST",
-            json={
-                "event_id": event_id,
-                "event_type": event_type,
-                "data": data,
-                "occurred_at": occurred_at,
-            },
+            f"internal/gateway/sandbox/{jsonable_encoder(sandbox_id_)}/policy",
+            method="GET",
             headers={
-                "content-type": "application/json",
-                "paddle-signature": str(paddle_signature) if paddle_signature is not None else None,
+                "if-none-match": str(if_none_match) if if_none_match is not None else None,
+                "x-public-tenant-id": str(public_tenant_id) if public_tenant_id is not None else None,
+                "x-public-user-id": str(public_user_id) if public_user_id is not None else None,
+                "x-sandbox-id": str(sandbox_id) if sandbox_id is not None else None,
             },
             request_options=request_options,
-            omit=OMIT,
+        )
+        try:
+            if _response is None or not _response.text.strip():
+                return HttpResponse(response=_response, data=None)
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    typing.Any,
+                    parse_obj_as(
+                        type_=typing.Any,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_gateway_policy_by_key(
+        self,
+        profile_key: str,
+        *,
+        sandbox_id: typing.Optional[str] = None,
+        if_none_match: typing.Optional[str] = None,
+        public_tenant_id: typing.Optional[str] = None,
+        public_user_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[typing.Any]:
+        """
+        Policy endpoint keyed by (tenant_id, profile_key) instead of sandbox lookup.
+
+        Eliminates the race where vm_id isn't yet committed to Postgres.
+        ``x_sandbox_id`` is accepted for tracing but not used for policy resolution.
+
+        Returns 404 (not a permissive default) when the profile is not found — this is
+        intentional: a missing key means something is misconfigured, so the gateway should
+        fail closed (503) rather than silently allow traffic.
+
+        Parameters
+        ----------
+        profile_key : str
+
+        sandbox_id : typing.Optional[str]
+
+        if_none_match : typing.Optional[str]
+
+        public_tenant_id : typing.Optional[str]
+
+        public_user_id : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[typing.Any]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"internal/gateway/policy/{jsonable_encoder(profile_key)}",
+            method="GET",
+            headers={
+                "x-sandbox-id": str(sandbox_id) if sandbox_id is not None else None,
+                "if-none-match": str(if_none_match) if if_none_match is not None else None,
+                "x-public-tenant-id": str(public_tenant_id) if public_tenant_id is not None else None,
+                "x-public-user-id": str(public_user_id) if public_user_id is not None else None,
+            },
+            request_options=request_options,
+        )
+        try:
+            if _response is None or not _response.text.strip():
+                return HttpResponse(response=_response, data=None)
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    typing.Any,
+                    parse_obj_as(
+                        type_=typing.Any,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_gateway_token(
+        self,
+        *,
+        provider_key: str,
+        public_tenant_id: typing.Optional[str] = None,
+        public_user_id: typing.Optional[str] = None,
+        sandbox_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[typing.Any]:
+        """
+        Token endpoint for the Rust gateway's credential injection.
+
+        Wraps the existing ``_token_cache`` + ``get_integration_token`` and returns
+        ``access_token`` + ``ttl_seconds`` so the Rust gateway can cache locally.
+
+        Parameters
+        ----------
+        provider_key : str
+
+        public_tenant_id : typing.Optional[str]
+
+        public_user_id : typing.Optional[str]
+
+        sandbox_id : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[typing.Any]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "internal/gateway/token",
+            method="GET",
+            params={
+                "provider_key": provider_key,
+            },
+            headers={
+                "x-public-tenant-id": str(public_tenant_id) if public_tenant_id is not None else None,
+                "x-public-user-id": str(public_user_id) if public_user_id is not None else None,
+                "x-sandbox-id": str(sandbox_id) if sandbox_id is not None else None,
+            },
+            request_options=request_options,
         )
         try:
             if _response is None or not _response.text.strip():
@@ -209,139 +260,38 @@ class RawCreditsClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
 
-class AsyncRawCreditsClient:
+class AsyncRawGatewayInternalClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get_credit_balance(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[CreditBalance]:
-        """
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[CreditBalance]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "credits/balance",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CreditBalance,
-                    parse_obj_as(
-                        type_=CreditBalance,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def create_credit_checkout(
-        self, *, amount_cents: int, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[CreateCheckoutResponse]:
-        """
-        Parameters
-        ----------
-        amount_cents : int
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[CreateCheckoutResponse]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "credits/checkout",
-            method="POST",
-            json={
-                "amount_cents": amount_cents,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CreateCheckoutResponse,
-                    parse_obj_as(
-                        type_=CreateCheckoutResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def handle_paddle_webhook(
+    async def get_sandbox_policy(
         self,
+        sandbox_id_: str,
         *,
-        paddle_signature: str,
-        event_id: str,
-        event_type: str,
-        data: typing.Dict[str, typing.Any],
-        occurred_at: str,
+        if_none_match: typing.Optional[str] = None,
+        public_tenant_id: typing.Optional[str] = None,
+        public_user_id: typing.Optional[str] = None,
+        sandbox_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[typing.Any]:
         """
+        Stateless policy endpoint for the Rust gateway's ETag revalidation.
+
+        - Parses ``If-None-Match`` to extract profile_id, skipping PG on 304 path.
+        - Redis MGET only on revalidation (~0.5ms).
+        - Full PG load only on first request or version change.
+
         Parameters
         ----------
-        paddle_signature : str
+        sandbox_id_ : str
 
-        event_id : str
+        if_none_match : typing.Optional[str]
 
-        event_type : str
+        public_tenant_id : typing.Optional[str]
 
-        data : typing.Dict[str, typing.Any]
+        public_user_id : typing.Optional[str]
 
-        occurred_at : str
+        sandbox_id : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -352,20 +302,176 @@ class AsyncRawCreditsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "credits/paddle_webhook",
-            method="POST",
-            json={
-                "event_id": event_id,
-                "event_type": event_type,
-                "data": data,
-                "occurred_at": occurred_at,
-            },
+            f"internal/gateway/sandbox/{jsonable_encoder(sandbox_id_)}/policy",
+            method="GET",
             headers={
-                "content-type": "application/json",
-                "paddle-signature": str(paddle_signature) if paddle_signature is not None else None,
+                "if-none-match": str(if_none_match) if if_none_match is not None else None,
+                "x-public-tenant-id": str(public_tenant_id) if public_tenant_id is not None else None,
+                "x-public-user-id": str(public_user_id) if public_user_id is not None else None,
+                "x-sandbox-id": str(sandbox_id) if sandbox_id is not None else None,
             },
             request_options=request_options,
-            omit=OMIT,
+        )
+        try:
+            if _response is None or not _response.text.strip():
+                return AsyncHttpResponse(response=_response, data=None)
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    typing.Any,
+                    parse_obj_as(
+                        type_=typing.Any,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_gateway_policy_by_key(
+        self,
+        profile_key: str,
+        *,
+        sandbox_id: typing.Optional[str] = None,
+        if_none_match: typing.Optional[str] = None,
+        public_tenant_id: typing.Optional[str] = None,
+        public_user_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[typing.Any]:
+        """
+        Policy endpoint keyed by (tenant_id, profile_key) instead of sandbox lookup.
+
+        Eliminates the race where vm_id isn't yet committed to Postgres.
+        ``x_sandbox_id`` is accepted for tracing but not used for policy resolution.
+
+        Returns 404 (not a permissive default) when the profile is not found — this is
+        intentional: a missing key means something is misconfigured, so the gateway should
+        fail closed (503) rather than silently allow traffic.
+
+        Parameters
+        ----------
+        profile_key : str
+
+        sandbox_id : typing.Optional[str]
+
+        if_none_match : typing.Optional[str]
+
+        public_tenant_id : typing.Optional[str]
+
+        public_user_id : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[typing.Any]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"internal/gateway/policy/{jsonable_encoder(profile_key)}",
+            method="GET",
+            headers={
+                "x-sandbox-id": str(sandbox_id) if sandbox_id is not None else None,
+                "if-none-match": str(if_none_match) if if_none_match is not None else None,
+                "x-public-tenant-id": str(public_tenant_id) if public_tenant_id is not None else None,
+                "x-public-user-id": str(public_user_id) if public_user_id is not None else None,
+            },
+            request_options=request_options,
+        )
+        try:
+            if _response is None or not _response.text.strip():
+                return AsyncHttpResponse(response=_response, data=None)
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    typing.Any,
+                    parse_obj_as(
+                        type_=typing.Any,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_gateway_token(
+        self,
+        *,
+        provider_key: str,
+        public_tenant_id: typing.Optional[str] = None,
+        public_user_id: typing.Optional[str] = None,
+        sandbox_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[typing.Any]:
+        """
+        Token endpoint for the Rust gateway's credential injection.
+
+        Wraps the existing ``_token_cache`` + ``get_integration_token`` and returns
+        ``access_token`` + ``ttl_seconds`` so the Rust gateway can cache locally.
+
+        Parameters
+        ----------
+        provider_key : str
+
+        public_tenant_id : typing.Optional[str]
+
+        public_user_id : typing.Optional[str]
+
+        sandbox_id : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[typing.Any]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "internal/gateway/token",
+            method="GET",
+            params={
+                "provider_key": provider_key,
+            },
+            headers={
+                "x-public-tenant-id": str(public_tenant_id) if public_tenant_id is not None else None,
+                "x-public-user-id": str(public_user_id) if public_user_id is not None else None,
+                "x-sandbox-id": str(sandbox_id) if sandbox_id is not None else None,
+            },
+            request_options=request_options,
         )
         try:
             if _response is None or not _response.text.strip():

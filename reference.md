@@ -1,4 +1,896 @@
 # Reference
+<details><summary><code>client.<a href="src/islo/client.py">healthcheck</a>() -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.healthcheck()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## api-keys
+<details><summary><code>client.api_keys.<a href="src/islo/api_keys/client.py">list_api_keys</a>() -> typing.List[ApiKeyResponse]</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all API keys for the tenant.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.api_keys.list_api_keys()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.api_keys.<a href="src/islo/api_keys/client.py">create_api_key</a>(...) -> CreateApiKeyResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a new API key for the tenant. The key secret is only returned once.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.api_keys.create_api_key(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` — Display name for the API key
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**expires_in_days:** `typing.Optional[int]` — Number of days until the key expires (null = never expires)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.api_keys.<a href="src/islo/api_keys/client.py">get_api_key</a>(...) -> ApiKeyResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get details of a specific API key.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.api_keys.get_api_key(
+    api_key_id="api_key_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**api_key_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.api_keys.<a href="src/islo/api_keys/client.py">delete_api_key</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete an API key. This cannot be undone.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.api_keys.delete_api_key(
+    api_key_id="api_key_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**api_key_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.api_keys.<a href="src/islo/api_keys/client.py">deactivate_api_key</a>(...) -> ApiKeyResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Deactivate an API key. It can be reactivated later.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.api_keys.deactivate_api_key(
+    api_key_id="api_key_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**api_key_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.api_keys.<a href="src/islo/api_keys/client.py">activate_api_key</a>(...) -> ApiKeyResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Reactivate a previously deactivated API key.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.api_keys.activate_api_key(
+    api_key_id="api_key_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**api_key_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## users
+<details><summary><code>client.users.<a href="src/islo/users/client.py">authorize_user</a>() -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.users.authorize_user()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.users.<a href="src/islo/users/client.py">invite_user</a>(...) -> InviteUserResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Invite a user to join the current tenant.
+Sends an invitation email via Loops.so.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.users.invite_user(
+    email="email",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**email:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## tenants
+<details><summary><code>client.tenants.<a href="src/islo/tenants/client.py">list_tenants</a>() -> typing.List[PublicTenant]</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.tenants.list_tenants()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.tenants.<a href="src/islo/tenants/client.py">create_tenant</a>(...) -> CreateTenantResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.tenants.create_tenant(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.tenants.<a href="src/islo/tenants/client.py">get_subscription</a>() -> PublicSubscription</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.tenants.get_subscription()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.tenants.<a href="src/islo/tenants/client.py">get_tenant_settings</a>() -> TenantSettingsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get all tenant settings.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.tenants.get_tenant_settings()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.tenants.<a href="src/islo/tenants/client.py">update_tenant_settings</a>(...) -> TenantSettingsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Partial update tenant settings (deep merge).
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.tenants.update_tenant_settings(
+    data={
+        "key": "value"
+    },
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**data:** `typing.Dict[str, typing.Any]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## sandboxes
 <details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">list_sandboxes</a>(...) -> PaginatedSandboxResponse</code></summary>
 <dl>
@@ -2373,6 +3265,513 @@ client.snapshots.delete_snapshot(
 </dl>
 </details>
 
+## certificate-authority
+<details><summary><code>client.certificate_authority.<a href="src/islo/certificate_authority/client.py">get_ca_public_key</a>() -> CaPublicKeyResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get the CA public key for trusting SSH certificates (unauthenticated).
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.certificate_authority.get_ca_public_key()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.certificate_authority.<a href="src/islo/certificate_authority/client.py">create_ssh_certificate</a>(...) -> SshCertificateResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Sign an SSH public key with the ISLO CA for sandbox access.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.certificate_authority.create_ssh_certificate(
+    public_key="public_key",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**public_key:** `str` — User's SSH public key in OpenSSH format (ssh-ed25519 AAAA...)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## shares
+<details><summary><code>client.shares.<a href="src/islo/shares/client.py">list_shares</a>(...) -> typing.List[ShareResponse]</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List active shares for a sandbox.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.shares.list_shares(
+    sandbox_name="sandbox_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.shares.<a href="src/islo/shares/client.py">create_share</a>(...) -> ShareResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a shareable URL for a sandbox port.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.shares.create_share(
+    sandbox_name="sandbox_name",
+    port=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**port:** `int` — Port to share
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**ttl_seconds:** `typing.Optional[int]` — Time-to-live in seconds (1 minute to 7 days). Defaults to 24h.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.shares.<a href="src/islo/shares/client.py">revoke_share</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Revoke a shareable URL.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.shares.revoke_share(
+    sandbox_name="sandbox_name",
+    share_id="share_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**share_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## usage
+<details><summary><code>client.usage.<a href="src/islo/usage/client.py">get_usage_summary</a>(...) -> UsageSummary</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.usage.get_usage_summary()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**start:** `typing.Optional[datetime.datetime]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**end:** `typing.Optional[datetime.datetime]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.usage.<a href="src/islo/usage/client.py">get_sandbox_usage</a>(...) -> typing.List[SandboxUsageDetail]</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.usage.get_sandbox_usage()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**start:** `typing.Optional[datetime.datetime]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**end:** `typing.Optional[datetime.datetime]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Credits
 <details><summary><code>client.credits.<a href="src/islo/credits/client.py">get_credit_balance</a>() -> CreditBalance</code></summary>
 <dl>
@@ -2501,8 +3900,13 @@ client = Islo(
 )
 
 client.credits.handle_paddle_webhook(
-    paddle_signature="paddleSignature",
-    request={"key": "value"},
+    paddle_signature="paddle-signature",
+    event_id="event_id",
+    event_type="event_type",
+    data={
+        "key": "value"
+    },
+    occurred_at="occurred_at",
 )
 
 ```
@@ -2527,7 +3931,31 @@ client.credits.handle_paddle_webhook(
 <dl>
 <dd>
 
-**request:** `typing.Any` 
+**event_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**event_type:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**data:** `typing.Dict[str, typing.Any]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**occurred_at:** `str` 
     
 </dd>
 </dl>
@@ -4174,6 +5602,388 @@ client.cloud_roles.update_cloud_role(
 <dd>
 
 **is_enabled:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## models
+<details><summary><code>client.models.<a href="src/islo/models/client.py">get_model_pricing</a>() -> ModelPricingResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns per-1M-token pricing for chat models across all providers. Data is sourced from LiteLLM's community-maintained pricing file and refreshed every hour.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.models.get_model_pricing()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## GatewayInternal
+<details><summary><code>client.gateway_internal.<a href="src/islo/gateway_internal/client.py">get_sandbox_policy</a>(...) -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Stateless policy endpoint for the Rust gateway's ETag revalidation.
+
+- Parses ``If-None-Match`` to extract profile_id, skipping PG on 304 path.
+- Redis MGET only on revalidation (~0.5ms).
+- Full PG load only on first request or version change.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.gateway_internal.get_sandbox_policy(
+    sandbox_id="sandbox_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**if_none_match:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**public_tenant_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**public_user_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sandbox_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.gateway_internal.<a href="src/islo/gateway_internal/client.py">get_gateway_policy_by_key</a>(...) -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Policy endpoint keyed by (tenant_id, profile_key) instead of sandbox lookup.
+
+Eliminates the race where vm_id isn't yet committed to Postgres.
+``x_sandbox_id`` is accepted for tracing but not used for policy resolution.
+
+Returns 404 (not a permissive default) when the profile is not found — this is
+intentional: a missing key means something is misconfigured, so the gateway should
+fail closed (503) rather than silently allow traffic.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.gateway_internal.get_gateway_policy_by_key(
+    profile_key="profile_key",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**profile_key:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sandbox_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**if_none_match:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**public_tenant_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**public_user_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.gateway_internal.<a href="src/islo/gateway_internal/client.py">get_gateway_token</a>(...) -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Token endpoint for the Rust gateway's credential injection.
+
+Wraps the existing ``_token_cache`` + ``get_integration_token`` and returns
+``access_token`` + ``ttl_seconds`` so the Rust gateway can cache locally.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    base_url="https://yourhost.com/path/to/api",
+)
+
+client.gateway_internal.get_gateway_token(
+    provider_key="provider_key",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**provider_key:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**public_tenant_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**public_user_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sandbox_id:** `typing.Optional[str]` 
     
 </dd>
 </dl>

@@ -9,23 +9,29 @@ from ..core.http_response import AsyncHttpResponse, HttpResponse
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
+from ..errors.bad_request_error import BadRequestError
+from ..errors.service_unavailable_error import ServiceUnavailableError
+from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
-from ..types.create_checkout_response import CreateCheckoutResponse
-from ..types.credit_balance import CreditBalance
+from ..types.ca_public_key_response import CaPublicKeyResponse
+from ..types.error_response import ErrorResponse
+from ..types.ssh_certificate_response import SshCertificateResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
 
-class RawCreditsClient:
+class RawCertificateAuthorityClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get_credit_balance(
+    def get_ca_public_key(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[CreditBalance]:
+    ) -> HttpResponse[CaPublicKeyResponse]:
         """
+        Get the CA public key for trusting SSH certificates (unauthenticated).
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -33,31 +39,31 @@ class RawCreditsClient:
 
         Returns
         -------
-        HttpResponse[CreditBalance]
+        HttpResponse[CaPublicKeyResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            "credits/balance",
+            "certificate-authority/public-key",
             method="GET",
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CreditBalance,
+                    CaPublicKeyResponse,
                     parse_obj_as(
-                        type_=CreditBalance,  # type: ignore
+                        type_=CaPublicKeyResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        ErrorResponse,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=ErrorResponse,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -71,27 +77,30 @@ class RawCreditsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def create_credit_checkout(
-        self, *, amount_cents: int, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[CreateCheckoutResponse]:
+    def create_ssh_certificate(
+        self, *, public_key: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[SshCertificateResponse]:
         """
+        Sign an SSH public key with the ISLO CA for sandbox access.
+
         Parameters
         ----------
-        amount_cents : int
+        public_key : str
+            User's SSH public key in OpenSSH format (ssh-ed25519 AAAA...)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[CreateCheckoutResponse]
+        HttpResponse[SshCertificateResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            "credits/checkout",
+            "certificate-authority/",
             method="POST",
             json={
-                "amount_cents": amount_cents,
+                "public_key": public_key,
             },
             headers={
                 "content-type": "application/json",
@@ -102,13 +111,35 @@ class RawCreditsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CreateCheckoutResponse,
+                    SshCertificateResponse,
                     parse_obj_as(
-                        type_=CreateCheckoutResponse,  # type: ignore
+                        type_=SshCertificateResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -120,81 +151,13 @@ class RawCreditsClient:
                         ),
                     ),
                 )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def handle_paddle_webhook(
-        self,
-        *,
-        paddle_signature: str,
-        event_id: str,
-        event_type: str,
-        data: typing.Dict[str, typing.Any],
-        occurred_at: str,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[typing.Any]:
-        """
-        Parameters
-        ----------
-        paddle_signature : str
-
-        event_id : str
-
-        event_type : str
-
-        data : typing.Dict[str, typing.Any]
-
-        occurred_at : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[typing.Any]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "credits/paddle_webhook",
-            method="POST",
-            json={
-                "event_id": event_id,
-                "event_type": event_type,
-                "data": data,
-                "occurred_at": occurred_at,
-            },
-            headers={
-                "content-type": "application/json",
-                "paddle-signature": str(paddle_signature) if paddle_signature is not None else None,
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if _response is None or not _response.text.strip():
-                return HttpResponse(response=_response, data=None)
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.Any,
-                    parse_obj_as(
-                        type_=typing.Any,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        ErrorResponse,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=ErrorResponse,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -209,14 +172,16 @@ class RawCreditsClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
 
-class AsyncRawCreditsClient:
+class AsyncRawCertificateAuthorityClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get_credit_balance(
+    async def get_ca_public_key(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[CreditBalance]:
+    ) -> AsyncHttpResponse[CaPublicKeyResponse]:
         """
+        Get the CA public key for trusting SSH certificates (unauthenticated).
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -224,31 +189,31 @@ class AsyncRawCreditsClient:
 
         Returns
         -------
-        AsyncHttpResponse[CreditBalance]
+        AsyncHttpResponse[CaPublicKeyResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "credits/balance",
+            "certificate-authority/public-key",
             method="GET",
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CreditBalance,
+                    CaPublicKeyResponse,
                     parse_obj_as(
-                        type_=CreditBalance,  # type: ignore
+                        type_=CaPublicKeyResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        ErrorResponse,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=ErrorResponse,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -262,27 +227,30 @@ class AsyncRawCreditsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def create_credit_checkout(
-        self, *, amount_cents: int, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[CreateCheckoutResponse]:
+    async def create_ssh_certificate(
+        self, *, public_key: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[SshCertificateResponse]:
         """
+        Sign an SSH public key with the ISLO CA for sandbox access.
+
         Parameters
         ----------
-        amount_cents : int
+        public_key : str
+            User's SSH public key in OpenSSH format (ssh-ed25519 AAAA...)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[CreateCheckoutResponse]
+        AsyncHttpResponse[SshCertificateResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "credits/checkout",
+            "certificate-authority/",
             method="POST",
             json={
-                "amount_cents": amount_cents,
+                "public_key": public_key,
             },
             headers={
                 "content-type": "application/json",
@@ -293,13 +261,35 @@ class AsyncRawCreditsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CreateCheckoutResponse,
+                    SshCertificateResponse,
                     parse_obj_as(
-                        type_=CreateCheckoutResponse,  # type: ignore
+                        type_=SshCertificateResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -311,81 +301,13 @@ class AsyncRawCreditsClient:
                         ),
                     ),
                 )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def handle_paddle_webhook(
-        self,
-        *,
-        paddle_signature: str,
-        event_id: str,
-        event_type: str,
-        data: typing.Dict[str, typing.Any],
-        occurred_at: str,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[typing.Any]:
-        """
-        Parameters
-        ----------
-        paddle_signature : str
-
-        event_id : str
-
-        event_type : str
-
-        data : typing.Dict[str, typing.Any]
-
-        occurred_at : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[typing.Any]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "credits/paddle_webhook",
-            method="POST",
-            json={
-                "event_id": event_id,
-                "event_type": event_type,
-                "data": data,
-                "occurred_at": occurred_at,
-            },
-            headers={
-                "content-type": "application/json",
-                "paddle-signature": str(paddle_signature) if paddle_signature is not None else None,
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if _response is None or not _response.text.strip():
-                return AsyncHttpResponse(response=_response, data=None)
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.Any,
-                    parse_obj_as(
-                        type_=typing.Any,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        ErrorResponse,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=ErrorResponse,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

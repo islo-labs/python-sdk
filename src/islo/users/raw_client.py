@@ -9,149 +9,24 @@ from ..core.http_response import AsyncHttpResponse, HttpResponse
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
+from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
-from ..types.create_checkout_response import CreateCheckoutResponse
-from ..types.credit_balance import CreditBalance
+from ..types.error_response import ErrorResponse
+from ..types.invite_user_response import InviteUserResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
 
-class RawCreditsClient:
+class RawUsersClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get_credit_balance(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[CreditBalance]:
+    def authorize_user(self, *, request_options: typing.Optional[RequestOptions] = None) -> HttpResponse[typing.Any]:
         """
         Parameters
         ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[CreditBalance]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "credits/balance",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CreditBalance,
-                    parse_obj_as(
-                        type_=CreditBalance,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def create_credit_checkout(
-        self, *, amount_cents: int, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[CreateCheckoutResponse]:
-        """
-        Parameters
-        ----------
-        amount_cents : int
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[CreateCheckoutResponse]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "credits/checkout",
-            method="POST",
-            json={
-                "amount_cents": amount_cents,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CreateCheckoutResponse,
-                    parse_obj_as(
-                        type_=CreateCheckoutResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def handle_paddle_webhook(
-        self,
-        *,
-        paddle_signature: str,
-        event_id: str,
-        event_type: str,
-        data: typing.Dict[str, typing.Any],
-        occurred_at: str,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[typing.Any]:
-        """
-        Parameters
-        ----------
-        paddle_signature : str
-
-        event_id : str
-
-        event_type : str
-
-        data : typing.Dict[str, typing.Any]
-
-        occurred_at : str
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -161,20 +36,9 @@ class RawCreditsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            "credits/paddle_webhook",
+            "users/authorize",
             method="POST",
-            json={
-                "event_id": event_id,
-                "event_type": event_type,
-                "data": data,
-                "occurred_at": occurred_at,
-            },
-            headers={
-                "content-type": "application/json",
-                "paddle-signature": str(paddle_signature) if paddle_signature is not None else None,
-            },
             request_options=request_options,
-            omit=OMIT,
         )
         try:
             if _response is None or not _response.text.strip():
@@ -188,13 +52,13 @@ class RawCreditsClient:
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
+            if _response.status_code == 401:
+                raise UnauthorizedError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        ErrorResponse,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=ErrorResponse,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -208,81 +72,30 @@ class RawCreditsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-
-class AsyncRawCreditsClient:
-    def __init__(self, *, client_wrapper: AsyncClientWrapper):
-        self._client_wrapper = client_wrapper
-
-    async def get_credit_balance(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[CreditBalance]:
+    def invite_user(
+        self, *, email: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[InviteUserResponse]:
         """
+        Invite a user to join the current tenant.
+        Sends an invitation email via Loops.so.
+
         Parameters
         ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[CreditBalance]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "credits/balance",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CreditBalance,
-                    parse_obj_as(
-                        type_=CreditBalance,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def create_credit_checkout(
-        self, *, amount_cents: int, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[CreateCheckoutResponse]:
-        """
-        Parameters
-        ----------
-        amount_cents : int
+        email : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[CreateCheckoutResponse]
+        HttpResponse[InviteUserResponse]
             Successful Response
         """
-        _response = await self._client_wrapper.httpx_client.request(
-            "credits/checkout",
+        _response = self._client_wrapper.httpx_client.request(
+            "users/invite",
             method="POST",
             json={
-                "amount_cents": amount_cents,
+                "email": email,
             },
             headers={
                 "content-type": "application/json",
@@ -293,13 +106,24 @@ class AsyncRawCreditsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CreateCheckoutResponse,
+                    InviteUserResponse,
                     parse_obj_as(
-                        type_=CreateCheckoutResponse,  # type: ignore
+                        type_=InviteUserResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
-                return AsyncHttpResponse(response=_response, data=_data)
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -320,29 +144,17 @@ class AsyncRawCreditsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def handle_paddle_webhook(
-        self,
-        *,
-        paddle_signature: str,
-        event_id: str,
-        event_type: str,
-        data: typing.Dict[str, typing.Any],
-        occurred_at: str,
-        request_options: typing.Optional[RequestOptions] = None,
+
+class AsyncRawUsersClient:
+    def __init__(self, *, client_wrapper: AsyncClientWrapper):
+        self._client_wrapper = client_wrapper
+
+    async def authorize_user(
+        self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[typing.Any]:
         """
         Parameters
         ----------
-        paddle_signature : str
-
-        event_id : str
-
-        event_type : str
-
-        data : typing.Dict[str, typing.Any]
-
-        occurred_at : str
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -352,20 +164,9 @@ class AsyncRawCreditsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "credits/paddle_webhook",
+            "users/authorize",
             method="POST",
-            json={
-                "event_id": event_id,
-                "event_type": event_type,
-                "data": data,
-                "occurred_at": occurred_at,
-            },
-            headers={
-                "content-type": "application/json",
-                "paddle-signature": str(paddle_signature) if paddle_signature is not None else None,
-            },
             request_options=request_options,
-            omit=OMIT,
         )
         try:
             if _response is None or not _response.text.strip():
@@ -379,6 +180,78 @@ class AsyncRawCreditsClient:
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def invite_user(
+        self, *, email: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[InviteUserResponse]:
+        """
+        Invite a user to join the current tenant.
+        Sends an invitation email via Loops.so.
+
+        Parameters
+        ----------
+        email : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[InviteUserResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "users/invite",
+            method="POST",
+            json={
+                "email": email,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    InviteUserResponse,
+                    parse_obj_as(
+                        type_=InviteUserResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
