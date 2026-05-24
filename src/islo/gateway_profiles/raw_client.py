@@ -49,6 +49,7 @@ class RawGatewayProfilesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "gateway/profiles",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -130,6 +131,7 @@ class RawGatewayProfilesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "gateway/profiles",
+            base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
                 "name": name,
@@ -215,6 +217,7 @@ class RawGatewayProfilesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -287,6 +290,7 @@ class RawGatewayProfilesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
         )
@@ -386,6 +390,7 @@ class RawGatewayProfilesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
                 "name": name,
@@ -512,6 +517,7 @@ class RawGatewayProfilesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"gateway/profiles/{jsonable_encoder(profile_id)}/rules",
+            base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
                 "priority": priority,
@@ -605,6 +611,7 @@ class RawGatewayProfilesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/{jsonable_encoder(rule_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
         )
@@ -704,6 +711,7 @@ class RawGatewayProfilesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/{jsonable_encoder(rule_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
                 "priority": priority,
@@ -802,6 +810,7 @@ class RawGatewayProfilesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/reorder",
+            base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
                 "rules": convert_and_respect_annotation_metadata(
@@ -887,6 +896,7 @@ class AsyncRawGatewayProfilesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "gateway/profiles",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -968,6 +978,7 @@ class AsyncRawGatewayProfilesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "gateway/profiles",
+            base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
                 "name": name,
@@ -1053,6 +1064,7 @@ class AsyncRawGatewayProfilesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -1125,6 +1137,7 @@ class AsyncRawGatewayProfilesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
         )
@@ -1224,6 +1237,7 @@ class AsyncRawGatewayProfilesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
                 "name": name,
@@ -1350,6 +1364,7 @@ class AsyncRawGatewayProfilesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"gateway/profiles/{jsonable_encoder(profile_id)}/rules",
+            base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
                 "priority": priority,
@@ -1443,6 +1458,7 @@ class AsyncRawGatewayProfilesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/{jsonable_encoder(rule_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
         )
@@ -1542,6 +1558,7 @@ class AsyncRawGatewayProfilesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/{jsonable_encoder(rule_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
                 "priority": priority,
@@ -1640,6 +1657,7 @@ class AsyncRawGatewayProfilesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/reorder",
+            base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
                 "rules": convert_and_respect_annotation_metadata(

@@ -4,18 +4,21 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
-from .islo_error_code import IsloErrorCode
+from .error_code import ErrorCode
 
 
 class ErrorResponse(UniversalBaseModel):
-    """
-    Structured error response for API clients.
-    """
-
-    code: IsloErrorCode
+    available: typing.Optional[int] = None
+    code: ErrorCode
+    limit: typing.Optional[int] = None
     message: str
-    hint: typing.Optional[str] = None
-    details: typing.Optional[typing.Dict[str, typing.Any]] = None
     request_id: typing.Optional[str] = None
+    requested: typing.Optional[int] = None
+    resource: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Optional capacity fields populated for `InsufficientResources` errors so
+    clients (including peer agents) can recover the typed payload across
+    HTTP boundaries instead of collapsing it to an opaque message.
+    """
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
