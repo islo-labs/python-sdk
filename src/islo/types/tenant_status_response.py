@@ -4,14 +4,10 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .tenant_status import TenantStatus
 
 
-class SetupScript(UniversalBaseModel):
-    """
-    A named setup script to execute after git clones.
-    """
-
-    name: typing.Optional[str] = None
-    script: str
+class TenantStatusResponse(UniversalBaseModel):
+    status: TenantStatus
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

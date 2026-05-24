@@ -52,7 +52,6 @@ class GatewayProfilesClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.gateway_profiles.list_gateway_profiles()
         """
@@ -100,7 +99,6 @@ class GatewayProfilesClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.gateway_profiles.create_gateway_profile(
             name="name",
@@ -139,7 +137,6 @@ class GatewayProfilesClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.gateway_profiles.get_gateway_profile(
             profile_id="profile_id",
@@ -169,7 +166,6 @@ class GatewayProfilesClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.gateway_profiles.delete_gateway_profile(
             profile_id="profile_id",
@@ -222,7 +218,6 @@ class GatewayProfilesClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.gateway_profiles.update_gateway_profile(
             profile_id="profile_id",
@@ -292,7 +287,6 @@ class GatewayProfilesClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.gateway_profiles.create_gateway_rule(
             profile_id="profile_id",
@@ -337,7 +331,6 @@ class GatewayProfilesClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.gateway_profiles.delete_gateway_rule(
             profile_id="profile_id",
@@ -402,7 +395,6 @@ class GatewayProfilesClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.gateway_profiles.update_gateway_rule(
             profile_id="profile_id",
@@ -453,7 +445,6 @@ class GatewayProfilesClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.gateway_profiles.reorder_gateway_rules(
             profile_id="profile_id",
@@ -506,7 +497,6 @@ class AsyncGatewayProfilesClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -562,7 +552,6 @@ class AsyncGatewayProfilesClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -609,7 +598,6 @@ class AsyncGatewayProfilesClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -647,7 +635,6 @@ class AsyncGatewayProfilesClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -708,7 +695,6 @@ class AsyncGatewayProfilesClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -786,7 +772,6 @@ class AsyncGatewayProfilesClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -839,7 +824,6 @@ class AsyncGatewayProfilesClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -912,7 +896,6 @@ class AsyncGatewayProfilesClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -971,7 +954,6 @@ class AsyncGatewayProfilesClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 

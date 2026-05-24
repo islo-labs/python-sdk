@@ -4,12 +4,8 @@ import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.create_checkout_response import CreateCheckoutResponse
 from ..types.credit_balance import CreditBalance
 from .raw_client import AsyncRawCreditsClient, RawCreditsClient
-
-# this is used as the default value for optional parameters
-OMIT = typing.cast(typing.Any, ...)
 
 
 class CreditsClient:
@@ -45,78 +41,10 @@ class CreditsClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.credits.get_credit_balance()
         """
         _response = self._raw_client.get_credit_balance(request_options=request_options)
-        return _response.data
-
-    def create_credit_checkout(
-        self, *, amount_cents: int, request_options: typing.Optional[RequestOptions] = None
-    ) -> CreateCheckoutResponse:
-        """
-        Parameters
-        ----------
-        amount_cents : int
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        CreateCheckoutResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.credits.create_credit_checkout(
-            amount_cents=1,
-        )
-        """
-        _response = self._raw_client.create_credit_checkout(amount_cents=amount_cents, request_options=request_options)
-        return _response.data
-
-    def handle_paddle_webhook(
-        self, *, paddle_signature: str, request: typing.Any, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
-        """
-        Parameters
-        ----------
-        paddle_signature : str
-
-        request : typing.Any
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-        client.credits.handle_paddle_webhook(
-            paddle_signature="paddleSignature",
-            request={"key": "value"},
-        )
-        """
-        _response = self._raw_client.handle_paddle_webhook(
-            paddle_signature=paddle_signature, request=request, request_options=request_options
-        )
         return _response.data
 
 
@@ -155,7 +83,6 @@ class AsyncCreditsClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -166,89 +93,4 @@ class AsyncCreditsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.get_credit_balance(request_options=request_options)
-        return _response.data
-
-    async def create_credit_checkout(
-        self, *, amount_cents: int, request_options: typing.Optional[RequestOptions] = None
-    ) -> CreateCheckoutResponse:
-        """
-        Parameters
-        ----------
-        amount_cents : int
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        CreateCheckoutResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.credits.create_credit_checkout(
-                amount_cents=1,
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.create_credit_checkout(
-            amount_cents=amount_cents, request_options=request_options
-        )
-        return _response.data
-
-    async def handle_paddle_webhook(
-        self, *, paddle_signature: str, request: typing.Any, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.Any:
-        """
-        Parameters
-        ----------
-        paddle_signature : str
-
-        request : typing.Any
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.Any
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
-        )
-
-
-        async def main() -> None:
-            await client.credits.handle_paddle_webhook(
-                paddle_signature="paddleSignature",
-                request={"key": "value"},
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.handle_paddle_webhook(
-            paddle_signature=paddle_signature, request=request, request_options=request_options
-        )
         return _response.data

@@ -6,12 +6,8 @@ import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
 
 
-class SetupScript(UniversalBaseModel):
-    """
-    A named setup script to execute after git clones.
-    """
-
-    name: typing.Optional[str] = None
-    script: str
+class TenantLimits(UniversalBaseModel):
+    max_concurrent_sandboxes: int
+    global_rpm: int
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

@@ -59,7 +59,6 @@ class IntegrationsClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.integrations.list_integration_providers()
         """
@@ -94,7 +93,6 @@ class IntegrationsClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.integrations.list_integrations()
         """
@@ -129,7 +127,6 @@ class IntegrationsClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.integrations.list_custom_services()
         """
@@ -165,7 +162,6 @@ class IntegrationsClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.integrations.create_custom_service(
             custom=CustomIntegration(
@@ -218,7 +214,6 @@ class IntegrationsClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.integrations.disconnect_custom_integration(
             descope_app_id="descope_app_id",
@@ -255,7 +250,6 @@ class IntegrationsClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.integrations.get_integration_status(
             provider="provider",
@@ -303,7 +297,6 @@ class IntegrationsClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.integrations.disconnect_integration(
             provider="provider",
@@ -358,7 +351,6 @@ class AsyncIntegrationsClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -403,7 +395,6 @@ class AsyncIntegrationsClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -446,7 +437,6 @@ class AsyncIntegrationsClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -490,7 +480,6 @@ class AsyncIntegrationsClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -551,7 +540,6 @@ class AsyncIntegrationsClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -596,7 +584,6 @@ class AsyncIntegrationsClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -652,7 +639,6 @@ class AsyncIntegrationsClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 

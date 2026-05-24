@@ -47,7 +47,6 @@ class CloudRolesClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.cloud_roles.list_cloud_roles()
         """
@@ -85,7 +84,6 @@ class CloudRolesClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.cloud_roles.create_cloud_role(
             provider="aws",
@@ -122,7 +120,6 @@ class CloudRolesClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.cloud_roles.get_cloud_role(
             role_id="role_id",
@@ -150,7 +147,6 @@ class CloudRolesClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.cloud_roles.delete_cloud_role(
             role_id="role_id",
@@ -193,7 +189,6 @@ class CloudRolesClient:
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
         client.cloud_roles.update_cloud_role(
             role_id="role_id",
@@ -246,7 +241,6 @@ class AsyncCloudRolesClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -292,7 +286,6 @@ class AsyncCloudRolesClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -337,7 +330,6 @@ class AsyncCloudRolesClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -373,7 +365,6 @@ class AsyncCloudRolesClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 
@@ -424,7 +415,6 @@ class AsyncCloudRolesClient:
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
         )
 
 

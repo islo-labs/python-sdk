@@ -4,14 +4,13 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .tenant_limits import TenantLimits
 
 
-class SetupScript(UniversalBaseModel):
-    """
-    A named setup script to execute after git clones.
-    """
-
-    name: typing.Optional[str] = None
-    script: str
+class TenantConfigResponse(UniversalBaseModel):
+    default_gateway_profile_key: str
+    tier: str
+    limits: TenantLimits
+    suspended: bool
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

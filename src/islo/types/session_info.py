@@ -4,14 +4,12 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .session_status import SessionStatus
 
 
-class SetupScript(UniversalBaseModel):
-    """
-    A named setup script to execute after git clones.
-    """
-
-    name: typing.Optional[str] = None
-    script: str
+class SessionInfo(UniversalBaseModel):
+    name: str
+    started_at_unix_ms: typing.Optional[int] = None
+    status: SessionStatus
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

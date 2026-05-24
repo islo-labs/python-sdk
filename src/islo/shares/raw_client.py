@@ -10,68 +10,66 @@ from ..core.jsonable_encoder import jsonable_encoder
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
-from ..errors.conflict_error import ConflictError
+from ..errors.bad_request_error import BadRequestError
 from ..errors.not_found_error import NotFoundError
-from ..errors.service_unavailable_error import ServiceUnavailableError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..types.error_response import ErrorResponse
-from ..types.paginated_snapshot_response import PaginatedSnapshotResponse
-from ..types.snapshot_response import SnapshotResponse
+from ..types.share_response import ShareResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
 
-class RawSnapshotsClient:
+class RawSharesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list_snapshots(
-        self,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PaginatedSnapshotResponse]:
+    def list_shares(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[typing.List[ShareResponse]]:
         """
-        List all snapshots for the current tenant.
-
         Parameters
         ----------
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
+        name : str
+            Sandbox name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[PaginatedSnapshotResponse]
-            Successful Response
+        HttpResponse[typing.List[ShareResponse]]
+            Active shares
         """
         _response = self._client_wrapper.httpx_client.request(
-            "snapshots/",
+            f"sandboxes/{jsonable_encoder(name)}/shares",
             method="GET",
-            params={
-                "limit": limit,
-                "offset": offset,
-            },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PaginatedSnapshotResponse,
+                    typing.List[ShareResponse],
                     parse_obj_as(
-                        type_=PaginatedSnapshotResponse,  # type: ignore
+                        type_=typing.List[ShareResponse],  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -90,36 +88,38 @@ class RawSnapshotsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def create_snapshot(
+    def create_share(
         self,
+        name: str,
         *,
-        sandbox_id: str,
-        name: typing.Optional[str] = OMIT,
+        port: int,
+        ttl_seconds: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[SnapshotResponse]:
+    ) -> HttpResponse[ShareResponse]:
         """
-        Create a snapshot from a running sandbox.
-
         Parameters
         ----------
-        sandbox_id : str
+        name : str
+            Sandbox name
 
-        name : typing.Optional[str]
+        port : int
+
+        ttl_seconds : typing.Optional[int]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[SnapshotResponse]
-            Successful Response
+        HttpResponse[ShareResponse]
+            Share created
         """
         _response = self._client_wrapper.httpx_client.request(
-            "snapshots/",
+            f"sandboxes/{jsonable_encoder(name)}/shares",
             method="POST",
             json={
-                "name": name,
-                "sandbox_id": sandbox_id,
+                "port": port,
+                "ttl_seconds": ttl_seconds,
             },
             headers={
                 "content-type": "application/json",
@@ -130,15 +130,15 @@ class RawSnapshotsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SnapshotResponse,
+                    ShareResponse,
                     parse_obj_as(
-                        type_=SnapshotResponse,  # type: ignore
+                        type_=ShareResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
+            if _response.status_code == 400:
+                raise BadRequestError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -148,82 +148,6 @@ class RawSnapshotsClient:
                         ),
                     ),
                 )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 503:
-                raise ServiceUnavailableError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def get_snapshot(
-        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[SnapshotResponse]:
-        """
-        Get snapshot details by name.
-
-        Parameters
-        ----------
-        name : str
-            Name
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[SnapshotResponse]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"snapshots/{jsonable_encoder(name)}",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    SnapshotResponse,
-                    parse_obj_as(
-                        type_=SnapshotResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
                     headers=dict(_response.headers),
@@ -255,16 +179,17 @@ class RawSnapshotsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def delete_snapshot(
-        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    def delete_share(
+        self, name: str, share_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[None]:
         """
-        Delete a snapshot by name.
-
         Parameters
         ----------
         name : str
-            Name
+            Sandbox name
+
+        share_id : str
+            Share ID
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -274,7 +199,7 @@ class RawSnapshotsClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"snapshots/{jsonable_encoder(name)}",
+            f"sandboxes/{jsonable_encoder(name)}/shares/{jsonable_encoder(share_id)}",
             method="DELETE",
             request_options=request_options,
         )
@@ -313,55 +238,55 @@ class RawSnapshotsClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
 
-class AsyncRawSnapshotsClient:
+class AsyncRawSharesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list_snapshots(
-        self,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PaginatedSnapshotResponse]:
+    async def list_shares(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[typing.List[ShareResponse]]:
         """
-        List all snapshots for the current tenant.
-
         Parameters
         ----------
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
+        name : str
+            Sandbox name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[PaginatedSnapshotResponse]
-            Successful Response
+        AsyncHttpResponse[typing.List[ShareResponse]]
+            Active shares
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "snapshots/",
+            f"sandboxes/{jsonable_encoder(name)}/shares",
             method="GET",
-            params={
-                "limit": limit,
-                "offset": offset,
-            },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PaginatedSnapshotResponse,
+                    typing.List[ShareResponse],
                     parse_obj_as(
-                        type_=PaginatedSnapshotResponse,  # type: ignore
+                        type_=typing.List[ShareResponse],  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -380,36 +305,38 @@ class AsyncRawSnapshotsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def create_snapshot(
+    async def create_share(
         self,
+        name: str,
         *,
-        sandbox_id: str,
-        name: typing.Optional[str] = OMIT,
+        port: int,
+        ttl_seconds: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[SnapshotResponse]:
+    ) -> AsyncHttpResponse[ShareResponse]:
         """
-        Create a snapshot from a running sandbox.
-
         Parameters
         ----------
-        sandbox_id : str
+        name : str
+            Sandbox name
 
-        name : typing.Optional[str]
+        port : int
+
+        ttl_seconds : typing.Optional[int]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[SnapshotResponse]
-            Successful Response
+        AsyncHttpResponse[ShareResponse]
+            Share created
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "snapshots/",
+            f"sandboxes/{jsonable_encoder(name)}/shares",
             method="POST",
             json={
-                "name": name,
-                "sandbox_id": sandbox_id,
+                "port": port,
+                "ttl_seconds": ttl_seconds,
             },
             headers={
                 "content-type": "application/json",
@@ -420,15 +347,15 @@ class AsyncRawSnapshotsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SnapshotResponse,
+                    ShareResponse,
                     parse_obj_as(
-                        type_=SnapshotResponse,  # type: ignore
+                        type_=ShareResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
+            if _response.status_code == 400:
+                raise BadRequestError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -438,82 +365,6 @@ class AsyncRawSnapshotsClient:
                         ),
                     ),
                 )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 409:
-                raise ConflictError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 503:
-                raise ServiceUnavailableError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def get_snapshot(
-        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[SnapshotResponse]:
-        """
-        Get snapshot details by name.
-
-        Parameters
-        ----------
-        name : str
-            Name
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[SnapshotResponse]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"snapshots/{jsonable_encoder(name)}",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    SnapshotResponse,
-                    parse_obj_as(
-                        type_=SnapshotResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
                     headers=dict(_response.headers),
@@ -545,16 +396,17 @@ class AsyncRawSnapshotsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def delete_snapshot(
-        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    async def delete_share(
+        self, name: str, share_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[None]:
         """
-        Delete a snapshot by name.
-
         Parameters
         ----------
         name : str
-            Name
+            Sandbox name
+
+        share_id : str
+            Share ID
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -564,7 +416,7 @@ class AsyncRawSnapshotsClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"snapshots/{jsonable_encoder(name)}",
+            f"sandboxes/{jsonable_encoder(name)}/shares/{jsonable_encoder(share_id)}",
             method="DELETE",
             request_options=request_options,
         )

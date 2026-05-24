@@ -15,6 +15,7 @@ The Islo Python library provides convenient access to the Islo APIs from Python.
 - [Development](#development)
 - [Reference](#reference)
 - [Usage](#usage)
+- [Environments](#environments)
 - [Async Client](#async-client)
 - [Exception Handling](#exception-handling)
 - [Advanced](#advanced)
@@ -142,10 +143,24 @@ from islo import Islo
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
 )
 
-client.sandboxes.create_sandbox()
+client.compute.billing_check(
+    tenant_id="tenant_id",
+)
+```
+
+## Environments
+
+This SDK allows you to configure different environments for API requests.
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    environment=IsloEnvironment.CONTROL,
+)
 ```
 
 ## Async Client
@@ -159,12 +174,13 @@ from islo import AsyncIslo
 
 client = AsyncIslo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
 )
 
 
 async def main() -> None:
-    await client.sandboxes.create_sandbox()
+    await client.compute.billing_check(
+        tenant_id="tenant_id",
+    )
 
 
 asyncio.run(main())
@@ -179,7 +195,7 @@ will be thrown.
 from islo.core.api_error import ApiError
 
 try:
-    client.sandboxes.create_sandbox(...)
+    client.compute.billing_check(...)
 except ApiError as e:
     print(e.status_code)
     print(e.body)
@@ -196,7 +212,7 @@ The `.with_raw_response` property returns a "raw" client that can be used to acc
 from islo import Islo
 
 client = Islo(...)
-response = client.sandboxes.with_raw_response.create_sandbox(...)
+response = client.compute.with_raw_response.billing_check(...)
 print(response.headers)  # access the response headers
 print(response.status_code)  # access the response status code
 print(response.data)  # access the underlying object
@@ -217,7 +233,7 @@ A request is deemed retryable when any of the following HTTP status codes is ret
 Use the `max_retries` request option to configure this behavior.
 
 ```python
-client.sandboxes.create_sandbox(..., request_options={
+client.compute.billing_check(..., request_options={
     "max_retries": 1
 })
 ```
@@ -232,7 +248,7 @@ from islo import Islo
 client = Islo(..., timeout=20.0)
 
 # Override timeout for a specific method
-client.sandboxes.create_sandbox(..., request_options={
+client.compute.billing_check(..., request_options={
     "timeout_in_seconds": 1
 })
 ```
