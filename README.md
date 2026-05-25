@@ -70,31 +70,29 @@ export ISLO_API_KEY="your-api-key"
 client = Islo()  # Picks up ISLO_API_KEY automatically
 ```
 
-### Explicit token
+### Explicit API key
 
 ```python
-client = Islo(token="your-api-key")
-```
-
-### Auto-refreshing token provider
-
-```python
-from islo import Islo
-from islo.custom import SyncTokenProvider
-
-provider = SyncTokenProvider(
-    base_url="https://api.islo.dev",
-    access_key="your-access-key",
-)
-client = Islo(token=provider)
+client = Islo(api_key="your-api-key")
 ```
 
 ## Configuration
 
 | Environment Variable | Description | Default |
 |---------------------|-------------|---------|
-| `ISLO_API_KEY` | Bearer token for authentication | — |
-| `ISLO_BASE_URL` | API base URL | `https://api.islo.dev` |
+| `ISLO_API_KEY` | API key exchanged for a short-lived JWT | — |
+| `ISLO_BASE_URL` | Control-plane API base URL | `https://api.islo.dev` |
+| `ISLO_COMPUTE_URL` | Compute-plane API base URL | `https://compute.islo.dev` |
+
+Override the control and compute planes independently when needed:
+
+```python
+client = Islo(
+    api_key="your-api-key",
+    base_url="https://api.customer.example.com",
+    compute_url="https://compute.customer.example.com",
+)
+```
 
 ## Async Support
 
@@ -142,7 +140,7 @@ Instantiate and use the client with the following:
 from islo import Islo
 
 client = Islo(
-    api_key="<token>",
+    api_key="<api-key>",
 )
 
 client.sandboxes.create_sandbox()
@@ -161,6 +159,16 @@ client = Islo(
 )
 ```
 
+You can also pass a custom dual-URL environment or use the convenience URL
+arguments:
+
+```python
+client = Islo(
+    base_url="https://api.customer.example.com",
+    compute_url="https://compute.customer.example.com",
+)
+```
+
 ## Async Client
 
 The SDK also exports an `async` client so that you can make non-blocking calls to our API. Note that if you are constructing an Async httpx client class to pass into this client, use `httpx.AsyncClient()` instead of `httpx.Client()` (e.g. for the `httpx_client` parameter of this client).
@@ -171,7 +179,7 @@ import asyncio
 from islo import AsyncIslo
 
 client = AsyncIslo(
-    api_key="<token>",
+    api_key="<api-key>",
 )
 
 
