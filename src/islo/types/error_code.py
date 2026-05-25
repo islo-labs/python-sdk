@@ -2,22 +2,32 @@
 
 import typing
 
-IsloErrorCode = typing.Union[
+ErrorCode = typing.Union[
     typing.Literal[
+        "UNAUTHORIZED",
+        "BAD_REQUEST",
+        "NOT_FOUND",
+        "INVALID_JSON",
+        "VM_NOT_FOUND",
+        "VM_ALREADY_EXISTS",
+        "VM_INVALID_STATE",
+        "IMAGE_NOT_FOUND",
+        "FILE_NOT_FOUND",
+        "COMMAND_NOT_FOUND",
+        "EXEC_FAILED",
+        "FILE_OPERATION_ERROR",
+        "INSUFFICIENT_RESOURCES",
+        "CACHE_CONFLICT",
+        "TIMEOUT",
+        "INTERNAL_ERROR",
         "AUTH_REQUIRED",
         "AUTH_TOKEN_EXPIRED",
         "AUTH_TOKEN_INVALID",
-        "ACCESS_DENIED",
         "SANDBOX_NOT_FOUND",
         "SANDBOX_ALREADY_EXISTS",
         "SANDBOX_NOT_RUNNING",
-        "SANDBOX_INVALID_STATE",
-        "COMMAND_NOT_FOUND",
-        "EXEC_FAILED",
         "RESOURCE_UNAVAILABLE",
         "RESOURCE_NOT_FOUND",
-        "FILE_NOT_FOUND",
-        "CACHE_CONFLICT",
         "RATE_LIMITED",
         "INSUFFICIENT_CREDITS",
         "VALIDATION_ERROR",
@@ -25,8 +35,6 @@ IsloErrorCode = typing.Union[
         "UPSTREAM_ERROR",
         "UPSTREAM_TIMEOUT",
         "UPSTREAM_UNAVAILABLE",
-        "TIMEOUT",
-        "INTERNAL_ERROR",
     ],
     typing.Any,
 ]

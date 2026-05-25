@@ -49,10 +49,11 @@ class GatewayProfilesClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.gateway_profiles.list_gateway_profiles()
         """
@@ -97,10 +98,11 @@ class GatewayProfilesClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.gateway_profiles.create_gateway_profile(
             name="name",
@@ -136,10 +138,11 @@ class GatewayProfilesClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.gateway_profiles.get_gateway_profile(
             profile_id="profile_id",
@@ -166,10 +169,11 @@ class GatewayProfilesClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.gateway_profiles.delete_gateway_profile(
             profile_id="profile_id",
@@ -219,10 +223,11 @@ class GatewayProfilesClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.gateway_profiles.update_gateway_profile(
             profile_id="profile_id",
@@ -289,10 +294,11 @@ class GatewayProfilesClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.gateway_profiles.create_gateway_rule(
             profile_id="profile_id",
@@ -334,10 +340,11 @@ class GatewayProfilesClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.gateway_profiles.delete_gateway_rule(
             profile_id="profile_id",
@@ -399,10 +406,11 @@ class GatewayProfilesClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.gateway_profiles.update_gateway_rule(
             profile_id="profile_id",
@@ -450,10 +458,11 @@ class GatewayProfilesClient:
         Examples
         --------
         from islo import Islo, RuleReorderItem
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.gateway_profiles.reorder_gateway_rules(
             profile_id="profile_id",
@@ -503,10 +512,11 @@ class AsyncGatewayProfilesClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
@@ -559,10 +569,11 @@ class AsyncGatewayProfilesClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
@@ -606,10 +617,11 @@ class AsyncGatewayProfilesClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
@@ -644,10 +656,11 @@ class AsyncGatewayProfilesClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
@@ -705,10 +718,11 @@ class AsyncGatewayProfilesClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
@@ -783,10 +797,11 @@ class AsyncGatewayProfilesClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
@@ -836,10 +851,11 @@ class AsyncGatewayProfilesClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
@@ -909,10 +925,11 @@ class AsyncGatewayProfilesClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
@@ -968,10 +985,11 @@ class AsyncGatewayProfilesClient:
         import asyncio
 
         from islo import AsyncIslo, RuleReorderItem
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 

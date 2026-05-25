@@ -6,12 +6,11 @@ import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
 
 
-class SetupScript(UniversalBaseModel):
-    """
-    A named setup script to execute after git clones.
-    """
-
-    name: typing.Optional[str] = None
-    script: str
+class ListSandboxesQuery(UniversalBaseModel):
+    created_by: typing.Optional[str] = None
+    limit: typing.Optional[int] = None
+    name_prefix: typing.Optional[str] = None
+    offset: typing.Optional[int] = None
+    status: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
