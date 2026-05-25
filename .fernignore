@@ -31,3 +31,6 @@ uv.lock
 # Project's .gitignore — Fern would otherwise rewrite it (drops our entries
 # for poetry.lock, requirements.txt, .astro/, node_modules/, .DS_Store).
 .gitignore
+.fern/replay.lock
+.fern/replay.yml
+.gitattributes
