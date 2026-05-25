@@ -187,7 +187,7 @@ async def _async_get_client_internals(
     """
     wrapper = client._client_wrapper
     headers = await wrapper.async_get_headers()
-    return wrapper.get_base_url(), headers
+    return wrapper.get_environment().compute, headers
 
 
 async def async_upload_file(

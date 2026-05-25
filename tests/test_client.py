@@ -4,25 +4,66 @@ from pytest_httpx import HTTPXMock
 
 from islo import AsyncIslo, Islo
 from islo.custom.auth import SyncTokenProvider
+from islo.environment import IsloEnvironment
 
 
 class TestIsloClient:
     def test_default_base_url(self, monkeypatch):
         monkeypatch.delenv("ISLO_BASE_URL", raising=False)
+        monkeypatch.delenv("ISLO_COMPUTE_URL", raising=False)
         monkeypatch.delenv("ISLO_API_KEY", raising=False)
         client = Islo()
-        assert "api.islo.dev" in client._client_wrapper._base_url
+        environment = client._client_wrapper.get_environment()
+        assert environment.control == "https://api.islo.dev"
+        assert environment.compute == "https://compute.islo.dev"
 
     def test_env_base_url(self, monkeypatch):
         monkeypatch.setenv("ISLO_BASE_URL", "https://custom.example.com")
+        monkeypatch.setenv("ISLO_COMPUTE_URL", "https://compute.example.com")
         monkeypatch.delenv("ISLO_API_KEY", raising=False)
         client = Islo()
-        assert "custom.example.com" in client._client_wrapper._base_url
+        environment = client._client_wrapper.get_environment()
+        assert environment.control == "https://custom.example.com"
+        assert environment.compute == "https://compute.example.com"
 
     def test_explicit_base_url_overrides_env(self, monkeypatch):
         monkeypatch.setenv("ISLO_BASE_URL", "https://env.example.com")
-        client = Islo(base_url="https://explicit.example.com")
-        assert "explicit.example.com" in client._client_wrapper._base_url
+        monkeypatch.setenv("ISLO_COMPUTE_URL", "https://compute.env.example.com")
+        client = Islo(
+            base_url="https://explicit.example.com",
+            compute_url="https://compute.explicit.example.com",
+        )
+        environment = client._client_wrapper.get_environment()
+        assert environment.control == "https://explicit.example.com"
+        assert environment.compute == "https://compute.explicit.example.com"
+
+    def test_environment_override(self, monkeypatch):
+        monkeypatch.delenv("ISLO_BASE_URL", raising=False)
+        monkeypatch.delenv("ISLO_COMPUTE_URL", raising=False)
+        client = Islo(
+            environment=IsloEnvironment(
+                control="https://control.environment.example.com",
+                compute="https://compute.environment.example.com",
+            )
+        )
+        environment = client._client_wrapper.get_environment()
+        assert environment.control == "https://control.environment.example.com"
+        assert environment.compute == "https://compute.environment.example.com"
+
+    def test_explicit_urls_override_environment(self, monkeypatch):
+        monkeypatch.delenv("ISLO_BASE_URL", raising=False)
+        monkeypatch.delenv("ISLO_COMPUTE_URL", raising=False)
+        client = Islo(
+            base_url="https://control.explicit.example.com",
+            compute_url="https://compute.explicit.example.com",
+            environment=IsloEnvironment(
+                control="https://control.environment.example.com",
+                compute="https://compute.environment.example.com",
+            ),
+        )
+        environment = client._client_wrapper.get_environment()
+        assert environment.control == "https://control.explicit.example.com"
+        assert environment.compute == "https://compute.explicit.example.com"
 
     def test_api_key_creates_token_provider(self, monkeypatch):
         monkeypatch.delenv("ISLO_API_KEY", raising=False)
@@ -51,7 +92,6 @@ class TestIsloClient:
         # the hand-written custom/auth.py token providers instead.
         assert not hasattr(client, "auth")
         assert not hasattr(client, "api_keys")
-        assert not hasattr(client, "shares")
         assert not hasattr(client, "usage")
         assert not hasattr(client, "certificate_authority")
         assert not hasattr(client, "tenants")
@@ -62,9 +102,12 @@ class TestIsloClient:
 class TestAsyncIsloClient:
     def test_default_base_url(self, monkeypatch):
         monkeypatch.delenv("ISLO_BASE_URL", raising=False)
+        monkeypatch.delenv("ISLO_COMPUTE_URL", raising=False)
         monkeypatch.delenv("ISLO_API_KEY", raising=False)
         client = AsyncIslo()
-        assert "api.islo.dev" in client._client_wrapper._base_url
+        environment = client._client_wrapper.get_environment()
+        assert environment.control == "https://api.islo.dev"
+        assert environment.compute == "https://compute.islo.dev"
 
     def test_api_key_creates_async_token_provider(self, monkeypatch):
         monkeypatch.delenv("ISLO_API_KEY", raising=False)
@@ -87,6 +130,7 @@ class TestTokenProviderIntegration:
     def test_api_key_exchange_on_first_call(self, httpx_mock: HTTPXMock, monkeypatch):
         monkeypatch.delenv("ISLO_API_KEY", raising=False)
         monkeypatch.delenv("ISLO_BASE_URL", raising=False)
+        monkeypatch.delenv("ISLO_COMPUTE_URL", raising=False)
 
         httpx_mock.add_response(
             url="https://api.islo.dev/auth/token",
@@ -96,3 +140,21 @@ class TestTokenProviderIntegration:
         client = Islo(api_key="ak_test")
         token = client._client_wrapper._api_key()
         assert token == "jwt-from-exchange"
+
+    def test_api_key_exchange_uses_custom_control_url(self, httpx_mock: HTTPXMock, monkeypatch):
+        monkeypatch.delenv("ISLO_API_KEY", raising=False)
+        monkeypatch.delenv("ISLO_BASE_URL", raising=False)
+        monkeypatch.delenv("ISLO_COMPUTE_URL", raising=False)
+
+        httpx_mock.add_response(
+            url="https://control.customer.example.com/auth/token",
+            json={"session_token": "jwt-from-custom-control", "cookie_max_age": 600},
+        )
+
+        client = Islo(
+            api_key="ak_test",
+            base_url="https://control.customer.example.com",
+            compute_url="https://compute.customer.example.com",
+        )
+        token = client._client_wrapper._api_key()
+        assert token == "jwt-from-custom-control"
