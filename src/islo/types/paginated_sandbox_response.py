@@ -8,13 +8,9 @@ from .sandbox_response import SandboxResponse
 
 
 class PaginatedSandboxResponse(UniversalBaseModel):
-    """
-    Paginated list of sandboxes.
-    """
-
     items: typing.List[SandboxResponse]
-    total: int
     limit: int
     offset: int
+    total: int
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
