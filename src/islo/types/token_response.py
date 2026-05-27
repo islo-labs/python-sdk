@@ -16,4 +16,9 @@ class TokenResponse(UniversalBaseModel):
     Descope session JWT
     """
 
+    expires_in: int = pydantic.Field()
+    """
+    Seconds until the session JWT expires
+    """
+
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

@@ -8,14 +8,14 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 class ExecResultResponse(UniversalBaseModel):
     """
-    Full result of an exec command, polled via GET /exec/{exec_id}.
+    Response from exec result query
     """
 
     exec_id: str
-    status: str
     exit_code: typing.Optional[int] = None
-    stdout: typing.Optional[str] = None
-    stderr: typing.Optional[str] = None
-    truncated: typing.Optional[bool] = None
+    status: str
+    stderr: str
+    stdout: str
+    truncated: bool
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

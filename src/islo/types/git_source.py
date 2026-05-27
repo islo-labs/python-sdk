@@ -4,32 +4,15 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
-from .git_source_type import GitSourceType
 
 
 class GitSource(UniversalBaseModel):
     """
-    A git repository to clone into the sandbox workspace.
+    A git source to clone into /workspace.
     """
 
-    type: typing.Optional[GitSourceType] = pydantic.Field(default=None)
-    """
-    Source type discriminator.
-    """
-
-    repo_url: str = pydantic.Field()
-    """
-    Git repository URL (HTTPS)
-    """
-
-    branch: typing.Optional[str] = pydantic.Field(default=None)
-    """
-    Branch/tag/ref to checkout. Defaults to the remote HEAD.
-    """
-
-    target_path: typing.Optional[str] = pydantic.Field(default=None)
-    """
-    Target directory name under /workspace. Defaults to repo name.
-    """
+    branch: typing.Optional[str] = None
+    repo_url: str
+    target_path: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

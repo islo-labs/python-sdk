@@ -6,7 +6,11 @@ import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
 
 
-class CreateCheckoutResponse(UniversalBaseModel):
-    transaction_id: str
+class ShareResponse(UniversalBaseModel):
+    created_at: str
+    expires_at: typing.Optional[str] = None
+    port: int
+    share_id: str
+    url: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

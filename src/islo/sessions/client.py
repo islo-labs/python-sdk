@@ -4,36 +4,42 @@ import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.credit_balance import CreditBalance
-from .raw_client import AsyncRawCreditsClient, RawCreditsClient
+from .raw_client import AsyncRawSessionsClient, RawSessionsClient
 
 
-class CreditsClient:
+class SessionsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
-        self._raw_client = RawCreditsClient(client_wrapper=client_wrapper)
+        self._raw_client = RawSessionsClient(client_wrapper=client_wrapper)
 
     @property
-    def with_raw_response(self) -> RawCreditsClient:
+    def with_raw_response(self) -> RawSessionsClient:
         """
         Retrieves a raw implementation of this client that returns raw responses.
 
         Returns
         -------
-        RawCreditsClient
+        RawSessionsClient
         """
         return self._raw_client
 
-    def get_credit_balance(self, *, request_options: typing.Optional[RequestOptions] = None) -> CreditBalance:
+    def sandbox_attach_session(
+        self, sandbox_name: str, session: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
         """
         Parameters
         ----------
+        sandbox_name : str
+            Sandbox name
+
+        session : str
+            Session name
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        CreditBalance
-            Successful Response
+        None
 
         Examples
         --------
@@ -44,38 +50,48 @@ class CreditsClient:
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-        client.credits.get_credit_balance()
+        client.sessions.sandbox_attach_session(
+            sandbox_name="sandbox_name",
+            session="session",
+        )
         """
-        _response = self._raw_client.get_credit_balance(request_options=request_options)
+        _response = self._raw_client.sandbox_attach_session(sandbox_name, session, request_options=request_options)
         return _response.data
 
 
-class AsyncCreditsClient:
+class AsyncSessionsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
-        self._raw_client = AsyncRawCreditsClient(client_wrapper=client_wrapper)
+        self._raw_client = AsyncRawSessionsClient(client_wrapper=client_wrapper)
 
     @property
-    def with_raw_response(self) -> AsyncRawCreditsClient:
+    def with_raw_response(self) -> AsyncRawSessionsClient:
         """
         Retrieves a raw implementation of this client that returns raw responses.
 
         Returns
         -------
-        AsyncRawCreditsClient
+        AsyncRawSessionsClient
         """
         return self._raw_client
 
-    async def get_credit_balance(self, *, request_options: typing.Optional[RequestOptions] = None) -> CreditBalance:
+    async def sandbox_attach_session(
+        self, sandbox_name: str, session: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
         """
         Parameters
         ----------
+        sandbox_name : str
+            Sandbox name
+
+        session : str
+            Session name
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        CreditBalance
-            Successful Response
+        None
 
         Examples
         --------
@@ -91,10 +107,15 @@ class AsyncCreditsClient:
 
 
         async def main() -> None:
-            await client.credits.get_credit_balance()
+            await client.sessions.sandbox_attach_session(
+                sandbox_name="sandbox_name",
+                session="session",
+            )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_credit_balance(request_options=request_options)
+        _response = await self._raw_client.sandbox_attach_session(
+            sandbox_name, session, request_options=request_options
+        )
         return _response.data

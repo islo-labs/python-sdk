@@ -44,10 +44,11 @@ class CloudRolesClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.cloud_roles.list_cloud_roles()
         """
@@ -82,10 +83,11 @@ class CloudRolesClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.cloud_roles.create_cloud_role(
             provider="aws",
@@ -119,10 +121,11 @@ class CloudRolesClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.cloud_roles.get_cloud_role(
             role_id="role_id",
@@ -147,10 +150,11 @@ class CloudRolesClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.cloud_roles.delete_cloud_role(
             role_id="role_id",
@@ -190,10 +194,11 @@ class CloudRolesClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.cloud_roles.update_cloud_role(
             role_id="role_id",
@@ -243,10 +248,11 @@ class AsyncCloudRolesClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
@@ -289,10 +295,11 @@ class AsyncCloudRolesClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
@@ -334,10 +341,11 @@ class AsyncCloudRolesClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
@@ -370,10 +378,11 @@ class AsyncCloudRolesClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
@@ -421,10 +430,11 @@ class AsyncCloudRolesClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
