@@ -4,9 +4,11 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .size_limit_content_filter_direction import SizeLimitContentFilterDirection
 
 
-class CreateCheckoutResponse(UniversalBaseModel):
-    transaction_id: str
+class SizeLimitContentFilter(UniversalBaseModel):
+    direction: SizeLimitContentFilterDirection
+    pattern: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

@@ -6,19 +6,19 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from .types import (
+    from .sandbox_create_init import (
         SandboxCreateInit,
-        SandboxCreateInitCapabilitiesItem,
         SandboxCreateInit_Custom,
         SandboxCreateInit_Full,
         SandboxCreateInit_Minimal,
     )
+    from .sandbox_create_init_capabilities_item import SandboxCreateInitCapabilitiesItem
 _dynamic_imports: typing.Dict[str, str] = {
-    "SandboxCreateInit": ".types",
-    "SandboxCreateInitCapabilitiesItem": ".types",
-    "SandboxCreateInit_Custom": ".types",
-    "SandboxCreateInit_Full": ".types",
-    "SandboxCreateInit_Minimal": ".types",
+    "SandboxCreateInit": ".sandbox_create_init",
+    "SandboxCreateInitCapabilitiesItem": ".sandbox_create_init_capabilities_item",
+    "SandboxCreateInit_Custom": ".sandbox_create_init",
+    "SandboxCreateInit_Full": ".sandbox_create_init",
+    "SandboxCreateInit_Minimal": ".sandbox_create_init",
 }
 
 

@@ -16,13 +16,14 @@ from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.auth_strategy_schema import AuthStrategySchema
-from ..types.content_filter_schema import ContentFilterSchema
 from ..types.error_response import ErrorResponse
 from ..types.gateway_action import GatewayAction
 from ..types.gateway_profile_detail_response import GatewayProfileDetailResponse
 from ..types.gateway_profile_response import GatewayProfileResponse
 from ..types.gateway_rule_response import GatewayRuleResponse
 from ..types.rule_reorder_item import RuleReorderItem
+from .types.gateway_rule_create_content_filter import GatewayRuleCreateContentFilter
+from .types.gateway_rule_update_content_filter import GatewayRuleUpdateContentFilter
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -118,7 +119,7 @@ class RawGatewayProfilesClient:
         is_default : typing.Optional[bool]
 
         cloud_role : typing.Optional[str]
-            Cloud role name or public_id
+            Cloud role public ID (UUID)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -374,7 +375,7 @@ class RawGatewayProfilesClient:
         is_default : typing.Optional[bool]
 
         cloud_role : typing.Optional[str]
-            Cloud role name or public_id, empty string to unset
+            Cloud role public ID (UUID), empty string to unset
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -476,7 +477,7 @@ class RawGatewayProfilesClient:
         rate_limit_rpm: typing.Optional[int] = OMIT,
         provider_key: typing.Optional[str] = OMIT,
         auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
-        content_filter: typing.Optional[ContentFilterSchema] = OMIT,
+        content_filter: typing.Optional[GatewayRuleCreateContentFilter] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[GatewayRuleResponse]:
         """
@@ -500,7 +501,7 @@ class RawGatewayProfilesClient:
 
         auth_strategy : typing.Optional[AuthStrategySchema]
 
-        content_filter : typing.Optional[ContentFilterSchema]
+        content_filter : typing.Optional[GatewayRuleCreateContentFilter]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -525,7 +526,9 @@ class RawGatewayProfilesClient:
                     object_=auth_strategy, annotation=typing.Optional[AuthStrategySchema], direction="write"
                 ),
                 "content_filter": convert_and_respect_annotation_metadata(
-                    object_=content_filter, annotation=typing.Optional[ContentFilterSchema], direction="write"
+                    object_=content_filter,
+                    annotation=typing.Optional[GatewayRuleCreateContentFilter],
+                    direction="write",
                 ),
             },
             headers={
@@ -666,7 +669,7 @@ class RawGatewayProfilesClient:
         rate_limit_rpm: typing.Optional[int] = OMIT,
         provider_key: typing.Optional[str] = OMIT,
         auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
-        content_filter: typing.Optional[ContentFilterSchema] = OMIT,
+        content_filter: typing.Optional[GatewayRuleUpdateContentFilter] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[GatewayRuleResponse]:
         """
@@ -692,7 +695,7 @@ class RawGatewayProfilesClient:
 
         auth_strategy : typing.Optional[AuthStrategySchema]
 
-        content_filter : typing.Optional[ContentFilterSchema]
+        content_filter : typing.Optional[GatewayRuleUpdateContentFilter]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -717,7 +720,9 @@ class RawGatewayProfilesClient:
                     object_=auth_strategy, annotation=typing.Optional[AuthStrategySchema], direction="write"
                 ),
                 "content_filter": convert_and_respect_annotation_metadata(
-                    object_=content_filter, annotation=typing.Optional[ContentFilterSchema], direction="write"
+                    object_=content_filter,
+                    annotation=typing.Optional[GatewayRuleUpdateContentFilter],
+                    direction="write",
                 ),
             },
             headers={
@@ -956,7 +961,7 @@ class AsyncRawGatewayProfilesClient:
         is_default : typing.Optional[bool]
 
         cloud_role : typing.Optional[str]
-            Cloud role name or public_id
+            Cloud role public ID (UUID)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1212,7 +1217,7 @@ class AsyncRawGatewayProfilesClient:
         is_default : typing.Optional[bool]
 
         cloud_role : typing.Optional[str]
-            Cloud role name or public_id, empty string to unset
+            Cloud role public ID (UUID), empty string to unset
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1314,7 +1319,7 @@ class AsyncRawGatewayProfilesClient:
         rate_limit_rpm: typing.Optional[int] = OMIT,
         provider_key: typing.Optional[str] = OMIT,
         auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
-        content_filter: typing.Optional[ContentFilterSchema] = OMIT,
+        content_filter: typing.Optional[GatewayRuleCreateContentFilter] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[GatewayRuleResponse]:
         """
@@ -1338,7 +1343,7 @@ class AsyncRawGatewayProfilesClient:
 
         auth_strategy : typing.Optional[AuthStrategySchema]
 
-        content_filter : typing.Optional[ContentFilterSchema]
+        content_filter : typing.Optional[GatewayRuleCreateContentFilter]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1363,7 +1368,9 @@ class AsyncRawGatewayProfilesClient:
                     object_=auth_strategy, annotation=typing.Optional[AuthStrategySchema], direction="write"
                 ),
                 "content_filter": convert_and_respect_annotation_metadata(
-                    object_=content_filter, annotation=typing.Optional[ContentFilterSchema], direction="write"
+                    object_=content_filter,
+                    annotation=typing.Optional[GatewayRuleCreateContentFilter],
+                    direction="write",
                 ),
             },
             headers={
@@ -1504,7 +1511,7 @@ class AsyncRawGatewayProfilesClient:
         rate_limit_rpm: typing.Optional[int] = OMIT,
         provider_key: typing.Optional[str] = OMIT,
         auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
-        content_filter: typing.Optional[ContentFilterSchema] = OMIT,
+        content_filter: typing.Optional[GatewayRuleUpdateContentFilter] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[GatewayRuleResponse]:
         """
@@ -1530,7 +1537,7 @@ class AsyncRawGatewayProfilesClient:
 
         auth_strategy : typing.Optional[AuthStrategySchema]
 
-        content_filter : typing.Optional[ContentFilterSchema]
+        content_filter : typing.Optional[GatewayRuleUpdateContentFilter]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1555,7 +1562,9 @@ class AsyncRawGatewayProfilesClient:
                     object_=auth_strategy, annotation=typing.Optional[AuthStrategySchema], direction="write"
                 ),
                 "content_filter": convert_and_respect_annotation_metadata(
-                    object_=content_filter, annotation=typing.Optional[ContentFilterSchema], direction="write"
+                    object_=content_filter,
+                    annotation=typing.Optional[GatewayRuleUpdateContentFilter],
+                    direction="write",
                 ),
             },
             headers={

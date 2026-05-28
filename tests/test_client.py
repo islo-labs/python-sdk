@@ -40,23 +40,22 @@ class TestIsloClient:
         monkeypatch.delenv("ISLO_API_KEY", raising=False)
         monkeypatch.delenv("ISLO_BASE_URL", raising=False)
         client = Islo()
-        assert hasattr(client, "sandboxes")
-        assert hasattr(client, "integrations")
+        public_resource_clients = {
+            name
+            for cls in type(client).mro()
+            for name, value in vars(cls).items()
+            if isinstance(value, property) and not name.startswith("_")
+        }
 
-    def test_excluded_resource_clients_not_available(self, monkeypatch):
-        monkeypatch.delenv("ISLO_API_KEY", raising=False)
-        monkeypatch.delenv("ISLO_BASE_URL", raising=False)
-        client = Islo()
-        # /auth/token is x-fern-ignored on the API side; users go through
-        # the hand-written custom/auth.py token providers instead.
-        assert not hasattr(client, "auth")
-        assert not hasattr(client, "api_keys")
-        assert not hasattr(client, "shares")
-        assert not hasattr(client, "usage")
-        assert not hasattr(client, "certificate_authority")
-        assert not hasattr(client, "tenants")
-        assert not hasattr(client, "users")
-        assert not hasattr(client, "models")
+        assert public_resource_clients == {
+            "cloud_roles",
+            "credits",
+            "gateway_profiles",
+            "integrations",
+            "sandboxes",
+            "shares",
+            "snapshots",
+        }
 
 
 class TestAsyncIsloClient:
