@@ -5,13 +5,14 @@ import typing
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
 from ..types.auth_strategy_schema import AuthStrategySchema
-from ..types.content_filter_schema import ContentFilterSchema
 from ..types.gateway_action import GatewayAction
 from ..types.gateway_profile_detail_response import GatewayProfileDetailResponse
 from ..types.gateway_profile_response import GatewayProfileResponse
 from ..types.gateway_rule_response import GatewayRuleResponse
 from ..types.rule_reorder_item import RuleReorderItem
 from .raw_client import AsyncRawGatewayProfilesClient, RawGatewayProfilesClient
+from .types.gateway_rule_create_content_filter import GatewayRuleCreateContentFilter
+from .types.gateway_rule_update_content_filter import GatewayRuleUpdateContentFilter
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -84,7 +85,7 @@ class GatewayProfilesClient:
         is_default : typing.Optional[bool]
 
         cloud_role : typing.Optional[str]
-            Cloud role name or public_id
+            Cloud role public ID (UUID)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -206,7 +207,7 @@ class GatewayProfilesClient:
         is_default : typing.Optional[bool]
 
         cloud_role : typing.Optional[str]
-            Cloud role name or public_id, empty string to unset
+            Cloud role public ID (UUID), empty string to unset
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -252,7 +253,7 @@ class GatewayProfilesClient:
         rate_limit_rpm: typing.Optional[int] = OMIT,
         provider_key: typing.Optional[str] = OMIT,
         auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
-        content_filter: typing.Optional[ContentFilterSchema] = OMIT,
+        content_filter: typing.Optional[GatewayRuleCreateContentFilter] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayRuleResponse:
         """
@@ -276,7 +277,7 @@ class GatewayProfilesClient:
 
         auth_strategy : typing.Optional[AuthStrategySchema]
 
-        content_filter : typing.Optional[ContentFilterSchema]
+        content_filter : typing.Optional[GatewayRuleCreateContentFilter]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -360,7 +361,7 @@ class GatewayProfilesClient:
         rate_limit_rpm: typing.Optional[int] = OMIT,
         provider_key: typing.Optional[str] = OMIT,
         auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
-        content_filter: typing.Optional[ContentFilterSchema] = OMIT,
+        content_filter: typing.Optional[GatewayRuleUpdateContentFilter] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayRuleResponse:
         """
@@ -386,7 +387,7 @@ class GatewayProfilesClient:
 
         auth_strategy : typing.Optional[AuthStrategySchema]
 
-        content_filter : typing.Optional[ContentFilterSchema]
+        content_filter : typing.Optional[GatewayRuleUpdateContentFilter]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -544,7 +545,7 @@ class AsyncGatewayProfilesClient:
         is_default : typing.Optional[bool]
 
         cloud_role : typing.Optional[str]
-            Cloud role name or public_id
+            Cloud role public ID (UUID)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -690,7 +691,7 @@ class AsyncGatewayProfilesClient:
         is_default : typing.Optional[bool]
 
         cloud_role : typing.Optional[str]
-            Cloud role name or public_id, empty string to unset
+            Cloud role public ID (UUID), empty string to unset
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -744,7 +745,7 @@ class AsyncGatewayProfilesClient:
         rate_limit_rpm: typing.Optional[int] = OMIT,
         provider_key: typing.Optional[str] = OMIT,
         auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
-        content_filter: typing.Optional[ContentFilterSchema] = OMIT,
+        content_filter: typing.Optional[GatewayRuleCreateContentFilter] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayRuleResponse:
         """
@@ -768,7 +769,7 @@ class AsyncGatewayProfilesClient:
 
         auth_strategy : typing.Optional[AuthStrategySchema]
 
-        content_filter : typing.Optional[ContentFilterSchema]
+        content_filter : typing.Optional[GatewayRuleCreateContentFilter]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -868,7 +869,7 @@ class AsyncGatewayProfilesClient:
         rate_limit_rpm: typing.Optional[int] = OMIT,
         provider_key: typing.Optional[str] = OMIT,
         auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
-        content_filter: typing.Optional[ContentFilterSchema] = OMIT,
+        content_filter: typing.Optional[GatewayRuleUpdateContentFilter] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayRuleResponse:
         """
@@ -894,7 +895,7 @@ class AsyncGatewayProfilesClient:
 
         auth_strategy : typing.Optional[AuthStrategySchema]
 
-        content_filter : typing.Optional[ContentFilterSchema]
+        content_filter : typing.Optional[GatewayRuleUpdateContentFilter]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

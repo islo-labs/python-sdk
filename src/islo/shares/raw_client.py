@@ -13,186 +13,47 @@ from ..core.request_options import RequestOptions
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
-from ..types.cloud_provider import CloudProvider
-from ..types.cloud_role_response import CloudRoleResponse
 from ..types.error_response import ErrorResponse
+from ..types.share_response import ShareResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
 
-class RawCloudRolesClient:
+class RawSharesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list_cloud_roles(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[typing.List[CloudRoleResponse]]:
+    def list_shares(
+        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[typing.List[ShareResponse]]:
         """
+        List active shares for a sandbox.
+
         Parameters
         ----------
+        sandbox_name : str
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[typing.List[CloudRoleResponse]]
+        HttpResponse[typing.List[ShareResponse]]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            "cloud-roles",
+            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares",
             method="GET",
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[CloudRoleResponse],
+                    typing.List[ShareResponse],
                     parse_obj_as(
-                        type_=typing.List[CloudRoleResponse],  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def create_cloud_role(
-        self,
-        *,
-        provider: CloudProvider,
-        role_arn: str,
-        session_duration_seconds: typing.Optional[int] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[CloudRoleResponse]:
-        """
-        Parameters
-        ----------
-        provider : CloudProvider
-
-        role_arn : str
-
-        session_duration_seconds : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[CloudRoleResponse]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "cloud-roles",
-            method="POST",
-            json={
-                "provider": provider,
-                "role_arn": role_arn,
-                "session_duration_seconds": session_duration_seconds,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CloudRoleResponse,
-                    parse_obj_as(
-                        type_=CloudRoleResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def get_cloud_role(
-        self, role_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[CloudRoleResponse]:
-        """
-        Parameters
-        ----------
-        role_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[CloudRoleResponse]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CloudRoleResponse,
-                    parse_obj_as(
-                        type_=CloudRoleResponse,  # type: ignore
+                        type_=typing.List[ShareResponse],  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -239,13 +100,111 @@ class RawCloudRolesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def delete_cloud_role(
-        self, role_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[None]:
+    def create_share(
+        self,
+        sandbox_name: str,
+        *,
+        port: int,
+        ttl_seconds: typing.Optional[int] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[ShareResponse]:
         """
+        Create a shareable URL for a sandbox port.
+
         Parameters
         ----------
-        role_id : str
+        sandbox_name : str
+
+        port : int
+            Port to share
+
+        ttl_seconds : typing.Optional[int]
+            Time-to-live in seconds (1 minute to 7 days). Defaults to 24h.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[ShareResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares",
+            method="POST",
+            json={
+                "port": port,
+                "ttl_seconds": ttl_seconds,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ShareResponse,
+                    parse_obj_as(
+                        type_=ShareResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def revoke_share(
+        self, sandbox_name: str, share_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[None]:
+        """
+        Revoke a shareable URL.
+
+        Parameters
+        ----------
+        sandbox_name : str
+
+        share_id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -255,7 +214,7 @@ class RawCloudRolesClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares/{jsonable_encoder(share_id)}",
             method="DELETE",
             request_options=request_options,
         )
@@ -304,272 +263,40 @@ class RawCloudRolesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def update_cloud_role(
-        self,
-        role_id: str,
-        *,
-        role_arn: typing.Optional[str] = OMIT,
-        session_duration_seconds: typing.Optional[int] = OMIT,
-        is_enabled: typing.Optional[bool] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[CloudRoleResponse]:
-        """
-        Parameters
-        ----------
-        role_id : str
 
-        role_arn : typing.Optional[str]
-
-        session_duration_seconds : typing.Optional[int]
-
-        is_enabled : typing.Optional[bool]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[CloudRoleResponse]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
-            method="PATCH",
-            json={
-                "role_arn": role_arn,
-                "session_duration_seconds": session_duration_seconds,
-                "is_enabled": is_enabled,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CloudRoleResponse,
-                    parse_obj_as(
-                        type_=CloudRoleResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-
-class AsyncRawCloudRolesClient:
+class AsyncRawSharesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list_cloud_roles(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[typing.List[CloudRoleResponse]]:
+    async def list_shares(
+        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[typing.List[ShareResponse]]:
         """
+        List active shares for a sandbox.
+
         Parameters
         ----------
+        sandbox_name : str
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[typing.List[CloudRoleResponse]]
+        AsyncHttpResponse[typing.List[ShareResponse]]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "cloud-roles",
+            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares",
             method="GET",
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[CloudRoleResponse],
+                    typing.List[ShareResponse],
                     parse_obj_as(
-                        type_=typing.List[CloudRoleResponse],  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def create_cloud_role(
-        self,
-        *,
-        provider: CloudProvider,
-        role_arn: str,
-        session_duration_seconds: typing.Optional[int] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[CloudRoleResponse]:
-        """
-        Parameters
-        ----------
-        provider : CloudProvider
-
-        role_arn : str
-
-        session_duration_seconds : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[CloudRoleResponse]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "cloud-roles",
-            method="POST",
-            json={
-                "provider": provider,
-                "role_arn": role_arn,
-                "session_duration_seconds": session_duration_seconds,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CloudRoleResponse,
-                    parse_obj_as(
-                        type_=CloudRoleResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def get_cloud_role(
-        self, role_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[CloudRoleResponse]:
-        """
-        Parameters
-        ----------
-        role_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[CloudRoleResponse]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CloudRoleResponse,
-                    parse_obj_as(
-                        type_=CloudRoleResponse,  # type: ignore
+                        type_=typing.List[ShareResponse],  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -616,13 +343,111 @@ class AsyncRawCloudRolesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def delete_cloud_role(
-        self, role_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[None]:
+    async def create_share(
+        self,
+        sandbox_name: str,
+        *,
+        port: int,
+        ttl_seconds: typing.Optional[int] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[ShareResponse]:
         """
+        Create a shareable URL for a sandbox port.
+
         Parameters
         ----------
-        role_id : str
+        sandbox_name : str
+
+        port : int
+            Port to share
+
+        ttl_seconds : typing.Optional[int]
+            Time-to-live in seconds (1 minute to 7 days). Defaults to 24h.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[ShareResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares",
+            method="POST",
+            json={
+                "port": port,
+                "ttl_seconds": ttl_seconds,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ShareResponse,
+                    parse_obj_as(
+                        type_=ShareResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def revoke_share(
+        self, sandbox_name: str, share_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[None]:
+        """
+        Revoke a shareable URL.
+
+        Parameters
+        ----------
+        sandbox_name : str
+
+        share_id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -632,107 +457,13 @@ class AsyncRawCloudRolesClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares/{jsonable_encoder(share_id)}",
             method="DELETE",
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 return AsyncHttpResponse(response=_response, data=None)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def update_cloud_role(
-        self,
-        role_id: str,
-        *,
-        role_arn: typing.Optional[str] = OMIT,
-        session_duration_seconds: typing.Optional[int] = OMIT,
-        is_enabled: typing.Optional[bool] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[CloudRoleResponse]:
-        """
-        Parameters
-        ----------
-        role_id : str
-
-        role_arn : typing.Optional[str]
-
-        session_duration_seconds : typing.Optional[int]
-
-        is_enabled : typing.Optional[bool]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[CloudRoleResponse]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
-            method="PATCH",
-            json={
-                "role_arn": role_arn,
-                "session_duration_seconds": session_duration_seconds,
-                "is_enabled": is_enabled,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CloudRoleResponse,
-                    parse_obj_as(
-                        type_=CloudRoleResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
                     headers=dict(_response.headers),
