@@ -82,6 +82,7 @@ class TestIsloClient:
         monkeypatch.delenv("ISLO_BASE_URL", raising=False)
         client = Islo()
         assert hasattr(client, "sandboxes")
+        assert hasattr(client, "shares")
         assert hasattr(client, "integrations")
 
     def test_excluded_resource_clients_not_available(self, monkeypatch):
