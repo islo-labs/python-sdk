@@ -15,6 +15,7 @@ if typing.TYPE_CHECKING:
     from .gateway_profiles.client import AsyncGatewayProfilesClient, GatewayProfilesClient
     from .integrations.client import AsyncIntegrationsClient, IntegrationsClient
     from .sandboxes.client import AsyncSandboxesClient, SandboxesClient
+    from .shares.client import AsyncSharesClient, SharesClient
     from .snapshots.client import AsyncSnapshotsClient, SnapshotsClient
 
 
@@ -81,6 +82,7 @@ class BaseIslo:
         )
         self._sandboxes: typing.Optional[SandboxesClient] = None
         self._snapshots: typing.Optional[SnapshotsClient] = None
+        self._shares: typing.Optional[SharesClient] = None
         self._credits: typing.Optional[CreditsClient] = None
         self._integrations: typing.Optional[IntegrationsClient] = None
         self._gateway_profiles: typing.Optional[GatewayProfilesClient] = None
@@ -101,6 +103,14 @@ class BaseIslo:
 
             self._snapshots = SnapshotsClient(client_wrapper=self._client_wrapper)
         return self._snapshots
+
+    @property
+    def shares(self):
+        if self._shares is None:
+            from .shares.client import SharesClient  # noqa: E402
+
+            self._shares = SharesClient(client_wrapper=self._client_wrapper)
+        return self._shares
 
     @property
     def credits(self):
@@ -203,6 +213,7 @@ class AsyncBaseIslo:
         )
         self._sandboxes: typing.Optional[AsyncSandboxesClient] = None
         self._snapshots: typing.Optional[AsyncSnapshotsClient] = None
+        self._shares: typing.Optional[AsyncSharesClient] = None
         self._credits: typing.Optional[AsyncCreditsClient] = None
         self._integrations: typing.Optional[AsyncIntegrationsClient] = None
         self._gateway_profiles: typing.Optional[AsyncGatewayProfilesClient] = None
@@ -223,6 +234,14 @@ class AsyncBaseIslo:
 
             self._snapshots = AsyncSnapshotsClient(client_wrapper=self._client_wrapper)
         return self._snapshots
+
+    @property
+    def shares(self):
+        if self._shares is None:
+            from .shares.client import AsyncSharesClient  # noqa: E402
+
+            self._shares = AsyncSharesClient(client_wrapper=self._client_wrapper)
+        return self._shares
 
     @property
     def credits(self):
