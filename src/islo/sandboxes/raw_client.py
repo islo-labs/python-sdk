@@ -31,6 +31,8 @@ from ..types.git_source import GitSource
 from ..types.paginated_sandbox_response import PaginatedSandboxResponse
 from ..types.sandbox_response import SandboxResponse
 from ..types.setup_script import SetupScript
+from .types.sandbox_create_init import SandboxCreateInit
+from .types.sandbox_create_init_capabilities_item import SandboxCreateInitCapabilitiesItem
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -153,7 +155,8 @@ class RawSandboxesClient:
         cache_key: typing.Optional[str] = OMIT,
         env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         workdir: typing.Optional[str] = OMIT,
-        init_capabilities: typing.Optional[typing.Sequence[str]] = OMIT,
+        init: typing.Optional[SandboxCreateInit] = OMIT,
+        init_capabilities: typing.Optional[typing.Sequence[SandboxCreateInitCapabilitiesItem]] = OMIT,
         gateway_profile: typing.Optional[str] = OMIT,
         snapshot_name: typing.Optional[str] = OMIT,
         sources: typing.Optional[typing.Sequence[GitSource]] = OMIT,
@@ -189,8 +192,11 @@ class RawSandboxesClient:
         workdir : typing.Optional[str]
             Working directory relative to /workspace (e.g. 'my-project')
 
-        init_capabilities : typing.Optional[typing.Sequence[str]]
-            Init capabilities to enable (in addition to Core which always runs). None = all capabilities (default, backward compatible), [] = Core only (minimal init), ['ssh', 'devtools'] = Core + specified capabilities. Valid values: ssh, terminal, devtools, docker.
+        init : typing.Optional[SandboxCreateInit]
+            Sandbox init intent. Omitted typed SDK values should send minimal. Raw requests that omit both init and init_capabilities use legacy full init during migration. Platform init always runs.
+
+        init_capabilities : typing.Optional[typing.Sequence[SandboxCreateInitCapabilitiesItem]]
+            Deprecated legacy init capabilities. Use init instead. None = full init, [] = platform init only, ['ssh'] = selected capabilities. Valid legacy values: core-gateway-proxy, ssh, docker.
 
         gateway_profile : typing.Optional[str]
             Gateway profile name or ID to apply. Uses tenant default if omitted.
@@ -224,6 +230,9 @@ class RawSandboxesClient:
                 "cache_key": cache_key,
                 "env": env,
                 "workdir": workdir,
+                "init": convert_and_respect_annotation_metadata(
+                    object_=init, annotation=SandboxCreateInit, direction="write"
+                ),
                 "init_capabilities": init_capabilities,
                 "gateway_profile": gateway_profile,
                 "snapshot_name": snapshot_name,
@@ -2314,7 +2323,8 @@ class AsyncRawSandboxesClient:
         cache_key: typing.Optional[str] = OMIT,
         env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         workdir: typing.Optional[str] = OMIT,
-        init_capabilities: typing.Optional[typing.Sequence[str]] = OMIT,
+        init: typing.Optional[SandboxCreateInit] = OMIT,
+        init_capabilities: typing.Optional[typing.Sequence[SandboxCreateInitCapabilitiesItem]] = OMIT,
         gateway_profile: typing.Optional[str] = OMIT,
         snapshot_name: typing.Optional[str] = OMIT,
         sources: typing.Optional[typing.Sequence[GitSource]] = OMIT,
@@ -2350,8 +2360,11 @@ class AsyncRawSandboxesClient:
         workdir : typing.Optional[str]
             Working directory relative to /workspace (e.g. 'my-project')
 
-        init_capabilities : typing.Optional[typing.Sequence[str]]
-            Init capabilities to enable (in addition to Core which always runs). None = all capabilities (default, backward compatible), [] = Core only (minimal init), ['ssh', 'devtools'] = Core + specified capabilities. Valid values: ssh, terminal, devtools, docker.
+        init : typing.Optional[SandboxCreateInit]
+            Sandbox init intent. Omitted typed SDK values should send minimal. Raw requests that omit both init and init_capabilities use legacy full init during migration. Platform init always runs.
+
+        init_capabilities : typing.Optional[typing.Sequence[SandboxCreateInitCapabilitiesItem]]
+            Deprecated legacy init capabilities. Use init instead. None = full init, [] = platform init only, ['ssh'] = selected capabilities. Valid legacy values: core-gateway-proxy, ssh, docker.
 
         gateway_profile : typing.Optional[str]
             Gateway profile name or ID to apply. Uses tenant default if omitted.
@@ -2385,6 +2398,9 @@ class AsyncRawSandboxesClient:
                 "cache_key": cache_key,
                 "env": env,
                 "workdir": workdir,
+                "init": convert_and_respect_annotation_metadata(
+                    object_=init, annotation=SandboxCreateInit, direction="write"
+                ),
                 "init_capabilities": init_capabilities,
                 "gateway_profile": gateway_profile,
                 "snapshot_name": snapshot_name,

@@ -6,12 +6,14 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from .types import (
+    from .gateway_rule_create_content_filter import (
         GatewayRuleCreateContentFilter,
         GatewayRuleCreateContentFilter_ContentType,
         GatewayRuleCreateContentFilter_Judge,
         GatewayRuleCreateContentFilter_Regex,
         GatewayRuleCreateContentFilter_SizeLimit,
+    )
+    from .gateway_rule_update_content_filter import (
         GatewayRuleUpdateContentFilter,
         GatewayRuleUpdateContentFilter_ContentType,
         GatewayRuleUpdateContentFilter_Judge,
@@ -19,16 +21,16 @@ if typing.TYPE_CHECKING:
         GatewayRuleUpdateContentFilter_SizeLimit,
     )
 _dynamic_imports: typing.Dict[str, str] = {
-    "GatewayRuleCreateContentFilter": ".types",
-    "GatewayRuleCreateContentFilter_ContentType": ".types",
-    "GatewayRuleCreateContentFilter_Judge": ".types",
-    "GatewayRuleCreateContentFilter_Regex": ".types",
-    "GatewayRuleCreateContentFilter_SizeLimit": ".types",
-    "GatewayRuleUpdateContentFilter": ".types",
-    "GatewayRuleUpdateContentFilter_ContentType": ".types",
-    "GatewayRuleUpdateContentFilter_Judge": ".types",
-    "GatewayRuleUpdateContentFilter_Regex": ".types",
-    "GatewayRuleUpdateContentFilter_SizeLimit": ".types",
+    "GatewayRuleCreateContentFilter": ".gateway_rule_create_content_filter",
+    "GatewayRuleCreateContentFilter_ContentType": ".gateway_rule_create_content_filter",
+    "GatewayRuleCreateContentFilter_Judge": ".gateway_rule_create_content_filter",
+    "GatewayRuleCreateContentFilter_Regex": ".gateway_rule_create_content_filter",
+    "GatewayRuleCreateContentFilter_SizeLimit": ".gateway_rule_create_content_filter",
+    "GatewayRuleUpdateContentFilter": ".gateway_rule_update_content_filter",
+    "GatewayRuleUpdateContentFilter_ContentType": ".gateway_rule_update_content_filter",
+    "GatewayRuleUpdateContentFilter_Judge": ".gateway_rule_update_content_filter",
+    "GatewayRuleUpdateContentFilter_Regex": ".gateway_rule_update_content_filter",
+    "GatewayRuleUpdateContentFilter_SizeLimit": ".gateway_rule_update_content_filter",
 }
 
 
