@@ -4,26 +4,25 @@ import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.credit_balance import CreditBalance
-from .raw_client import AsyncRawCreditsClient, RawCreditsClient
+from .raw_client import AsyncRawComputeClient, RawComputeClient
 
 
-class CreditsClient:
+class ComputeClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
-        self._raw_client = RawCreditsClient(client_wrapper=client_wrapper)
+        self._raw_client = RawComputeClient(client_wrapper=client_wrapper)
 
     @property
-    def with_raw_response(self) -> RawCreditsClient:
+    def with_raw_response(self) -> RawComputeClient:
         """
         Retrieves a raw implementation of this client that returns raw responses.
 
         Returns
         -------
-        RawCreditsClient
+        RawComputeClient
         """
         return self._raw_client
 
-    def get_credit_balance(self, *, request_options: typing.Optional[RequestOptions] = None) -> CreditBalance:
+    def billing_check(self, *, request_options: typing.Optional[RequestOptions] = None) -> typing.Any:
         """
         Parameters
         ----------
@@ -32,7 +31,7 @@ class CreditsClient:
 
         Returns
         -------
-        CreditBalance
+        typing.Any
             Successful Response
 
         Examples
@@ -44,28 +43,28 @@ class CreditsClient:
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-        client.credits.get_credit_balance()
+        client.compute.billing_check()
         """
-        _response = self._raw_client.get_credit_balance(request_options=request_options)
+        _response = self._raw_client.billing_check(request_options=request_options)
         return _response.data
 
 
-class AsyncCreditsClient:
+class AsyncComputeClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
-        self._raw_client = AsyncRawCreditsClient(client_wrapper=client_wrapper)
+        self._raw_client = AsyncRawComputeClient(client_wrapper=client_wrapper)
 
     @property
-    def with_raw_response(self) -> AsyncRawCreditsClient:
+    def with_raw_response(self) -> AsyncRawComputeClient:
         """
         Retrieves a raw implementation of this client that returns raw responses.
 
         Returns
         -------
-        AsyncRawCreditsClient
+        AsyncRawComputeClient
         """
         return self._raw_client
 
-    async def get_credit_balance(self, *, request_options: typing.Optional[RequestOptions] = None) -> CreditBalance:
+    async def billing_check(self, *, request_options: typing.Optional[RequestOptions] = None) -> typing.Any:
         """
         Parameters
         ----------
@@ -74,7 +73,7 @@ class AsyncCreditsClient:
 
         Returns
         -------
-        CreditBalance
+        typing.Any
             Successful Response
 
         Examples
@@ -91,10 +90,10 @@ class AsyncCreditsClient:
 
 
         async def main() -> None:
-            await client.credits.get_credit_balance()
+            await client.compute.billing_check()
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_credit_balance(request_options=request_options)
+        _response = await self._raw_client.billing_check(request_options=request_options)
         return _response.data

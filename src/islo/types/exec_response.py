@@ -9,13 +9,10 @@ from ..core.pydantic_utilities import UniversalBaseModel
 class ExecResponse(UniversalBaseModel):
     """
     Command execution started response.
-
-    The command runs asynchronously in the sandbox. Poll the result via
-    GET /sandboxes/{name}/exec/{exec_id}.
     """
 
     exec_id: str
-    status: str
     sandbox_id: str
+    status: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

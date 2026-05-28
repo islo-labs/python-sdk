@@ -9,8 +9,8 @@ from .snapshot_response import SnapshotResponse
 
 class PaginatedSnapshotResponse(UniversalBaseModel):
     items: typing.List[SnapshotResponse]
-    total: int
     limit: int
     offset: int
+    total: int
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

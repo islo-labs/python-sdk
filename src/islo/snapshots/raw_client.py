@@ -14,7 +14,6 @@ from ..errors.conflict_error import ConflictError
 from ..errors.not_found_error import NotFoundError
 from ..errors.service_unavailable_error import ServiceUnavailableError
 from ..errors.unauthorized_error import UnauthorizedError
-from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.error_response import ErrorResponse
 from ..types.paginated_snapshot_response import PaginatedSnapshotResponse
 from ..types.snapshot_response import SnapshotResponse
@@ -54,6 +53,7 @@ class RawSnapshotsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "snapshots/",
+            base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             params={
                 "limit": limit,
@@ -78,17 +78,6 @@ class RawSnapshotsClient:
                         ErrorResponse,
                         parse_obj_as(
                             type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -128,10 +117,11 @@ class RawSnapshotsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "snapshots/",
+            base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             json={
-                "sandbox_id": sandbox_id,
                 "name": name,
+                "sandbox_id": sandbox_id,
             },
             headers={
                 "content-type": "application/json",
@@ -182,17 +172,6 @@ class RawSnapshotsClient:
                         ),
                     ),
                 )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 503:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
@@ -222,6 +201,7 @@ class RawSnapshotsClient:
         Parameters
         ----------
         name : str
+            Name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -233,6 +213,7 @@ class RawSnapshotsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"snapshots/{jsonable_encoder(name)}",
+            base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
         )
@@ -268,17 +249,6 @@ class RawSnapshotsClient:
                         ),
                     ),
                 )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
@@ -297,6 +267,7 @@ class RawSnapshotsClient:
         Parameters
         ----------
         name : str
+            Name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -307,6 +278,7 @@ class RawSnapshotsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"snapshots/{jsonable_encoder(name)}",
+            base_url=self._client_wrapper.get_environment().compute,
             method="DELETE",
             request_options=request_options,
         )
@@ -331,17 +303,6 @@ class RawSnapshotsClient:
                         ErrorResponse,
                         parse_obj_as(
                             type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -386,6 +347,7 @@ class AsyncRawSnapshotsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "snapshots/",
+            base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             params={
                 "limit": limit,
@@ -410,17 +372,6 @@ class AsyncRawSnapshotsClient:
                         ErrorResponse,
                         parse_obj_as(
                             type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -460,10 +411,11 @@ class AsyncRawSnapshotsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "snapshots/",
+            base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             json={
-                "sandbox_id": sandbox_id,
                 "name": name,
+                "sandbox_id": sandbox_id,
             },
             headers={
                 "content-type": "application/json",
@@ -514,17 +466,6 @@ class AsyncRawSnapshotsClient:
                         ),
                     ),
                 )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 503:
                 raise ServiceUnavailableError(
                     headers=dict(_response.headers),
@@ -554,6 +495,7 @@ class AsyncRawSnapshotsClient:
         Parameters
         ----------
         name : str
+            Name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -565,6 +507,7 @@ class AsyncRawSnapshotsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"snapshots/{jsonable_encoder(name)}",
+            base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
         )
@@ -600,17 +543,6 @@ class AsyncRawSnapshotsClient:
                         ),
                     ),
                 )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
@@ -629,6 +561,7 @@ class AsyncRawSnapshotsClient:
         Parameters
         ----------
         name : str
+            Name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -639,6 +572,7 @@ class AsyncRawSnapshotsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"snapshots/{jsonable_encoder(name)}",
+            base_url=self._client_wrapper.get_environment().compute,
             method="DELETE",
             request_options=request_options,
         )
@@ -663,17 +597,6 @@ class AsyncRawSnapshotsClient:
                         ErrorResponse,
                         parse_obj_as(
                             type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

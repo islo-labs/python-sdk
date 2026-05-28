@@ -42,6 +42,7 @@ class RawCloudRolesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "cloud-roles",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -113,6 +114,7 @@ class RawCloudRolesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "cloud-roles",
+            base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
                 "provider": provider,
@@ -184,6 +186,7 @@ class RawCloudRolesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"cloud-roles/{jsonable_encoder(role_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -256,6 +259,7 @@ class RawCloudRolesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"cloud-roles/{jsonable_encoder(role_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
         )
@@ -334,6 +338,7 @@ class RawCloudRolesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"cloud-roles/{jsonable_encoder(role_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
                 "role_arn": role_arn,
@@ -419,6 +424,7 @@ class AsyncRawCloudRolesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "cloud-roles",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -490,6 +496,7 @@ class AsyncRawCloudRolesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "cloud-roles",
+            base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
                 "provider": provider,
@@ -561,6 +568,7 @@ class AsyncRawCloudRolesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"cloud-roles/{jsonable_encoder(role_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -633,6 +641,7 @@ class AsyncRawCloudRolesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"cloud-roles/{jsonable_encoder(role_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
         )
@@ -711,6 +720,7 @@ class AsyncRawCloudRolesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"cloud-roles/{jsonable_encoder(role_id)}",
+            base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
                 "role_arn": role_arn,

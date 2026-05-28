@@ -2,4 +2,4 @@
 
 import typing
 
-GitSourceType = typing.Union[typing.Literal["git"], typing.Any]
+InitCapability = typing.Union[typing.Literal["ssh", "docker"], typing.Any]
