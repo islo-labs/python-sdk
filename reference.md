@@ -1,1037 +1,5 @@
 # Reference
-## sandboxes
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">list_sandboxes</a>(...) -> PaginatedSandboxResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-List and filter sandboxes for the authenticated tenant.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.list_sandboxes()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**search:** `typing.Optional[str]` — Search by sandbox name (case-insensitive)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**status:** `typing.Optional[typing.List[str]]` — Filter by status (e.g., ?status=running&status=unknown&status=deleted)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**date_from:** `typing.Optional[datetime.datetime]` — Filter sandboxes created on or after this date
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**date_to:** `typing.Optional[datetime.datetime]` — Filter sandboxes created on or before this date
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**created_by:** `typing.Optional[str]` — Filter by creator. Use 'me' for your own sandboxes.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**limit:** `typing.Optional[int]` — Max items per page
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**offset:** `typing.Optional[int]` — Number of items to skip
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">create_sandbox</a>(...) -> SandboxResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Create a new sandbox with the specified configuration.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.create_sandbox()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `typing.Optional[str]` — User-friendly sandbox name. If omitted, a random slug is generated.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**image:** `typing.Optional[str]` — Container image to use
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**vcpus:** `typing.Optional[int]` — Number of vCPUs
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**memory_mb:** `typing.Optional[int]` — Memory in MB
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**disk_gb:** `typing.Optional[int]` — Disk size in GB
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cache_key:** `typing.Optional[str]` — Tool cache key for golden cache lookup (computed by CLI)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**env:** `typing.Optional[typing.Dict[str, typing.Optional[str]]]` — Environment variables to inject into the sandbox
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**workdir:** `typing.Optional[str]` — Working directory relative to /workspace (e.g. 'my-project')
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**init:** `typing.Optional[SandboxCreateInit]` — Sandbox init intent. Omitted typed SDK values should send minimal. Raw requests that omit both init and init_capabilities use legacy full init during migration. Platform init always runs.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**init_capabilities:** `typing.Optional[typing.List[SandboxCreateInitCapabilitiesItem]]` — Deprecated legacy init capabilities. Use init instead. None = full init, [] = platform init only, ['ssh'] = selected capabilities. Valid legacy values: core-gateway-proxy, ssh, docker.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**gateway_profile:** `typing.Optional[str]` — Gateway profile name or ID to apply. Uses tenant default if omitted.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**snapshot_name:** `typing.Optional[str]` — Name of a snapshot to restore from. When set, the VM is created from the snapshot's filesystem.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sources:** `typing.Optional[typing.List[GitSource]]` — Repository sources to clone into /workspace after VM init.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**setup_scripts:** `typing.Optional[typing.List[SetupScript]]` — Named setup script steps to execute sequentially after git clones.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">get_sandbox_by_id_sandboxes_by_id_sandbox_id_get</a>(...) -> SandboxResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get details of a specific sandbox by stable public ID, including deleted sandboxes.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.get_sandbox_by_id_sandboxes_by_id_sandbox_id_get(
-    sandbox_id="sandbox_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**sandbox_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">get_sandbox</a>(...) -> SandboxResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get details of a specific sandbox by name.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.get_sandbox(
-    sandbox_name="sandbox_name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**sandbox_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">delete_sandbox</a>(...) -> typing.Any</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Mark a sandbox for deletion. VM teardown happens asynchronously.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.delete_sandbox(
-    sandbox_name="sandbox_name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**sandbox_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">stop_sandbox</a>(...) -> typing.Any</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Stop a sandbox. VM teardown happens asynchronously; the record stays visible.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.stop_sandbox(
-    sandbox_name="sandbox_name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**sandbox_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">pause_sandbox</a>(...) -> SandboxResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Snapshot the sandbox VM state to disk and free CPU/memory. The sandbox can be resumed later.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.pause_sandbox(
-    sandbox_name="sandbox_name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**sandbox_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">resume_sandbox</a>(...) -> SandboxResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Resume a paused sandbox from its local snapshot.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.resume_sandbox(
-    sandbox_name="sandbox_name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**sandbox_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">promote_sandbox_cache</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Promote the sandbox's tool cache to golden cache for reuse.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.promote_sandbox_cache(
-    sandbox_name="sandbox_name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**sandbox_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">list_sessions</a>(...) -> typing.Any</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-List active persistent sessions in a sandbox.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.list_sessions(
-    sandbox_name="sandbox_name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**sandbox_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">create_session</a>(...) -> typing.Any</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Create a persistent session in a sandbox.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.create_session(
-    sandbox_name="sandbox_name",
-    request={
-        "key": "value"
-    },
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**sandbox_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request:** `typing.Dict[str, typing.Any]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">kill_session</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Kill a persistent session in a sandbox.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.kill_session(
-    sandbox_name="sandbox_name",
-    session_name="session_name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**sandbox_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**session_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
+## Sandboxes
 <details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">list_exec_sessions</a>(...) -> typing.List[ExecSessionResponse]</code></summary>
 <dl>
 <dd>
@@ -1060,10 +28,11 @@ List all exec sessions for a sandbox.
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.sandboxes.list_exec_sessions(
@@ -1140,10 +109,11 @@ Return logs for a specific exec session in asciinema v2 format for playback.
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.sandboxes.get_exec_session_asciinema(
@@ -1229,10 +199,11 @@ Return raw logs for a specific exec session.
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.sandboxes.get_exec_session_logs(
@@ -1326,10 +297,11 @@ List all Claude agent sessions for a sandbox, ordered by most recent first.
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.sandboxes.list_agent_sessions(
@@ -1414,10 +386,11 @@ Return all trace events for a specific agent session, ordered by timestamp.
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.sandboxes.get_agent_session_events(
@@ -1507,23 +480,9 @@ client.sandboxes.get_agent_session_events(
 </dl>
 </details>
 
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">download_file</a>(...) -> typing.Any</code></summary>
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">list_sandboxes</a>(...) -> PaginatedSandboxResponse</code></summary>
 <dl>
 <dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Download a single file from a sandbox.
-</dd>
-</dl>
-</dd>
-</dl>
 
 #### 🔌 Usage
 
@@ -1535,16 +494,14 @@ Download a single file from a sandbox.
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
-client.sandboxes.download_file(
-    sandbox_name="sandbox_name",
-    path="path",
-)
+client.sandboxes.list_sandboxes()
 
 ```
 </dd>
@@ -1560,7 +517,7 @@ client.sandboxes.download_file(
 <dl>
 <dd>
 
-**sandbox_name:** `str` 
+**status:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
     
 </dd>
 </dl>
@@ -1568,7 +525,7 @@ client.sandboxes.download_file(
 <dl>
 <dd>
 
-**path:** `str` — Absolute source path in the sandbox
+**name_prefix:** `typing.Optional[str]` 
     
 </dd>
 </dl>
@@ -1576,555 +533,10 @@ client.sandboxes.download_file(
 <dl>
 <dd>
 
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+**created_by:** `typing.Optional[str]` 
     
 </dd>
 </dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">upload_file</a>(...) -> typing.Any</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Upload a single file into a sandbox.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.upload_file(
-    sandbox_name="sandbox_name",
-    path="path",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**sandbox_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**path:** `str` — Absolute target path in the sandbox
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">download_archive</a>(...) -> typing.Any</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Download a directory from a sandbox as a tar.gz archive.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.download_archive(
-    sandbox_name="sandbox_name",
-    path="path",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**sandbox_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**path:** `str` — Absolute source directory in the sandbox
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">upload_archive</a>(...) -> typing.Any</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Upload a tar.gz archive and extract it into a sandbox directory.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.upload_archive(
-    sandbox_name="sandbox_name",
-    path="path",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**sandbox_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**path:** `str` — Absolute target directory in the sandbox
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">exec_in_sandbox</a>(...) -> ExecResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Execute a command inside a sandbox by name.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.exec_in_sandbox(
-    sandbox_name="sandbox_name",
-    command=[
-        "command"
-    ],
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**sandbox_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request:** `ExecRequest` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">get_exec_result</a>(...) -> ExecResultResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Poll the result of a previously started exec command.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.get_exec_result(
-    sandbox_name="sandbox_name",
-    exec_id="exec_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**sandbox_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**exec_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">exec_in_sandbox_stream</a>(...) -> typing.Any</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Execute a command inside a sandbox and stream stdout/stderr as SSE.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.sandboxes.exec_in_sandbox_stream(
-    sandbox_name="sandbox_name",
-    command=[
-        "command"
-    ],
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**sandbox_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request:** `ExecRequest` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Snapshots
-<details><summary><code>client.snapshots.<a href="src/islo/snapshots/client.py">list_snapshots</a>(...) -> PaginatedSnapshotResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-List all snapshots for the current tenant.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.snapshots.list_snapshots()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
 
 <dl>
 <dd>
@@ -2157,23 +569,9 @@ client.snapshots.list_snapshots()
 </dl>
 </details>
 
-<details><summary><code>client.snapshots.<a href="src/islo/snapshots/client.py">create_snapshot</a>(...) -> SnapshotResponse</code></summary>
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">create_sandbox</a>(...) -> SandboxResponse</code></summary>
 <dl>
 <dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Create a snapshot from a running sandbox.
-</dd>
-</dl>
-</dd>
-</dl>
 
 #### 🔌 Usage
 
@@ -2185,15 +583,14 @@ Create a snapshot from a running sandbox.
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
-client.snapshots.create_snapshot(
-    sandbox_id="sandbox_id",
-)
+client.sandboxes.create_sandbox()
 
 ```
 </dd>
@@ -2209,7 +606,63 @@ client.snapshots.create_snapshot(
 <dl>
 <dd>
 
-**sandbox_id:** `str` 
+**cache_key:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**disk_gb:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**env:** `typing.Optional[typing.Dict[str, typing.Optional[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**gateway_profile:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**image:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**init:** `typing.Optional[SandboxInit]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**init_capabilities:** `typing.Optional[typing.List[LegacyInitCapability]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**memory_mb:** `typing.Optional[int]` 
     
 </dd>
 </dl>
@@ -2225,6 +678,54 @@ client.snapshots.create_snapshot(
 <dl>
 <dd>
 
+**setup_scripts:** `typing.Optional[typing.List[SetupScript]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**snapshot_name:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**snapshot_url:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sources:** `typing.Optional[typing.List[GitSource]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**vcpus:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**workdir:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -2237,7 +738,7 @@ client.snapshots.create_snapshot(
 </dl>
 </details>
 
-<details><summary><code>client.snapshots.<a href="src/islo/snapshots/client.py">get_snapshot</a>(...) -> SnapshotResponse</code></summary>
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">get_sandbox_by_id</a>(...) -> SandboxResponse</code></summary>
 <dl>
 <dd>
 
@@ -2249,7 +750,9 @@ client.snapshots.create_snapshot(
 <dl>
 <dd>
 
-Get snapshot details by name.
+Resolves the public_id to a sandbox name, then delegates to the same
+coordinator flow as get_sandbox for consistent cluster forwarding and
+setup_steps enrichment.
 </dd>
 </dl>
 </dd>
@@ -2265,14 +768,15 @@ Get snapshot details by name.
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
-client.snapshots.get_snapshot(
-    name="name",
+client.sandboxes.get_sandbox_by_id(
+    id="id",
 )
 
 ```
@@ -2289,7 +793,7 @@ client.snapshots.get_snapshot(
 <dl>
 <dd>
 
-**name:** `str` 
+**id:** `str` — Sandbox public ID (UUID)
     
 </dd>
 </dl>
@@ -2309,23 +813,9 @@ client.snapshots.get_snapshot(
 </dl>
 </details>
 
-<details><summary><code>client.snapshots.<a href="src/islo/snapshots/client.py">delete_snapshot</a>(...)</code></summary>
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">get_sandbox</a>(...) -> SandboxResponse</code></summary>
 <dl>
 <dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Delete a snapshot by name.
-</dd>
-</dl>
-</dd>
-</dl>
 
 #### 🔌 Usage
 
@@ -2337,86 +827,14 @@ Delete a snapshot by name.
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
-client.snapshots.delete_snapshot(
-    name="name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## shares
-<details><summary><code>client.shares.<a href="src/islo/shares/client.py">list_shares</a>(...) -> typing.List[ShareResponse]</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-List active shares for a sandbox.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-
-client = Islo(
-    api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
-)
-
-client.shares.list_shares(
+client.sandboxes.get_sandbox(
     sandbox_name="sandbox_name",
 )
 
@@ -2434,7 +852,7 @@ client.shares.list_shares(
 <dl>
 <dd>
 
-**sandbox_name:** `str` 
+**sandbox_name:** `str` — Sandbox name
     
 </dd>
 </dl>
@@ -2454,23 +872,9 @@ client.shares.list_shares(
 </dl>
 </details>
 
-<details><summary><code>client.shares.<a href="src/islo/shares/client.py">create_share</a>(...) -> ShareResponse</code></summary>
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">delete_sandbox</a>(...)</code></summary>
 <dl>
 <dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Create a shareable URL for a sandbox port.
-</dd>
-</dl>
-</dd>
-</dl>
 
 #### 🔌 Usage
 
@@ -2482,13 +886,735 @@ Create a shareable URL for a sandbox port.
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
-client.shares.create_share(
+client.sandboxes.delete_sandbox(
+    sandbox_name="sandbox_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">sandbox_exec_interactive</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.sandbox_exec_interactive(
+    sandbox_name="sandbox_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">exec_in_sandbox</a>(...) -> ExecResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.exec_in_sandbox(
+    sandbox_name="sandbox_name",
+    command=[
+        "command"
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**command:** `typing.List[str]` — Command to execute.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**env:** `typing.Optional[typing.Dict[str, typing.Optional[str]]]` — Environment variables to inject into this execution session.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**timeout_secs:** `typing.Optional[int]` — Optional client-side timeout hint. Currently accepted for API compatibility.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**user:** `typing.Optional[str]` — User to run the command as (e.g., "islo"). If not provided, uses image default.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**workdir:** `typing.Optional[str]` — Working directory for command execution inside the sandbox.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">exec_in_sandbox_stream</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.exec_in_sandbox_stream(
+    sandbox_name="sandbox_name",
+    args=[
+        "args"
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**args:** `typing.List[str]` — Command and arguments to execute (e.g., ["/entrypoint.sh"])
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**env_vars:** `typing.Optional[typing.Dict[str, typing.Optional[str]]]` — Optional environment variables to pass to the command
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**timeout_secs:** `typing.Optional[int]` — Accepted but ignored (CLI sends this field).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**user:** `typing.Optional[str]` — User to run the command as (e.g., "islo"). If not specified, uses image default.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**workdir:** `typing.Optional[str]` — Working directory for the command. If not specified, uses the image's WorkingDir (from Dockerfile).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">get_exec_result</a>(...) -> ExecResultResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.get_exec_result(
+    sandbox_name="sandbox_name",
+    exec_id="exec_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**exec_id:** `str` — Exec ID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">download_file</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.download_file(
+    sandbox_name="sandbox_name",
+    path="path",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**path:** `str` — File path inside the sandbox
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">upload_file</a>(...) -> FileUploadStatusResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.upload_file(
+    sandbox_name="sandbox_name",
+    path="path",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**path:** `str` — Destination path inside the sandbox
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">download_archive</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.download_archive(
+    sandbox_name="sandbox_name",
+    path="path",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**path:** `str` — Directory path to archive inside the sandbox
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">upload_archive</a>(...) -> FileUploadStatusResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.upload_archive(
+    sandbox_name="sandbox_name",
+    path="path",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**path:** `str` — Destination directory inside the sandbox
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">pause_sandbox</a>(...) -> SandboxResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.pause_sandbox(
+    sandbox_name="sandbox_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">sandbox_port_forward</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.sandbox_port_forward(
     sandbox_name="sandbox_name",
     port=1,
 )
@@ -2507,7 +1633,7 @@ client.shares.create_share(
 <dl>
 <dd>
 
-**sandbox_name:** `str` 
+**sandbox_name:** `str` — Sandbox name
     
 </dd>
 </dl>
@@ -2515,15 +1641,7 @@ client.shares.create_share(
 <dl>
 <dd>
 
-**port:** `int` — Port to share
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**ttl_seconds:** `typing.Optional[int]` — Time-to-live in seconds (1 minute to 7 days). Defaults to 24h.
+**port:** `int` — Target port inside the sandbox VM
     
 </dd>
 </dl>
@@ -2543,23 +1661,9 @@ client.shares.create_share(
 </dl>
 </details>
 
-<details><summary><code>client.shares.<a href="src/islo/shares/client.py">revoke_share</a>(...)</code></summary>
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">promote_sandbox_cache</a>(...) -> PromoteCacheResponse</code></summary>
 <dl>
 <dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Revoke a shareable URL.
-</dd>
-</dl>
-</dd>
-</dl>
 
 #### 🔌 Usage
 
@@ -2571,15 +1675,15 @@ Revoke a shareable URL.
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
-client.shares.revoke_share(
+client.sandboxes.promote_sandbox_cache(
     sandbox_name="sandbox_name",
-    share_id="share_id",
 )
 
 ```
@@ -2596,7 +1700,7 @@ client.shares.revoke_share(
 <dl>
 <dd>
 
-**sandbox_name:** `str` 
+**sandbox_name:** `str` — Sandbox name
     
 </dd>
 </dl>
@@ -2604,10 +1708,627 @@ client.shares.revoke_share(
 <dl>
 <dd>
 
-**share_id:** `str` 
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
 </dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">sandbox_proxy_root</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.sandbox_proxy_root(
+    sandbox_name="sandbox_name",
+    port=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**port:** `int` — Target port inside the sandbox VM
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">sandbox_proxy</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.sandbox_proxy(
+    sandbox_name="sandbox_name",
+    port=1,
+    path="path",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**port:** `int` — Target port inside the sandbox VM
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**path:** `str` — Path suffix forwarded to the VM
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">resume_sandbox</a>(...) -> SandboxResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.resume_sandbox(
+    sandbox_name="sandbox_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">list_sessions</a>(...) -> ListSessionsResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.list_sessions(
+    sandbox_name="sandbox_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">create_session</a>(...) -> CreateSessionResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.create_session(
+    sandbox_name="sandbox_name",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**command:** `typing.Optional[typing.List[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**env:** `typing.Optional[typing.Dict[str, typing.Optional[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**ttl:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**user:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**workdir:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">kill_session</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.kill_session(
+    sandbox_name="sandbox_name",
+    session="session",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**session:** `str` — Session name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">stop_sandbox</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.stop_sandbox(
+    sandbox_name="sandbox_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">sandbox_ws_proxy</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.sandbox_ws_proxy(
+    sandbox_name="sandbox_name",
+    port=1,
+    path="path",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**port:** `int` — Target port inside the sandbox VM
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**path:** `typing.Optional[str]` — Optional path suffix forwarded to the VM
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## compute
+<details><summary><code>client.compute.<a href="src/islo/compute/client.py">billing_check</a>() -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.compute.billing_check()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
 
 <dl>
 <dd>
@@ -2639,10 +2360,11 @@ client.shares.revoke_share(
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.credits.get_credit_balance()
@@ -2706,10 +2428,11 @@ and skip a server round-trip on the connect path.
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.integrations.list_integration_providers()
@@ -2776,10 +2499,11 @@ list of available-but-not-connected providers should call
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.integrations.list_integrations()
@@ -2844,10 +2568,11 @@ service catalog.
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.integrations.list_custom_services()
@@ -2911,10 +2636,11 @@ through this endpoint -- their app ids come straight from
 
 ```python
 from islo import Islo, CustomIntegration
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.integrations.create_custom_service(
@@ -2992,10 +2718,11 @@ the Descope app entirely (affects every user in the workspace).
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.integrations.disconnect_custom_integration(
@@ -3082,10 +2809,11 @@ Returns both user-level and tenant-level connection status independently.
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.integrations.get_integration_status(
@@ -3159,10 +2887,11 @@ Args:
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.integrations.disconnect_integration(
@@ -3234,10 +2963,11 @@ client.integrations.disconnect_integration(
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.gateway_profiles.list_gateway_profiles()
@@ -3282,10 +3012,11 @@ client.gateway_profiles.list_gateway_profiles()
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.gateway_profiles.create_gateway_profile(
@@ -3380,10 +3111,11 @@ client.gateway_profiles.create_gateway_profile(
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.gateway_profiles.get_gateway_profile(
@@ -3438,10 +3170,11 @@ client.gateway_profiles.get_gateway_profile(
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.gateway_profiles.delete_gateway_profile(
@@ -3496,10 +3229,11 @@ client.gateway_profiles.delete_gateway_profile(
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.gateway_profiles.update_gateway_profile(
@@ -3602,10 +3336,11 @@ client.gateway_profiles.update_gateway_profile(
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.gateway_profiles.create_gateway_rule(
@@ -3733,10 +3468,11 @@ client.gateway_profiles.create_gateway_rule(
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.gateway_profiles.delete_gateway_rule(
@@ -3800,10 +3536,11 @@ client.gateway_profiles.delete_gateway_rule(
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.gateway_profiles.update_gateway_rule(
@@ -3939,10 +3676,11 @@ client.gateway_profiles.update_gateway_rule(
 
 ```python
 from islo import Islo, RuleReorderItem
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.gateway_profiles.reorder_gateway_rules(
@@ -4012,10 +3750,11 @@ client.gateway_profiles.reorder_gateway_rules(
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.cloud_roles.list_cloud_roles()
@@ -4060,10 +3799,11 @@ client.cloud_roles.list_cloud_roles()
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.cloud_roles.create_cloud_role(
@@ -4135,10 +3875,11 @@ client.cloud_roles.create_cloud_role(
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.cloud_roles.get_cloud_role(
@@ -4193,10 +3934,11 @@ client.cloud_roles.get_cloud_role(
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.cloud_roles.delete_cloud_role(
@@ -4251,10 +3993,11 @@ client.cloud_roles.delete_cloud_role(
 
 ```python
 from islo import Islo
+from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
+    environment=IsloEnvironment.PRODUCTION,
 )
 
 client.cloud_roles.update_cloud_role(
@@ -4300,6 +4043,586 @@ client.cloud_roles.update_cloud_role(
 <dd>
 
 **is_enabled:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Sessions
+<details><summary><code>client.sessions.<a href="src/islo/sessions/client.py">sandbox_attach_session</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sessions.sandbox_attach_session(
+    sandbox_name="sandbox_name",
+    session="session",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**session:** `str` — Session name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Shares
+<details><summary><code>client.shares.<a href="src/islo/shares/client.py">list_shares</a>(...) -> typing.List[ShareResponse]</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.shares.list_shares(
+    sandbox_name="sandbox_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.shares.<a href="src/islo/shares/client.py">create_share</a>(...) -> ShareResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.shares.create_share(
+    sandbox_name="sandbox_name",
+    port=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**port:** `int` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**ttl_seconds:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.shares.<a href="src/islo/shares/client.py">revoke_share</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.shares.revoke_share(
+    sandbox_name="sandbox_name",
+    share_id="share_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**share_id:** `str` — Share ID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## snapshots
+<details><summary><code>client.snapshots.<a href="src/islo/snapshots/client.py">list_snapshots</a>(...) -> PaginatedSnapshotResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all snapshots for the current tenant.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.snapshots.list_snapshots()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.snapshots.<a href="src/islo/snapshots/client.py">create_snapshot</a>(...) -> SnapshotResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a snapshot from a running sandbox.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.snapshots.create_snapshot(
+    sandbox_id="sandbox_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.snapshots.<a href="src/islo/snapshots/client.py">get_snapshot</a>(...) -> SnapshotResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get snapshot details by name.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.snapshots.get_snapshot(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` — Name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.snapshots.<a href="src/islo/snapshots/client.py">delete_snapshot</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a snapshot by name.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.snapshots.delete_snapshot(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` — Name
     
 </dd>
 </dl>

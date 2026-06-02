@@ -8,13 +8,16 @@ import typing
 import httpx
 from .core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .core.logging import LogConfig, Logger
+from .environment import IsloEnvironment
 
 if typing.TYPE_CHECKING:
     from .cloud_roles.client import AsyncCloudRolesClient, CloudRolesClient
+    from .compute.client import AsyncComputeClient, ComputeClient
     from .credits.client import AsyncCreditsClient, CreditsClient
     from .gateway_profiles.client import AsyncGatewayProfilesClient, GatewayProfilesClient
     from .integrations.client import AsyncIntegrationsClient, IntegrationsClient
     from .sandboxes.client import AsyncSandboxesClient, SandboxesClient
+    from .sessions.client import AsyncSessionsClient, SessionsClient
     from .shares.client import AsyncSharesClient, SharesClient
     from .snapshots.client import AsyncSnapshotsClient, SnapshotsClient
 
@@ -25,8 +28,8 @@ class BaseIslo:
 
     Parameters
     ----------
-    base_url : str
-        The base url to use for requests from the client.
+    environment : IsloEnvironment
+        The environment to use for requests from the client.
 
     api_key : typing.Optional[typing.Union[str, typing.Callable[[], str]]]
     headers : typing.Optional[typing.Dict[str, str]]
@@ -47,17 +50,18 @@ class BaseIslo:
     Examples
     --------
     from islo import Islo
+    from islo.environment import IsloEnvironment
 
     client = Islo(
         api_key="YOUR_API_KEY",
-        base_url="https://yourhost.com/path/to/api",
+        environment=IsloEnvironment.PRODUCTION,
     )
     """
 
     def __init__(
         self,
         *,
-        base_url: str,
+        environment: IsloEnvironment,
         api_key: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = os.getenv("ISLO_API_KEY"),
         headers: typing.Optional[typing.Dict[str, str]] = None,
         timeout: typing.Optional[float] = None,
@@ -69,7 +73,7 @@ class BaseIslo:
             timeout if timeout is not None else 60 if httpx_client is None else httpx_client.timeout.read
         )
         self._client_wrapper = SyncClientWrapper(
-            base_url=base_url,
+            environment=environment,
             api_key=api_key,
             headers=headers,
             httpx_client=httpx_client
@@ -81,12 +85,14 @@ class BaseIslo:
             logging=logging,
         )
         self._sandboxes: typing.Optional[SandboxesClient] = None
-        self._snapshots: typing.Optional[SnapshotsClient] = None
-        self._shares: typing.Optional[SharesClient] = None
+        self._compute: typing.Optional[ComputeClient] = None
         self._credits: typing.Optional[CreditsClient] = None
         self._integrations: typing.Optional[IntegrationsClient] = None
         self._gateway_profiles: typing.Optional[GatewayProfilesClient] = None
         self._cloud_roles: typing.Optional[CloudRolesClient] = None
+        self._sessions: typing.Optional[SessionsClient] = None
+        self._shares: typing.Optional[SharesClient] = None
+        self._snapshots: typing.Optional[SnapshotsClient] = None
 
     @property
     def sandboxes(self):
@@ -97,20 +103,12 @@ class BaseIslo:
         return self._sandboxes
 
     @property
-    def snapshots(self):
-        if self._snapshots is None:
-            from .snapshots.client import SnapshotsClient  # noqa: E402
+    def compute(self):
+        if self._compute is None:
+            from .compute.client import ComputeClient  # noqa: E402
 
-            self._snapshots = SnapshotsClient(client_wrapper=self._client_wrapper)
-        return self._snapshots
-
-    @property
-    def shares(self):
-        if self._shares is None:
-            from .shares.client import SharesClient  # noqa: E402
-
-            self._shares = SharesClient(client_wrapper=self._client_wrapper)
-        return self._shares
+            self._compute = ComputeClient(client_wrapper=self._client_wrapper)
+        return self._compute
 
     @property
     def credits(self):
@@ -144,6 +142,30 @@ class BaseIslo:
             self._cloud_roles = CloudRolesClient(client_wrapper=self._client_wrapper)
         return self._cloud_roles
 
+    @property
+    def sessions(self):
+        if self._sessions is None:
+            from .sessions.client import SessionsClient  # noqa: E402
+
+            self._sessions = SessionsClient(client_wrapper=self._client_wrapper)
+        return self._sessions
+
+    @property
+    def shares(self):
+        if self._shares is None:
+            from .shares.client import SharesClient  # noqa: E402
+
+            self._shares = SharesClient(client_wrapper=self._client_wrapper)
+        return self._shares
+
+    @property
+    def snapshots(self):
+        if self._snapshots is None:
+            from .snapshots.client import SnapshotsClient  # noqa: E402
+
+            self._snapshots = SnapshotsClient(client_wrapper=self._client_wrapper)
+        return self._snapshots
+
 
 class AsyncBaseIslo:
     """
@@ -151,8 +173,8 @@ class AsyncBaseIslo:
 
     Parameters
     ----------
-    base_url : str
-        The base url to use for requests from the client.
+    environment : IsloEnvironment
+        The environment to use for requests from the client.
 
     api_key : typing.Optional[typing.Union[str, typing.Callable[[], str]]]
     headers : typing.Optional[typing.Dict[str, str]]
@@ -176,17 +198,18 @@ class AsyncBaseIslo:
     Examples
     --------
     from islo import AsyncIslo
+    from islo.environment import IsloEnvironment
 
     client = AsyncIslo(
         api_key="YOUR_API_KEY",
-        base_url="https://yourhost.com/path/to/api",
+        environment=IsloEnvironment.PRODUCTION,
     )
     """
 
     def __init__(
         self,
         *,
-        base_url: str,
+        environment: IsloEnvironment,
         api_key: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = os.getenv("ISLO_API_KEY"),
         headers: typing.Optional[typing.Dict[str, str]] = None,
         async_token: typing.Optional[typing.Callable[[], typing.Awaitable[str]]] = None,
@@ -199,7 +222,7 @@ class AsyncBaseIslo:
             timeout if timeout is not None else 60 if httpx_client is None else httpx_client.timeout.read
         )
         self._client_wrapper = AsyncClientWrapper(
-            base_url=base_url,
+            environment=environment,
             api_key=api_key,
             headers=headers,
             async_token=async_token,
@@ -212,12 +235,14 @@ class AsyncBaseIslo:
             logging=logging,
         )
         self._sandboxes: typing.Optional[AsyncSandboxesClient] = None
-        self._snapshots: typing.Optional[AsyncSnapshotsClient] = None
-        self._shares: typing.Optional[AsyncSharesClient] = None
+        self._compute: typing.Optional[AsyncComputeClient] = None
         self._credits: typing.Optional[AsyncCreditsClient] = None
         self._integrations: typing.Optional[AsyncIntegrationsClient] = None
         self._gateway_profiles: typing.Optional[AsyncGatewayProfilesClient] = None
         self._cloud_roles: typing.Optional[AsyncCloudRolesClient] = None
+        self._sessions: typing.Optional[AsyncSessionsClient] = None
+        self._shares: typing.Optional[AsyncSharesClient] = None
+        self._snapshots: typing.Optional[AsyncSnapshotsClient] = None
 
     @property
     def sandboxes(self):
@@ -228,20 +253,12 @@ class AsyncBaseIslo:
         return self._sandboxes
 
     @property
-    def snapshots(self):
-        if self._snapshots is None:
-            from .snapshots.client import AsyncSnapshotsClient  # noqa: E402
+    def compute(self):
+        if self._compute is None:
+            from .compute.client import AsyncComputeClient  # noqa: E402
 
-            self._snapshots = AsyncSnapshotsClient(client_wrapper=self._client_wrapper)
-        return self._snapshots
-
-    @property
-    def shares(self):
-        if self._shares is None:
-            from .shares.client import AsyncSharesClient  # noqa: E402
-
-            self._shares = AsyncSharesClient(client_wrapper=self._client_wrapper)
-        return self._shares
+            self._compute = AsyncComputeClient(client_wrapper=self._client_wrapper)
+        return self._compute
 
     @property
     def credits(self):
@@ -274,3 +291,27 @@ class AsyncBaseIslo:
 
             self._cloud_roles = AsyncCloudRolesClient(client_wrapper=self._client_wrapper)
         return self._cloud_roles
+
+    @property
+    def sessions(self):
+        if self._sessions is None:
+            from .sessions.client import AsyncSessionsClient  # noqa: E402
+
+            self._sessions = AsyncSessionsClient(client_wrapper=self._client_wrapper)
+        return self._sessions
+
+    @property
+    def shares(self):
+        if self._shares is None:
+            from .shares.client import AsyncSharesClient  # noqa: E402
+
+            self._shares = AsyncSharesClient(client_wrapper=self._client_wrapper)
+        return self._shares
+
+    @property
+    def snapshots(self):
+        if self._snapshots is None:
+            from .snapshots.client import AsyncSnapshotsClient  # noqa: E402
+
+            self._snapshots = AsyncSnapshotsClient(client_wrapper=self._client_wrapper)
+        return self._snapshots

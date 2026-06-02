@@ -4,13 +4,10 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .session_info import SessionInfo
 
 
-class ShareResponse(UniversalBaseModel):
-    created_at: str
-    expires_at: typing.Optional[str] = None
-    port: int
-    share_id: str
-    url: str
+class ListSessionsResponse(UniversalBaseModel):
+    sessions: typing.List[SessionInfo]
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

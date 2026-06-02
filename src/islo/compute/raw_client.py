@@ -10,17 +10,14 @@ from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
-from ..types.credit_balance import CreditBalance
 from pydantic import ValidationError
 
 
-class RawCreditsClient:
+class RawComputeClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get_credit_balance(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[CreditBalance]:
+    def billing_check(self, *, request_options: typing.Optional[RequestOptions] = None) -> HttpResponse[typing.Any]:
         """
         Parameters
         ----------
@@ -29,21 +26,23 @@ class RawCreditsClient:
 
         Returns
         -------
-        HttpResponse[CreditBalance]
+        HttpResponse[typing.Any]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            "credits/balance",
+            "billing/check",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
         try:
+            if _response is None or not _response.text.strip():
+                return HttpResponse(response=_response, data=None)
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CreditBalance,
+                    typing.Any,
                     parse_obj_as(
-                        type_=CreditBalance,  # type: ignore
+                        type_=typing.Any,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -69,13 +68,13 @@ class RawCreditsClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
 
-class AsyncRawCreditsClient:
+class AsyncRawComputeClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get_credit_balance(
+    async def billing_check(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[CreditBalance]:
+    ) -> AsyncHttpResponse[typing.Any]:
         """
         Parameters
         ----------
@@ -84,21 +83,23 @@ class AsyncRawCreditsClient:
 
         Returns
         -------
-        AsyncHttpResponse[CreditBalance]
+        AsyncHttpResponse[typing.Any]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "credits/balance",
+            "billing/check",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
         try:
+            if _response is None or not _response.text.strip():
+                return AsyncHttpResponse(response=_response, data=None)
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CreditBalance,
+                    typing.Any,
                     parse_obj_as(
-                        type_=CreditBalance,  # type: ignore
+                        type_=typing.Any,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

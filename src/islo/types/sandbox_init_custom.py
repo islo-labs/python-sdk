@@ -4,13 +4,10 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .init_capability import InitCapability
 
 
-class ShareResponse(UniversalBaseModel):
-    created_at: str
-    expires_at: typing.Optional[str] = None
-    port: int
-    share_id: str
-    url: str
+class SandboxInitCustom(UniversalBaseModel):
+    capabilities: typing.List[InitCapability]
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

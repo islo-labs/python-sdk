@@ -6,11 +6,8 @@ import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
 
 
-class ShareResponse(UniversalBaseModel):
-    created_at: str
-    expires_at: typing.Optional[str] = None
-    port: int
-    share_id: str
-    url: str
+class CreateSessionResponse(UniversalBaseModel):
+    name: str
+    status: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
