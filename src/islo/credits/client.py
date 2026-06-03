@@ -38,10 +38,11 @@ class CreditsClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.credits.get_credit_balance()
         """
@@ -81,10 +82,11 @@ class AsyncCreditsClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 

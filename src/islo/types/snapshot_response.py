@@ -8,13 +8,13 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class SnapshotResponse(UniversalBaseModel):
-    id: str
-    name: str
-    status: str
-    sandbox_id: typing.Optional[str] = None
-    size_bytes: typing.Optional[int] = None
     checksum_sha256: typing.Optional[str] = None
     created_at: typing.Optional[dt.datetime] = None
     created_by: typing.Optional[str] = None
+    id: str
+    name: str
+    sandbox_id: typing.Optional[str] = None
+    size_bytes: typing.Optional[int] = None
+    status: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

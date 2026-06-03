@@ -30,11 +30,10 @@ class SharesClient:
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> typing.List[ShareResponse]:
         """
-        List active shares for a sandbox.
-
         Parameters
         ----------
         sandbox_name : str
+            Sandbox name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -42,15 +41,16 @@ class SharesClient:
         Returns
         -------
         typing.List[ShareResponse]
-            Successful Response
+            Active shares
 
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.shares.list_shares(
             sandbox_name="sandbox_name",
@@ -68,17 +68,14 @@ class SharesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ShareResponse:
         """
-        Create a shareable URL for a sandbox port.
-
         Parameters
         ----------
         sandbox_name : str
+            Sandbox name
 
         port : int
-            Port to share
 
         ttl_seconds : typing.Optional[int]
-            Time-to-live in seconds (1 minute to 7 days). Defaults to 24h.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -86,15 +83,16 @@ class SharesClient:
         Returns
         -------
         ShareResponse
-            Successful Response
+            Share created
 
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.shares.create_share(
             sandbox_name="sandbox_name",
@@ -110,13 +108,13 @@ class SharesClient:
         self, sandbox_name: str, share_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
-        Revoke a shareable URL.
-
         Parameters
         ----------
         sandbox_name : str
+            Sandbox name
 
         share_id : str
+            Share ID
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -128,10 +126,11 @@ class SharesClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.shares.revoke_share(
             sandbox_name="sandbox_name",
@@ -161,11 +160,10 @@ class AsyncSharesClient:
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> typing.List[ShareResponse]:
         """
-        List active shares for a sandbox.
-
         Parameters
         ----------
         sandbox_name : str
+            Sandbox name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -173,17 +171,18 @@ class AsyncSharesClient:
         Returns
         -------
         typing.List[ShareResponse]
-            Successful Response
+            Active shares
 
         Examples
         --------
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
@@ -207,17 +206,14 @@ class AsyncSharesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ShareResponse:
         """
-        Create a shareable URL for a sandbox port.
-
         Parameters
         ----------
         sandbox_name : str
+            Sandbox name
 
         port : int
-            Port to share
 
         ttl_seconds : typing.Optional[int]
-            Time-to-live in seconds (1 minute to 7 days). Defaults to 24h.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -225,17 +221,18 @@ class AsyncSharesClient:
         Returns
         -------
         ShareResponse
-            Successful Response
+            Share created
 
         Examples
         --------
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
@@ -257,13 +254,13 @@ class AsyncSharesClient:
         self, sandbox_name: str, share_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
-        Revoke a shareable URL.
-
         Parameters
         ----------
         sandbox_name : str
+            Sandbox name
 
         share_id : str
+            Share ID
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -277,10 +274,11 @@ class AsyncSharesClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
