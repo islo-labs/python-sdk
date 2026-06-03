@@ -98,6 +98,7 @@ class TestIsloClient:
             "sessions",
             "shares",
             "snapshots",
+            "tenants",
         }
 
     def test_excluded_resource_clients_not_available(self, monkeypatch):
@@ -110,7 +111,6 @@ class TestIsloClient:
         assert not hasattr(client, "api_keys")
         assert not hasattr(client, "usage")
         assert not hasattr(client, "certificate_authority")
-        assert not hasattr(client, "tenants")
         assert not hasattr(client, "users")
         assert not hasattr(client, "models")
 
