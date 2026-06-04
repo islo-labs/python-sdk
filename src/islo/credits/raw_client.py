@@ -34,6 +34,7 @@ class RawCreditsClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             "credits/balance",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )
@@ -88,6 +89,7 @@ class AsyncRawCreditsClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             "credits/balance",
+            base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
         )

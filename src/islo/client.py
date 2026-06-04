@@ -10,10 +10,13 @@ import httpx
 from .base_client import AsyncBaseIslo, BaseIslo
 from .core.logging import LogConfig, Logger
 from .custom.auth import AsyncTokenProvider, SyncTokenProvider
+from .environment import IsloEnvironment
 
 _DEFAULT_BASE_URL = "https://api.islo.dev"
+_DEFAULT_COMPUTE_URL = "https://ca.compute.islo.dev"
 _ENV_API_KEY = "ISLO_API_KEY"
 _ENV_BASE_URL = "ISLO_BASE_URL"
+_ENV_COMPUTE_URL = "ISLO_COMPUTE_URL"
 
 
 def _resolve_auth(
@@ -41,6 +44,28 @@ def _resolve_async_auth(
     return None
 
 
+def _resolve_environment(
+    *,
+    base_url: str | None,
+    compute_url: str | None,
+    environment: IsloEnvironment | None,
+) -> IsloEnvironment:
+    """Resolve dual control/compute URLs with explicit values taking precedence."""
+    if environment is not None and base_url is None and compute_url is None:
+        return environment
+
+    return IsloEnvironment(
+        control=base_url
+        or os.environ.get(_ENV_BASE_URL)
+        or (environment.control if environment is not None else None)
+        or _DEFAULT_BASE_URL,
+        compute=compute_url
+        or os.environ.get(_ENV_COMPUTE_URL)
+        or (environment.compute if environment is not None else None)
+        or _DEFAULT_COMPUTE_URL,
+    )
+
+
 class Islo(BaseIslo):
     """Islo sandbox platform client (synchronous).
 
@@ -59,8 +84,14 @@ class Islo(BaseIslo):
         Islo API key. Exchanged for a short-lived JWT automatically.
         Falls back to the ``ISLO_API_KEY`` environment variable.
     base_url : str, optional
-        API base URL. Defaults to ``ISLO_BASE_URL`` env var or
+        Control-plane API base URL. Defaults to ``ISLO_BASE_URL`` env var or
         ``https://api.islo.dev``.
+    compute_url : str, optional
+        Compute-plane API base URL. Defaults to ``ISLO_COMPUTE_URL`` env var or
+        ``https://ca.compute.islo.dev``.
+    environment : IsloEnvironment, optional
+        Fully resolved Fern environment. Explicit ``base_url`` and
+        ``compute_url`` values override the corresponding URL.
     """
 
     def __init__(
@@ -68,17 +99,23 @@ class Islo(BaseIslo):
         *,
         api_key: str | None = None,
         base_url: str | None = None,
+        compute_url: str | None = None,
+        environment: IsloEnvironment | None = None,
         headers: dict[str, str] | None = None,
         timeout: float | None = None,
         follow_redirects: bool | None = True,
         httpx_client: httpx.Client | None = None,
         logging: LogConfig | Logger | None = None,
     ):
-        resolved_base_url = base_url or os.environ.get(_ENV_BASE_URL, _DEFAULT_BASE_URL)
-        resolved_token = _resolve_auth(resolved_base_url, api_key)
+        resolved_environment = _resolve_environment(
+            base_url=base_url,
+            compute_url=compute_url,
+            environment=environment,
+        )
+        resolved_token = _resolve_auth(resolved_environment.control, api_key)
 
         super().__init__(
-            base_url=resolved_base_url,
+            environment=resolved_environment,
             api_key=resolved_token,
             headers=headers,
             timeout=timeout,
@@ -109,8 +146,14 @@ class AsyncIslo(AsyncBaseIslo):
         Async callable returning a JWT. Use this to plug in custom
         async-aware token resolution; when provided, ``api_key`` is ignored.
     base_url : str, optional
-        API base URL. Defaults to ``ISLO_BASE_URL`` env var or
+        Control-plane API base URL. Defaults to ``ISLO_BASE_URL`` env var or
         ``https://api.islo.dev``.
+    compute_url : str, optional
+        Compute-plane API base URL. Defaults to ``ISLO_COMPUTE_URL`` env var or
+        ``https://ca.compute.islo.dev``.
+    environment : IsloEnvironment, optional
+        Fully resolved Fern environment. Explicit ``base_url`` and
+        ``compute_url`` values override the corresponding URL.
     """
 
     def __init__(
@@ -118,6 +161,8 @@ class AsyncIslo(AsyncBaseIslo):
         *,
         api_key: str | None = None,
         base_url: str | None = None,
+        compute_url: str | None = None,
+        environment: IsloEnvironment | None = None,
         async_token: typing.Callable[[], typing.Awaitable[str]] | None = None,
         headers: dict[str, str] | None = None,
         timeout: float | None = None,
@@ -125,11 +170,15 @@ class AsyncIslo(AsyncBaseIslo):
         httpx_client: httpx.AsyncClient | None = None,
         logging: LogConfig | Logger | None = None,
     ):
-        resolved_base_url = base_url or os.environ.get(_ENV_BASE_URL, _DEFAULT_BASE_URL)
-        resolved_async_token = _resolve_async_auth(resolved_base_url, api_key, async_token)
+        resolved_environment = _resolve_environment(
+            base_url=base_url,
+            compute_url=compute_url,
+            environment=environment,
+        )
+        resolved_async_token = _resolve_async_auth(resolved_environment.control, api_key, async_token)
 
         super().__init__(
-            base_url=resolved_base_url,
+            environment=resolved_environment,
             headers=headers,
             async_token=resolved_async_token,
             timeout=timeout,

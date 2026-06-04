@@ -7,12 +7,8 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class SandboxSpec(UniversalBaseModel):
-    """
-    Hardware specification of a sandbox.
-    """
-
-    vcpus: int
-    memory_mb: int
     disk_gb: int
+    memory_mb: int
+    vcpus: int
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

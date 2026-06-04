@@ -6,8 +6,8 @@ import typing
 
 import pydantic
 import typing_extensions
-from ...core.pydantic_utilities import UniversalBaseModel
-from ...types.init_custom_capabilities_item import InitCustomCapabilitiesItem
+from ..core.pydantic_utilities import UniversalBaseModel
+from .init_custom_capabilities_item import InitCustomCapabilitiesItem
 
 
 class SandboxCreateInit_Custom(UniversalBaseModel):

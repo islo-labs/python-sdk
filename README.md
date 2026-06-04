@@ -15,6 +15,7 @@ The Islo Python library provides convenient access to the Islo APIs from Python.
 - [Development](#development)
 - [Reference](#reference)
 - [Usage](#usage)
+- [Environments](#environments)
 - [Async Client](#async-client)
 - [Exception Handling](#exception-handling)
 - [Advanced](#advanced)
@@ -142,10 +143,22 @@ from islo import Islo
 
 client = Islo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
 )
 
 client.sandboxes.create_sandbox()
+```
+
+## Environments
+
+This SDK allows you to configure different environments for API requests.
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    environment=IsloEnvironment.PRODUCTION,
+)
 ```
 
 ## Async Client
@@ -159,7 +172,6 @@ from islo import AsyncIslo
 
 client = AsyncIslo(
     api_key="<token>",
-    base_url="https://yourhost.com/path/to/api",
 )
 
 

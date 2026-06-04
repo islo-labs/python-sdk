@@ -8,17 +8,10 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 class SetupScript(UniversalBaseModel):
     """
-    A named setup script step.
+    A named setup script to execute after git clones.
     """
 
-    name: typing.Optional[str] = pydantic.Field(default=None)
-    """
-    Step name for display (auto-assigned if empty).
-    """
-
-    script: str = pydantic.Field()
-    """
-    Shell script body to execute.
-    """
+    name: typing.Optional[str] = None
+    script: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

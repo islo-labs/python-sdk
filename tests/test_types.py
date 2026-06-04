@@ -16,15 +16,20 @@ class TestErrorResponse:
         )
         assert err.code == "SANDBOX_NOT_FOUND"
         assert err.message == "sandbox not found"
-        assert err.hint is None
 
-    def test_with_hint(self):
+    def test_with_capacity_fields(self):
         err = ErrorResponse(
-            code="VALIDATION_ERROR",
-            message="bad input",
-            hint="check the name field",
+            code="INSUFFICIENT_RESOURCES",
+            message="not enough capacity",
+            available=2,
+            limit=8,
+            requested=4,
+            resource="vcpus",
         )
-        assert err.hint == "check the name field"
+        assert err.available == 2
+        assert err.limit == 8
+        assert err.requested == 4
+        assert err.resource == "vcpus"
 
     def test_extra_fields_allowed(self):
         err = ErrorResponse(
@@ -42,14 +47,17 @@ class TestSandboxResponse:
             name="test-sandbox",
             status="running",
             image="ubuntu:22.04",
+            created_at="2026-05-28T00:00:00Z",
             spec=SandboxSpec(vcpus=2, memory_mb=4096, disk_gb=10),
         )
         assert sandbox.name == "test-sandbox"
         assert sandbox.status == "running"
         assert sandbox.spec.vcpus == 2
+        assert sandbox.created_at == "2026-05-28T00:00:00Z"
 
 
 class TestTokenResponse:
     def test_fields(self):
-        token = TokenResponse(session_token="jwt-abc")
+        token = TokenResponse(session_token="jwt-abc", expires_in=3600)
         assert token.session_token == "jwt-abc"
+        assert token.expires_in == 3600
