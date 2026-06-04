@@ -15,7 +15,7 @@ class TestIsloClient:
         client = Islo()
         environment = client._client_wrapper.get_environment()
         assert environment.control == "https://api.islo.dev"
-        assert environment.compute == "https://compute.islo.dev"
+        assert environment.compute == "https://ca.compute.islo.dev"
 
     def test_env_base_url(self, monkeypatch):
         monkeypatch.setenv("ISLO_BASE_URL", "https://custom.example.com")
@@ -123,7 +123,7 @@ class TestAsyncIsloClient:
         client = AsyncIslo()
         environment = client._client_wrapper.get_environment()
         assert environment.control == "https://api.islo.dev"
-        assert environment.compute == "https://compute.islo.dev"
+        assert environment.compute == "https://ca.compute.islo.dev"
 
     def test_api_key_creates_async_token_provider(self, monkeypatch):
         monkeypatch.delenv("ISLO_API_KEY", raising=False)

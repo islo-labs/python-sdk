@@ -13,7 +13,7 @@ from .custom.auth import AsyncTokenProvider, SyncTokenProvider
 from .environment import IsloEnvironment
 
 _DEFAULT_BASE_URL = "https://api.islo.dev"
-_DEFAULT_COMPUTE_URL = "https://compute.islo.dev"
+_DEFAULT_COMPUTE_URL = "https://ca.compute.islo.dev"
 _ENV_API_KEY = "ISLO_API_KEY"
 _ENV_BASE_URL = "ISLO_BASE_URL"
 _ENV_COMPUTE_URL = "ISLO_COMPUTE_URL"
@@ -88,7 +88,7 @@ class Islo(BaseIslo):
         ``https://api.islo.dev``.
     compute_url : str, optional
         Compute-plane API base URL. Defaults to ``ISLO_COMPUTE_URL`` env var or
-        ``https://compute.islo.dev``.
+        ``https://ca.compute.islo.dev``.
     environment : IsloEnvironment, optional
         Fully resolved Fern environment. Explicit ``base_url`` and
         ``compute_url`` values override the corresponding URL.
@@ -150,7 +150,7 @@ class AsyncIslo(AsyncBaseIslo):
         ``https://api.islo.dev``.
     compute_url : str, optional
         Compute-plane API base URL. Defaults to ``ISLO_COMPUTE_URL`` env var or
-        ``https://compute.islo.dev``.
+        ``https://ca.compute.islo.dev``.
     environment : IsloEnvironment, optional
         Fully resolved Fern environment. Explicit ``base_url`` and
         ``compute_url`` values override the corresponding URL.
