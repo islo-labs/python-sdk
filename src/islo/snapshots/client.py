@@ -54,10 +54,11 @@ class SnapshotsClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.snapshots.list_snapshots()
         """
@@ -67,7 +68,7 @@ class SnapshotsClient:
     def create_snapshot(
         self,
         *,
-        sandbox_id: str,
+        sandbox_name: str,
         name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SnapshotResponse:
@@ -76,7 +77,7 @@ class SnapshotsClient:
 
         Parameters
         ----------
-        sandbox_id : str
+        sandbox_name : str
 
         name : typing.Optional[str]
 
@@ -91,16 +92,19 @@ class SnapshotsClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.snapshots.create_snapshot(
-            sandbox_id="sandbox_id",
+            sandbox_name="sandbox_name",
         )
         """
-        _response = self._raw_client.create_snapshot(sandbox_id=sandbox_id, name=name, request_options=request_options)
+        _response = self._raw_client.create_snapshot(
+            sandbox_name=sandbox_name, name=name, request_options=request_options
+        )
         return _response.data
 
     def get_snapshot(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> SnapshotResponse:
@@ -110,6 +114,7 @@ class SnapshotsClient:
         Parameters
         ----------
         name : str
+            Name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -122,10 +127,11 @@ class SnapshotsClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.snapshots.get_snapshot(
             name="name",
@@ -141,6 +147,7 @@ class SnapshotsClient:
         Parameters
         ----------
         name : str
+            Name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -152,10 +159,11 @@ class SnapshotsClient:
         Examples
         --------
         from islo import Islo
+        from islo.environment import IsloEnvironment
 
         client = Islo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
         client.snapshots.delete_snapshot(
             name="name",
@@ -209,10 +217,11 @@ class AsyncSnapshotsClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
@@ -228,7 +237,7 @@ class AsyncSnapshotsClient:
     async def create_snapshot(
         self,
         *,
-        sandbox_id: str,
+        sandbox_name: str,
         name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SnapshotResponse:
@@ -237,7 +246,7 @@ class AsyncSnapshotsClient:
 
         Parameters
         ----------
-        sandbox_id : str
+        sandbox_name : str
 
         name : typing.Optional[str]
 
@@ -254,23 +263,24 @@ class AsyncSnapshotsClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
         async def main() -> None:
             await client.snapshots.create_snapshot(
-                sandbox_id="sandbox_id",
+                sandbox_name="sandbox_name",
             )
 
 
         asyncio.run(main())
         """
         _response = await self._raw_client.create_snapshot(
-            sandbox_id=sandbox_id, name=name, request_options=request_options
+            sandbox_name=sandbox_name, name=name, request_options=request_options
         )
         return _response.data
 
@@ -283,6 +293,7 @@ class AsyncSnapshotsClient:
         Parameters
         ----------
         name : str
+            Name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -297,10 +308,11 @@ class AsyncSnapshotsClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 
@@ -322,6 +334,7 @@ class AsyncSnapshotsClient:
         Parameters
         ----------
         name : str
+            Name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -335,10 +348,11 @@ class AsyncSnapshotsClient:
         import asyncio
 
         from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
             api_key="YOUR_API_KEY",
-            base_url="https://yourhost.com/path/to/api",
+            environment=IsloEnvironment.PRODUCTION,
         )
 
 

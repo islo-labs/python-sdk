@@ -7,14 +7,10 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class SetupStepResult(UniversalBaseModel):
-    """
-    Result of a single setup step execution.
-    """
-
     name: str
+    script: typing.Optional[str] = None
     status: str
     stderr: typing.Optional[str] = None
     stdout: typing.Optional[str] = None
-    script: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

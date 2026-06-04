@@ -10,9 +10,9 @@ from ..core.jsonable_encoder import jsonable_encoder
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
+from ..errors.bad_request_error import BadRequestError
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
-from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.error_response import ErrorResponse
 from ..types.share_response import ShareResponse
 from pydantic import ValidationError
@@ -29,11 +29,10 @@ class RawSharesClient:
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[typing.List[ShareResponse]]:
         """
-        List active shares for a sandbox.
-
         Parameters
         ----------
         sandbox_name : str
+            Sandbox name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -41,10 +40,11 @@ class RawSharesClient:
         Returns
         -------
         HttpResponse[typing.List[ShareResponse]]
-            Successful Response
+            Active shares
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sandboxes/{jsonable_encoder(sandbox_name)}/shares",
+            base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
         )
@@ -80,17 +80,6 @@ class RawSharesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
@@ -109,17 +98,14 @@ class RawSharesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ShareResponse]:
         """
-        Create a shareable URL for a sandbox port.
-
         Parameters
         ----------
         sandbox_name : str
+            Sandbox name
 
         port : int
-            Port to share
 
         ttl_seconds : typing.Optional[int]
-            Time-to-live in seconds (1 minute to 7 days). Defaults to 24h.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -127,10 +113,11 @@ class RawSharesClient:
         Returns
         -------
         HttpResponse[ShareResponse]
-            Successful Response
+            Share created
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sandboxes/{jsonable_encoder(sandbox_name)}/shares",
+            base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             json={
                 "port": port,
@@ -152,6 +139,17 @@ class RawSharesClient:
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 401:
                 raise UnauthorizedError(
                     headers=dict(_response.headers),
@@ -174,17 +172,6 @@ class RawSharesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
@@ -198,13 +185,13 @@ class RawSharesClient:
         self, sandbox_name: str, share_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[None]:
         """
-        Revoke a shareable URL.
-
         Parameters
         ----------
         sandbox_name : str
+            Sandbox name
 
         share_id : str
+            Share ID
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -215,6 +202,7 @@ class RawSharesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"sandboxes/{jsonable_encoder(sandbox_name)}/shares/{jsonable_encoder(share_id)}",
+            base_url=self._client_wrapper.get_environment().compute,
             method="DELETE",
             request_options=request_options,
         )
@@ -243,17 +231,6 @@ class RawSharesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
@@ -272,11 +249,10 @@ class AsyncRawSharesClient:
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[typing.List[ShareResponse]]:
         """
-        List active shares for a sandbox.
-
         Parameters
         ----------
         sandbox_name : str
+            Sandbox name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -284,10 +260,11 @@ class AsyncRawSharesClient:
         Returns
         -------
         AsyncHttpResponse[typing.List[ShareResponse]]
-            Successful Response
+            Active shares
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sandboxes/{jsonable_encoder(sandbox_name)}/shares",
+            base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
         )
@@ -323,17 +300,6 @@ class AsyncRawSharesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
@@ -352,17 +318,14 @@ class AsyncRawSharesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ShareResponse]:
         """
-        Create a shareable URL for a sandbox port.
-
         Parameters
         ----------
         sandbox_name : str
+            Sandbox name
 
         port : int
-            Port to share
 
         ttl_seconds : typing.Optional[int]
-            Time-to-live in seconds (1 minute to 7 days). Defaults to 24h.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -370,10 +333,11 @@ class AsyncRawSharesClient:
         Returns
         -------
         AsyncHttpResponse[ShareResponse]
-            Successful Response
+            Share created
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sandboxes/{jsonable_encoder(sandbox_name)}/shares",
+            base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             json={
                 "port": port,
@@ -395,6 +359,17 @@ class AsyncRawSharesClient:
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 401:
                 raise UnauthorizedError(
                     headers=dict(_response.headers),
@@ -417,17 +392,6 @@ class AsyncRawSharesClient:
                         ),
                     ),
                 )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
@@ -441,13 +405,13 @@ class AsyncRawSharesClient:
         self, sandbox_name: str, share_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[None]:
         """
-        Revoke a shareable URL.
-
         Parameters
         ----------
         sandbox_name : str
+            Sandbox name
 
         share_id : str
+            Share ID
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -458,6 +422,7 @@ class AsyncRawSharesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"sandboxes/{jsonable_encoder(sandbox_name)}/shares/{jsonable_encoder(share_id)}",
+            base_url=self._client_wrapper.get_environment().compute,
             method="DELETE",
             request_options=request_options,
         )
@@ -482,17 +447,6 @@ class AsyncRawSharesClient:
                         ErrorResponse,
                         parse_obj_as(
                             type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
