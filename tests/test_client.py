@@ -90,12 +90,10 @@ class TestIsloClient:
 
         assert public_resource_clients == {
             "cloud_roles",
-            "compute",
             "credits",
             "gateway_profiles",
             "integrations",
             "sandboxes",
-            "sessions",
             "shares",
             "snapshots",
             "tenants",
@@ -113,6 +111,8 @@ class TestIsloClient:
         assert not hasattr(client, "certificate_authority")
         assert not hasattr(client, "users")
         assert not hasattr(client, "models")
+        assert not hasattr(client, "compute")
+        assert not hasattr(client, "sessions")
 
 
 class TestAsyncIsloClient:
