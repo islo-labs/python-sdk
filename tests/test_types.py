@@ -53,4 +53,3 @@ class TestSandboxResponse:
         assert sandbox.status == "running"
         assert sandbox.spec.vcpus == 2
         assert sandbox.created_at == "2026-05-28T00:00:00Z"
-
