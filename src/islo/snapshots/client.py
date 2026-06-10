@@ -114,7 +114,7 @@ class SnapshotsClient:
         Parameters
         ----------
         name : str
-            Name
+            Snapshot name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -147,7 +147,7 @@ class SnapshotsClient:
         Parameters
         ----------
         name : str
-            Name
+            Snapshot name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -293,7 +293,7 @@ class AsyncSnapshotsClient:
         Parameters
         ----------
         name : str
-            Name
+            Snapshot name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -334,7 +334,7 @@ class AsyncSnapshotsClient:
         Parameters
         ----------
         name : str
-            Name
+            Snapshot name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

@@ -12,12 +12,10 @@ from .environment import IsloEnvironment
 
 if typing.TYPE_CHECKING:
     from .cloud_roles.client import AsyncCloudRolesClient, CloudRolesClient
-    from .compute.client import AsyncComputeClient, ComputeClient
     from .credits.client import AsyncCreditsClient, CreditsClient
     from .gateway_profiles.client import AsyncGatewayProfilesClient, GatewayProfilesClient
     from .integrations.client import AsyncIntegrationsClient, IntegrationsClient
     from .sandboxes.client import AsyncSandboxesClient, SandboxesClient
-    from .sessions.client import AsyncSessionsClient, SessionsClient
     from .shares.client import AsyncSharesClient, SharesClient
     from .snapshots.client import AsyncSnapshotsClient, SnapshotsClient
     from .tenants.client import AsyncTenantsClient, TenantsClient
@@ -86,13 +84,11 @@ class BaseIslo:
             logging=logging,
         )
         self._tenants: typing.Optional[TenantsClient] = None
-        self._sandboxes: typing.Optional[SandboxesClient] = None
-        self._compute: typing.Optional[ComputeClient] = None
         self._credits: typing.Optional[CreditsClient] = None
         self._integrations: typing.Optional[IntegrationsClient] = None
         self._gateway_profiles: typing.Optional[GatewayProfilesClient] = None
         self._cloud_roles: typing.Optional[CloudRolesClient] = None
-        self._sessions: typing.Optional[SessionsClient] = None
+        self._sandboxes: typing.Optional[SandboxesClient] = None
         self._shares: typing.Optional[SharesClient] = None
         self._snapshots: typing.Optional[SnapshotsClient] = None
 
@@ -103,22 +99,6 @@ class BaseIslo:
 
             self._tenants = TenantsClient(client_wrapper=self._client_wrapper)
         return self._tenants
-
-    @property
-    def sandboxes(self):
-        if self._sandboxes is None:
-            from .sandboxes.client import SandboxesClient  # noqa: E402
-
-            self._sandboxes = SandboxesClient(client_wrapper=self._client_wrapper)
-        return self._sandboxes
-
-    @property
-    def compute(self):
-        if self._compute is None:
-            from .compute.client import ComputeClient  # noqa: E402
-
-            self._compute = ComputeClient(client_wrapper=self._client_wrapper)
-        return self._compute
 
     @property
     def credits(self):
@@ -153,12 +133,12 @@ class BaseIslo:
         return self._cloud_roles
 
     @property
-    def sessions(self):
-        if self._sessions is None:
-            from .sessions.client import SessionsClient  # noqa: E402
+    def sandboxes(self):
+        if self._sandboxes is None:
+            from .sandboxes.client import SandboxesClient  # noqa: E402
 
-            self._sessions = SessionsClient(client_wrapper=self._client_wrapper)
-        return self._sessions
+            self._sandboxes = SandboxesClient(client_wrapper=self._client_wrapper)
+        return self._sandboxes
 
     @property
     def shares(self):
@@ -245,13 +225,11 @@ class AsyncBaseIslo:
             logging=logging,
         )
         self._tenants: typing.Optional[AsyncTenantsClient] = None
-        self._sandboxes: typing.Optional[AsyncSandboxesClient] = None
-        self._compute: typing.Optional[AsyncComputeClient] = None
         self._credits: typing.Optional[AsyncCreditsClient] = None
         self._integrations: typing.Optional[AsyncIntegrationsClient] = None
         self._gateway_profiles: typing.Optional[AsyncGatewayProfilesClient] = None
         self._cloud_roles: typing.Optional[AsyncCloudRolesClient] = None
-        self._sessions: typing.Optional[AsyncSessionsClient] = None
+        self._sandboxes: typing.Optional[AsyncSandboxesClient] = None
         self._shares: typing.Optional[AsyncSharesClient] = None
         self._snapshots: typing.Optional[AsyncSnapshotsClient] = None
 
@@ -262,22 +240,6 @@ class AsyncBaseIslo:
 
             self._tenants = AsyncTenantsClient(client_wrapper=self._client_wrapper)
         return self._tenants
-
-    @property
-    def sandboxes(self):
-        if self._sandboxes is None:
-            from .sandboxes.client import AsyncSandboxesClient  # noqa: E402
-
-            self._sandboxes = AsyncSandboxesClient(client_wrapper=self._client_wrapper)
-        return self._sandboxes
-
-    @property
-    def compute(self):
-        if self._compute is None:
-            from .compute.client import AsyncComputeClient  # noqa: E402
-
-            self._compute = AsyncComputeClient(client_wrapper=self._client_wrapper)
-        return self._compute
 
     @property
     def credits(self):
@@ -312,12 +274,12 @@ class AsyncBaseIslo:
         return self._cloud_roles
 
     @property
-    def sessions(self):
-        if self._sessions is None:
-            from .sessions.client import AsyncSessionsClient  # noqa: E402
+    def sandboxes(self):
+        if self._sandboxes is None:
+            from .sandboxes.client import AsyncSandboxesClient  # noqa: E402
 
-            self._sessions = AsyncSessionsClient(client_wrapper=self._client_wrapper)
-        return self._sessions
+            self._sandboxes = AsyncSandboxesClient(client_wrapper=self._client_wrapper)
+        return self._sandboxes
 
     @property
     def shares(self):

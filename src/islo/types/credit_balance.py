@@ -7,7 +7,14 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class CreditBalance(UniversalBaseModel):
-    balance_cents: int
-    currency: typing.Optional[str] = None
+    balance_cents: int = pydantic.Field()
+    """
+    Available credit balance in cents of the returned currency.
+    """
+
+    currency: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    ISO 4217 currency code.
+    """
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

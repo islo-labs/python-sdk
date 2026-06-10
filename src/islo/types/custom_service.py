@@ -16,7 +16,6 @@ class CustomService(UniversalBaseModel):
     in gateway rules.
     """
 
-    descope_app_id: str
     name: str
     slug: str
     auth_method: AuthMethod

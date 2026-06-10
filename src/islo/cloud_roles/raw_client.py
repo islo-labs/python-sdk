@@ -16,6 +16,7 @@ from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.cloud_provider import CloudProvider
 from ..types.cloud_role_response import CloudRoleResponse
 from ..types.error_response import ErrorResponse
+from ..types.http_validation_error import HttpValidationError
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -71,9 +72,9 @@ class RawCloudRolesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -152,9 +153,9 @@ class RawCloudRolesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -226,9 +227,9 @@ class RawCloudRolesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -292,9 +293,9 @@ class RawCloudRolesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -387,9 +388,9 @@ class RawCloudRolesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -453,9 +454,9 @@ class AsyncRawCloudRolesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -534,9 +535,9 @@ class AsyncRawCloudRolesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -608,9 +609,9 @@ class AsyncRawCloudRolesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -674,9 +675,9 @@ class AsyncRawCloudRolesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -769,9 +770,9 @@ class AsyncRawCloudRolesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

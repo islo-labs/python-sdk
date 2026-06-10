@@ -201,7 +201,7 @@ class RawSnapshotsClient:
         Parameters
         ----------
         name : str
-            Name
+            Snapshot name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -267,7 +267,7 @@ class RawSnapshotsClient:
         Parameters
         ----------
         name : str
-            Name
+            Snapshot name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -495,7 +495,7 @@ class AsyncRawSnapshotsClient:
         Parameters
         ----------
         name : str
-            Name
+            Snapshot name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -561,7 +561,7 @@ class AsyncRawSnapshotsClient:
         Parameters
         ----------
         name : str
-            Name
+            Snapshot name
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

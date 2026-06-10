@@ -12,6 +12,7 @@ from ..core.request_options import RequestOptions
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.error_response import ErrorResponse
+from ..types.http_validation_error import HttpValidationError
 from ..types.tenant_regions_response import TenantRegionsResponse
 from pydantic import ValidationError
 
@@ -24,7 +25,7 @@ class RawTenantsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[TenantRegionsResponse]:
         """
-        List compute regions allowed for the current tenant.
+        Return the compute regions the authenticated tenant may use, including the API and WebSocket base URLs for each region.
 
         Parameters
         ----------
@@ -67,9 +68,9 @@ class RawTenantsClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -92,7 +93,7 @@ class AsyncRawTenantsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[TenantRegionsResponse]:
         """
-        List compute regions allowed for the current tenant.
+        Return the compute regions the authenticated tenant may use, including the API and WebSocket base URLs for each region.
 
         Parameters
         ----------
@@ -135,9 +136,9 @@ class AsyncRawTenantsClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

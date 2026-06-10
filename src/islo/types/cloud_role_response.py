@@ -11,7 +11,6 @@ class CloudRoleResponse(UniversalBaseModel):
     id: str
     provider: str
     role_arn: str
-    external_id: str
     session_duration_seconds: int
     is_enabled: bool
     created_at: typing.Optional[dt.datetime] = None

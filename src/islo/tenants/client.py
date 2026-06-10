@@ -27,7 +27,7 @@ class TenantsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> TenantRegionsResponse:
         """
-        List compute regions allowed for the current tenant.
+        Return the compute regions the authenticated tenant may use, including the API and WebSocket base URLs for each region.
 
         Parameters
         ----------
@@ -73,7 +73,7 @@ class AsyncTenantsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> TenantRegionsResponse:
         """
-        List compute regions allowed for the current tenant.
+        Return the compute regions the authenticated tenant may use, including the API and WebSocket base URLs for each region.
 
         Parameters
         ----------

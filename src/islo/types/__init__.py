@@ -6,8 +6,6 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from .agent_session_event_response import AgentSessionEventResponse
-    from .agent_session_response import AgentSessionResponse
     from .auth_method import AuthMethod
     from .auth_strategy_schema import AuthStrategySchema
     from .auth_strategy_schema_mode import AuthStrategySchemaMode
@@ -26,12 +24,8 @@ if typing.TYPE_CHECKING:
     from .custom_services_response import CustomServicesResponse
     from .error_code import ErrorCode
     from .error_response import ErrorResponse
-    from .exec_log_line_response import ExecLogLineResponse
-    from .exec_log_line_response_stream import ExecLogLineResponseStream
-    from .exec_logs_response import ExecLogsResponse
     from .exec_response import ExecResponse
     from .exec_result_response import ExecResultResponse
-    from .exec_session_response import ExecSessionResponse
     from .file_upload_status_response import FileUploadStatusResponse
     from .gateway_action import GatewayAction
     from .gateway_profile_detail_response import GatewayProfileDetailResponse
@@ -40,10 +34,6 @@ if typing.TYPE_CHECKING:
     from .git_source import GitSource
     from .http_validation_error import HttpValidationError
     from .init_capability import InitCapability
-    from .init_custom import InitCustom
-    from .init_custom_capabilities_item import InitCustomCapabilitiesItem
-    from .init_full import InitFull
-    from .init_minimal import InitMinimal
     from .integration_detail_response import IntegrationDetailResponse
     from .integration_level import IntegrationLevel
     from .integration_list_response import IntegrationListResponse
@@ -55,34 +45,19 @@ if typing.TYPE_CHECKING:
     from .judge_content_filter_direction import JudgeContentFilterDirection
     from .judge_content_filter_fallback import JudgeContentFilterFallback
     from .judge_content_filter_provider_key import JudgeContentFilterProviderKey
-    from .legacy_init_capability import LegacyInitCapability
-    from .list_sandboxes_query import ListSandboxesQuery
     from .list_sessions_response import ListSessionsResponse
-    from .list_snapshots_query import ListSnapshotsQuery
     from .paginated_sandbox_response import PaginatedSandboxResponse
     from .paginated_snapshot_response import PaginatedSnapshotResponse
-    from .promote_cache_response import PromoteCacheResponse
     from .provider_app import ProviderApp
     from .regex_content_filter import RegexContentFilter
     from .regex_content_filter_direction import RegexContentFilterDirection
     from .rule_reorder_item import RuleReorderItem
-    from .sandbox_create import SandboxCreate
-    from .sandbox_create_init import (
-        SandboxCreateInit,
-        SandboxCreateInit_Custom,
-        SandboxCreateInit_Full,
-        SandboxCreateInit_Minimal,
-    )
-    from .sandbox_create_init_capabilities_item import SandboxCreateInitCapabilitiesItem
     from .sandbox_init import SandboxInit, SandboxInit_Custom, SandboxInit_Full, SandboxInit_Minimal
     from .sandbox_init_custom import SandboxInitCustom
     from .sandbox_init_full import SandboxInitFull
     from .sandbox_init_minimal import SandboxInitMinimal
-    from .sandbox_network import SandboxNetwork
     from .sandbox_response import SandboxResponse
     from .sandbox_spec import SandboxSpec
-    from .save_snapshot_request import SaveSnapshotRequest
-    from .save_snapshot_response import SaveSnapshotResponse
     from .session_info import SessionInfo
     from .session_status import SessionStatus
     from .setup_script import SetupScript
@@ -92,13 +67,9 @@ if typing.TYPE_CHECKING:
     from .size_limit_content_filter_direction import SizeLimitContentFilterDirection
     from .snapshot_response import SnapshotResponse
     from .tenant_regions_response import TenantRegionsResponse
-    from .token_request import TokenRequest
-    from .token_response import TokenResponse
     from .validation_error import ValidationError
     from .validation_error_loc_item import ValidationErrorLocItem
 _dynamic_imports: typing.Dict[str, str] = {
-    "AgentSessionEventResponse": ".agent_session_event_response",
-    "AgentSessionResponse": ".agent_session_response",
     "AuthMethod": ".auth_method",
     "AuthStrategySchema": ".auth_strategy_schema",
     "AuthStrategySchemaMode": ".auth_strategy_schema_mode",
@@ -117,12 +88,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CustomServicesResponse": ".custom_services_response",
     "ErrorCode": ".error_code",
     "ErrorResponse": ".error_response",
-    "ExecLogLineResponse": ".exec_log_line_response",
-    "ExecLogLineResponseStream": ".exec_log_line_response_stream",
-    "ExecLogsResponse": ".exec_logs_response",
     "ExecResponse": ".exec_response",
     "ExecResultResponse": ".exec_result_response",
-    "ExecSessionResponse": ".exec_session_response",
     "FileUploadStatusResponse": ".file_upload_status_response",
     "GatewayAction": ".gateway_action",
     "GatewayProfileDetailResponse": ".gateway_profile_detail_response",
@@ -131,10 +98,6 @@ _dynamic_imports: typing.Dict[str, str] = {
     "GitSource": ".git_source",
     "HttpValidationError": ".http_validation_error",
     "InitCapability": ".init_capability",
-    "InitCustom": ".init_custom",
-    "InitCustomCapabilitiesItem": ".init_custom_capabilities_item",
-    "InitFull": ".init_full",
-    "InitMinimal": ".init_minimal",
     "IntegrationDetailResponse": ".integration_detail_response",
     "IntegrationLevel": ".integration_level",
     "IntegrationListResponse": ".integration_list_response",
@@ -146,23 +109,13 @@ _dynamic_imports: typing.Dict[str, str] = {
     "JudgeContentFilterDirection": ".judge_content_filter_direction",
     "JudgeContentFilterFallback": ".judge_content_filter_fallback",
     "JudgeContentFilterProviderKey": ".judge_content_filter_provider_key",
-    "LegacyInitCapability": ".legacy_init_capability",
-    "ListSandboxesQuery": ".list_sandboxes_query",
     "ListSessionsResponse": ".list_sessions_response",
-    "ListSnapshotsQuery": ".list_snapshots_query",
     "PaginatedSandboxResponse": ".paginated_sandbox_response",
     "PaginatedSnapshotResponse": ".paginated_snapshot_response",
-    "PromoteCacheResponse": ".promote_cache_response",
     "ProviderApp": ".provider_app",
     "RegexContentFilter": ".regex_content_filter",
     "RegexContentFilterDirection": ".regex_content_filter_direction",
     "RuleReorderItem": ".rule_reorder_item",
-    "SandboxCreate": ".sandbox_create",
-    "SandboxCreateInit": ".sandbox_create_init",
-    "SandboxCreateInitCapabilitiesItem": ".sandbox_create_init_capabilities_item",
-    "SandboxCreateInit_Custom": ".sandbox_create_init",
-    "SandboxCreateInit_Full": ".sandbox_create_init",
-    "SandboxCreateInit_Minimal": ".sandbox_create_init",
     "SandboxInit": ".sandbox_init",
     "SandboxInitCustom": ".sandbox_init_custom",
     "SandboxInitFull": ".sandbox_init_full",
@@ -170,11 +123,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SandboxInit_Custom": ".sandbox_init",
     "SandboxInit_Full": ".sandbox_init",
     "SandboxInit_Minimal": ".sandbox_init",
-    "SandboxNetwork": ".sandbox_network",
     "SandboxResponse": ".sandbox_response",
     "SandboxSpec": ".sandbox_spec",
-    "SaveSnapshotRequest": ".save_snapshot_request",
-    "SaveSnapshotResponse": ".save_snapshot_response",
     "SessionInfo": ".session_info",
     "SessionStatus": ".session_status",
     "SetupScript": ".setup_script",
@@ -184,8 +134,6 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SizeLimitContentFilterDirection": ".size_limit_content_filter_direction",
     "SnapshotResponse": ".snapshot_response",
     "TenantRegionsResponse": ".tenant_regions_response",
-    "TokenRequest": ".token_request",
-    "TokenResponse": ".token_response",
     "ValidationError": ".validation_error",
     "ValidationErrorLocItem": ".validation_error_loc_item",
 }
@@ -213,8 +161,6 @@ def __dir__():
 
 
 __all__ = [
-    "AgentSessionEventResponse",
-    "AgentSessionResponse",
     "AuthMethod",
     "AuthStrategySchema",
     "AuthStrategySchemaMode",
@@ -233,12 +179,8 @@ __all__ = [
     "CustomServicesResponse",
     "ErrorCode",
     "ErrorResponse",
-    "ExecLogLineResponse",
-    "ExecLogLineResponseStream",
-    "ExecLogsResponse",
     "ExecResponse",
     "ExecResultResponse",
-    "ExecSessionResponse",
     "FileUploadStatusResponse",
     "GatewayAction",
     "GatewayProfileDetailResponse",
@@ -247,10 +189,6 @@ __all__ = [
     "GitSource",
     "HttpValidationError",
     "InitCapability",
-    "InitCustom",
-    "InitCustomCapabilitiesItem",
-    "InitFull",
-    "InitMinimal",
     "IntegrationDetailResponse",
     "IntegrationLevel",
     "IntegrationListResponse",
@@ -262,23 +200,13 @@ __all__ = [
     "JudgeContentFilterDirection",
     "JudgeContentFilterFallback",
     "JudgeContentFilterProviderKey",
-    "LegacyInitCapability",
-    "ListSandboxesQuery",
     "ListSessionsResponse",
-    "ListSnapshotsQuery",
     "PaginatedSandboxResponse",
     "PaginatedSnapshotResponse",
-    "PromoteCacheResponse",
     "ProviderApp",
     "RegexContentFilter",
     "RegexContentFilterDirection",
     "RuleReorderItem",
-    "SandboxCreate",
-    "SandboxCreateInit",
-    "SandboxCreateInitCapabilitiesItem",
-    "SandboxCreateInit_Custom",
-    "SandboxCreateInit_Full",
-    "SandboxCreateInit_Minimal",
     "SandboxInit",
     "SandboxInitCustom",
     "SandboxInitFull",
@@ -286,11 +214,8 @@ __all__ = [
     "SandboxInit_Custom",
     "SandboxInit_Full",
     "SandboxInit_Minimal",
-    "SandboxNetwork",
     "SandboxResponse",
     "SandboxSpec",
-    "SaveSnapshotRequest",
-    "SaveSnapshotResponse",
     "SessionInfo",
     "SessionStatus",
     "SetupScript",
@@ -300,8 +225,6 @@ __all__ = [
     "SizeLimitContentFilterDirection",
     "SnapshotResponse",
     "TenantRegionsResponse",
-    "TokenRequest",
-    "TokenResponse",
     "ValidationError",
     "ValidationErrorLocItem",
 ]

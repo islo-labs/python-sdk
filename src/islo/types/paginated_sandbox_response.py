@@ -10,6 +10,7 @@ from .sandbox_response import SandboxResponse
 class PaginatedSandboxResponse(UniversalBaseModel):
     items: typing.List[SandboxResponse]
     limit: int
+    next_cursor: typing.Optional[str] = None
     offset: int
     total: int
 
