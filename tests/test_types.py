@@ -4,7 +4,6 @@ from islo.types import (
     ErrorResponse,
     SandboxResponse,
     SandboxSpec,
-    TokenResponse,
 )
 
 
@@ -54,10 +53,3 @@ class TestSandboxResponse:
         assert sandbox.status == "running"
         assert sandbox.spec.vcpus == 2
         assert sandbox.created_at == "2026-05-28T00:00:00Z"
-
-
-class TestTokenResponse:
-    def test_fields(self):
-        token = TokenResponse(session_token="jwt-abc", expires_in=3600)
-        assert token.session_token == "jwt-abc"
-        assert token.expires_in == 3600
