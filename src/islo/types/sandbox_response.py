@@ -11,16 +11,13 @@ from .setup_step_result import SetupStepResult
 class SandboxResponse(UniversalBaseModel):
     created_at: str
     created_by: typing.Optional[str] = None
-    created_by_entity: typing.Optional[str] = None
     deleted_at: typing.Optional[str] = None
     id: str
     image: str
     name: str
-    owner_node_id: typing.Optional[str] = None
     setup_steps: typing.Optional[typing.List[SetupStepResult]] = None
     spec: typing.Optional[SandboxSpec] = None
     status: str
-    vm_id: typing.Optional[str] = None
     workdir: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

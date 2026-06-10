@@ -30,6 +30,8 @@ class SharesClient:
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> typing.List[ShareResponse]:
         """
+        List active public shares for a sandbox.
+
         Parameters
         ----------
         sandbox_name : str
@@ -68,6 +70,8 @@ class SharesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ShareResponse:
         """
+        Create a temporary public share for a sandbox port.
+
         Parameters
         ----------
         sandbox_name : str
@@ -108,6 +112,8 @@ class SharesClient:
         self, sandbox_name: str, share_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
+        Revoke a sandbox port share.
+
         Parameters
         ----------
         sandbox_name : str
@@ -160,6 +166,8 @@ class AsyncSharesClient:
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> typing.List[ShareResponse]:
         """
+        List active public shares for a sandbox.
+
         Parameters
         ----------
         sandbox_name : str
@@ -206,6 +214,8 @@ class AsyncSharesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ShareResponse:
         """
+        Create a temporary public share for a sandbox port.
+
         Parameters
         ----------
         sandbox_name : str
@@ -254,6 +264,8 @@ class AsyncSharesClient:
         self, sandbox_name: str, share_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
+        Revoke a sandbox port share.
+
         Parameters
         ----------
         sandbox_name : str

@@ -22,7 +22,6 @@ class IntegrationStatus(UniversalBaseModel):
     connected: bool
     level: typing.Optional[IntegrationLevel] = None
     auth_method: typing.Optional[AuthMethod] = None
-    descope_app_id: typing.Optional[str] = None
     preset_id: typing.Optional[str] = None
     display_name: typing.Optional[str] = None
 

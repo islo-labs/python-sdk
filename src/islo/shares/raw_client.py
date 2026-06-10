@@ -29,6 +29,8 @@ class RawSharesClient:
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[typing.List[ShareResponse]]:
         """
+        List active public shares for a sandbox.
+
         Parameters
         ----------
         sandbox_name : str
@@ -98,6 +100,8 @@ class RawSharesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ShareResponse]:
         """
+        Create a temporary public share for a sandbox port.
+
         Parameters
         ----------
         sandbox_name : str
@@ -185,6 +189,8 @@ class RawSharesClient:
         self, sandbox_name: str, share_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[None]:
         """
+        Revoke a sandbox port share.
+
         Parameters
         ----------
         sandbox_name : str
@@ -249,6 +255,8 @@ class AsyncRawSharesClient:
         self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[typing.List[ShareResponse]]:
         """
+        List active public shares for a sandbox.
+
         Parameters
         ----------
         sandbox_name : str
@@ -318,6 +326,8 @@ class AsyncRawSharesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ShareResponse]:
         """
+        Create a temporary public share for a sandbox port.
+
         Parameters
         ----------
         sandbox_name : str
@@ -405,6 +415,8 @@ class AsyncRawSharesClient:
         self, sandbox_name: str, share_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[None]:
         """
+        Revoke a sandbox port share.
+
         Parameters
         ----------
         sandbox_name : str

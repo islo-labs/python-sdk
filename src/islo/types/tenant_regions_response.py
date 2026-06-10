@@ -8,6 +8,9 @@ from .compute_region_response import ComputeRegionResponse
 
 
 class TenantRegionsResponse(UniversalBaseModel):
-    regions: typing.List[ComputeRegionResponse]
+    regions: typing.List[ComputeRegionResponse] = pydantic.Field()
+    """
+    Compute regions available to the authenticated tenant.
+    """
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

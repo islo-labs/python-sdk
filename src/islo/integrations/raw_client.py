@@ -20,6 +20,7 @@ from ..types.custom_integration import CustomIntegration
 from ..types.custom_service_create_response import CustomServiceCreateResponse
 from ..types.custom_services_response import CustomServicesResponse
 from ..types.error_response import ErrorResponse
+from ..types.http_validation_error import HttpValidationError
 from ..types.integration_detail_response import IntegrationDetailResponse
 from ..types.integration_level import IntegrationLevel
 from ..types.integration_list_response import IntegrationListResponse
@@ -38,11 +39,7 @@ class RawIntegrationsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[IntegrationProvidersResponse]:
         """
-        List available preset providers and their pre-provisioned Descope apps.
-
-        The ``apps`` array carries every (auth_method, scope) -> app_id combo a
-        preset supports, so the modal can resolve the right ``app_id`` locally
-        and skip a server round-trip on the connect path.
+        Return the integration providers available to connect from Islo, including the supported authentication methods and connection scopes.
 
         Parameters
         ----------
@@ -134,9 +131,9 @@ class RawIntegrationsClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -203,9 +200,9 @@ class RawIntegrationsClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -293,9 +290,9 @@ class RawIntegrationsClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -401,9 +398,9 @@ class RawIntegrationsClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -479,9 +476,9 @@ class RawIntegrationsClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -585,9 +582,9 @@ class RawIntegrationsClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -610,11 +607,7 @@ class AsyncRawIntegrationsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[IntegrationProvidersResponse]:
         """
-        List available preset providers and their pre-provisioned Descope apps.
-
-        The ``apps`` array carries every (auth_method, scope) -> app_id combo a
-        preset supports, so the modal can resolve the right ``app_id`` locally
-        and skip a server round-trip on the connect path.
+        Return the integration providers available to connect from Islo, including the supported authentication methods and connection scopes.
 
         Parameters
         ----------
@@ -706,9 +699,9 @@ class AsyncRawIntegrationsClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -775,9 +768,9 @@ class AsyncRawIntegrationsClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -865,9 +858,9 @@ class AsyncRawIntegrationsClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -973,9 +966,9 @@ class AsyncRawIntegrationsClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1051,9 +1044,9 @@ class AsyncRawIntegrationsClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1157,9 +1150,9 @@ class AsyncRawIntegrationsClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

@@ -21,6 +21,7 @@ from ..types.gateway_action import GatewayAction
 from ..types.gateway_profile_detail_response import GatewayProfileDetailResponse
 from ..types.gateway_profile_response import GatewayProfileResponse
 from ..types.gateway_rule_response import GatewayRuleResponse
+from ..types.http_validation_error import HttpValidationError
 from ..types.rule_reorder_item import RuleReorderItem
 from .types.gateway_rule_create_content_filter import GatewayRuleCreateContentFilter
 from .types.gateway_rule_update_content_filter import GatewayRuleUpdateContentFilter
@@ -79,9 +80,9 @@ class RawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -184,9 +185,9 @@ class RawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -258,9 +259,9 @@ class RawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -335,9 +336,9 @@ class RawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -454,9 +455,9 @@ class RawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -579,9 +580,9 @@ class RawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -647,9 +648,9 @@ class RawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -775,9 +776,9 @@ class RawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -864,9 +865,9 @@ class RawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -930,9 +931,9 @@ class AsyncRawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1035,9 +1036,9 @@ class AsyncRawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1109,9 +1110,9 @@ class AsyncRawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1186,9 +1187,9 @@ class AsyncRawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1305,9 +1306,9 @@ class AsyncRawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1430,9 +1431,9 @@ class AsyncRawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1498,9 +1499,9 @@ class AsyncRawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1626,9 +1627,9 @@ class AsyncRawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1715,9 +1716,9 @@ class AsyncRawGatewayProfilesClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

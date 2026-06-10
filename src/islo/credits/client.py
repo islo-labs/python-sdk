@@ -25,6 +25,8 @@ class CreditsClient:
 
     def get_credit_balance(self, *, request_options: typing.Optional[RequestOptions] = None) -> CreditBalance:
         """
+        Return the tenant's available prepaid credit balance in cents.
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -67,6 +69,8 @@ class AsyncCreditsClient:
 
     async def get_credit_balance(self, *, request_options: typing.Optional[RequestOptions] = None) -> CreditBalance:
         """
+        Return the tenant's available prepaid credit balance in cents.
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]

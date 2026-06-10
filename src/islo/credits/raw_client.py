@@ -11,6 +11,7 @@ from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.credit_balance import CreditBalance
+from ..types.http_validation_error import HttpValidationError
 from pydantic import ValidationError
 
 
@@ -22,6 +23,8 @@ class RawCreditsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[CreditBalance]:
         """
+        Return the tenant's available prepaid credit balance in cents.
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -52,9 +55,9 @@ class RawCreditsClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -77,6 +80,8 @@ class AsyncRawCreditsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[CreditBalance]:
         """
+        Return the tenant's available prepaid credit balance in cents.
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -107,9 +112,9 @@ class AsyncRawCreditsClient:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        typing.Any,
+                        HttpValidationError,
                         parse_obj_as(
-                            type_=typing.Any,  # type: ignore
+                            type_=HttpValidationError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

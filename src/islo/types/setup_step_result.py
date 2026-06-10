@@ -8,7 +8,6 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 class SetupStepResult(UniversalBaseModel):
     name: str
-    script: typing.Optional[str] = None
     status: str
     stderr: typing.Optional[str] = None
     stdout: typing.Optional[str] = None
