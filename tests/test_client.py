@@ -97,6 +97,7 @@ class TestIsloClient:
             "shares",
             "snapshots",
             "tenants",
+            "webhooks",
         }
 
     def test_excluded_resource_clients_not_available(self, monkeypatch):

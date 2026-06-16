@@ -4,6 +4,7 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .lifecycle_policy import LifecyclePolicy
 from .sandbox_spec import SandboxSpec
 from .setup_step_result import SetupStepResult
 
@@ -14,6 +15,7 @@ class SandboxResponse(UniversalBaseModel):
     deleted_at: typing.Optional[str] = None
     id: str
     image: str
+    lifecycle: typing.Optional[LifecyclePolicy] = None
     name: str
     setup_steps: typing.Optional[typing.List[SetupStepResult]] = None
     spec: typing.Optional[SandboxSpec] = None
