@@ -19,6 +19,7 @@ if typing.TYPE_CHECKING:
     from .shares.client import AsyncSharesClient, SharesClient
     from .snapshots.client import AsyncSnapshotsClient, SnapshotsClient
     from .tenants.client import AsyncTenantsClient, TenantsClient
+    from .webhooks.client import AsyncWebhooksClient, WebhooksClient
 
 
 class BaseIslo:
@@ -91,6 +92,7 @@ class BaseIslo:
         self._sandboxes: typing.Optional[SandboxesClient] = None
         self._shares: typing.Optional[SharesClient] = None
         self._snapshots: typing.Optional[SnapshotsClient] = None
+        self._webhooks: typing.Optional[WebhooksClient] = None
 
     @property
     def tenants(self):
@@ -155,6 +157,14 @@ class BaseIslo:
 
             self._snapshots = SnapshotsClient(client_wrapper=self._client_wrapper)
         return self._snapshots
+
+    @property
+    def webhooks(self):
+        if self._webhooks is None:
+            from .webhooks.client import WebhooksClient  # noqa: E402
+
+            self._webhooks = WebhooksClient(client_wrapper=self._client_wrapper)
+        return self._webhooks
 
 
 class AsyncBaseIslo:
@@ -232,6 +242,7 @@ class AsyncBaseIslo:
         self._sandboxes: typing.Optional[AsyncSandboxesClient] = None
         self._shares: typing.Optional[AsyncSharesClient] = None
         self._snapshots: typing.Optional[AsyncSnapshotsClient] = None
+        self._webhooks: typing.Optional[AsyncWebhooksClient] = None
 
     @property
     def tenants(self):
@@ -296,3 +307,11 @@ class AsyncBaseIslo:
 
             self._snapshots = AsyncSnapshotsClient(client_wrapper=self._client_wrapper)
         return self._snapshots
+
+    @property
+    def webhooks(self):
+        if self._webhooks is None:
+            from .webhooks.client import AsyncWebhooksClient  # noqa: E402
+
+            self._webhooks = AsyncWebhooksClient(client_wrapper=self._client_wrapper)
+        return self._webhooks

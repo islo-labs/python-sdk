@@ -9,6 +9,41 @@ if typing.TYPE_CHECKING:
     from .auth_method import AuthMethod
     from .auth_strategy_schema import AuthStrategySchema
     from .auth_strategy_schema_mode import AuthStrategySchemaMode
+    from .auth_verifier import AuthVerifier
+    from .auth_verifier_five import AuthVerifierFive
+    from .auth_verifier_five_type import AuthVerifierFiveType
+    from .auth_verifier_four import AuthVerifierFour
+    from .auth_verifier_four_type import AuthVerifierFourType
+    from .auth_verifier_one import AuthVerifierOne
+    from .auth_verifier_one_type import AuthVerifierOneType
+    from .auth_verifier_response import (
+        AuthVerifierResponse,
+        AuthVerifierResponse_Basic,
+        AuthVerifierResponse_BearerStatic,
+        AuthVerifierResponse_HeaderEquals,
+        AuthVerifierResponse_Hmac,
+        AuthVerifierResponse_IpAllowlist,
+        AuthVerifierResponse_Jwt,
+        AuthVerifierResponse_QueryEquals,
+    )
+    from .auth_verifier_response_basic import AuthVerifierResponseBasic
+    from .auth_verifier_response_bearer_static import AuthVerifierResponseBearerStatic
+    from .auth_verifier_response_header_equals import AuthVerifierResponseHeaderEquals
+    from .auth_verifier_response_hmac import AuthVerifierResponseHmac
+    from .auth_verifier_response_ip_allowlist import AuthVerifierResponseIpAllowlist
+    from .auth_verifier_response_jwt import AuthVerifierResponseJwt
+    from .auth_verifier_response_query_equals import AuthVerifierResponseQueryEquals
+    from .auth_verifier_six import AuthVerifierSix
+    from .auth_verifier_six_type import AuthVerifierSixType
+    from .auth_verifier_three import AuthVerifierThree
+    from .auth_verifier_three_type import AuthVerifierThreeType
+    from .auth_verifier_two import AuthVerifierTwo
+    from .auth_verifier_two_type import AuthVerifierTwoType
+    from .auth_verifier_zero import AuthVerifierZero
+    from .auth_verifier_zero_type import AuthVerifierZeroType
+    from .auto_resume_policy import AutoResumePolicy
+    from .basic_auth_verifier import BasicAuthVerifier
+    from .bearer_static_verifier import BearerStaticVerifier
     from .cloud_provider import CloudProvider
     from .cloud_role_ref import CloudRoleRef
     from .cloud_role_response import CloudRoleResponse
@@ -32,7 +67,94 @@ if typing.TYPE_CHECKING:
     from .gateway_profile_response import GatewayProfileResponse
     from .gateway_rule_response import GatewayRuleResponse
     from .git_source import GitSource
+    from .header_equals_verifier import HeaderEqualsVerifier
+    from .hmac_algorithm import HmacAlgorithm
+    from .hmac_verifier import HmacVerifier
     from .http_validation_error import HttpValidationError
+    from .idempotency_config import (
+        IdempotencyConfig,
+        IdempotencyConfig_BodySha256,
+        IdempotencyConfig_Header,
+        IdempotencyConfig_HeaderParam,
+        IdempotencyConfig_JsonPath,
+    )
+    from .idempotency_config_body_sha256 import IdempotencyConfigBodySha256
+    from .idempotency_config_header import IdempotencyConfigHeader
+    from .idempotency_config_header_param import IdempotencyConfigHeaderParam
+    from .idempotency_config_json_path import IdempotencyConfigJsonPath
+    from .incoming_webhook import IncomingWebhook
+    from .incoming_webhook_action import (
+        IncomingWebhookAction,
+        IncomingWebhookAction_DeleteSandbox,
+        IncomingWebhookAction_DeliverToPort,
+        IncomingWebhookAction_EnsureSandbox,
+        IncomingWebhookAction_PauseSandbox,
+        IncomingWebhookAction_ResumeSandbox,
+    )
+    from .incoming_webhook_action_delete_sandbox import IncomingWebhookActionDeleteSandbox
+    from .incoming_webhook_action_deliver_to_port import IncomingWebhookActionDeliverToPort
+    from .incoming_webhook_action_ensure_sandbox import IncomingWebhookActionEnsureSandbox
+    from .incoming_webhook_action_pause_sandbox import IncomingWebhookActionPauseSandbox
+    from .incoming_webhook_action_resume_sandbox import IncomingWebhookActionResumeSandbox
+    from .incoming_webhook_auth import IncomingWebhookAuth
+    from .incoming_webhook_auth_auth_type import IncomingWebhookAuthAuthType
+    from .incoming_webhook_auth_auth_type_auth_type import IncomingWebhookAuthAuthTypeAuthType
+    from .incoming_webhook_auth_eight import IncomingWebhookAuthEight
+    from .incoming_webhook_auth_eight_auth_type import IncomingWebhookAuthEightAuthType
+    from .incoming_webhook_auth_five import IncomingWebhookAuthFive
+    from .incoming_webhook_auth_five_auth_type import IncomingWebhookAuthFiveAuthType
+    from .incoming_webhook_auth_four import IncomingWebhookAuthFour
+    from .incoming_webhook_auth_four_auth_type import IncomingWebhookAuthFourAuthType
+    from .incoming_webhook_auth_nine import IncomingWebhookAuthNine
+    from .incoming_webhook_auth_nine_auth_type import IncomingWebhookAuthNineAuthType
+    from .incoming_webhook_auth_one import IncomingWebhookAuthOne
+    from .incoming_webhook_auth_one_auth_type import IncomingWebhookAuthOneAuthType
+    from .incoming_webhook_auth_response import (
+        IncomingWebhookAuthResponse,
+        IncomingWebhookAuthResponse_All,
+        IncomingWebhookAuthResponse_Any,
+        IncomingWebhookAuthResponse_Basic,
+        IncomingWebhookAuthResponse_BearerStatic,
+        IncomingWebhookAuthResponse_HeaderEquals,
+        IncomingWebhookAuthResponse_Hmac,
+        IncomingWebhookAuthResponse_IpAllowlist,
+        IncomingWebhookAuthResponse_Jwt,
+        IncomingWebhookAuthResponse_None,
+        IncomingWebhookAuthResponse_QueryEquals,
+    )
+    from .incoming_webhook_auth_response_all import IncomingWebhookAuthResponseAll
+    from .incoming_webhook_auth_response_any import IncomingWebhookAuthResponseAny
+    from .incoming_webhook_auth_response_basic import IncomingWebhookAuthResponseBasic
+    from .incoming_webhook_auth_response_bearer_static import IncomingWebhookAuthResponseBearerStatic
+    from .incoming_webhook_auth_response_header_equals import IncomingWebhookAuthResponseHeaderEquals
+    from .incoming_webhook_auth_response_hmac import IncomingWebhookAuthResponseHmac
+    from .incoming_webhook_auth_response_ip_allowlist import IncomingWebhookAuthResponseIpAllowlist
+    from .incoming_webhook_auth_response_jwt import IncomingWebhookAuthResponseJwt
+    from .incoming_webhook_auth_response_none import IncomingWebhookAuthResponseNone
+    from .incoming_webhook_auth_response_query_equals import IncomingWebhookAuthResponseQueryEquals
+    from .incoming_webhook_auth_seven import IncomingWebhookAuthSeven
+    from .incoming_webhook_auth_seven_auth_type import IncomingWebhookAuthSevenAuthType
+    from .incoming_webhook_auth_six import IncomingWebhookAuthSix
+    from .incoming_webhook_auth_six_auth_type import IncomingWebhookAuthSixAuthType
+    from .incoming_webhook_auth_three import IncomingWebhookAuthThree
+    from .incoming_webhook_auth_three_auth_type import IncomingWebhookAuthThreeAuthType
+    from .incoming_webhook_auth_zero import IncomingWebhookAuthZero
+    from .incoming_webhook_auth_zero_auth_type import IncomingWebhookAuthZeroAuthType
+    from .incoming_webhook_auto_resume_policy import IncomingWebhookAutoResumePolicy
+    from .incoming_webhook_condition import IncomingWebhookCondition
+    from .incoming_webhook_rule import IncomingWebhookRule
+    from .incoming_webhook_sandbox_lifecycle import IncomingWebhookSandboxLifecycle
+    from .incoming_webhook_sandbox_template import IncomingWebhookSandboxTemplate
+    from .incoming_webhook_secret import IncomingWebhookSecret
+    from .incoming_webhook_secret_ref import IncomingWebhookSecretRef
+    from .incoming_webhook_status import IncomingWebhookStatus
+    from .incoming_webhook_target import (
+        IncomingWebhookTarget,
+        IncomingWebhookTarget_FixedSandboxName,
+        IncomingWebhookTarget_SandboxNameFromEvent,
+    )
+    from .incoming_webhook_target_fixed_sandbox_name import IncomingWebhookTargetFixedSandboxName
+    from .incoming_webhook_target_sandbox_name_from_event import IncomingWebhookTargetSandboxNameFromEvent
     from .init_capability import InitCapability
     from .integration_detail_response import IntegrationDetailResponse
     from .integration_level import IntegrationLevel
@@ -40,15 +162,21 @@ if typing.TYPE_CHECKING:
     from .integration_provider import IntegrationProvider
     from .integration_providers_response import IntegrationProvidersResponse
     from .integration_status import IntegrationStatus
+    from .ip_allowlist_verifier import IpAllowlistVerifier
     from .islo_error_code import IsloErrorCode
     from .judge_content_filter import JudgeContentFilter
     from .judge_content_filter_direction import JudgeContentFilterDirection
     from .judge_content_filter_fallback import JudgeContentFilterFallback
     from .judge_content_filter_provider_key import JudgeContentFilterProviderKey
+    from .jwt_verifier import JwtVerifier
+    from .lifecycle_policy import LifecyclePolicy
     from .list_sessions_response import ListSessionsResponse
     from .paginated_sandbox_response import PaginatedSandboxResponse
     from .paginated_snapshot_response import PaginatedSnapshotResponse
+    from .payload_mapping import PayloadMapping
+    from .payload_mapping_type import PayloadMappingType
     from .provider_app import ProviderApp
+    from .query_equals_verifier import QueryEqualsVerifier
     from .regex_content_filter import RegexContentFilter
     from .regex_content_filter_direction import RegexContentFilterDirection
     from .rule_reorder_item import RuleReorderItem
@@ -63,16 +191,74 @@ if typing.TYPE_CHECKING:
     from .setup_script import SetupScript
     from .setup_step_result import SetupStepResult
     from .share_response import ShareResponse
+    from .signature_encoding import SignatureEncoding
+    from .signed_part import SignedPart, SignedPart_Literal, SignedPart_Source
+    from .signed_part_literal import SignedPartLiteral
+    from .signed_part_source import SignedPartSource
+    from .signed_payload import SignedPayload, SignedPayload_RawBody, SignedPayload_Template
+    from .signed_payload_raw_body import SignedPayloadRawBody
+    from .signed_payload_template import SignedPayloadTemplate
     from .size_limit_content_filter import SizeLimitContentFilter
     from .size_limit_content_filter_direction import SizeLimitContentFilterDirection
     from .snapshot_response import SnapshotResponse
     from .tenant_regions_response import TenantRegionsResponse
+    from .timestamp_check import TimestampCheck
     from .validation_error import ValidationError
     from .validation_error_loc_item import ValidationErrorLocItem
+    from .value_source import (
+        ValueSource,
+        ValueSource_Header,
+        ValueSource_HeaderParam,
+        ValueSource_JsonPath,
+        ValueSource_Method,
+        ValueSource_Path,
+        ValueSource_Query,
+        ValueSource_RawBody,
+    )
+    from .value_source_header import ValueSourceHeader
+    from .value_source_header_param import ValueSourceHeaderParam
+    from .value_source_json_path import ValueSourceJsonPath
+    from .value_source_method import ValueSourceMethod
+    from .value_source_path import ValueSourcePath
+    from .value_source_query import ValueSourceQuery
+    from .value_source_raw_body import ValueSourceRawBody
 _dynamic_imports: typing.Dict[str, str] = {
     "AuthMethod": ".auth_method",
     "AuthStrategySchema": ".auth_strategy_schema",
     "AuthStrategySchemaMode": ".auth_strategy_schema_mode",
+    "AuthVerifier": ".auth_verifier",
+    "AuthVerifierFive": ".auth_verifier_five",
+    "AuthVerifierFiveType": ".auth_verifier_five_type",
+    "AuthVerifierFour": ".auth_verifier_four",
+    "AuthVerifierFourType": ".auth_verifier_four_type",
+    "AuthVerifierOne": ".auth_verifier_one",
+    "AuthVerifierOneType": ".auth_verifier_one_type",
+    "AuthVerifierResponse": ".auth_verifier_response",
+    "AuthVerifierResponseBasic": ".auth_verifier_response_basic",
+    "AuthVerifierResponseBearerStatic": ".auth_verifier_response_bearer_static",
+    "AuthVerifierResponseHeaderEquals": ".auth_verifier_response_header_equals",
+    "AuthVerifierResponseHmac": ".auth_verifier_response_hmac",
+    "AuthVerifierResponseIpAllowlist": ".auth_verifier_response_ip_allowlist",
+    "AuthVerifierResponseJwt": ".auth_verifier_response_jwt",
+    "AuthVerifierResponseQueryEquals": ".auth_verifier_response_query_equals",
+    "AuthVerifierResponse_Basic": ".auth_verifier_response",
+    "AuthVerifierResponse_BearerStatic": ".auth_verifier_response",
+    "AuthVerifierResponse_HeaderEquals": ".auth_verifier_response",
+    "AuthVerifierResponse_Hmac": ".auth_verifier_response",
+    "AuthVerifierResponse_IpAllowlist": ".auth_verifier_response",
+    "AuthVerifierResponse_Jwt": ".auth_verifier_response",
+    "AuthVerifierResponse_QueryEquals": ".auth_verifier_response",
+    "AuthVerifierSix": ".auth_verifier_six",
+    "AuthVerifierSixType": ".auth_verifier_six_type",
+    "AuthVerifierThree": ".auth_verifier_three",
+    "AuthVerifierThreeType": ".auth_verifier_three_type",
+    "AuthVerifierTwo": ".auth_verifier_two",
+    "AuthVerifierTwoType": ".auth_verifier_two_type",
+    "AuthVerifierZero": ".auth_verifier_zero",
+    "AuthVerifierZeroType": ".auth_verifier_zero_type",
+    "AutoResumePolicy": ".auto_resume_policy",
+    "BasicAuthVerifier": ".basic_auth_verifier",
+    "BearerStaticVerifier": ".bearer_static_verifier",
     "CloudProvider": ".cloud_provider",
     "CloudRoleRef": ".cloud_role_ref",
     "CloudRoleResponse": ".cloud_role_response",
@@ -96,7 +282,86 @@ _dynamic_imports: typing.Dict[str, str] = {
     "GatewayProfileResponse": ".gateway_profile_response",
     "GatewayRuleResponse": ".gateway_rule_response",
     "GitSource": ".git_source",
+    "HeaderEqualsVerifier": ".header_equals_verifier",
+    "HmacAlgorithm": ".hmac_algorithm",
+    "HmacVerifier": ".hmac_verifier",
     "HttpValidationError": ".http_validation_error",
+    "IdempotencyConfig": ".idempotency_config",
+    "IdempotencyConfigBodySha256": ".idempotency_config_body_sha256",
+    "IdempotencyConfigHeader": ".idempotency_config_header",
+    "IdempotencyConfigHeaderParam": ".idempotency_config_header_param",
+    "IdempotencyConfigJsonPath": ".idempotency_config_json_path",
+    "IdempotencyConfig_BodySha256": ".idempotency_config",
+    "IdempotencyConfig_Header": ".idempotency_config",
+    "IdempotencyConfig_HeaderParam": ".idempotency_config",
+    "IdempotencyConfig_JsonPath": ".idempotency_config",
+    "IncomingWebhook": ".incoming_webhook",
+    "IncomingWebhookAction": ".incoming_webhook_action",
+    "IncomingWebhookActionDeleteSandbox": ".incoming_webhook_action_delete_sandbox",
+    "IncomingWebhookActionDeliverToPort": ".incoming_webhook_action_deliver_to_port",
+    "IncomingWebhookActionEnsureSandbox": ".incoming_webhook_action_ensure_sandbox",
+    "IncomingWebhookActionPauseSandbox": ".incoming_webhook_action_pause_sandbox",
+    "IncomingWebhookActionResumeSandbox": ".incoming_webhook_action_resume_sandbox",
+    "IncomingWebhookAction_DeleteSandbox": ".incoming_webhook_action",
+    "IncomingWebhookAction_DeliverToPort": ".incoming_webhook_action",
+    "IncomingWebhookAction_EnsureSandbox": ".incoming_webhook_action",
+    "IncomingWebhookAction_PauseSandbox": ".incoming_webhook_action",
+    "IncomingWebhookAction_ResumeSandbox": ".incoming_webhook_action",
+    "IncomingWebhookAuth": ".incoming_webhook_auth",
+    "IncomingWebhookAuthAuthType": ".incoming_webhook_auth_auth_type",
+    "IncomingWebhookAuthAuthTypeAuthType": ".incoming_webhook_auth_auth_type_auth_type",
+    "IncomingWebhookAuthEight": ".incoming_webhook_auth_eight",
+    "IncomingWebhookAuthEightAuthType": ".incoming_webhook_auth_eight_auth_type",
+    "IncomingWebhookAuthFive": ".incoming_webhook_auth_five",
+    "IncomingWebhookAuthFiveAuthType": ".incoming_webhook_auth_five_auth_type",
+    "IncomingWebhookAuthFour": ".incoming_webhook_auth_four",
+    "IncomingWebhookAuthFourAuthType": ".incoming_webhook_auth_four_auth_type",
+    "IncomingWebhookAuthNine": ".incoming_webhook_auth_nine",
+    "IncomingWebhookAuthNineAuthType": ".incoming_webhook_auth_nine_auth_type",
+    "IncomingWebhookAuthOne": ".incoming_webhook_auth_one",
+    "IncomingWebhookAuthOneAuthType": ".incoming_webhook_auth_one_auth_type",
+    "IncomingWebhookAuthResponse": ".incoming_webhook_auth_response",
+    "IncomingWebhookAuthResponseAll": ".incoming_webhook_auth_response_all",
+    "IncomingWebhookAuthResponseAny": ".incoming_webhook_auth_response_any",
+    "IncomingWebhookAuthResponseBasic": ".incoming_webhook_auth_response_basic",
+    "IncomingWebhookAuthResponseBearerStatic": ".incoming_webhook_auth_response_bearer_static",
+    "IncomingWebhookAuthResponseHeaderEquals": ".incoming_webhook_auth_response_header_equals",
+    "IncomingWebhookAuthResponseHmac": ".incoming_webhook_auth_response_hmac",
+    "IncomingWebhookAuthResponseIpAllowlist": ".incoming_webhook_auth_response_ip_allowlist",
+    "IncomingWebhookAuthResponseJwt": ".incoming_webhook_auth_response_jwt",
+    "IncomingWebhookAuthResponseNone": ".incoming_webhook_auth_response_none",
+    "IncomingWebhookAuthResponseQueryEquals": ".incoming_webhook_auth_response_query_equals",
+    "IncomingWebhookAuthResponse_All": ".incoming_webhook_auth_response",
+    "IncomingWebhookAuthResponse_Any": ".incoming_webhook_auth_response",
+    "IncomingWebhookAuthResponse_Basic": ".incoming_webhook_auth_response",
+    "IncomingWebhookAuthResponse_BearerStatic": ".incoming_webhook_auth_response",
+    "IncomingWebhookAuthResponse_HeaderEquals": ".incoming_webhook_auth_response",
+    "IncomingWebhookAuthResponse_Hmac": ".incoming_webhook_auth_response",
+    "IncomingWebhookAuthResponse_IpAllowlist": ".incoming_webhook_auth_response",
+    "IncomingWebhookAuthResponse_Jwt": ".incoming_webhook_auth_response",
+    "IncomingWebhookAuthResponse_None": ".incoming_webhook_auth_response",
+    "IncomingWebhookAuthResponse_QueryEquals": ".incoming_webhook_auth_response",
+    "IncomingWebhookAuthSeven": ".incoming_webhook_auth_seven",
+    "IncomingWebhookAuthSevenAuthType": ".incoming_webhook_auth_seven_auth_type",
+    "IncomingWebhookAuthSix": ".incoming_webhook_auth_six",
+    "IncomingWebhookAuthSixAuthType": ".incoming_webhook_auth_six_auth_type",
+    "IncomingWebhookAuthThree": ".incoming_webhook_auth_three",
+    "IncomingWebhookAuthThreeAuthType": ".incoming_webhook_auth_three_auth_type",
+    "IncomingWebhookAuthZero": ".incoming_webhook_auth_zero",
+    "IncomingWebhookAuthZeroAuthType": ".incoming_webhook_auth_zero_auth_type",
+    "IncomingWebhookAutoResumePolicy": ".incoming_webhook_auto_resume_policy",
+    "IncomingWebhookCondition": ".incoming_webhook_condition",
+    "IncomingWebhookRule": ".incoming_webhook_rule",
+    "IncomingWebhookSandboxLifecycle": ".incoming_webhook_sandbox_lifecycle",
+    "IncomingWebhookSandboxTemplate": ".incoming_webhook_sandbox_template",
+    "IncomingWebhookSecret": ".incoming_webhook_secret",
+    "IncomingWebhookSecretRef": ".incoming_webhook_secret_ref",
+    "IncomingWebhookStatus": ".incoming_webhook_status",
+    "IncomingWebhookTarget": ".incoming_webhook_target",
+    "IncomingWebhookTargetFixedSandboxName": ".incoming_webhook_target_fixed_sandbox_name",
+    "IncomingWebhookTargetSandboxNameFromEvent": ".incoming_webhook_target_sandbox_name_from_event",
+    "IncomingWebhookTarget_FixedSandboxName": ".incoming_webhook_target",
+    "IncomingWebhookTarget_SandboxNameFromEvent": ".incoming_webhook_target",
     "InitCapability": ".init_capability",
     "IntegrationDetailResponse": ".integration_detail_response",
     "IntegrationLevel": ".integration_level",
@@ -104,15 +369,21 @@ _dynamic_imports: typing.Dict[str, str] = {
     "IntegrationProvider": ".integration_provider",
     "IntegrationProvidersResponse": ".integration_providers_response",
     "IntegrationStatus": ".integration_status",
+    "IpAllowlistVerifier": ".ip_allowlist_verifier",
     "IsloErrorCode": ".islo_error_code",
     "JudgeContentFilter": ".judge_content_filter",
     "JudgeContentFilterDirection": ".judge_content_filter_direction",
     "JudgeContentFilterFallback": ".judge_content_filter_fallback",
     "JudgeContentFilterProviderKey": ".judge_content_filter_provider_key",
+    "JwtVerifier": ".jwt_verifier",
+    "LifecyclePolicy": ".lifecycle_policy",
     "ListSessionsResponse": ".list_sessions_response",
     "PaginatedSandboxResponse": ".paginated_sandbox_response",
     "PaginatedSnapshotResponse": ".paginated_snapshot_response",
+    "PayloadMapping": ".payload_mapping",
+    "PayloadMappingType": ".payload_mapping_type",
     "ProviderApp": ".provider_app",
+    "QueryEqualsVerifier": ".query_equals_verifier",
     "RegexContentFilter": ".regex_content_filter",
     "RegexContentFilterDirection": ".regex_content_filter_direction",
     "RuleReorderItem": ".rule_reorder_item",
@@ -130,12 +401,39 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SetupScript": ".setup_script",
     "SetupStepResult": ".setup_step_result",
     "ShareResponse": ".share_response",
+    "SignatureEncoding": ".signature_encoding",
+    "SignedPart": ".signed_part",
+    "SignedPartLiteral": ".signed_part_literal",
+    "SignedPartSource": ".signed_part_source",
+    "SignedPart_Literal": ".signed_part",
+    "SignedPart_Source": ".signed_part",
+    "SignedPayload": ".signed_payload",
+    "SignedPayloadRawBody": ".signed_payload_raw_body",
+    "SignedPayloadTemplate": ".signed_payload_template",
+    "SignedPayload_RawBody": ".signed_payload",
+    "SignedPayload_Template": ".signed_payload",
     "SizeLimitContentFilter": ".size_limit_content_filter",
     "SizeLimitContentFilterDirection": ".size_limit_content_filter_direction",
     "SnapshotResponse": ".snapshot_response",
     "TenantRegionsResponse": ".tenant_regions_response",
+    "TimestampCheck": ".timestamp_check",
     "ValidationError": ".validation_error",
     "ValidationErrorLocItem": ".validation_error_loc_item",
+    "ValueSource": ".value_source",
+    "ValueSourceHeader": ".value_source_header",
+    "ValueSourceHeaderParam": ".value_source_header_param",
+    "ValueSourceJsonPath": ".value_source_json_path",
+    "ValueSourceMethod": ".value_source_method",
+    "ValueSourcePath": ".value_source_path",
+    "ValueSourceQuery": ".value_source_query",
+    "ValueSourceRawBody": ".value_source_raw_body",
+    "ValueSource_Header": ".value_source",
+    "ValueSource_HeaderParam": ".value_source",
+    "ValueSource_JsonPath": ".value_source",
+    "ValueSource_Method": ".value_source",
+    "ValueSource_Path": ".value_source",
+    "ValueSource_Query": ".value_source",
+    "ValueSource_RawBody": ".value_source",
 }
 
 
@@ -164,6 +462,39 @@ __all__ = [
     "AuthMethod",
     "AuthStrategySchema",
     "AuthStrategySchemaMode",
+    "AuthVerifier",
+    "AuthVerifierFive",
+    "AuthVerifierFiveType",
+    "AuthVerifierFour",
+    "AuthVerifierFourType",
+    "AuthVerifierOne",
+    "AuthVerifierOneType",
+    "AuthVerifierResponse",
+    "AuthVerifierResponseBasic",
+    "AuthVerifierResponseBearerStatic",
+    "AuthVerifierResponseHeaderEquals",
+    "AuthVerifierResponseHmac",
+    "AuthVerifierResponseIpAllowlist",
+    "AuthVerifierResponseJwt",
+    "AuthVerifierResponseQueryEquals",
+    "AuthVerifierResponse_Basic",
+    "AuthVerifierResponse_BearerStatic",
+    "AuthVerifierResponse_HeaderEquals",
+    "AuthVerifierResponse_Hmac",
+    "AuthVerifierResponse_IpAllowlist",
+    "AuthVerifierResponse_Jwt",
+    "AuthVerifierResponse_QueryEquals",
+    "AuthVerifierSix",
+    "AuthVerifierSixType",
+    "AuthVerifierThree",
+    "AuthVerifierThreeType",
+    "AuthVerifierTwo",
+    "AuthVerifierTwoType",
+    "AuthVerifierZero",
+    "AuthVerifierZeroType",
+    "AutoResumePolicy",
+    "BasicAuthVerifier",
+    "BearerStaticVerifier",
     "CloudProvider",
     "CloudRoleRef",
     "CloudRoleResponse",
@@ -187,7 +518,86 @@ __all__ = [
     "GatewayProfileResponse",
     "GatewayRuleResponse",
     "GitSource",
+    "HeaderEqualsVerifier",
+    "HmacAlgorithm",
+    "HmacVerifier",
     "HttpValidationError",
+    "IdempotencyConfig",
+    "IdempotencyConfigBodySha256",
+    "IdempotencyConfigHeader",
+    "IdempotencyConfigHeaderParam",
+    "IdempotencyConfigJsonPath",
+    "IdempotencyConfig_BodySha256",
+    "IdempotencyConfig_Header",
+    "IdempotencyConfig_HeaderParam",
+    "IdempotencyConfig_JsonPath",
+    "IncomingWebhook",
+    "IncomingWebhookAction",
+    "IncomingWebhookActionDeleteSandbox",
+    "IncomingWebhookActionDeliverToPort",
+    "IncomingWebhookActionEnsureSandbox",
+    "IncomingWebhookActionPauseSandbox",
+    "IncomingWebhookActionResumeSandbox",
+    "IncomingWebhookAction_DeleteSandbox",
+    "IncomingWebhookAction_DeliverToPort",
+    "IncomingWebhookAction_EnsureSandbox",
+    "IncomingWebhookAction_PauseSandbox",
+    "IncomingWebhookAction_ResumeSandbox",
+    "IncomingWebhookAuth",
+    "IncomingWebhookAuthAuthType",
+    "IncomingWebhookAuthAuthTypeAuthType",
+    "IncomingWebhookAuthEight",
+    "IncomingWebhookAuthEightAuthType",
+    "IncomingWebhookAuthFive",
+    "IncomingWebhookAuthFiveAuthType",
+    "IncomingWebhookAuthFour",
+    "IncomingWebhookAuthFourAuthType",
+    "IncomingWebhookAuthNine",
+    "IncomingWebhookAuthNineAuthType",
+    "IncomingWebhookAuthOne",
+    "IncomingWebhookAuthOneAuthType",
+    "IncomingWebhookAuthResponse",
+    "IncomingWebhookAuthResponseAll",
+    "IncomingWebhookAuthResponseAny",
+    "IncomingWebhookAuthResponseBasic",
+    "IncomingWebhookAuthResponseBearerStatic",
+    "IncomingWebhookAuthResponseHeaderEquals",
+    "IncomingWebhookAuthResponseHmac",
+    "IncomingWebhookAuthResponseIpAllowlist",
+    "IncomingWebhookAuthResponseJwt",
+    "IncomingWebhookAuthResponseNone",
+    "IncomingWebhookAuthResponseQueryEquals",
+    "IncomingWebhookAuthResponse_All",
+    "IncomingWebhookAuthResponse_Any",
+    "IncomingWebhookAuthResponse_Basic",
+    "IncomingWebhookAuthResponse_BearerStatic",
+    "IncomingWebhookAuthResponse_HeaderEquals",
+    "IncomingWebhookAuthResponse_Hmac",
+    "IncomingWebhookAuthResponse_IpAllowlist",
+    "IncomingWebhookAuthResponse_Jwt",
+    "IncomingWebhookAuthResponse_None",
+    "IncomingWebhookAuthResponse_QueryEquals",
+    "IncomingWebhookAuthSeven",
+    "IncomingWebhookAuthSevenAuthType",
+    "IncomingWebhookAuthSix",
+    "IncomingWebhookAuthSixAuthType",
+    "IncomingWebhookAuthThree",
+    "IncomingWebhookAuthThreeAuthType",
+    "IncomingWebhookAuthZero",
+    "IncomingWebhookAuthZeroAuthType",
+    "IncomingWebhookAutoResumePolicy",
+    "IncomingWebhookCondition",
+    "IncomingWebhookRule",
+    "IncomingWebhookSandboxLifecycle",
+    "IncomingWebhookSandboxTemplate",
+    "IncomingWebhookSecret",
+    "IncomingWebhookSecretRef",
+    "IncomingWebhookStatus",
+    "IncomingWebhookTarget",
+    "IncomingWebhookTargetFixedSandboxName",
+    "IncomingWebhookTargetSandboxNameFromEvent",
+    "IncomingWebhookTarget_FixedSandboxName",
+    "IncomingWebhookTarget_SandboxNameFromEvent",
     "InitCapability",
     "IntegrationDetailResponse",
     "IntegrationLevel",
@@ -195,15 +605,21 @@ __all__ = [
     "IntegrationProvider",
     "IntegrationProvidersResponse",
     "IntegrationStatus",
+    "IpAllowlistVerifier",
     "IsloErrorCode",
     "JudgeContentFilter",
     "JudgeContentFilterDirection",
     "JudgeContentFilterFallback",
     "JudgeContentFilterProviderKey",
+    "JwtVerifier",
+    "LifecyclePolicy",
     "ListSessionsResponse",
     "PaginatedSandboxResponse",
     "PaginatedSnapshotResponse",
+    "PayloadMapping",
+    "PayloadMappingType",
     "ProviderApp",
+    "QueryEqualsVerifier",
     "RegexContentFilter",
     "RegexContentFilterDirection",
     "RuleReorderItem",
@@ -221,10 +637,37 @@ __all__ = [
     "SetupScript",
     "SetupStepResult",
     "ShareResponse",
+    "SignatureEncoding",
+    "SignedPart",
+    "SignedPartLiteral",
+    "SignedPartSource",
+    "SignedPart_Literal",
+    "SignedPart_Source",
+    "SignedPayload",
+    "SignedPayloadRawBody",
+    "SignedPayloadTemplate",
+    "SignedPayload_RawBody",
+    "SignedPayload_Template",
     "SizeLimitContentFilter",
     "SizeLimitContentFilterDirection",
     "SnapshotResponse",
     "TenantRegionsResponse",
+    "TimestampCheck",
     "ValidationError",
     "ValidationErrorLocItem",
+    "ValueSource",
+    "ValueSourceHeader",
+    "ValueSourceHeaderParam",
+    "ValueSourceJsonPath",
+    "ValueSourceMethod",
+    "ValueSourcePath",
+    "ValueSourceQuery",
+    "ValueSourceRawBody",
+    "ValueSource_Header",
+    "ValueSource_HeaderParam",
+    "ValueSource_JsonPath",
+    "ValueSource_Method",
+    "ValueSource_Path",
+    "ValueSource_Query",
+    "ValueSource_RawBody",
 ]

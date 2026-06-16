@@ -23,6 +23,7 @@ ErrorCode = typing.Union[
         "TENANT_SUSPENDED",
         "RATE_LIMITED",
         "TIMEOUT",
+        "GONE",
         "INTERNAL_ERROR",
     ],
     typing.Any,

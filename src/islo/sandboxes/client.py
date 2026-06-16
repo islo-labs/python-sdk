@@ -9,6 +9,7 @@ from ..types.exec_response import ExecResponse
 from ..types.exec_result_response import ExecResultResponse
 from ..types.file_upload_status_response import FileUploadStatusResponse
 from ..types.git_source import GitSource
+from ..types.lifecycle_policy import LifecyclePolicy
 from ..types.list_sessions_response import ListSessionsResponse
 from ..types.paginated_sandbox_response import PaginatedSandboxResponse
 from ..types.sandbox_init import SandboxInit
@@ -38,6 +39,8 @@ class SandboxesClient:
     def list_sandboxes(
         self,
         *,
+        q: typing.Optional[str] = None,
+        search: typing.Optional[str] = None,
         status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
         name_prefix: typing.Optional[str] = None,
         created_by: typing.Optional[str] = None,
@@ -51,6 +54,12 @@ class SandboxesClient:
 
         Parameters
         ----------
+        q : typing.Optional[str]
+            Search term for sandbox name, image, creator, or public ID. Takes precedence over `search` when both are provided.
+
+        search : typing.Optional[str]
+            Search term for sandbox name, image, creator, or public ID. Alias for `q`.
+
         status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
 
         name_prefix : typing.Optional[str]
@@ -83,6 +92,8 @@ class SandboxesClient:
         client.sandboxes.list_sandboxes()
         """
         _response = self._raw_client.list_sandboxes(
+            q=q,
+            search=search,
             status=status,
             name_prefix=name_prefix,
             created_by=created_by,
@@ -102,6 +113,7 @@ class SandboxesClient:
         gateway_profile: typing.Optional[str] = OMIT,
         image: typing.Optional[str] = OMIT,
         init: typing.Optional[SandboxInit] = OMIT,
+        lifecycle: typing.Optional[LifecyclePolicy] = OMIT,
         memory_mb: typing.Optional[int] = OMIT,
         name: typing.Optional[str] = OMIT,
         request_id: typing.Optional[str] = OMIT,
@@ -129,6 +141,8 @@ class SandboxesClient:
         image : typing.Optional[str]
 
         init : typing.Optional[SandboxInit]
+
+        lifecycle : typing.Optional[LifecyclePolicy]
 
         memory_mb : typing.Optional[int]
 
@@ -174,6 +188,7 @@ class SandboxesClient:
             gateway_profile=gateway_profile,
             image=image,
             init=init,
+            lifecycle=lifecycle,
             memory_mb=memory_mb,
             name=name,
             request_id=request_id,
@@ -807,6 +822,8 @@ class AsyncSandboxesClient:
     async def list_sandboxes(
         self,
         *,
+        q: typing.Optional[str] = None,
+        search: typing.Optional[str] = None,
         status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
         name_prefix: typing.Optional[str] = None,
         created_by: typing.Optional[str] = None,
@@ -820,6 +837,12 @@ class AsyncSandboxesClient:
 
         Parameters
         ----------
+        q : typing.Optional[str]
+            Search term for sandbox name, image, creator, or public ID. Takes precedence over `search` when both are provided.
+
+        search : typing.Optional[str]
+            Search term for sandbox name, image, creator, or public ID. Alias for `q`.
+
         status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
 
         name_prefix : typing.Optional[str]
@@ -860,6 +883,8 @@ class AsyncSandboxesClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.list_sandboxes(
+            q=q,
+            search=search,
             status=status,
             name_prefix=name_prefix,
             created_by=created_by,
@@ -879,6 +904,7 @@ class AsyncSandboxesClient:
         gateway_profile: typing.Optional[str] = OMIT,
         image: typing.Optional[str] = OMIT,
         init: typing.Optional[SandboxInit] = OMIT,
+        lifecycle: typing.Optional[LifecyclePolicy] = OMIT,
         memory_mb: typing.Optional[int] = OMIT,
         name: typing.Optional[str] = OMIT,
         request_id: typing.Optional[str] = OMIT,
@@ -906,6 +932,8 @@ class AsyncSandboxesClient:
         image : typing.Optional[str]
 
         init : typing.Optional[SandboxInit]
+
+        lifecycle : typing.Optional[LifecyclePolicy]
 
         memory_mb : typing.Optional[int]
 
@@ -959,6 +987,7 @@ class AsyncSandboxesClient:
             gateway_profile=gateway_profile,
             image=image,
             init=init,
+            lifecycle=lifecycle,
             memory_mb=memory_mb,
             name=name,
             request_id=request_id,

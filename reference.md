@@ -1842,6 +1842,22 @@ client.sandboxes.list_sandboxes()
 <dl>
 <dd>
 
+**q:** `typing.Optional[str]` — Search term for sandbox name, image, creator, or public ID. Takes precedence over `search` when both are provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**search:** `typing.Optional[str]` — Search term for sandbox name, image, creator, or public ID. Alias for `q`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **status:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
     
 </dd>
@@ -1994,6 +2010,14 @@ client.sandboxes.create_sandbox()
 <dd>
 
 **init:** `typing.Optional[SandboxInit]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**lifecycle:** `typing.Optional[LifecyclePolicy]` 
     
 </dd>
 </dl>
@@ -3860,6 +3884,461 @@ client.snapshots.delete_snapshot(
 <dd>
 
 **name:** `str` — Snapshot name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## webhooks
+<details><summary><code>client.webhooks.<a href="src/islo/webhooks/client.py">list_incoming_webhooks</a>() -> typing.List[IncomingWebhook]</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List active incoming webhooks for the tenant.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.webhooks.list_incoming_webhooks()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.webhooks.<a href="src/islo/webhooks/client.py">create_incoming_webhook</a>(...) -> IncomingWebhook</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a tenant-scoped incoming webhook receiver. The receiver URL accepts external webhook deliveries and routes them to a resolved sandbox.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo, IncomingWebhookAuthZero
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.webhooks.create_incoming_webhook(
+    auth=IncomingWebhookAuthZero(
+        auth_type="none",
+    ),
+    idempotency={
+        "source": "header",
+        "name": "name"
+    },
+    name="name",
+    target={
+        "target_type": "fixed_sandbox_name",
+        "sandbox_name": "sandbox_name"
+    },
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**auth:** `IncomingWebhookAuth` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**idempotency:** `IdempotencyConfig` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**target:** `IncomingWebhookTarget` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**rules:** `typing.Optional[typing.List[IncomingWebhookRule]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[IncomingWebhookStatus]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.webhooks.<a href="src/islo/webhooks/client.py">get_incoming_webhook</a>(...) -> IncomingWebhook</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get one incoming webhook by ID.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.webhooks.get_incoming_webhook(
+    webhook_id="webhook_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**webhook_id:** `str` — Incoming webhook ID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.webhooks.<a href="src/islo/webhooks/client.py">delete_incoming_webhook</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Soft-delete an incoming webhook receiver.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.webhooks.delete_incoming_webhook(
+    webhook_id="webhook_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**webhook_id:** `str` — Incoming webhook ID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.webhooks.<a href="src/islo/webhooks/client.py">update_incoming_webhook</a>(...) -> IncomingWebhook</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Partially update an incoming webhook receiver. Provided top-level fields replace the existing values.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.webhooks.update_incoming_webhook(
+    webhook_id="webhook_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**webhook_id:** `str` — Incoming webhook ID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**auth:** `typing.Optional[IncomingWebhookAuth]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**idempotency:** `typing.Optional[IdempotencyConfig]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**rules:** `typing.Optional[typing.List[IncomingWebhookRule]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[IncomingWebhookStatus]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**target:** `typing.Optional[IncomingWebhookTarget]` 
     
 </dd>
 </dl>
