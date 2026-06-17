@@ -14,6 +14,7 @@ if typing.TYPE_CHECKING:
     from .cloud_roles.client import AsyncCloudRolesClient, CloudRolesClient
     from .credits.client import AsyncCreditsClient, CreditsClient
     from .gateway_profiles.client import AsyncGatewayProfilesClient, GatewayProfilesClient
+    from .inference.client import AsyncInferenceClient, InferenceClient
     from .integrations.client import AsyncIntegrationsClient, IntegrationsClient
     from .sandboxes.client import AsyncSandboxesClient, SandboxesClient
     from .shares.client import AsyncSharesClient, SharesClient
@@ -89,6 +90,7 @@ class BaseIslo:
         self._integrations: typing.Optional[IntegrationsClient] = None
         self._gateway_profiles: typing.Optional[GatewayProfilesClient] = None
         self._cloud_roles: typing.Optional[CloudRolesClient] = None
+        self._inference: typing.Optional[InferenceClient] = None
         self._sandboxes: typing.Optional[SandboxesClient] = None
         self._shares: typing.Optional[SharesClient] = None
         self._snapshots: typing.Optional[SnapshotsClient] = None
@@ -133,6 +135,14 @@ class BaseIslo:
 
             self._cloud_roles = CloudRolesClient(client_wrapper=self._client_wrapper)
         return self._cloud_roles
+
+    @property
+    def inference(self):
+        if self._inference is None:
+            from .inference.client import InferenceClient  # noqa: E402
+
+            self._inference = InferenceClient(client_wrapper=self._client_wrapper)
+        return self._inference
 
     @property
     def sandboxes(self):
@@ -239,6 +249,7 @@ class AsyncBaseIslo:
         self._integrations: typing.Optional[AsyncIntegrationsClient] = None
         self._gateway_profiles: typing.Optional[AsyncGatewayProfilesClient] = None
         self._cloud_roles: typing.Optional[AsyncCloudRolesClient] = None
+        self._inference: typing.Optional[AsyncInferenceClient] = None
         self._sandboxes: typing.Optional[AsyncSandboxesClient] = None
         self._shares: typing.Optional[AsyncSharesClient] = None
         self._snapshots: typing.Optional[AsyncSnapshotsClient] = None
@@ -283,6 +294,14 @@ class AsyncBaseIslo:
 
             self._cloud_roles = AsyncCloudRolesClient(client_wrapper=self._client_wrapper)
         return self._cloud_roles
+
+    @property
+    def inference(self):
+        if self._inference is None:
+            from .inference.client import AsyncInferenceClient  # noqa: E402
+
+            self._inference = AsyncInferenceClient(client_wrapper=self._client_wrapper)
+        return self._inference
 
     @property
     def sandboxes(self):

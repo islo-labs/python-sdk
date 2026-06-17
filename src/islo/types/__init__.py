@@ -44,6 +44,7 @@ if typing.TYPE_CHECKING:
     from .auto_resume_policy import AutoResumePolicy
     from .basic_auth_verifier import BasicAuthVerifier
     from .bearer_static_verifier import BearerStaticVerifier
+    from .client_inference_api import ClientInferenceApi
     from .cloud_provider import CloudProvider
     from .cloud_role_ref import CloudRoleRef
     from .cloud_role_response import CloudRoleResponse
@@ -142,11 +143,13 @@ if typing.TYPE_CHECKING:
     from .incoming_webhook_auth_zero_auth_type import IncomingWebhookAuthZeroAuthType
     from .incoming_webhook_auto_resume_policy import IncomingWebhookAutoResumePolicy
     from .incoming_webhook_condition import IncomingWebhookCondition
+    from .incoming_webhook_git_source import IncomingWebhookGitSource
     from .incoming_webhook_rule import IncomingWebhookRule
     from .incoming_webhook_sandbox_lifecycle import IncomingWebhookSandboxLifecycle
     from .incoming_webhook_sandbox_template import IncomingWebhookSandboxTemplate
     from .incoming_webhook_secret import IncomingWebhookSecret
     from .incoming_webhook_secret_ref import IncomingWebhookSecretRef
+    from .incoming_webhook_setup_script import IncomingWebhookSetupScript
     from .incoming_webhook_status import IncomingWebhookStatus
     from .incoming_webhook_target import (
         IncomingWebhookTarget,
@@ -155,6 +158,9 @@ if typing.TYPE_CHECKING:
     )
     from .incoming_webhook_target_fixed_sandbox_name import IncomingWebhookTargetFixedSandboxName
     from .incoming_webhook_target_sandbox_name_from_event import IncomingWebhookTargetSandboxNameFromEvent
+    from .inference_model_catalog_entry import InferenceModelCatalogEntry
+    from .inference_models_response import InferenceModelsResponse
+    from .inference_provider import InferenceProvider
     from .init_capability import InitCapability
     from .integration_detail_response import IntegrationDetailResponse
     from .integration_level import IntegrationLevel
@@ -169,6 +175,7 @@ if typing.TYPE_CHECKING:
     from .judge_content_filter_fallback import JudgeContentFilterFallback
     from .judge_content_filter_provider_key import JudgeContentFilterProviderKey
     from .jwt_verifier import JwtVerifier
+    from .legacy_init_capability import LegacyInitCapability
     from .lifecycle_policy import LifecyclePolicy
     from .list_sessions_response import ListSessionsResponse
     from .paginated_sandbox_response import PaginatedSandboxResponse
@@ -259,6 +266,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "AutoResumePolicy": ".auto_resume_policy",
     "BasicAuthVerifier": ".basic_auth_verifier",
     "BearerStaticVerifier": ".bearer_static_verifier",
+    "ClientInferenceApi": ".client_inference_api",
     "CloudProvider": ".cloud_provider",
     "CloudRoleRef": ".cloud_role_ref",
     "CloudRoleResponse": ".cloud_role_response",
@@ -351,17 +359,22 @@ _dynamic_imports: typing.Dict[str, str] = {
     "IncomingWebhookAuthZeroAuthType": ".incoming_webhook_auth_zero_auth_type",
     "IncomingWebhookAutoResumePolicy": ".incoming_webhook_auto_resume_policy",
     "IncomingWebhookCondition": ".incoming_webhook_condition",
+    "IncomingWebhookGitSource": ".incoming_webhook_git_source",
     "IncomingWebhookRule": ".incoming_webhook_rule",
     "IncomingWebhookSandboxLifecycle": ".incoming_webhook_sandbox_lifecycle",
     "IncomingWebhookSandboxTemplate": ".incoming_webhook_sandbox_template",
     "IncomingWebhookSecret": ".incoming_webhook_secret",
     "IncomingWebhookSecretRef": ".incoming_webhook_secret_ref",
+    "IncomingWebhookSetupScript": ".incoming_webhook_setup_script",
     "IncomingWebhookStatus": ".incoming_webhook_status",
     "IncomingWebhookTarget": ".incoming_webhook_target",
     "IncomingWebhookTargetFixedSandboxName": ".incoming_webhook_target_fixed_sandbox_name",
     "IncomingWebhookTargetSandboxNameFromEvent": ".incoming_webhook_target_sandbox_name_from_event",
     "IncomingWebhookTarget_FixedSandboxName": ".incoming_webhook_target",
     "IncomingWebhookTarget_SandboxNameFromEvent": ".incoming_webhook_target",
+    "InferenceModelCatalogEntry": ".inference_model_catalog_entry",
+    "InferenceModelsResponse": ".inference_models_response",
+    "InferenceProvider": ".inference_provider",
     "InitCapability": ".init_capability",
     "IntegrationDetailResponse": ".integration_detail_response",
     "IntegrationLevel": ".integration_level",
@@ -376,6 +389,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "JudgeContentFilterFallback": ".judge_content_filter_fallback",
     "JudgeContentFilterProviderKey": ".judge_content_filter_provider_key",
     "JwtVerifier": ".jwt_verifier",
+    "LegacyInitCapability": ".legacy_init_capability",
     "LifecyclePolicy": ".lifecycle_policy",
     "ListSessionsResponse": ".list_sessions_response",
     "PaginatedSandboxResponse": ".paginated_sandbox_response",
@@ -495,6 +509,7 @@ __all__ = [
     "AutoResumePolicy",
     "BasicAuthVerifier",
     "BearerStaticVerifier",
+    "ClientInferenceApi",
     "CloudProvider",
     "CloudRoleRef",
     "CloudRoleResponse",
@@ -587,17 +602,22 @@ __all__ = [
     "IncomingWebhookAuthZeroAuthType",
     "IncomingWebhookAutoResumePolicy",
     "IncomingWebhookCondition",
+    "IncomingWebhookGitSource",
     "IncomingWebhookRule",
     "IncomingWebhookSandboxLifecycle",
     "IncomingWebhookSandboxTemplate",
     "IncomingWebhookSecret",
     "IncomingWebhookSecretRef",
+    "IncomingWebhookSetupScript",
     "IncomingWebhookStatus",
     "IncomingWebhookTarget",
     "IncomingWebhookTargetFixedSandboxName",
     "IncomingWebhookTargetSandboxNameFromEvent",
     "IncomingWebhookTarget_FixedSandboxName",
     "IncomingWebhookTarget_SandboxNameFromEvent",
+    "InferenceModelCatalogEntry",
+    "InferenceModelsResponse",
+    "InferenceProvider",
     "InitCapability",
     "IntegrationDetailResponse",
     "IntegrationLevel",
@@ -612,6 +632,7 @@ __all__ = [
     "JudgeContentFilterFallback",
     "JudgeContentFilterProviderKey",
     "JwtVerifier",
+    "LegacyInitCapability",
     "LifecyclePolicy",
     "ListSessionsResponse",
     "PaginatedSandboxResponse",
