@@ -92,6 +92,7 @@ class TestIsloClient:
             "cloud_roles",
             "credits",
             "gateway_profiles",
+            "inference",
             "integrations",
             "sandboxes",
             "shares",
