@@ -50,6 +50,7 @@ if typing.TYPE_CHECKING:
     from .cloud_role_response import CloudRoleResponse
     from .compute_region_response import ComputeRegionResponse
     from .connection_status import ConnectionStatus
+    from .container_registry_response import ContainerRegistryResponse
     from .content_type_content_filter import ContentTypeContentFilter
     from .content_type_content_filter_direction import ContentTypeContentFilterDirection
     from .create_session_response import CreateSessionResponse
@@ -186,6 +187,7 @@ if typing.TYPE_CHECKING:
     from .query_equals_verifier import QueryEqualsVerifier
     from .regex_content_filter import RegexContentFilter
     from .regex_content_filter_direction import RegexContentFilterDirection
+    from .registry_provider import RegistryProvider
     from .rule_reorder_item import RuleReorderItem
     from .sandbox_init import SandboxInit, SandboxInit_Custom, SandboxInit_Full, SandboxInit_Minimal
     from .sandbox_init_custom import SandboxInitCustom
@@ -272,6 +274,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CloudRoleResponse": ".cloud_role_response",
     "ComputeRegionResponse": ".compute_region_response",
     "ConnectionStatus": ".connection_status",
+    "ContainerRegistryResponse": ".container_registry_response",
     "ContentTypeContentFilter": ".content_type_content_filter",
     "ContentTypeContentFilterDirection": ".content_type_content_filter_direction",
     "CreateSessionResponse": ".create_session_response",
@@ -400,6 +403,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "QueryEqualsVerifier": ".query_equals_verifier",
     "RegexContentFilter": ".regex_content_filter",
     "RegexContentFilterDirection": ".regex_content_filter_direction",
+    "RegistryProvider": ".registry_provider",
     "RuleReorderItem": ".rule_reorder_item",
     "SandboxInit": ".sandbox_init",
     "SandboxInitCustom": ".sandbox_init_custom",
@@ -515,6 +519,7 @@ __all__ = [
     "CloudRoleResponse",
     "ComputeRegionResponse",
     "ConnectionStatus",
+    "ContainerRegistryResponse",
     "ContentTypeContentFilter",
     "ContentTypeContentFilterDirection",
     "CreateSessionResponse",
@@ -643,6 +648,7 @@ __all__ = [
     "QueryEqualsVerifier",
     "RegexContentFilter",
     "RegexContentFilterDirection",
+    "RegistryProvider",
     "RuleReorderItem",
     "SandboxInit",
     "SandboxInitCustom",
