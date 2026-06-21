@@ -90,6 +90,7 @@ class TestIsloClient:
 
         assert public_resource_clients == {
             "cloud_roles",
+            "container_registries",
             "credits",
             "gateway_profiles",
             "inference",
