@@ -23,6 +23,8 @@ from ..types.gateway_profile_response import GatewayProfileResponse
 from ..types.gateway_rule_response import GatewayRuleResponse
 from ..types.http_validation_error import HttpValidationError
 from ..types.rule_reorder_item import RuleReorderItem
+from .types.gateway_profile_create_integration_policy import GatewayProfileCreateIntegrationPolicy
+from .types.gateway_profile_update_integration_policy import GatewayProfileUpdateIntegrationPolicy
 from .types.gateway_rule_create_content_filter import GatewayRuleCreateContentFilter
 from .types.gateway_rule_update_content_filter import GatewayRuleUpdateContentFilter
 from pydantic import ValidationError
@@ -105,6 +107,7 @@ class RawGatewayProfilesClient:
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
         cloud_role: typing.Optional[str] = OMIT,
+        integration_policy: typing.Optional[GatewayProfileCreateIntegrationPolicy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[GatewayProfileResponse]:
         """
@@ -122,6 +125,8 @@ class RawGatewayProfilesClient:
 
         cloud_role : typing.Optional[str]
             Cloud role public ID (UUID)
+
+        integration_policy : typing.Optional[GatewayProfileCreateIntegrationPolicy]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -142,6 +147,9 @@ class RawGatewayProfilesClient:
                 "internet_enabled": internet_enabled,
                 "is_default": is_default,
                 "cloud_role": cloud_role,
+                "integration_policy": convert_and_respect_annotation_metadata(
+                    object_=integration_policy, annotation=GatewayProfileCreateIntegrationPolicy, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -362,6 +370,7 @@ class RawGatewayProfilesClient:
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
         cloud_role: typing.Optional[str] = OMIT,
+        integration_policy: typing.Optional[GatewayProfileUpdateIntegrationPolicy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[GatewayProfileResponse]:
         """
@@ -382,6 +391,9 @@ class RawGatewayProfilesClient:
         cloud_role : typing.Optional[str]
             Cloud role public ID (UUID), empty string to unset
 
+        integration_policy : typing.Optional[GatewayProfileUpdateIntegrationPolicy]
+            Omit to leave unchanged; send {"mode": "all"} to allow all integrations
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -401,6 +413,11 @@ class RawGatewayProfilesClient:
                 "internet_enabled": internet_enabled,
                 "is_default": is_default,
                 "cloud_role": cloud_role,
+                "integration_policy": convert_and_respect_annotation_metadata(
+                    object_=integration_policy,
+                    annotation=typing.Optional[GatewayProfileUpdateIntegrationPolicy],
+                    direction="write",
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -956,6 +973,7 @@ class AsyncRawGatewayProfilesClient:
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
         cloud_role: typing.Optional[str] = OMIT,
+        integration_policy: typing.Optional[GatewayProfileCreateIntegrationPolicy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[GatewayProfileResponse]:
         """
@@ -973,6 +991,8 @@ class AsyncRawGatewayProfilesClient:
 
         cloud_role : typing.Optional[str]
             Cloud role public ID (UUID)
+
+        integration_policy : typing.Optional[GatewayProfileCreateIntegrationPolicy]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -993,6 +1013,9 @@ class AsyncRawGatewayProfilesClient:
                 "internet_enabled": internet_enabled,
                 "is_default": is_default,
                 "cloud_role": cloud_role,
+                "integration_policy": convert_and_respect_annotation_metadata(
+                    object_=integration_policy, annotation=GatewayProfileCreateIntegrationPolicy, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -1213,6 +1236,7 @@ class AsyncRawGatewayProfilesClient:
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
         cloud_role: typing.Optional[str] = OMIT,
+        integration_policy: typing.Optional[GatewayProfileUpdateIntegrationPolicy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[GatewayProfileResponse]:
         """
@@ -1233,6 +1257,9 @@ class AsyncRawGatewayProfilesClient:
         cloud_role : typing.Optional[str]
             Cloud role public ID (UUID), empty string to unset
 
+        integration_policy : typing.Optional[GatewayProfileUpdateIntegrationPolicy]
+            Omit to leave unchanged; send {"mode": "all"} to allow all integrations
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -1252,6 +1279,11 @@ class AsyncRawGatewayProfilesClient:
                 "internet_enabled": internet_enabled,
                 "is_default": is_default,
                 "cloud_role": cloud_role,
+                "integration_policy": convert_and_respect_annotation_metadata(
+                    object_=integration_policy,
+                    annotation=typing.Optional[GatewayProfileUpdateIntegrationPolicy],
+                    direction="write",
+                ),
             },
             headers={
                 "content-type": "application/json",
