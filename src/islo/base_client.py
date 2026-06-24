@@ -12,6 +12,7 @@ from .environment import IsloEnvironment
 
 if typing.TYPE_CHECKING:
     from .cloud_roles.client import AsyncCloudRolesClient, CloudRolesClient
+    from .container_registries.client import AsyncContainerRegistriesClient, ContainerRegistriesClient
     from .credits.client import AsyncCreditsClient, CreditsClient
     from .gateway_profiles.client import AsyncGatewayProfilesClient, GatewayProfilesClient
     from .inference.client import AsyncInferenceClient, InferenceClient
@@ -91,6 +92,7 @@ class BaseIslo:
         self._gateway_profiles: typing.Optional[GatewayProfilesClient] = None
         self._cloud_roles: typing.Optional[CloudRolesClient] = None
         self._inference: typing.Optional[InferenceClient] = None
+        self._container_registries: typing.Optional[ContainerRegistriesClient] = None
         self._sandboxes: typing.Optional[SandboxesClient] = None
         self._shares: typing.Optional[SharesClient] = None
         self._snapshots: typing.Optional[SnapshotsClient] = None
@@ -143,6 +145,14 @@ class BaseIslo:
 
             self._inference = InferenceClient(client_wrapper=self._client_wrapper)
         return self._inference
+
+    @property
+    def container_registries(self):
+        if self._container_registries is None:
+            from .container_registries.client import ContainerRegistriesClient  # noqa: E402
+
+            self._container_registries = ContainerRegistriesClient(client_wrapper=self._client_wrapper)
+        return self._container_registries
 
     @property
     def sandboxes(self):
@@ -250,6 +260,7 @@ class AsyncBaseIslo:
         self._gateway_profiles: typing.Optional[AsyncGatewayProfilesClient] = None
         self._cloud_roles: typing.Optional[AsyncCloudRolesClient] = None
         self._inference: typing.Optional[AsyncInferenceClient] = None
+        self._container_registries: typing.Optional[AsyncContainerRegistriesClient] = None
         self._sandboxes: typing.Optional[AsyncSandboxesClient] = None
         self._shares: typing.Optional[AsyncSharesClient] = None
         self._snapshots: typing.Optional[AsyncSnapshotsClient] = None
@@ -302,6 +313,14 @@ class AsyncBaseIslo:
 
             self._inference = AsyncInferenceClient(client_wrapper=self._client_wrapper)
         return self._inference
+
+    @property
+    def container_registries(self):
+        if self._container_registries is None:
+            from .container_registries.client import AsyncContainerRegistriesClient  # noqa: E402
+
+            self._container_registries = AsyncContainerRegistriesClient(client_wrapper=self._client_wrapper)
+        return self._container_registries
 
     @property
     def sandboxes(self):

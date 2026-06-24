@@ -7,6 +7,12 @@ from importlib import import_module
 
 if typing.TYPE_CHECKING:
     from .types import (
+        GatewayProfileCreateIntegrationPolicy,
+        GatewayProfileCreateIntegrationPolicy_All,
+        GatewayProfileCreateIntegrationPolicy_Custom,
+        GatewayProfileUpdateIntegrationPolicy,
+        GatewayProfileUpdateIntegrationPolicy_All,
+        GatewayProfileUpdateIntegrationPolicy_Custom,
         GatewayRuleCreateContentFilter,
         GatewayRuleCreateContentFilter_ContentType,
         GatewayRuleCreateContentFilter_Judge,
@@ -19,6 +25,12 @@ if typing.TYPE_CHECKING:
         GatewayRuleUpdateContentFilter_SizeLimit,
     )
 _dynamic_imports: typing.Dict[str, str] = {
+    "GatewayProfileCreateIntegrationPolicy": ".types",
+    "GatewayProfileCreateIntegrationPolicy_All": ".types",
+    "GatewayProfileCreateIntegrationPolicy_Custom": ".types",
+    "GatewayProfileUpdateIntegrationPolicy": ".types",
+    "GatewayProfileUpdateIntegrationPolicy_All": ".types",
+    "GatewayProfileUpdateIntegrationPolicy_Custom": ".types",
     "GatewayRuleCreateContentFilter": ".types",
     "GatewayRuleCreateContentFilter_ContentType": ".types",
     "GatewayRuleCreateContentFilter_Judge": ".types",
@@ -54,6 +66,12 @@ def __dir__():
 
 
 __all__ = [
+    "GatewayProfileCreateIntegrationPolicy",
+    "GatewayProfileCreateIntegrationPolicy_All",
+    "GatewayProfileCreateIntegrationPolicy_Custom",
+    "GatewayProfileUpdateIntegrationPolicy",
+    "GatewayProfileUpdateIntegrationPolicy_All",
+    "GatewayProfileUpdateIntegrationPolicy_Custom",
     "GatewayRuleCreateContentFilter",
     "GatewayRuleCreateContentFilter_ContentType",
     "GatewayRuleCreateContentFilter_Judge",

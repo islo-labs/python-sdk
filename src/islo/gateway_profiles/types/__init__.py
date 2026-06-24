@@ -6,6 +6,16 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
+    from .gateway_profile_create_integration_policy import (
+        GatewayProfileCreateIntegrationPolicy,
+        GatewayProfileCreateIntegrationPolicy_All,
+        GatewayProfileCreateIntegrationPolicy_Custom,
+    )
+    from .gateway_profile_update_integration_policy import (
+        GatewayProfileUpdateIntegrationPolicy,
+        GatewayProfileUpdateIntegrationPolicy_All,
+        GatewayProfileUpdateIntegrationPolicy_Custom,
+    )
     from .gateway_rule_create_content_filter import (
         GatewayRuleCreateContentFilter,
         GatewayRuleCreateContentFilter_ContentType,
@@ -21,6 +31,12 @@ if typing.TYPE_CHECKING:
         GatewayRuleUpdateContentFilter_SizeLimit,
     )
 _dynamic_imports: typing.Dict[str, str] = {
+    "GatewayProfileCreateIntegrationPolicy": ".gateway_profile_create_integration_policy",
+    "GatewayProfileCreateIntegrationPolicy_All": ".gateway_profile_create_integration_policy",
+    "GatewayProfileCreateIntegrationPolicy_Custom": ".gateway_profile_create_integration_policy",
+    "GatewayProfileUpdateIntegrationPolicy": ".gateway_profile_update_integration_policy",
+    "GatewayProfileUpdateIntegrationPolicy_All": ".gateway_profile_update_integration_policy",
+    "GatewayProfileUpdateIntegrationPolicy_Custom": ".gateway_profile_update_integration_policy",
     "GatewayRuleCreateContentFilter": ".gateway_rule_create_content_filter",
     "GatewayRuleCreateContentFilter_ContentType": ".gateway_rule_create_content_filter",
     "GatewayRuleCreateContentFilter_Judge": ".gateway_rule_create_content_filter",
@@ -56,6 +72,12 @@ def __dir__():
 
 
 __all__ = [
+    "GatewayProfileCreateIntegrationPolicy",
+    "GatewayProfileCreateIntegrationPolicy_All",
+    "GatewayProfileCreateIntegrationPolicy_Custom",
+    "GatewayProfileUpdateIntegrationPolicy",
+    "GatewayProfileUpdateIntegrationPolicy_All",
+    "GatewayProfileUpdateIntegrationPolicy_Custom",
     "GatewayRuleCreateContentFilter",
     "GatewayRuleCreateContentFilter_ContentType",
     "GatewayRuleCreateContentFilter_Judge",

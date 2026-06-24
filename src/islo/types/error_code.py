@@ -24,6 +24,7 @@ ErrorCode = typing.Union[
         "RATE_LIMITED",
         "TIMEOUT",
         "GONE",
+        "BAD_GATEWAY",
         "INTERNAL_ERROR",
     ],
     typing.Any,

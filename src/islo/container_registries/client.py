@@ -4,45 +4,41 @@ import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.cloud_provider import CloudProvider
-from ..types.cloud_role_response import CloudRoleResponse
-from ..types.cloud_role_type import CloudRoleType
-from .raw_client import AsyncRawCloudRolesClient, RawCloudRolesClient
+from ..types.container_registry_response import ContainerRegistryResponse
+from ..types.registry_provider import RegistryProvider
+from .raw_client import AsyncRawContainerRegistriesClient, RawContainerRegistriesClient
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
 
-class CloudRolesClient:
+class ContainerRegistriesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
-        self._raw_client = RawCloudRolesClient(client_wrapper=client_wrapper)
+        self._raw_client = RawContainerRegistriesClient(client_wrapper=client_wrapper)
 
     @property
-    def with_raw_response(self) -> RawCloudRolesClient:
+    def with_raw_response(self) -> RawContainerRegistriesClient:
         """
         Retrieves a raw implementation of this client that returns raw responses.
 
         Returns
         -------
-        RawCloudRolesClient
+        RawContainerRegistriesClient
         """
         return self._raw_client
 
-    def list_cloud_roles(
-        self, *, type: typing.Optional[CloudRoleType] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.List[CloudRoleResponse]:
+    def list_container_registries(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.List[ContainerRegistryResponse]:
         """
         Parameters
         ----------
-        type : typing.Optional[CloudRoleType]
-            Filter by role type
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.List[CloudRoleResponse]
+        typing.List[ContainerRegistryResponse]
             Successful Response
 
         Examples
@@ -54,37 +50,40 @@ class CloudRolesClient:
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-        client.cloud_roles.list_cloud_roles()
+        client.container_registries.list_container_registries()
         """
-        _response = self._raw_client.list_cloud_roles(type=type, request_options=request_options)
+        _response = self._raw_client.list_container_registries(request_options=request_options)
         return _response.data
 
-    def create_cloud_role(
+    def create_container_registry(
         self,
         *,
-        provider: CloudProvider,
-        role_arn: str,
-        type: typing.Optional[CloudRoleType] = OMIT,
-        session_duration_seconds: typing.Optional[int] = OMIT,
+        provider: RegistryProvider,
+        registry_host: str,
+        cloud_role_id: str,
+        region: str,
+        repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> CloudRoleResponse:
+    ) -> ContainerRegistryResponse:
         """
         Parameters
         ----------
-        provider : CloudProvider
+        provider : RegistryProvider
 
-        role_arn : str
+        registry_host : str
 
-        type : typing.Optional[CloudRoleType]
+        cloud_role_id : str
 
-        session_duration_seconds : typing.Optional[int]
+        region : str
+
+        repository_prefixes : typing.Optional[typing.Sequence[str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        CloudRoleResponse
+        ContainerRegistryResponse
             Successful Response
 
         Examples
@@ -96,34 +95,37 @@ class CloudRolesClient:
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-        client.cloud_roles.create_cloud_role(
-            provider="aws",
-            role_arn="role_arn",
+        client.container_registries.create_container_registry(
+            provider="ecr",
+            registry_host="registry_host",
+            cloud_role_id="cloud_role_id",
+            region="region",
         )
         """
-        _response = self._raw_client.create_cloud_role(
+        _response = self._raw_client.create_container_registry(
             provider=provider,
-            role_arn=role_arn,
-            type=type,
-            session_duration_seconds=session_duration_seconds,
+            registry_host=registry_host,
+            cloud_role_id=cloud_role_id,
+            region=region,
+            repository_prefixes=repository_prefixes,
             request_options=request_options,
         )
         return _response.data
 
-    def get_cloud_role(
-        self, role_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> CloudRoleResponse:
+    def get_container_registry(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> ContainerRegistryResponse:
         """
         Parameters
         ----------
-        role_id : str
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        CloudRoleResponse
+        ContainerRegistryResponse
             Successful Response
 
         Examples
@@ -135,18 +137,18 @@ class CloudRolesClient:
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-        client.cloud_roles.get_cloud_role(
-            role_id="role_id",
+        client.container_registries.get_container_registry(
+            id="id",
         )
         """
-        _response = self._raw_client.get_cloud_role(role_id, request_options=request_options)
+        _response = self._raw_client.get_container_registry(id, request_options=request_options)
         return _response.data
 
-    def delete_cloud_role(self, role_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
+    def delete_container_registry(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
         Parameters
         ----------
-        role_id : str
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -164,30 +166,30 @@ class CloudRolesClient:
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-        client.cloud_roles.delete_cloud_role(
-            role_id="role_id",
+        client.container_registries.delete_container_registry(
+            id="id",
         )
         """
-        _response = self._raw_client.delete_cloud_role(role_id, request_options=request_options)
+        _response = self._raw_client.delete_container_registry(id, request_options=request_options)
         return _response.data
 
-    def update_cloud_role(
+    def update_container_registry(
         self,
-        role_id: str,
+        id: str,
         *,
-        role_arn: typing.Optional[str] = OMIT,
-        session_duration_seconds: typing.Optional[int] = OMIT,
+        repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
+        cloud_role_id: typing.Optional[str] = OMIT,
         is_enabled: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> CloudRoleResponse:
+    ) -> ContainerRegistryResponse:
         """
         Parameters
         ----------
-        role_id : str
+        id : str
 
-        role_arn : typing.Optional[str]
+        repository_prefixes : typing.Optional[typing.Sequence[str]]
 
-        session_duration_seconds : typing.Optional[int]
+        cloud_role_id : typing.Optional[str]
 
         is_enabled : typing.Optional[bool]
 
@@ -196,7 +198,7 @@ class CloudRolesClient:
 
         Returns
         -------
-        CloudRoleResponse
+        ContainerRegistryResponse
             Successful Response
 
         Examples
@@ -208,50 +210,47 @@ class CloudRolesClient:
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-        client.cloud_roles.update_cloud_role(
-            role_id="role_id",
+        client.container_registries.update_container_registry(
+            id="id",
         )
         """
-        _response = self._raw_client.update_cloud_role(
-            role_id,
-            role_arn=role_arn,
-            session_duration_seconds=session_duration_seconds,
+        _response = self._raw_client.update_container_registry(
+            id,
+            repository_prefixes=repository_prefixes,
+            cloud_role_id=cloud_role_id,
             is_enabled=is_enabled,
             request_options=request_options,
         )
         return _response.data
 
 
-class AsyncCloudRolesClient:
+class AsyncContainerRegistriesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
-        self._raw_client = AsyncRawCloudRolesClient(client_wrapper=client_wrapper)
+        self._raw_client = AsyncRawContainerRegistriesClient(client_wrapper=client_wrapper)
 
     @property
-    def with_raw_response(self) -> AsyncRawCloudRolesClient:
+    def with_raw_response(self) -> AsyncRawContainerRegistriesClient:
         """
         Retrieves a raw implementation of this client that returns raw responses.
 
         Returns
         -------
-        AsyncRawCloudRolesClient
+        AsyncRawContainerRegistriesClient
         """
         return self._raw_client
 
-    async def list_cloud_roles(
-        self, *, type: typing.Optional[CloudRoleType] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.List[CloudRoleResponse]:
+    async def list_container_registries(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.List[ContainerRegistryResponse]:
         """
         Parameters
         ----------
-        type : typing.Optional[CloudRoleType]
-            Filter by role type
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.List[CloudRoleResponse]
+        typing.List[ContainerRegistryResponse]
             Successful Response
 
         Examples
@@ -268,40 +267,43 @@ class AsyncCloudRolesClient:
 
 
         async def main() -> None:
-            await client.cloud_roles.list_cloud_roles()
+            await client.container_registries.list_container_registries()
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.list_cloud_roles(type=type, request_options=request_options)
+        _response = await self._raw_client.list_container_registries(request_options=request_options)
         return _response.data
 
-    async def create_cloud_role(
+    async def create_container_registry(
         self,
         *,
-        provider: CloudProvider,
-        role_arn: str,
-        type: typing.Optional[CloudRoleType] = OMIT,
-        session_duration_seconds: typing.Optional[int] = OMIT,
+        provider: RegistryProvider,
+        registry_host: str,
+        cloud_role_id: str,
+        region: str,
+        repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> CloudRoleResponse:
+    ) -> ContainerRegistryResponse:
         """
         Parameters
         ----------
-        provider : CloudProvider
+        provider : RegistryProvider
 
-        role_arn : str
+        registry_host : str
 
-        type : typing.Optional[CloudRoleType]
+        cloud_role_id : str
 
-        session_duration_seconds : typing.Optional[int]
+        region : str
+
+        repository_prefixes : typing.Optional[typing.Sequence[str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        CloudRoleResponse
+        ContainerRegistryResponse
             Successful Response
 
         Examples
@@ -318,37 +320,40 @@ class AsyncCloudRolesClient:
 
 
         async def main() -> None:
-            await client.cloud_roles.create_cloud_role(
-                provider="aws",
-                role_arn="role_arn",
+            await client.container_registries.create_container_registry(
+                provider="ecr",
+                registry_host="registry_host",
+                cloud_role_id="cloud_role_id",
+                region="region",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.create_cloud_role(
+        _response = await self._raw_client.create_container_registry(
             provider=provider,
-            role_arn=role_arn,
-            type=type,
-            session_duration_seconds=session_duration_seconds,
+            registry_host=registry_host,
+            cloud_role_id=cloud_role_id,
+            region=region,
+            repository_prefixes=repository_prefixes,
             request_options=request_options,
         )
         return _response.data
 
-    async def get_cloud_role(
-        self, role_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> CloudRoleResponse:
+    async def get_container_registry(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> ContainerRegistryResponse:
         """
         Parameters
         ----------
-        role_id : str
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        CloudRoleResponse
+        ContainerRegistryResponse
             Successful Response
 
         Examples
@@ -365,21 +370,23 @@ class AsyncCloudRolesClient:
 
 
         async def main() -> None:
-            await client.cloud_roles.get_cloud_role(
-                role_id="role_id",
+            await client.container_registries.get_container_registry(
+                id="id",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_cloud_role(role_id, request_options=request_options)
+        _response = await self._raw_client.get_container_registry(id, request_options=request_options)
         return _response.data
 
-    async def delete_cloud_role(self, role_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
+    async def delete_container_registry(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
         """
         Parameters
         ----------
-        role_id : str
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -402,33 +409,33 @@ class AsyncCloudRolesClient:
 
 
         async def main() -> None:
-            await client.cloud_roles.delete_cloud_role(
-                role_id="role_id",
+            await client.container_registries.delete_container_registry(
+                id="id",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.delete_cloud_role(role_id, request_options=request_options)
+        _response = await self._raw_client.delete_container_registry(id, request_options=request_options)
         return _response.data
 
-    async def update_cloud_role(
+    async def update_container_registry(
         self,
-        role_id: str,
+        id: str,
         *,
-        role_arn: typing.Optional[str] = OMIT,
-        session_duration_seconds: typing.Optional[int] = OMIT,
+        repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
+        cloud_role_id: typing.Optional[str] = OMIT,
         is_enabled: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> CloudRoleResponse:
+    ) -> ContainerRegistryResponse:
         """
         Parameters
         ----------
-        role_id : str
+        id : str
 
-        role_arn : typing.Optional[str]
+        repository_prefixes : typing.Optional[typing.Sequence[str]]
 
-        session_duration_seconds : typing.Optional[int]
+        cloud_role_id : typing.Optional[str]
 
         is_enabled : typing.Optional[bool]
 
@@ -437,7 +444,7 @@ class AsyncCloudRolesClient:
 
         Returns
         -------
-        CloudRoleResponse
+        ContainerRegistryResponse
             Successful Response
 
         Examples
@@ -454,17 +461,17 @@ class AsyncCloudRolesClient:
 
 
         async def main() -> None:
-            await client.cloud_roles.update_cloud_role(
-                role_id="role_id",
+            await client.container_registries.update_container_registry(
+                id="id",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.update_cloud_role(
-            role_id,
-            role_arn=role_arn,
-            session_duration_seconds=session_duration_seconds,
+        _response = await self._raw_client.update_container_registry(
+            id,
+            repository_prefixes=repository_prefixes,
+            cloud_role_id=cloud_role_id,
             is_enabled=is_enabled,
             request_options=request_options,
         )

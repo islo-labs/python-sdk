@@ -7,14 +7,14 @@ import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
 
 
-class CloudRoleResponse(UniversalBaseModel):
+class ContainerRegistryResponse(UniversalBaseModel):
     id: str
     provider: str
-    type: str
-    role_arn: str
-    session_duration_seconds: int
+    registry_host: str
+    repository_prefixes: typing.List[str]
+    cloud_role_id: str
+    region: str
     is_enabled: bool
-    islo_trust_role_arn: str
     created_at: typing.Optional[dt.datetime] = None
     updated_at: typing.Optional[dt.datetime] = None
 

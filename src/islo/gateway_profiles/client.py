@@ -11,6 +11,8 @@ from ..types.gateway_profile_response import GatewayProfileResponse
 from ..types.gateway_rule_response import GatewayRuleResponse
 from ..types.rule_reorder_item import RuleReorderItem
 from .raw_client import AsyncRawGatewayProfilesClient, RawGatewayProfilesClient
+from .types.gateway_profile_create_integration_policy import GatewayProfileCreateIntegrationPolicy
+from .types.gateway_profile_update_integration_policy import GatewayProfileUpdateIntegrationPolicy
 from .types.gateway_rule_create_content_filter import GatewayRuleCreateContentFilter
 from .types.gateway_rule_update_content_filter import GatewayRuleUpdateContentFilter
 
@@ -70,6 +72,7 @@ class GatewayProfilesClient:
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
         cloud_role: typing.Optional[str] = OMIT,
+        integration_policy: typing.Optional[GatewayProfileCreateIntegrationPolicy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayProfileResponse:
         """
@@ -87,6 +90,8 @@ class GatewayProfilesClient:
 
         cloud_role : typing.Optional[str]
             Cloud role public ID (UUID)
+
+        integration_policy : typing.Optional[GatewayProfileCreateIntegrationPolicy]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -116,6 +121,7 @@ class GatewayProfilesClient:
             internet_enabled=internet_enabled,
             is_default=is_default,
             cloud_role=cloud_role,
+            integration_policy=integration_policy,
             request_options=request_options,
         )
         return _response.data
@@ -193,6 +199,7 @@ class GatewayProfilesClient:
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
         cloud_role: typing.Optional[str] = OMIT,
+        integration_policy: typing.Optional[GatewayProfileUpdateIntegrationPolicy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayProfileResponse:
         """
@@ -212,6 +219,9 @@ class GatewayProfilesClient:
 
         cloud_role : typing.Optional[str]
             Cloud role public ID (UUID), empty string to unset
+
+        integration_policy : typing.Optional[GatewayProfileUpdateIntegrationPolicy]
+            Omit to leave unchanged; send {"mode": "all"} to allow all integrations
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -242,6 +252,7 @@ class GatewayProfilesClient:
             internet_enabled=internet_enabled,
             is_default=is_default,
             cloud_role=cloud_role,
+            integration_policy=integration_policy,
             request_options=request_options,
         )
         return _response.data
@@ -539,6 +550,7 @@ class AsyncGatewayProfilesClient:
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
         cloud_role: typing.Optional[str] = OMIT,
+        integration_policy: typing.Optional[GatewayProfileCreateIntegrationPolicy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayProfileResponse:
         """
@@ -556,6 +568,8 @@ class AsyncGatewayProfilesClient:
 
         cloud_role : typing.Optional[str]
             Cloud role public ID (UUID)
+
+        integration_policy : typing.Optional[GatewayProfileCreateIntegrationPolicy]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -593,6 +607,7 @@ class AsyncGatewayProfilesClient:
             internet_enabled=internet_enabled,
             is_default=is_default,
             cloud_role=cloud_role,
+            integration_policy=integration_policy,
             request_options=request_options,
         )
         return _response.data
@@ -686,6 +701,7 @@ class AsyncGatewayProfilesClient:
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
         cloud_role: typing.Optional[str] = OMIT,
+        integration_policy: typing.Optional[GatewayProfileUpdateIntegrationPolicy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayProfileResponse:
         """
@@ -705,6 +721,9 @@ class AsyncGatewayProfilesClient:
 
         cloud_role : typing.Optional[str]
             Cloud role public ID (UUID), empty string to unset
+
+        integration_policy : typing.Optional[GatewayProfileUpdateIntegrationPolicy]
+            Omit to leave unchanged; send {"mode": "all"} to allow all integrations
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -743,6 +762,7 @@ class AsyncGatewayProfilesClient:
             internet_enabled=internet_enabled,
             is_default=is_default,
             cloud_role=cloud_role,
+            integration_policy=integration_policy,
             request_options=request_options,
         )
         return _response.data

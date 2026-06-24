@@ -813,6 +813,14 @@ client.gateway_profiles.create_gateway_profile(
 <dl>
 <dd>
 
+**integration_policy:** `typing.Optional[GatewayProfileCreateIntegrationPolicy]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -1031,6 +1039,14 @@ client.gateway_profiles.update_gateway_profile(
 <dd>
 
 **cloud_role:** `typing.Optional[str]` — Cloud role public ID (UUID), empty string to unset
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**integration_policy:** `typing.Optional[GatewayProfileUpdateIntegrationPolicy]` — Omit to leave unchanged; send {"mode": "all"} to allow all integrations
     
 </dd>
 </dl>
@@ -1464,7 +1480,7 @@ client.gateway_profiles.reorder_gateway_rules(
 </details>
 
 ## CloudRoles
-<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">list_cloud_roles</a>() -> typing.List[CloudRoleResponse]</code></summary>
+<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">list_cloud_roles</a>(...) -> typing.List[CloudRoleResponse]</code></summary>
 <dl>
 <dd>
 
@@ -1497,6 +1513,14 @@ client.cloud_roles.list_cloud_roles()
 
 <dl>
 <dd>
+
+<dl>
+<dd>
+
+**type:** `typing.Optional[CloudRoleType]` — Filter by role type
+    
+</dd>
+</dl>
 
 <dl>
 <dd>
@@ -1562,6 +1586,14 @@ client.cloud_roles.create_cloud_role(
 <dd>
 
 **role_arn:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**type:** `typing.Optional[CloudRoleType]` 
     
 </dd>
 </dl>
@@ -1824,6 +1856,351 @@ client.inference.list_inference_models()
 
 <dl>
 <dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## ContainerRegistries
+<details><summary><code>client.container_registries.<a href="src/islo/container_registries/client.py">list_container_registries</a>() -> typing.List[ContainerRegistryResponse]</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.container_registries.list_container_registries()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.container_registries.<a href="src/islo/container_registries/client.py">create_container_registry</a>(...) -> ContainerRegistryResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.container_registries.create_container_registry(
+    provider="ecr",
+    registry_host="registry_host",
+    cloud_role_id="cloud_role_id",
+    region="region",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**provider:** `RegistryProvider` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**registry_host:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cloud_role_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**region:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**repository_prefixes:** `typing.Optional[typing.List[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.container_registries.<a href="src/islo/container_registries/client.py">get_container_registry</a>(...) -> ContainerRegistryResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.container_registries.get_container_registry(
+    id="id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.container_registries.<a href="src/islo/container_registries/client.py">delete_container_registry</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.container_registries.delete_container_registry(
+    id="id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.container_registries.<a href="src/islo/container_registries/client.py">update_container_registry</a>(...) -> ContainerRegistryResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.container_registries.update_container_registry(
+    id="id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**repository_prefixes:** `typing.Optional[typing.List[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cloud_role_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_enabled:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
 
 <dl>
 <dd>

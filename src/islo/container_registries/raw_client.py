@@ -10,56 +10,51 @@ from ..core.jsonable_encoder import jsonable_encoder
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
+from ..errors.bad_request_error import BadRequestError
+from ..errors.conflict_error import ConflictError
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
-from ..types.cloud_provider import CloudProvider
-from ..types.cloud_role_response import CloudRoleResponse
-from ..types.cloud_role_type import CloudRoleType
+from ..types.container_registry_response import ContainerRegistryResponse
 from ..types.error_response import ErrorResponse
 from ..types.http_validation_error import HttpValidationError
+from ..types.registry_provider import RegistryProvider
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
 
-class RawCloudRolesClient:
+class RawContainerRegistriesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list_cloud_roles(
-        self, *, type: typing.Optional[CloudRoleType] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[typing.List[CloudRoleResponse]]:
+    def list_container_registries(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[typing.List[ContainerRegistryResponse]]:
         """
         Parameters
         ----------
-        type : typing.Optional[CloudRoleType]
-            Filter by role type
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[typing.List[CloudRoleResponse]]
+        HttpResponse[typing.List[ContainerRegistryResponse]]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            "cloud-roles",
+            "container-registries",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
-            params={
-                "type": type,
-            },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[CloudRoleResponse],
+                    typing.List[ContainerRegistryResponse],
                     parse_obj_as(
-                        type_=typing.List[CloudRoleResponse],  # type: ignore
+                        type_=typing.List[ContainerRegistryResponse],  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -95,43 +90,47 @@ class RawCloudRolesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def create_cloud_role(
+    def create_container_registry(
         self,
         *,
-        provider: CloudProvider,
-        role_arn: str,
-        type: typing.Optional[CloudRoleType] = OMIT,
-        session_duration_seconds: typing.Optional[int] = OMIT,
+        provider: RegistryProvider,
+        registry_host: str,
+        cloud_role_id: str,
+        region: str,
+        repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[CloudRoleResponse]:
+    ) -> HttpResponse[ContainerRegistryResponse]:
         """
         Parameters
         ----------
-        provider : CloudProvider
+        provider : RegistryProvider
 
-        role_arn : str
+        registry_host : str
 
-        type : typing.Optional[CloudRoleType]
+        cloud_role_id : str
 
-        session_duration_seconds : typing.Optional[int]
+        region : str
+
+        repository_prefixes : typing.Optional[typing.Sequence[str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[CloudRoleResponse]
+        HttpResponse[ContainerRegistryResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            "cloud-roles",
+            "container-registries",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
                 "provider": provider,
-                "type": type,
-                "role_arn": role_arn,
-                "session_duration_seconds": session_duration_seconds,
+                "registry_host": registry_host,
+                "repository_prefixes": repository_prefixes,
+                "cloud_role_id": cloud_role_id,
+                "region": region,
             },
             headers={
                 "content-type": "application/json",
@@ -142,15 +141,37 @@ class RawCloudRolesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CloudRoleResponse,
+                    ContainerRegistryResponse,
                     parse_obj_as(
-                        type_=CloudRoleResponse,  # type: ignore
+                        type_=ContainerRegistryResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -180,24 +201,24 @@ class RawCloudRolesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get_cloud_role(
-        self, role_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[CloudRoleResponse]:
+    def get_container_registry(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[ContainerRegistryResponse]:
         """
         Parameters
         ----------
-        role_id : str
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[CloudRoleResponse]
+        HttpResponse[ContainerRegistryResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"container-registries/{jsonable_encoder(id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -205,9 +226,9 @@ class RawCloudRolesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CloudRoleResponse,
+                    ContainerRegistryResponse,
                     parse_obj_as(
-                        type_=CloudRoleResponse,  # type: ignore
+                        type_=ContainerRegistryResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -254,13 +275,13 @@ class RawCloudRolesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def delete_cloud_role(
-        self, role_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    def delete_container_registry(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[None]:
         """
         Parameters
         ----------
-        role_id : str
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -270,7 +291,7 @@ class RawCloudRolesClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"container-registries/{jsonable_encoder(id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -320,23 +341,23 @@ class RawCloudRolesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def update_cloud_role(
+    def update_container_registry(
         self,
-        role_id: str,
+        id: str,
         *,
-        role_arn: typing.Optional[str] = OMIT,
-        session_duration_seconds: typing.Optional[int] = OMIT,
+        repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
+        cloud_role_id: typing.Optional[str] = OMIT,
         is_enabled: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[CloudRoleResponse]:
+    ) -> HttpResponse[ContainerRegistryResponse]:
         """
         Parameters
         ----------
-        role_id : str
+        id : str
 
-        role_arn : typing.Optional[str]
+        repository_prefixes : typing.Optional[typing.Sequence[str]]
 
-        session_duration_seconds : typing.Optional[int]
+        cloud_role_id : typing.Optional[str]
 
         is_enabled : typing.Optional[bool]
 
@@ -345,16 +366,16 @@ class RawCloudRolesClient:
 
         Returns
         -------
-        HttpResponse[CloudRoleResponse]
+        HttpResponse[ContainerRegistryResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"container-registries/{jsonable_encoder(id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
-                "role_arn": role_arn,
-                "session_duration_seconds": session_duration_seconds,
+                "repository_prefixes": repository_prefixes,
+                "cloud_role_id": cloud_role_id,
                 "is_enabled": is_enabled,
             },
             headers={
@@ -366,13 +387,24 @@ class RawCloudRolesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CloudRoleResponse,
+                    ContainerRegistryResponse,
                     parse_obj_as(
-                        type_=CloudRoleResponse,  # type: ignore
+                        type_=ContainerRegistryResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 401:
                 raise UnauthorizedError(
                     headers=dict(_response.headers),
@@ -416,42 +448,36 @@ class RawCloudRolesClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
 
-class AsyncRawCloudRolesClient:
+class AsyncRawContainerRegistriesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list_cloud_roles(
-        self, *, type: typing.Optional[CloudRoleType] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[typing.List[CloudRoleResponse]]:
+    async def list_container_registries(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[typing.List[ContainerRegistryResponse]]:
         """
         Parameters
         ----------
-        type : typing.Optional[CloudRoleType]
-            Filter by role type
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[typing.List[CloudRoleResponse]]
+        AsyncHttpResponse[typing.List[ContainerRegistryResponse]]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "cloud-roles",
+            "container-registries",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
-            params={
-                "type": type,
-            },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[CloudRoleResponse],
+                    typing.List[ContainerRegistryResponse],
                     parse_obj_as(
-                        type_=typing.List[CloudRoleResponse],  # type: ignore
+                        type_=typing.List[ContainerRegistryResponse],  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -487,43 +513,47 @@ class AsyncRawCloudRolesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def create_cloud_role(
+    async def create_container_registry(
         self,
         *,
-        provider: CloudProvider,
-        role_arn: str,
-        type: typing.Optional[CloudRoleType] = OMIT,
-        session_duration_seconds: typing.Optional[int] = OMIT,
+        provider: RegistryProvider,
+        registry_host: str,
+        cloud_role_id: str,
+        region: str,
+        repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[CloudRoleResponse]:
+    ) -> AsyncHttpResponse[ContainerRegistryResponse]:
         """
         Parameters
         ----------
-        provider : CloudProvider
+        provider : RegistryProvider
 
-        role_arn : str
+        registry_host : str
 
-        type : typing.Optional[CloudRoleType]
+        cloud_role_id : str
 
-        session_duration_seconds : typing.Optional[int]
+        region : str
+
+        repository_prefixes : typing.Optional[typing.Sequence[str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[CloudRoleResponse]
+        AsyncHttpResponse[ContainerRegistryResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "cloud-roles",
+            "container-registries",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
                 "provider": provider,
-                "type": type,
-                "role_arn": role_arn,
-                "session_duration_seconds": session_duration_seconds,
+                "registry_host": registry_host,
+                "repository_prefixes": repository_prefixes,
+                "cloud_role_id": cloud_role_id,
+                "region": region,
             },
             headers={
                 "content-type": "application/json",
@@ -534,15 +564,37 @@ class AsyncRawCloudRolesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CloudRoleResponse,
+                    ContainerRegistryResponse,
                     parse_obj_as(
-                        type_=CloudRoleResponse,  # type: ignore
+                        type_=ContainerRegistryResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -572,24 +624,24 @@ class AsyncRawCloudRolesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def get_cloud_role(
-        self, role_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[CloudRoleResponse]:
+    async def get_container_registry(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[ContainerRegistryResponse]:
         """
         Parameters
         ----------
-        role_id : str
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[CloudRoleResponse]
+        AsyncHttpResponse[ContainerRegistryResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"container-registries/{jsonable_encoder(id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -597,9 +649,9 @@ class AsyncRawCloudRolesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CloudRoleResponse,
+                    ContainerRegistryResponse,
                     parse_obj_as(
-                        type_=CloudRoleResponse,  # type: ignore
+                        type_=ContainerRegistryResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -646,13 +698,13 @@ class AsyncRawCloudRolesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def delete_cloud_role(
-        self, role_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    async def delete_container_registry(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[None]:
         """
         Parameters
         ----------
-        role_id : str
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -662,7 +714,7 @@ class AsyncRawCloudRolesClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"container-registries/{jsonable_encoder(id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -712,23 +764,23 @@ class AsyncRawCloudRolesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def update_cloud_role(
+    async def update_container_registry(
         self,
-        role_id: str,
+        id: str,
         *,
-        role_arn: typing.Optional[str] = OMIT,
-        session_duration_seconds: typing.Optional[int] = OMIT,
+        repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
+        cloud_role_id: typing.Optional[str] = OMIT,
         is_enabled: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[CloudRoleResponse]:
+    ) -> AsyncHttpResponse[ContainerRegistryResponse]:
         """
         Parameters
         ----------
-        role_id : str
+        id : str
 
-        role_arn : typing.Optional[str]
+        repository_prefixes : typing.Optional[typing.Sequence[str]]
 
-        session_duration_seconds : typing.Optional[int]
+        cloud_role_id : typing.Optional[str]
 
         is_enabled : typing.Optional[bool]
 
@@ -737,16 +789,16 @@ class AsyncRawCloudRolesClient:
 
         Returns
         -------
-        AsyncHttpResponse[CloudRoleResponse]
+        AsyncHttpResponse[ContainerRegistryResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"container-registries/{jsonable_encoder(id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
-                "role_arn": role_arn,
-                "session_duration_seconds": session_duration_seconds,
+                "repository_prefixes": repository_prefixes,
+                "cloud_role_id": cloud_role_id,
                 "is_enabled": is_enabled,
             },
             headers={
@@ -758,13 +810,24 @@ class AsyncRawCloudRolesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CloudRoleResponse,
+                    ContainerRegistryResponse,
                     parse_obj_as(
-                        type_=CloudRoleResponse,  # type: ignore
+                        type_=ContainerRegistryResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 401:
                 raise UnauthorizedError(
                     headers=dict(_response.headers),
