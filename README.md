@@ -139,17 +139,16 @@ A full reference for this library is available [here](https://github.com/islo-la
 Instantiate and use the client with the following:
 
 ```python
-from islo import Islo, CustomIntegration
+from islo import Islo
 
 client = Islo(
     api_key="<token>",
 )
 
-client.integrations.create_custom_service(
-    custom=CustomIntegration(
-        name="name",
-        slug="slug",
-    ),
+client.knowledge.create_knowledge(
+    slug="slug",
+    level="episodic",
+    body="body",
 )
 ```
 
@@ -181,11 +180,10 @@ client = AsyncIslo(
 
 
 async def main() -> None:
-    await client.integrations.create_custom_service(
-        custom=CustomIntegration(
-            name="name",
-            slug="slug",
-        ),
+    await client.knowledge.create_knowledge(
+        slug="slug",
+        level="episodic",
+        body="body",
     )
 
 
@@ -201,7 +199,7 @@ will be thrown.
 from islo.core.api_error import ApiError
 
 try:
-    client.integrations.create_custom_service(...)
+    client.knowledge.create_knowledge(...)
 except ApiError as e:
     print(e.status_code)
     print(e.body)
@@ -218,7 +216,7 @@ The `.with_raw_response` property returns a "raw" client that can be used to acc
 from islo import Islo
 
 client = Islo(...)
-response = client.integrations.with_raw_response.create_custom_service(...)
+response = client.knowledge.with_raw_response.create_knowledge(...)
 print(response.headers)  # access the response headers
 print(response.status_code)  # access the response status code
 print(response.data)  # access the underlying object
@@ -239,7 +237,7 @@ A request is deemed retryable when any of the following HTTP status codes is ret
 Use the `max_retries` request option to configure this behavior.
 
 ```python
-client.integrations.create_custom_service(..., request_options={
+client.knowledge.create_knowledge(..., request_options={
     "max_retries": 1
 })
 ```
@@ -254,7 +252,7 @@ from islo import Islo
 client = Islo(..., timeout=20.0)
 
 # Override timeout for a specific method
-client.integrations.create_custom_service(..., request_options={
+client.knowledge.create_knowledge(..., request_options={
     "timeout_in_seconds": 1
 })
 ```

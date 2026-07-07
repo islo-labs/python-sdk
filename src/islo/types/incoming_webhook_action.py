@@ -9,6 +9,7 @@ import typing_extensions
 from ..core.pydantic_utilities import UniversalBaseModel
 from .incoming_webhook_auto_resume_policy import IncomingWebhookAutoResumePolicy
 from .incoming_webhook_sandbox_template import IncomingWebhookSandboxTemplate
+from .job_param_mapping import JobParamMapping
 from .payload_mapping import PayloadMapping
 
 
@@ -47,6 +48,16 @@ class IncomingWebhookAction_DeliverToPort(UniversalBaseModel):
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 
 
+class IncomingWebhookAction_TriggerJob(UniversalBaseModel):
+    action_type: typing.Literal["trigger_job"] = "trigger_job"
+    job_name: str
+    params: typing.Optional[typing.Dict[str, typing.Optional[JobParamMapping]]] = None
+    region: typing.Optional[str] = None
+    version_id: typing.Optional[str] = None
+
+    model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
+
+
 IncomingWebhookAction = typing_extensions.Annotated[
     typing.Union[
         IncomingWebhookAction_EnsureSandbox,
@@ -54,6 +65,7 @@ IncomingWebhookAction = typing_extensions.Annotated[
         IncomingWebhookAction_PauseSandbox,
         IncomingWebhookAction_DeleteSandbox,
         IncomingWebhookAction_DeliverToPort,
+        IncomingWebhookAction_TriggerJob,
     ],
     pydantic.Field(discriminator="action_type"),
 ]

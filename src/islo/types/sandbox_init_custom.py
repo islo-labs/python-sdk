@@ -8,6 +8,12 @@ from .init_capability import InitCapability
 
 
 class SandboxInitCustom(UniversalBaseModel):
+    await_ready: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Block until capabilities are fully ready (e.g. sshd accepts
+    connections, dockerd responds to API calls). Defaults to false.
+    """
+
     capabilities: typing.List[InitCapability]
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

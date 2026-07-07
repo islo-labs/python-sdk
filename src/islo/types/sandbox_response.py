@@ -12,6 +12,7 @@ from .setup_step_result import SetupStepResult
 class SandboxResponse(UniversalBaseModel):
     created_at: str
     created_by: typing.Optional[str] = None
+    creation_phase: typing.Optional[str] = None
     deleted_at: typing.Optional[str] = None
     id: str
     image: str

@@ -113,6 +113,7 @@ class SandboxesClient:
         gateway_profile: typing.Optional[str] = OMIT,
         image: typing.Optional[str] = OMIT,
         init: typing.Optional[SandboxInit] = OMIT,
+        internet_enabled: typing.Optional[bool] = OMIT,
         lifecycle: typing.Optional[LifecyclePolicy] = OMIT,
         memory_mb: typing.Optional[int] = OMIT,
         name: typing.Optional[str] = OMIT,
@@ -141,6 +142,8 @@ class SandboxesClient:
         image : typing.Optional[str]
 
         init : typing.Optional[SandboxInit]
+
+        internet_enabled : typing.Optional[bool]
 
         lifecycle : typing.Optional[LifecyclePolicy]
 
@@ -188,6 +191,7 @@ class SandboxesClient:
             gateway_profile=gateway_profile,
             image=image,
             init=init,
+            internet_enabled=internet_enabled,
             lifecycle=lifecycle,
             memory_mb=memory_mb,
             name=name,
@@ -904,6 +908,7 @@ class AsyncSandboxesClient:
         gateway_profile: typing.Optional[str] = OMIT,
         image: typing.Optional[str] = OMIT,
         init: typing.Optional[SandboxInit] = OMIT,
+        internet_enabled: typing.Optional[bool] = OMIT,
         lifecycle: typing.Optional[LifecyclePolicy] = OMIT,
         memory_mb: typing.Optional[int] = OMIT,
         name: typing.Optional[str] = OMIT,
@@ -932,6 +937,8 @@ class AsyncSandboxesClient:
         image : typing.Optional[str]
 
         init : typing.Optional[SandboxInit]
+
+        internet_enabled : typing.Optional[bool]
 
         lifecycle : typing.Optional[LifecyclePolicy]
 
@@ -987,6 +994,7 @@ class AsyncSandboxesClient:
             gateway_profile=gateway_profile,
             image=image,
             init=init,
+            internet_enabled=internet_enabled,
             lifecycle=lifecycle,
             memory_mb=memory_mb,
             name=name,
