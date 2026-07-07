@@ -236,9 +236,9 @@ class RawWebhooksClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -294,9 +294,9 @@ class RawWebhooksClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -412,9 +412,9 @@ class RawWebhooksClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -638,9 +638,9 @@ class AsyncRawWebhooksClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -696,9 +696,9 @@ class AsyncRawWebhooksClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -814,9 +814,9 @@ class AsyncRawWebhooksClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

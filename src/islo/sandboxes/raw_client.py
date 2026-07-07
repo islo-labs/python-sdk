@@ -139,6 +139,7 @@ class RawSandboxesClient:
         gateway_profile: typing.Optional[str] = OMIT,
         image: typing.Optional[str] = OMIT,
         init: typing.Optional[SandboxInit] = OMIT,
+        internet_enabled: typing.Optional[bool] = OMIT,
         lifecycle: typing.Optional[LifecyclePolicy] = OMIT,
         memory_mb: typing.Optional[int] = OMIT,
         name: typing.Optional[str] = OMIT,
@@ -167,6 +168,8 @@ class RawSandboxesClient:
         image : typing.Optional[str]
 
         init : typing.Optional[SandboxInit]
+
+        internet_enabled : typing.Optional[bool]
 
         lifecycle : typing.Optional[LifecyclePolicy]
 
@@ -209,6 +212,7 @@ class RawSandboxesClient:
                 "init": convert_and_respect_annotation_metadata(
                     object_=init, annotation=typing.Optional[SandboxInit], direction="write"
                 ),
+                "internet_enabled": internet_enabled,
                 "lifecycle": convert_and_respect_annotation_metadata(
                     object_=lifecycle, annotation=typing.Optional[LifecyclePolicy], direction="write"
                 ),
@@ -345,9 +349,9 @@ class RawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -411,9 +415,9 @@ class RawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -469,9 +473,9 @@ class RawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -580,9 +584,9 @@ class RawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -660,9 +664,9 @@ class RawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -724,9 +728,9 @@ class RawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -796,9 +800,9 @@ class RawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -860,9 +864,9 @@ class RawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -932,9 +936,9 @@ class RawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -998,9 +1002,9 @@ class RawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1097,9 +1101,9 @@ class RawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1174,9 +1178,9 @@ class RawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1273,9 +1277,9 @@ class RawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1334,9 +1338,9 @@ class RawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1392,9 +1396,9 @@ class RawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1523,6 +1527,7 @@ class AsyncRawSandboxesClient:
         gateway_profile: typing.Optional[str] = OMIT,
         image: typing.Optional[str] = OMIT,
         init: typing.Optional[SandboxInit] = OMIT,
+        internet_enabled: typing.Optional[bool] = OMIT,
         lifecycle: typing.Optional[LifecyclePolicy] = OMIT,
         memory_mb: typing.Optional[int] = OMIT,
         name: typing.Optional[str] = OMIT,
@@ -1551,6 +1556,8 @@ class AsyncRawSandboxesClient:
         image : typing.Optional[str]
 
         init : typing.Optional[SandboxInit]
+
+        internet_enabled : typing.Optional[bool]
 
         lifecycle : typing.Optional[LifecyclePolicy]
 
@@ -1593,6 +1600,7 @@ class AsyncRawSandboxesClient:
                 "init": convert_and_respect_annotation_metadata(
                     object_=init, annotation=typing.Optional[SandboxInit], direction="write"
                 ),
+                "internet_enabled": internet_enabled,
                 "lifecycle": convert_and_respect_annotation_metadata(
                     object_=lifecycle, annotation=typing.Optional[LifecyclePolicy], direction="write"
                 ),
@@ -1729,9 +1737,9 @@ class AsyncRawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1795,9 +1803,9 @@ class AsyncRawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1853,9 +1861,9 @@ class AsyncRawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1964,9 +1972,9 @@ class AsyncRawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -2044,9 +2052,9 @@ class AsyncRawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -2108,9 +2116,9 @@ class AsyncRawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -2180,9 +2188,9 @@ class AsyncRawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -2244,9 +2252,9 @@ class AsyncRawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -2316,9 +2324,9 @@ class AsyncRawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -2382,9 +2390,9 @@ class AsyncRawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -2481,9 +2489,9 @@ class AsyncRawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -2558,9 +2566,9 @@ class AsyncRawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -2657,9 +2665,9 @@ class AsyncRawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -2718,9 +2726,9 @@ class AsyncRawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -2776,9 +2784,9 @@ class AsyncRawSandboxesClient:
                 raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        ErrorResponse,
+                        typing.Any,
                         parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
+                            type_=typing.Any,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

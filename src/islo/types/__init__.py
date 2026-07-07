@@ -50,6 +50,14 @@ if typing.TYPE_CHECKING:
     from .cloud_role_ref import CloudRoleRef
     from .cloud_role_response import CloudRoleResponse
     from .cloud_role_type import CloudRoleType
+    from .compute_event_detail_response import ComputeEventDetailResponse
+    from .compute_event_detail_response_result import (
+        ComputeEventDetailResponseResult,
+        ComputeEventDetailResponseResult_Empty,
+        ComputeEventDetailResponseResult_Exec,
+        ComputeEventDetailResponseResult_Sandbox,
+        ComputeEventDetailResponseResult_Snapshot,
+    )
     from .compute_region_response import ComputeRegionResponse
     from .connection_status import ConnectionStatus
     from .container_registry_response import ContainerRegistryResponse
@@ -62,9 +70,11 @@ if typing.TYPE_CHECKING:
     from .custom_service import CustomService
     from .custom_service_create_response import CustomServiceCreateResponse
     from .custom_services_response import CustomServicesResponse
+    from .empty_result import EmptyResult
     from .error_code import ErrorCode
     from .error_response import ErrorResponse
     from .exec_response import ExecResponse
+    from .exec_result import ExecResult
     from .exec_result_response import ExecResultResponse
     from .file_upload_status_response import FileUploadStatusResponse
     from .gateway_action import GatewayAction
@@ -105,12 +115,14 @@ if typing.TYPE_CHECKING:
         IncomingWebhookAction_EnsureSandbox,
         IncomingWebhookAction_PauseSandbox,
         IncomingWebhookAction_ResumeSandbox,
+        IncomingWebhookAction_TriggerJob,
     )
     from .incoming_webhook_action_delete_sandbox import IncomingWebhookActionDeleteSandbox
     from .incoming_webhook_action_deliver_to_port import IncomingWebhookActionDeliverToPort
     from .incoming_webhook_action_ensure_sandbox import IncomingWebhookActionEnsureSandbox
     from .incoming_webhook_action_pause_sandbox import IncomingWebhookActionPauseSandbox
     from .incoming_webhook_action_resume_sandbox import IncomingWebhookActionResumeSandbox
+    from .incoming_webhook_action_trigger_job import IncomingWebhookActionTriggerJob
     from .incoming_webhook_auth import IncomingWebhookAuth
     from .incoming_webhook_auth_auth_type import IncomingWebhookAuthAuthType
     from .incoming_webhook_auth_auth_type_auth_type import IncomingWebhookAuthAuthTypeAuthType
@@ -184,14 +196,32 @@ if typing.TYPE_CHECKING:
     from .integration_status import IntegrationStatus
     from .ip_allowlist_verifier import IpAllowlistVerifier
     from .islo_error_code import IsloErrorCode
+    from .job_deploy_request import JobDeployRequest
+    from .job_list_item import JobListItem
+    from .job_param_definition import JobParamDefinition
+    from .job_param_mapping import JobParamMapping
+    from .job_response import JobResponse
+    from .job_run_response import JobRunResponse
+    from .job_run_status import JobRunStatus
+    from .job_run_step_timeline_entry import JobRunStepTimelineEntry
+    from .job_schedule_response import JobScheduleResponse
+    from .job_version_response import JobVersionResponse
     from .judge_content_filter import JudgeContentFilter
     from .judge_content_filter_direction import JudgeContentFilterDirection
     from .judge_content_filter_fallback import JudgeContentFilterFallback
     from .judge_content_filter_provider_key import JudgeContentFilterProviderKey
     from .jwt_verifier import JwtVerifier
+    from .knowledge_item_list_response import KnowledgeItemListResponse
+    from .knowledge_item_response import KnowledgeItemResponse
+    from .knowledge_level import KnowledgeLevel
+    from .knowledge_link_input import KnowledgeLinkInput
+    from .knowledge_link_response import KnowledgeLinkResponse
+    from .knowledge_link_type import KnowledgeLinkType
+    from .knowledge_status import KnowledgeStatus
     from .legacy_init_capability import LegacyInitCapability
     from .lifecycle_policy import LifecyclePolicy
     from .list_sessions_response import ListSessionsResponse
+    from .paginated_knowledge_response import PaginatedKnowledgeResponse
     from .paginated_sandbox_response import PaginatedSandboxResponse
     from .paginated_snapshot_response import PaginatedSnapshotResponse
     from .payload_mapping import PayloadMapping
@@ -207,6 +237,7 @@ if typing.TYPE_CHECKING:
     from .sandbox_init_full import SandboxInitFull
     from .sandbox_init_minimal import SandboxInitMinimal
     from .sandbox_response import SandboxResponse
+    from .sandbox_result import SandboxResult
     from .sandbox_spec import SandboxSpec
     from .session_info import SessionInfo
     from .session_status import SessionStatus
@@ -223,6 +254,7 @@ if typing.TYPE_CHECKING:
     from .size_limit_content_filter import SizeLimitContentFilter
     from .size_limit_content_filter_direction import SizeLimitContentFilterDirection
     from .snapshot_response import SnapshotResponse
+    from .snapshot_result import SnapshotResult
     from .tenant_regions_response import TenantRegionsResponse
     from .timestamp_check import TimestampCheck
     from .validation_error import ValidationError
@@ -287,6 +319,12 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CloudRoleRef": ".cloud_role_ref",
     "CloudRoleResponse": ".cloud_role_response",
     "CloudRoleType": ".cloud_role_type",
+    "ComputeEventDetailResponse": ".compute_event_detail_response",
+    "ComputeEventDetailResponseResult": ".compute_event_detail_response_result",
+    "ComputeEventDetailResponseResult_Empty": ".compute_event_detail_response_result",
+    "ComputeEventDetailResponseResult_Exec": ".compute_event_detail_response_result",
+    "ComputeEventDetailResponseResult_Sandbox": ".compute_event_detail_response_result",
+    "ComputeEventDetailResponseResult_Snapshot": ".compute_event_detail_response_result",
     "ComputeRegionResponse": ".compute_region_response",
     "ConnectionStatus": ".connection_status",
     "ContainerRegistryResponse": ".container_registry_response",
@@ -299,9 +337,11 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CustomService": ".custom_service",
     "CustomServiceCreateResponse": ".custom_service_create_response",
     "CustomServicesResponse": ".custom_services_response",
+    "EmptyResult": ".empty_result",
     "ErrorCode": ".error_code",
     "ErrorResponse": ".error_response",
     "ExecResponse": ".exec_response",
+    "ExecResult": ".exec_result",
     "ExecResultResponse": ".exec_result_response",
     "FileUploadStatusResponse": ".file_upload_status_response",
     "GatewayAction": ".gateway_action",
@@ -335,11 +375,13 @@ _dynamic_imports: typing.Dict[str, str] = {
     "IncomingWebhookActionEnsureSandbox": ".incoming_webhook_action_ensure_sandbox",
     "IncomingWebhookActionPauseSandbox": ".incoming_webhook_action_pause_sandbox",
     "IncomingWebhookActionResumeSandbox": ".incoming_webhook_action_resume_sandbox",
+    "IncomingWebhookActionTriggerJob": ".incoming_webhook_action_trigger_job",
     "IncomingWebhookAction_DeleteSandbox": ".incoming_webhook_action",
     "IncomingWebhookAction_DeliverToPort": ".incoming_webhook_action",
     "IncomingWebhookAction_EnsureSandbox": ".incoming_webhook_action",
     "IncomingWebhookAction_PauseSandbox": ".incoming_webhook_action",
     "IncomingWebhookAction_ResumeSandbox": ".incoming_webhook_action",
+    "IncomingWebhookAction_TriggerJob": ".incoming_webhook_action",
     "IncomingWebhookAuth": ".incoming_webhook_auth",
     "IncomingWebhookAuthAuthType": ".incoming_webhook_auth_auth_type",
     "IncomingWebhookAuthAuthTypeAuthType": ".incoming_webhook_auth_auth_type_auth_type",
@@ -409,14 +451,32 @@ _dynamic_imports: typing.Dict[str, str] = {
     "IntegrationStatus": ".integration_status",
     "IpAllowlistVerifier": ".ip_allowlist_verifier",
     "IsloErrorCode": ".islo_error_code",
+    "JobDeployRequest": ".job_deploy_request",
+    "JobListItem": ".job_list_item",
+    "JobParamDefinition": ".job_param_definition",
+    "JobParamMapping": ".job_param_mapping",
+    "JobResponse": ".job_response",
+    "JobRunResponse": ".job_run_response",
+    "JobRunStatus": ".job_run_status",
+    "JobRunStepTimelineEntry": ".job_run_step_timeline_entry",
+    "JobScheduleResponse": ".job_schedule_response",
+    "JobVersionResponse": ".job_version_response",
     "JudgeContentFilter": ".judge_content_filter",
     "JudgeContentFilterDirection": ".judge_content_filter_direction",
     "JudgeContentFilterFallback": ".judge_content_filter_fallback",
     "JudgeContentFilterProviderKey": ".judge_content_filter_provider_key",
     "JwtVerifier": ".jwt_verifier",
+    "KnowledgeItemListResponse": ".knowledge_item_list_response",
+    "KnowledgeItemResponse": ".knowledge_item_response",
+    "KnowledgeLevel": ".knowledge_level",
+    "KnowledgeLinkInput": ".knowledge_link_input",
+    "KnowledgeLinkResponse": ".knowledge_link_response",
+    "KnowledgeLinkType": ".knowledge_link_type",
+    "KnowledgeStatus": ".knowledge_status",
     "LegacyInitCapability": ".legacy_init_capability",
     "LifecyclePolicy": ".lifecycle_policy",
     "ListSessionsResponse": ".list_sessions_response",
+    "PaginatedKnowledgeResponse": ".paginated_knowledge_response",
     "PaginatedSandboxResponse": ".paginated_sandbox_response",
     "PaginatedSnapshotResponse": ".paginated_snapshot_response",
     "PayloadMapping": ".payload_mapping",
@@ -435,6 +495,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SandboxInit_Full": ".sandbox_init",
     "SandboxInit_Minimal": ".sandbox_init",
     "SandboxResponse": ".sandbox_response",
+    "SandboxResult": ".sandbox_result",
     "SandboxSpec": ".sandbox_spec",
     "SessionInfo": ".session_info",
     "SessionStatus": ".session_status",
@@ -455,6 +516,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SizeLimitContentFilter": ".size_limit_content_filter",
     "SizeLimitContentFilterDirection": ".size_limit_content_filter_direction",
     "SnapshotResponse": ".snapshot_response",
+    "SnapshotResult": ".snapshot_result",
     "TenantRegionsResponse": ".tenant_regions_response",
     "TimestampCheck": ".timestamp_check",
     "ValidationError": ".validation_error",
@@ -541,6 +603,12 @@ __all__ = [
     "CloudRoleRef",
     "CloudRoleResponse",
     "CloudRoleType",
+    "ComputeEventDetailResponse",
+    "ComputeEventDetailResponseResult",
+    "ComputeEventDetailResponseResult_Empty",
+    "ComputeEventDetailResponseResult_Exec",
+    "ComputeEventDetailResponseResult_Sandbox",
+    "ComputeEventDetailResponseResult_Snapshot",
     "ComputeRegionResponse",
     "ConnectionStatus",
     "ContainerRegistryResponse",
@@ -553,9 +621,11 @@ __all__ = [
     "CustomService",
     "CustomServiceCreateResponse",
     "CustomServicesResponse",
+    "EmptyResult",
     "ErrorCode",
     "ErrorResponse",
     "ExecResponse",
+    "ExecResult",
     "ExecResultResponse",
     "FileUploadStatusResponse",
     "GatewayAction",
@@ -589,11 +659,13 @@ __all__ = [
     "IncomingWebhookActionEnsureSandbox",
     "IncomingWebhookActionPauseSandbox",
     "IncomingWebhookActionResumeSandbox",
+    "IncomingWebhookActionTriggerJob",
     "IncomingWebhookAction_DeleteSandbox",
     "IncomingWebhookAction_DeliverToPort",
     "IncomingWebhookAction_EnsureSandbox",
     "IncomingWebhookAction_PauseSandbox",
     "IncomingWebhookAction_ResumeSandbox",
+    "IncomingWebhookAction_TriggerJob",
     "IncomingWebhookAuth",
     "IncomingWebhookAuthAuthType",
     "IncomingWebhookAuthAuthTypeAuthType",
@@ -663,14 +735,32 @@ __all__ = [
     "IntegrationStatus",
     "IpAllowlistVerifier",
     "IsloErrorCode",
+    "JobDeployRequest",
+    "JobListItem",
+    "JobParamDefinition",
+    "JobParamMapping",
+    "JobResponse",
+    "JobRunResponse",
+    "JobRunStatus",
+    "JobRunStepTimelineEntry",
+    "JobScheduleResponse",
+    "JobVersionResponse",
     "JudgeContentFilter",
     "JudgeContentFilterDirection",
     "JudgeContentFilterFallback",
     "JudgeContentFilterProviderKey",
     "JwtVerifier",
+    "KnowledgeItemListResponse",
+    "KnowledgeItemResponse",
+    "KnowledgeLevel",
+    "KnowledgeLinkInput",
+    "KnowledgeLinkResponse",
+    "KnowledgeLinkType",
+    "KnowledgeStatus",
     "LegacyInitCapability",
     "LifecyclePolicy",
     "ListSessionsResponse",
+    "PaginatedKnowledgeResponse",
     "PaginatedSandboxResponse",
     "PaginatedSnapshotResponse",
     "PayloadMapping",
@@ -689,6 +779,7 @@ __all__ = [
     "SandboxInit_Full",
     "SandboxInit_Minimal",
     "SandboxResponse",
+    "SandboxResult",
     "SandboxSpec",
     "SessionInfo",
     "SessionStatus",
@@ -709,6 +800,7 @@ __all__ = [
     "SizeLimitContentFilter",
     "SizeLimitContentFilterDirection",
     "SnapshotResponse",
+    "SnapshotResult",
     "TenantRegionsResponse",
     "TimestampCheck",
     "ValidationError",

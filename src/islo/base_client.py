@@ -12,11 +12,15 @@ from .environment import IsloEnvironment
 
 if typing.TYPE_CHECKING:
     from .cloud_roles.client import AsyncCloudRolesClient, CloudRolesClient
+    from .compute_events.client import AsyncComputeEventsClient, ComputeEventsClient
     from .container_registries.client import AsyncContainerRegistriesClient, ContainerRegistriesClient
     from .credits.client import AsyncCreditsClient, CreditsClient
     from .gateway_profiles.client import AsyncGatewayProfilesClient, GatewayProfilesClient
     from .inference.client import AsyncInferenceClient, InferenceClient
     from .integrations.client import AsyncIntegrationsClient, IntegrationsClient
+    from .job_runs.client import AsyncJobRunsClient, JobRunsClient
+    from .jobs.client import AsyncJobsClient, JobsClient
+    from .knowledge.client import AsyncKnowledgeClient, KnowledgeClient
     from .sandboxes.client import AsyncSandboxesClient, SandboxesClient
     from .shares.client import AsyncSharesClient, SharesClient
     from .snapshots.client import AsyncSnapshotsClient, SnapshotsClient
@@ -87,12 +91,16 @@ class BaseIslo:
             logging=logging,
         )
         self._tenants: typing.Optional[TenantsClient] = None
+        self._knowledge: typing.Optional[KnowledgeClient] = None
         self._credits: typing.Optional[CreditsClient] = None
         self._integrations: typing.Optional[IntegrationsClient] = None
         self._gateway_profiles: typing.Optional[GatewayProfilesClient] = None
         self._cloud_roles: typing.Optional[CloudRolesClient] = None
         self._inference: typing.Optional[InferenceClient] = None
         self._container_registries: typing.Optional[ContainerRegistriesClient] = None
+        self._jobs: typing.Optional[JobsClient] = None
+        self._job_runs: typing.Optional[JobRunsClient] = None
+        self._compute_events: typing.Optional[ComputeEventsClient] = None
         self._sandboxes: typing.Optional[SandboxesClient] = None
         self._shares: typing.Optional[SharesClient] = None
         self._snapshots: typing.Optional[SnapshotsClient] = None
@@ -105,6 +113,14 @@ class BaseIslo:
 
             self._tenants = TenantsClient(client_wrapper=self._client_wrapper)
         return self._tenants
+
+    @property
+    def knowledge(self):
+        if self._knowledge is None:
+            from .knowledge.client import KnowledgeClient  # noqa: E402
+
+            self._knowledge = KnowledgeClient(client_wrapper=self._client_wrapper)
+        return self._knowledge
 
     @property
     def credits(self):
@@ -153,6 +169,30 @@ class BaseIslo:
 
             self._container_registries = ContainerRegistriesClient(client_wrapper=self._client_wrapper)
         return self._container_registries
+
+    @property
+    def jobs(self):
+        if self._jobs is None:
+            from .jobs.client import JobsClient  # noqa: E402
+
+            self._jobs = JobsClient(client_wrapper=self._client_wrapper)
+        return self._jobs
+
+    @property
+    def job_runs(self):
+        if self._job_runs is None:
+            from .job_runs.client import JobRunsClient  # noqa: E402
+
+            self._job_runs = JobRunsClient(client_wrapper=self._client_wrapper)
+        return self._job_runs
+
+    @property
+    def compute_events(self):
+        if self._compute_events is None:
+            from .compute_events.client import ComputeEventsClient  # noqa: E402
+
+            self._compute_events = ComputeEventsClient(client_wrapper=self._client_wrapper)
+        return self._compute_events
 
     @property
     def sandboxes(self):
@@ -255,12 +295,16 @@ class AsyncBaseIslo:
             logging=logging,
         )
         self._tenants: typing.Optional[AsyncTenantsClient] = None
+        self._knowledge: typing.Optional[AsyncKnowledgeClient] = None
         self._credits: typing.Optional[AsyncCreditsClient] = None
         self._integrations: typing.Optional[AsyncIntegrationsClient] = None
         self._gateway_profiles: typing.Optional[AsyncGatewayProfilesClient] = None
         self._cloud_roles: typing.Optional[AsyncCloudRolesClient] = None
         self._inference: typing.Optional[AsyncInferenceClient] = None
         self._container_registries: typing.Optional[AsyncContainerRegistriesClient] = None
+        self._jobs: typing.Optional[AsyncJobsClient] = None
+        self._job_runs: typing.Optional[AsyncJobRunsClient] = None
+        self._compute_events: typing.Optional[AsyncComputeEventsClient] = None
         self._sandboxes: typing.Optional[AsyncSandboxesClient] = None
         self._shares: typing.Optional[AsyncSharesClient] = None
         self._snapshots: typing.Optional[AsyncSnapshotsClient] = None
@@ -273,6 +317,14 @@ class AsyncBaseIslo:
 
             self._tenants = AsyncTenantsClient(client_wrapper=self._client_wrapper)
         return self._tenants
+
+    @property
+    def knowledge(self):
+        if self._knowledge is None:
+            from .knowledge.client import AsyncKnowledgeClient  # noqa: E402
+
+            self._knowledge = AsyncKnowledgeClient(client_wrapper=self._client_wrapper)
+        return self._knowledge
 
     @property
     def credits(self):
@@ -321,6 +373,30 @@ class AsyncBaseIslo:
 
             self._container_registries = AsyncContainerRegistriesClient(client_wrapper=self._client_wrapper)
         return self._container_registries
+
+    @property
+    def jobs(self):
+        if self._jobs is None:
+            from .jobs.client import AsyncJobsClient  # noqa: E402
+
+            self._jobs = AsyncJobsClient(client_wrapper=self._client_wrapper)
+        return self._jobs
+
+    @property
+    def job_runs(self):
+        if self._job_runs is None:
+            from .job_runs.client import AsyncJobRunsClient  # noqa: E402
+
+            self._job_runs = AsyncJobRunsClient(client_wrapper=self._client_wrapper)
+        return self._job_runs
+
+    @property
+    def compute_events(self):
+        if self._compute_events is None:
+            from .compute_events.client import AsyncComputeEventsClient  # noqa: E402
+
+            self._compute_events = AsyncComputeEventsClient(client_wrapper=self._client_wrapper)
+        return self._compute_events
 
     @property
     def sandboxes(self):

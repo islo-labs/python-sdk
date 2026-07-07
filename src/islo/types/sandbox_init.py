@@ -36,6 +36,7 @@ class SandboxInit_Custom(UniversalBaseModel):
     """
 
     type: typing.Literal["custom"] = "custom"
+    await_ready: typing.Optional[bool] = None
     capabilities: typing.List[InitCapability]
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
