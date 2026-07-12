@@ -3952,14 +3952,6 @@ client.sandboxes.create_sandbox()
 <dl>
 <dd>
 
-**snapshot_url:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
 **sources:** `typing.Optional[typing.List[GitSource]]` 
     
 </dd>

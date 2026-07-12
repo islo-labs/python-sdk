@@ -23,7 +23,6 @@ class IncomingWebhookSandboxTemplate(UniversalBaseModel):
     memory_mb: int
     setup_scripts: typing.Optional[typing.List[IncomingWebhookSetupScript]] = None
     snapshot_name: typing.Optional[str] = None
-    snapshot_url: typing.Optional[str] = None
     sources: typing.Optional[typing.List[IncomingWebhookGitSource]] = None
     vcpus: int
     workdir: typing.Optional[str] = None

@@ -13,6 +13,8 @@ class ComputeEventDetailResponse(UniversalBaseModel):
     action: str
     success: bool
     error_message: typing.Optional[str] = None
+    error_code: typing.Optional[str] = None
+    error_details: typing.Optional[typing.Dict[str, typing.Any]] = None
     started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
     result: ComputeEventDetailResponseResult
