@@ -10,12 +10,14 @@ from ..core.jsonable_encoder import jsonable_encoder
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
+from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.bad_gateway_error import BadGatewayError
 from ..errors.service_unavailable_error import ServiceUnavailableError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.error_response import ErrorResponse
 from ..types.job_list_item import JobListItem
+from ..types.job_manifest_input import JobManifestInput
 from ..types.job_response import JobResponse
 from ..types.job_run_response import JobRunResponse
 from ..types.job_schedule_response import JobScheduleResponse
@@ -31,19 +33,15 @@ class RawJobsClient:
         self._client_wrapper = client_wrapper
 
     def validate_job_manifest(
-        self,
-        name: str,
-        *,
-        manifest: typing.Dict[str, typing.Any],
-        request_options: typing.Optional[RequestOptions] = None,
+        self, name: str, *, manifest: JobManifestInput, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[None]:
         """
         Parameters
         ----------
         name : str
 
-        manifest : typing.Dict[str, typing.Any]
-            Parsed job.toml content as JSON object
+        manifest : JobManifestInput
+            Job manifest (authored as TOML or JSON, stored as JSON)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -57,7 +55,9 @@ class RawJobsClient:
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "manifest": manifest,
+                "manifest": convert_and_respect_annotation_metadata(
+                    object_=manifest, annotation=JobManifestInput, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -100,19 +100,15 @@ class RawJobsClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
     def deploy_job(
-        self,
-        name: str,
-        *,
-        manifest: typing.Dict[str, typing.Any],
-        request_options: typing.Optional[RequestOptions] = None,
+        self, name: str, *, manifest: JobManifestInput, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[JobVersionResponse]:
         """
         Parameters
         ----------
         name : str
 
-        manifest : typing.Dict[str, typing.Any]
-            Parsed job.toml content as JSON object
+        manifest : JobManifestInput
+            Job manifest (authored as TOML or JSON, stored as JSON)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -127,7 +123,9 @@ class RawJobsClient:
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "manifest": manifest,
+                "manifest": convert_and_respect_annotation_metadata(
+                    object_=manifest, annotation=JobManifestInput, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -230,6 +228,48 @@ class RawJobsClient:
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def delete_job(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> HttpResponse[None]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[None]
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"jobs/{jsonable_encoder(name)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="DELETE",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return HttpResponse(response=_response, data=None)
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -728,19 +768,15 @@ class AsyncRawJobsClient:
         self._client_wrapper = client_wrapper
 
     async def validate_job_manifest(
-        self,
-        name: str,
-        *,
-        manifest: typing.Dict[str, typing.Any],
-        request_options: typing.Optional[RequestOptions] = None,
+        self, name: str, *, manifest: JobManifestInput, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[None]:
         """
         Parameters
         ----------
         name : str
 
-        manifest : typing.Dict[str, typing.Any]
-            Parsed job.toml content as JSON object
+        manifest : JobManifestInput
+            Job manifest (authored as TOML or JSON, stored as JSON)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -754,7 +790,9 @@ class AsyncRawJobsClient:
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "manifest": manifest,
+                "manifest": convert_and_respect_annotation_metadata(
+                    object_=manifest, annotation=JobManifestInput, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -797,19 +835,15 @@ class AsyncRawJobsClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
     async def deploy_job(
-        self,
-        name: str,
-        *,
-        manifest: typing.Dict[str, typing.Any],
-        request_options: typing.Optional[RequestOptions] = None,
+        self, name: str, *, manifest: JobManifestInput, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[JobVersionResponse]:
         """
         Parameters
         ----------
         name : str
 
-        manifest : typing.Dict[str, typing.Any]
-            Parsed job.toml content as JSON object
+        manifest : JobManifestInput
+            Job manifest (authored as TOML or JSON, stored as JSON)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -824,7 +858,9 @@ class AsyncRawJobsClient:
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "manifest": manifest,
+                "manifest": convert_and_respect_annotation_metadata(
+                    object_=manifest, annotation=JobManifestInput, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -927,6 +963,50 @@ class AsyncRawJobsClient:
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def delete_job(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[None]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[None]
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"jobs/{jsonable_encoder(name)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="DELETE",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return AsyncHttpResponse(response=_response, data=None)
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),

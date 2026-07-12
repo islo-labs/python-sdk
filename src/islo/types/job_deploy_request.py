@@ -4,12 +4,13 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .job_manifest_input import JobManifestInput
 
 
 class JobDeployRequest(UniversalBaseModel):
-    manifest: typing.Dict[str, typing.Any] = pydantic.Field()
+    manifest: JobManifestInput = pydantic.Field()
     """
-    Parsed job.toml content as JSON object
+    Job manifest (authored as TOML or JSON, stored as JSON)
     """
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

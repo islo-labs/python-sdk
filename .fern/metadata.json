@@ -15,10 +15,11 @@
     "pydantic_config": {
       "version": "v2",
       "skip_validation": false,
+      "enum_type": "forward_compatible_python_enums",
       "use_str_enums": true,
       "extra_fields": "allow"
     }
   },
-  "originGitCommit": "b6729f213d43286c694786d1d52cbf0c8fa51370",
-  "sdkVersion": "0.3.9"
+  "originGitCommit": "ed0eb6dbcf4d270aa3dcf2a745d2d03327523bb9",
+  "sdkVersion": "0.3.10"
 }

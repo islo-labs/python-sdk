@@ -2,4 +2,37 @@
 
 import typing
 
-RegexContentFilterDirection = typing.Union[typing.Literal["request", "response", "both"], typing.Any]
+from ..core import enum
+
+T_Result = typing.TypeVar("T_Result")
+
+
+class RegexContentFilterDirection(enum.StrEnum):
+    REQUEST = "request"
+    RESPONSE = "response"
+    BOTH = "both"
+    _UNKNOWN = "__REGEXCONTENTFILTERDIRECTION_UNKNOWN__"
+    """
+    This member is used for forward compatibility. If the value is not recognized by the enum, it will be stored here, and the raw value is accessible through `.value`.
+    """
+
+    @classmethod
+    def _missing_(cls, value: typing.Any) -> "RegexContentFilterDirection":
+        unknown = cls._UNKNOWN
+        unknown._value_ = value
+        return unknown
+
+    def visit(
+        self,
+        request: typing.Callable[[], T_Result],
+        response: typing.Callable[[], T_Result],
+        both: typing.Callable[[], T_Result],
+        _unknown_member: typing.Callable[[str], T_Result],
+    ) -> T_Result:
+        if self is RegexContentFilterDirection.REQUEST:
+            return request()
+        if self is RegexContentFilterDirection.RESPONSE:
+            return response()
+        if self is RegexContentFilterDirection.BOTH:
+            return both()
+        return _unknown_member(self._value_)

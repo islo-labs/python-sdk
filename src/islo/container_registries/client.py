@@ -88,7 +88,7 @@ class ContainerRegistriesClient:
 
         Examples
         --------
-        from islo import Islo
+        from islo import Islo, RegistryProvider
         from islo.environment import IsloEnvironment
 
         client = Islo(
@@ -96,7 +96,7 @@ class ContainerRegistriesClient:
             environment=IsloEnvironment.PRODUCTION,
         )
         client.container_registries.create_container_registry(
-            provider="ecr",
+            provider=RegistryProvider.ECR,
             registry_host="registry_host",
             cloud_role_id="cloud_role_id",
             region="region",
@@ -310,7 +310,7 @@ class AsyncContainerRegistriesClient:
         --------
         import asyncio
 
-        from islo import AsyncIslo
+        from islo import AsyncIslo, RegistryProvider
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
@@ -321,7 +321,7 @@ class AsyncContainerRegistriesClient:
 
         async def main() -> None:
             await client.container_registries.create_container_registry(
-                provider="ecr",
+                provider=RegistryProvider.ECR,
                 registry_host="registry_host",
                 cloud_role_id="cloud_role_id",
                 region="region",

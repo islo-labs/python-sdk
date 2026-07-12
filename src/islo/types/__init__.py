@@ -198,13 +198,18 @@ if typing.TYPE_CHECKING:
     from .islo_error_code import IsloErrorCode
     from .job_deploy_request import JobDeployRequest
     from .job_list_item import JobListItem
+    from .job_manifest_input import JobManifestInput
+    from .job_manifest_output import JobManifestOutput
     from .job_param_definition import JobParamDefinition
     from .job_param_mapping import JobParamMapping
+    from .job_param_spec import JobParamSpec
+    from .job_param_spec_type import JobParamSpecType
     from .job_response import JobResponse
     from .job_run_response import JobRunResponse
     from .job_run_status import JobRunStatus
     from .job_run_step_timeline_entry import JobRunStepTimelineEntry
     from .job_schedule_response import JobScheduleResponse
+    from .job_section import JobSection
     from .job_version_response import JobVersionResponse
     from .judge_content_filter import JudgeContentFilter
     from .judge_content_filter_direction import JudgeContentFilterDirection
@@ -232,13 +237,27 @@ if typing.TYPE_CHECKING:
     from .regex_content_filter_direction import RegexContentFilterDirection
     from .registry_provider import RegistryProvider
     from .rule_reorder_item import RuleReorderItem
+    from .run_section_input import RunSectionInput
+    from .run_section_input_timeout import RunSectionInputTimeout
+    from .run_section_output import RunSectionOutput
+    from .run_section_output_timeout import RunSectionOutputTimeout
+    from .sandbox_config import SandboxConfig
+    from .sandbox_config_init import (
+        SandboxConfigInit,
+        SandboxConfigInit_Custom,
+        SandboxConfigInit_Full,
+        SandboxConfigInit_Minimal,
+    )
+    from .sandbox_config_mode import SandboxConfigMode
     from .sandbox_init import SandboxInit, SandboxInit_Custom, SandboxInit_Full, SandboxInit_Minimal
     from .sandbox_init_custom import SandboxInitCustom
+    from .sandbox_init_custom_capabilities_item import SandboxInitCustomCapabilitiesItem
     from .sandbox_init_full import SandboxInitFull
     from .sandbox_init_minimal import SandboxInitMinimal
     from .sandbox_response import SandboxResponse
     from .sandbox_result import SandboxResult
     from .sandbox_spec import SandboxSpec
+    from .schedule_section import ScheduleSection
     from .session_info import SessionInfo
     from .session_status import SessionStatus
     from .setup_script import SetupScript
@@ -255,6 +274,11 @@ if typing.TYPE_CHECKING:
     from .size_limit_content_filter_direction import SizeLimitContentFilterDirection
     from .snapshot_response import SnapshotResponse
     from .snapshot_result import SnapshotResult
+    from .snapshot_step_action import SnapshotStepAction
+    from .task_input import TaskInput
+    from .task_output import TaskOutput
+    from .task_step import TaskStep
+    from .task_step_exec import TaskStepExec
     from .tenant_regions_response import TenantRegionsResponse
     from .timestamp_check import TimestampCheck
     from .validation_error import ValidationError
@@ -276,6 +300,8 @@ if typing.TYPE_CHECKING:
     from .value_source_path import ValueSourcePath
     from .value_source_query import ValueSourceQuery
     from .value_source_raw_body import ValueSourceRawBody
+    from .verification_gate import VerificationGate
+    from .verification_section import VerificationSection
 _dynamic_imports: typing.Dict[str, str] = {
     "AllIntegrationsPolicy": ".all_integrations_policy",
     "AuthMethod": ".auth_method",
@@ -453,13 +479,18 @@ _dynamic_imports: typing.Dict[str, str] = {
     "IsloErrorCode": ".islo_error_code",
     "JobDeployRequest": ".job_deploy_request",
     "JobListItem": ".job_list_item",
+    "JobManifestInput": ".job_manifest_input",
+    "JobManifestOutput": ".job_manifest_output",
     "JobParamDefinition": ".job_param_definition",
     "JobParamMapping": ".job_param_mapping",
+    "JobParamSpec": ".job_param_spec",
+    "JobParamSpecType": ".job_param_spec_type",
     "JobResponse": ".job_response",
     "JobRunResponse": ".job_run_response",
     "JobRunStatus": ".job_run_status",
     "JobRunStepTimelineEntry": ".job_run_step_timeline_entry",
     "JobScheduleResponse": ".job_schedule_response",
+    "JobSection": ".job_section",
     "JobVersionResponse": ".job_version_response",
     "JudgeContentFilter": ".judge_content_filter",
     "JudgeContentFilterDirection": ".judge_content_filter_direction",
@@ -487,8 +518,19 @@ _dynamic_imports: typing.Dict[str, str] = {
     "RegexContentFilterDirection": ".regex_content_filter_direction",
     "RegistryProvider": ".registry_provider",
     "RuleReorderItem": ".rule_reorder_item",
+    "RunSectionInput": ".run_section_input",
+    "RunSectionInputTimeout": ".run_section_input_timeout",
+    "RunSectionOutput": ".run_section_output",
+    "RunSectionOutputTimeout": ".run_section_output_timeout",
+    "SandboxConfig": ".sandbox_config",
+    "SandboxConfigInit": ".sandbox_config_init",
+    "SandboxConfigInit_Custom": ".sandbox_config_init",
+    "SandboxConfigInit_Full": ".sandbox_config_init",
+    "SandboxConfigInit_Minimal": ".sandbox_config_init",
+    "SandboxConfigMode": ".sandbox_config_mode",
     "SandboxInit": ".sandbox_init",
     "SandboxInitCustom": ".sandbox_init_custom",
+    "SandboxInitCustomCapabilitiesItem": ".sandbox_init_custom_capabilities_item",
     "SandboxInitFull": ".sandbox_init_full",
     "SandboxInitMinimal": ".sandbox_init_minimal",
     "SandboxInit_Custom": ".sandbox_init",
@@ -497,6 +539,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SandboxResponse": ".sandbox_response",
     "SandboxResult": ".sandbox_result",
     "SandboxSpec": ".sandbox_spec",
+    "ScheduleSection": ".schedule_section",
     "SessionInfo": ".session_info",
     "SessionStatus": ".session_status",
     "SetupScript": ".setup_script",
@@ -517,6 +560,11 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SizeLimitContentFilterDirection": ".size_limit_content_filter_direction",
     "SnapshotResponse": ".snapshot_response",
     "SnapshotResult": ".snapshot_result",
+    "SnapshotStepAction": ".snapshot_step_action",
+    "TaskInput": ".task_input",
+    "TaskOutput": ".task_output",
+    "TaskStep": ".task_step",
+    "TaskStepExec": ".task_step_exec",
     "TenantRegionsResponse": ".tenant_regions_response",
     "TimestampCheck": ".timestamp_check",
     "ValidationError": ".validation_error",
@@ -536,6 +584,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ValueSource_Path": ".value_source",
     "ValueSource_Query": ".value_source",
     "ValueSource_RawBody": ".value_source",
+    "VerificationGate": ".verification_gate",
+    "VerificationSection": ".verification_section",
 }
 
 
@@ -737,13 +787,18 @@ __all__ = [
     "IsloErrorCode",
     "JobDeployRequest",
     "JobListItem",
+    "JobManifestInput",
+    "JobManifestOutput",
     "JobParamDefinition",
     "JobParamMapping",
+    "JobParamSpec",
+    "JobParamSpecType",
     "JobResponse",
     "JobRunResponse",
     "JobRunStatus",
     "JobRunStepTimelineEntry",
     "JobScheduleResponse",
+    "JobSection",
     "JobVersionResponse",
     "JudgeContentFilter",
     "JudgeContentFilterDirection",
@@ -771,8 +826,19 @@ __all__ = [
     "RegexContentFilterDirection",
     "RegistryProvider",
     "RuleReorderItem",
+    "RunSectionInput",
+    "RunSectionInputTimeout",
+    "RunSectionOutput",
+    "RunSectionOutputTimeout",
+    "SandboxConfig",
+    "SandboxConfigInit",
+    "SandboxConfigInit_Custom",
+    "SandboxConfigInit_Full",
+    "SandboxConfigInit_Minimal",
+    "SandboxConfigMode",
     "SandboxInit",
     "SandboxInitCustom",
+    "SandboxInitCustomCapabilitiesItem",
     "SandboxInitFull",
     "SandboxInitMinimal",
     "SandboxInit_Custom",
@@ -781,6 +847,7 @@ __all__ = [
     "SandboxResponse",
     "SandboxResult",
     "SandboxSpec",
+    "ScheduleSection",
     "SessionInfo",
     "SessionStatus",
     "SetupScript",
@@ -801,6 +868,11 @@ __all__ = [
     "SizeLimitContentFilterDirection",
     "SnapshotResponse",
     "SnapshotResult",
+    "SnapshotStepAction",
+    "TaskInput",
+    "TaskOutput",
+    "TaskStep",
+    "TaskStepExec",
     "TenantRegionsResponse",
     "TimestampCheck",
     "ValidationError",
@@ -820,4 +892,6 @@ __all__ = [
     "ValueSource_Path",
     "ValueSource_Query",
     "ValueSource_RawBody",
+    "VerificationGate",
+    "VerificationSection",
 ]

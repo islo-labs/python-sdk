@@ -89,7 +89,7 @@ class CloudRolesClient:
 
         Examples
         --------
-        from islo import Islo
+        from islo import CloudProvider, Islo
         from islo.environment import IsloEnvironment
 
         client = Islo(
@@ -97,7 +97,7 @@ class CloudRolesClient:
             environment=IsloEnvironment.PRODUCTION,
         )
         client.cloud_roles.create_cloud_role(
-            provider="aws",
+            provider=CloudProvider.AWS,
             role_arn="role_arn",
         )
         """
@@ -308,7 +308,7 @@ class AsyncCloudRolesClient:
         --------
         import asyncio
 
-        from islo import AsyncIslo
+        from islo import AsyncIslo, CloudProvider
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
@@ -319,7 +319,7 @@ class AsyncCloudRolesClient:
 
         async def main() -> None:
             await client.cloud_roles.create_cloud_role(
-                provider="aws",
+                provider=CloudProvider.AWS,
                 role_arn="role_arn",
             )
 

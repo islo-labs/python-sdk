@@ -124,7 +124,7 @@ class KnowledgeClient:
 
         Examples
         --------
-        from islo import Islo
+        from islo import Islo, KnowledgeLevel
         from islo.environment import IsloEnvironment
 
         client = Islo(
@@ -133,7 +133,7 @@ class KnowledgeClient:
         )
         client.knowledge.create_knowledge(
             slug="slug",
-            level="episodic",
+            level=KnowledgeLevel.EPISODIC,
             body="body",
         )
         """
@@ -394,7 +394,7 @@ class AsyncKnowledgeClient:
         --------
         import asyncio
 
-        from islo import AsyncIslo
+        from islo import AsyncIslo, KnowledgeLevel
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
@@ -406,7 +406,7 @@ class AsyncKnowledgeClient:
         async def main() -> None:
             await client.knowledge.create_knowledge(
                 slug="slug",
-                level="episodic",
+                level=KnowledgeLevel.EPISODIC,
                 body="body",
             )
 
