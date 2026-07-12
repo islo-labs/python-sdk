@@ -23,7 +23,6 @@ class SandboxConfig(UniversalBaseModel):
     memory_mb: typing.Optional[int] = None
     disk_gb: typing.Optional[int] = None
     snapshot_name: typing.Optional[str] = None
-    snapshot_url: typing.Optional[str] = None
     gateway_profile: typing.Optional[str] = None
     init: typing.Optional[SandboxConfigInit] = None
     internet_enabled: typing.Optional[bool] = None

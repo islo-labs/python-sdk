@@ -120,7 +120,6 @@ class SandboxesClient:
         request_id: typing.Optional[str] = OMIT,
         setup_scripts: typing.Optional[typing.Sequence[SetupScript]] = OMIT,
         snapshot_name: typing.Optional[str] = OMIT,
-        snapshot_url: typing.Optional[str] = OMIT,
         sources: typing.Optional[typing.Sequence[GitSource]] = OMIT,
         vcpus: typing.Optional[int] = OMIT,
         workdir: typing.Optional[str] = OMIT,
@@ -156,8 +155,6 @@ class SandboxesClient:
         setup_scripts : typing.Optional[typing.Sequence[SetupScript]]
 
         snapshot_name : typing.Optional[str]
-
-        snapshot_url : typing.Optional[str]
 
         sources : typing.Optional[typing.Sequence[GitSource]]
 
@@ -198,7 +195,6 @@ class SandboxesClient:
             request_id=request_id,
             setup_scripts=setup_scripts,
             snapshot_name=snapshot_name,
-            snapshot_url=snapshot_url,
             sources=sources,
             vcpus=vcpus,
             workdir=workdir,
@@ -915,7 +911,6 @@ class AsyncSandboxesClient:
         request_id: typing.Optional[str] = OMIT,
         setup_scripts: typing.Optional[typing.Sequence[SetupScript]] = OMIT,
         snapshot_name: typing.Optional[str] = OMIT,
-        snapshot_url: typing.Optional[str] = OMIT,
         sources: typing.Optional[typing.Sequence[GitSource]] = OMIT,
         vcpus: typing.Optional[int] = OMIT,
         workdir: typing.Optional[str] = OMIT,
@@ -951,8 +946,6 @@ class AsyncSandboxesClient:
         setup_scripts : typing.Optional[typing.Sequence[SetupScript]]
 
         snapshot_name : typing.Optional[str]
-
-        snapshot_url : typing.Optional[str]
 
         sources : typing.Optional[typing.Sequence[GitSource]]
 
@@ -1001,7 +994,6 @@ class AsyncSandboxesClient:
             request_id=request_id,
             setup_scripts=setup_scripts,
             snapshot_name=snapshot_name,
-            snapshot_url=snapshot_url,
             sources=sources,
             vcpus=vcpus,
             workdir=workdir,

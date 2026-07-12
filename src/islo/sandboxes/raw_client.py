@@ -146,7 +146,6 @@ class RawSandboxesClient:
         request_id: typing.Optional[str] = OMIT,
         setup_scripts: typing.Optional[typing.Sequence[SetupScript]] = OMIT,
         snapshot_name: typing.Optional[str] = OMIT,
-        snapshot_url: typing.Optional[str] = OMIT,
         sources: typing.Optional[typing.Sequence[GitSource]] = OMIT,
         vcpus: typing.Optional[int] = OMIT,
         workdir: typing.Optional[str] = OMIT,
@@ -182,8 +181,6 @@ class RawSandboxesClient:
         setup_scripts : typing.Optional[typing.Sequence[SetupScript]]
 
         snapshot_name : typing.Optional[str]
-
-        snapshot_url : typing.Optional[str]
 
         sources : typing.Optional[typing.Sequence[GitSource]]
 
@@ -223,7 +220,6 @@ class RawSandboxesClient:
                     object_=setup_scripts, annotation=typing.Optional[typing.Sequence[SetupScript]], direction="write"
                 ),
                 "snapshot_name": snapshot_name,
-                "snapshot_url": snapshot_url,
                 "sources": convert_and_respect_annotation_metadata(
                     object_=sources, annotation=typing.Optional[typing.Sequence[GitSource]], direction="write"
                 ),
@@ -1534,7 +1530,6 @@ class AsyncRawSandboxesClient:
         request_id: typing.Optional[str] = OMIT,
         setup_scripts: typing.Optional[typing.Sequence[SetupScript]] = OMIT,
         snapshot_name: typing.Optional[str] = OMIT,
-        snapshot_url: typing.Optional[str] = OMIT,
         sources: typing.Optional[typing.Sequence[GitSource]] = OMIT,
         vcpus: typing.Optional[int] = OMIT,
         workdir: typing.Optional[str] = OMIT,
@@ -1570,8 +1565,6 @@ class AsyncRawSandboxesClient:
         setup_scripts : typing.Optional[typing.Sequence[SetupScript]]
 
         snapshot_name : typing.Optional[str]
-
-        snapshot_url : typing.Optional[str]
 
         sources : typing.Optional[typing.Sequence[GitSource]]
 
@@ -1611,7 +1604,6 @@ class AsyncRawSandboxesClient:
                     object_=setup_scripts, annotation=typing.Optional[typing.Sequence[SetupScript]], direction="write"
                 ),
                 "snapshot_name": snapshot_name,
-                "snapshot_url": snapshot_url,
                 "sources": convert_and_respect_annotation_metadata(
                     object_=sources, annotation=typing.Optional[typing.Sequence[GitSource]], direction="write"
                 ),

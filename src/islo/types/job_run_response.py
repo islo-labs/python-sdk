@@ -20,6 +20,8 @@ class JobRunResponse(UniversalBaseModel):
     started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
     error_message: typing.Optional[str] = None
+    error_code: typing.Optional[str] = None
+    error_details: typing.Optional[typing.Dict[str, typing.Any]] = None
     created_at: dt.datetime
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
