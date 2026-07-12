@@ -2,4 +2,33 @@
 
 import typing
 
-ClientInferenceApi = typing.Union[typing.Literal["openai_chat_completions", "anthropic_messages"], typing.Any]
+from ..core import enum
+
+T_Result = typing.TypeVar("T_Result")
+
+
+class ClientInferenceApi(enum.StrEnum):
+    OPENAI_CHAT_COMPLETIONS = "openai_chat_completions"
+    ANTHROPIC_MESSAGES = "anthropic_messages"
+    _UNKNOWN = "__CLIENTINFERENCEAPI_UNKNOWN__"
+    """
+    This member is used for forward compatibility. If the value is not recognized by the enum, it will be stored here, and the raw value is accessible through `.value`.
+    """
+
+    @classmethod
+    def _missing_(cls, value: typing.Any) -> "ClientInferenceApi":
+        unknown = cls._UNKNOWN
+        unknown._value_ = value
+        return unknown
+
+    def visit(
+        self,
+        openai_chat_completions: typing.Callable[[], T_Result],
+        anthropic_messages: typing.Callable[[], T_Result],
+        _unknown_member: typing.Callable[[str], T_Result],
+    ) -> T_Result:
+        if self is ClientInferenceApi.OPENAI_CHAT_COMPLETIONS:
+            return openai_chat_completions()
+        if self is ClientInferenceApi.ANTHROPIC_MESSAGES:
+            return anthropic_messages()
+        return _unknown_member(self._value_)

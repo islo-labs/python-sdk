@@ -5,6 +5,7 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .job_manifest_output import JobManifestOutput
 
 
 class JobVersionResponse(UniversalBaseModel):
@@ -12,6 +13,6 @@ class JobVersionResponse(UniversalBaseModel):
     version_number: int
     content_hash: str
     deployed_at: dt.datetime
-    manifest: typing.Dict[str, typing.Any]
+    manifest: JobManifestOutput
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

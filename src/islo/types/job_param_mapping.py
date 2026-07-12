@@ -2,12 +2,7 @@
 
 import typing
 
-import pydantic
-from ..core.pydantic_utilities import UniversalBaseModel
-from .value_source import ValueSource
+from .job_param_mapping_parts import JobParamMappingParts
+from .job_param_mapping_source import JobParamMappingSource
 
-
-class JobParamMapping(UniversalBaseModel):
-    source: ValueSource
-
-    model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
+JobParamMapping = typing.Union[JobParamMappingSource, JobParamMappingParts]

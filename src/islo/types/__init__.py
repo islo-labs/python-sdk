@@ -169,6 +169,7 @@ if typing.TYPE_CHECKING:
     from .incoming_webhook_auth_zero_auth_type import IncomingWebhookAuthZeroAuthType
     from .incoming_webhook_auto_resume_policy import IncomingWebhookAutoResumePolicy
     from .incoming_webhook_condition import IncomingWebhookCondition
+    from .incoming_webhook_condition_equals import IncomingWebhookConditionEquals
     from .incoming_webhook_git_source import IncomingWebhookGitSource
     from .incoming_webhook_rule import IncomingWebhookRule
     from .incoming_webhook_sandbox_lifecycle import IncomingWebhookSandboxLifecycle
@@ -198,14 +199,50 @@ if typing.TYPE_CHECKING:
     from .islo_error_code import IsloErrorCode
     from .job_deploy_request import JobDeployRequest
     from .job_list_item import JobListItem
+    from .job_manifest_input import JobManifestInput
+    from .job_manifest_output import JobManifestOutput
     from .job_param_definition import JobParamDefinition
     from .job_param_mapping import JobParamMapping
+    from .job_param_mapping_parts import JobParamMappingParts
+    from .job_param_mapping_source import JobParamMappingSource
+    from .job_param_spec import JobParamSpec
+    from .job_param_spec_type import JobParamSpecType
     from .job_response import JobResponse
     from .job_run_response import JobRunResponse
     from .job_run_status import JobRunStatus
     from .job_run_step_timeline_entry import JobRunStepTimelineEntry
     from .job_schedule_response import JobScheduleResponse
+    from .job_section import JobSection
     from .job_version_response import JobVersionResponse
+    from .json_path_condition import (
+        JsonPathCondition,
+        JsonPathCondition_All,
+        JsonPathCondition_Any,
+        JsonPathCondition_Contains,
+        JsonPathCondition_Equals,
+        JsonPathCondition_Exists,
+        JsonPathCondition_GreaterThan,
+        JsonPathCondition_GreaterThanOrEqual,
+        JsonPathCondition_LessThan,
+        JsonPathCondition_LessThanOrEqual,
+        JsonPathCondition_Matches,
+        JsonPathCondition_Not,
+        JsonPathCondition_NotEquals,
+        JsonPathCondition_NotExists,
+    )
+    from .json_path_condition_all import JsonPathConditionAll
+    from .json_path_condition_any import JsonPathConditionAny
+    from .json_path_condition_contains import JsonPathConditionContains
+    from .json_path_condition_equals import JsonPathConditionEquals
+    from .json_path_condition_exists import JsonPathConditionExists
+    from .json_path_condition_greater_than import JsonPathConditionGreaterThan
+    from .json_path_condition_greater_than_or_equal import JsonPathConditionGreaterThanOrEqual
+    from .json_path_condition_less_than import JsonPathConditionLessThan
+    from .json_path_condition_less_than_or_equal import JsonPathConditionLessThanOrEqual
+    from .json_path_condition_matches import JsonPathConditionMatches
+    from .json_path_condition_not import JsonPathConditionNot
+    from .json_path_condition_not_equals import JsonPathConditionNotEquals
+    from .json_path_condition_not_exists import JsonPathConditionNotExists
     from .judge_content_filter import JudgeContentFilter
     from .judge_content_filter_direction import JudgeContentFilterDirection
     from .judge_content_filter_fallback import JudgeContentFilterFallback
@@ -221,6 +258,9 @@ if typing.TYPE_CHECKING:
     from .legacy_init_capability import LegacyInitCapability
     from .lifecycle_policy import LifecyclePolicy
     from .list_sessions_response import ListSessionsResponse
+    from .mapping_part import MappingPart, MappingPart_Literal, MappingPart_Source
+    from .mapping_part_literal import MappingPartLiteral
+    from .mapping_part_source import MappingPartSource
     from .paginated_knowledge_response import PaginatedKnowledgeResponse
     from .paginated_sandbox_response import PaginatedSandboxResponse
     from .paginated_snapshot_response import PaginatedSnapshotResponse
@@ -232,13 +272,27 @@ if typing.TYPE_CHECKING:
     from .regex_content_filter_direction import RegexContentFilterDirection
     from .registry_provider import RegistryProvider
     from .rule_reorder_item import RuleReorderItem
+    from .run_section_input import RunSectionInput
+    from .run_section_input_timeout import RunSectionInputTimeout
+    from .run_section_output import RunSectionOutput
+    from .run_section_output_timeout import RunSectionOutputTimeout
+    from .sandbox_config import SandboxConfig
+    from .sandbox_config_init import (
+        SandboxConfigInit,
+        SandboxConfigInit_Custom,
+        SandboxConfigInit_Full,
+        SandboxConfigInit_Minimal,
+    )
+    from .sandbox_config_mode import SandboxConfigMode
     from .sandbox_init import SandboxInit, SandboxInit_Custom, SandboxInit_Full, SandboxInit_Minimal
     from .sandbox_init_custom import SandboxInitCustom
+    from .sandbox_init_custom_capabilities_item import SandboxInitCustomCapabilitiesItem
     from .sandbox_init_full import SandboxInitFull
     from .sandbox_init_minimal import SandboxInitMinimal
     from .sandbox_response import SandboxResponse
     from .sandbox_result import SandboxResult
     from .sandbox_spec import SandboxSpec
+    from .schedule_section import ScheduleSection
     from .session_info import SessionInfo
     from .session_status import SessionStatus
     from .setup_script import SetupScript
@@ -255,6 +309,11 @@ if typing.TYPE_CHECKING:
     from .size_limit_content_filter_direction import SizeLimitContentFilterDirection
     from .snapshot_response import SnapshotResponse
     from .snapshot_result import SnapshotResult
+    from .snapshot_step_action import SnapshotStepAction
+    from .task_input import TaskInput
+    from .task_output import TaskOutput
+    from .task_step import TaskStep
+    from .task_step_exec import TaskStepExec
     from .tenant_regions_response import TenantRegionsResponse
     from .timestamp_check import TimestampCheck
     from .validation_error import ValidationError
@@ -276,6 +335,8 @@ if typing.TYPE_CHECKING:
     from .value_source_path import ValueSourcePath
     from .value_source_query import ValueSourceQuery
     from .value_source_raw_body import ValueSourceRawBody
+    from .verification_gate import VerificationGate
+    from .verification_section import VerificationSection
 _dynamic_imports: typing.Dict[str, str] = {
     "AllIntegrationsPolicy": ".all_integrations_policy",
     "AuthMethod": ".auth_method",
@@ -426,6 +487,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "IncomingWebhookAuthZeroAuthType": ".incoming_webhook_auth_zero_auth_type",
     "IncomingWebhookAutoResumePolicy": ".incoming_webhook_auto_resume_policy",
     "IncomingWebhookCondition": ".incoming_webhook_condition",
+    "IncomingWebhookConditionEquals": ".incoming_webhook_condition_equals",
     "IncomingWebhookGitSource": ".incoming_webhook_git_source",
     "IncomingWebhookRule": ".incoming_webhook_rule",
     "IncomingWebhookSandboxLifecycle": ".incoming_webhook_sandbox_lifecycle",
@@ -453,14 +515,48 @@ _dynamic_imports: typing.Dict[str, str] = {
     "IsloErrorCode": ".islo_error_code",
     "JobDeployRequest": ".job_deploy_request",
     "JobListItem": ".job_list_item",
+    "JobManifestInput": ".job_manifest_input",
+    "JobManifestOutput": ".job_manifest_output",
     "JobParamDefinition": ".job_param_definition",
     "JobParamMapping": ".job_param_mapping",
+    "JobParamMappingParts": ".job_param_mapping_parts",
+    "JobParamMappingSource": ".job_param_mapping_source",
+    "JobParamSpec": ".job_param_spec",
+    "JobParamSpecType": ".job_param_spec_type",
     "JobResponse": ".job_response",
     "JobRunResponse": ".job_run_response",
     "JobRunStatus": ".job_run_status",
     "JobRunStepTimelineEntry": ".job_run_step_timeline_entry",
     "JobScheduleResponse": ".job_schedule_response",
+    "JobSection": ".job_section",
     "JobVersionResponse": ".job_version_response",
+    "JsonPathCondition": ".json_path_condition",
+    "JsonPathConditionAll": ".json_path_condition_all",
+    "JsonPathConditionAny": ".json_path_condition_any",
+    "JsonPathConditionContains": ".json_path_condition_contains",
+    "JsonPathConditionEquals": ".json_path_condition_equals",
+    "JsonPathConditionExists": ".json_path_condition_exists",
+    "JsonPathConditionGreaterThan": ".json_path_condition_greater_than",
+    "JsonPathConditionGreaterThanOrEqual": ".json_path_condition_greater_than_or_equal",
+    "JsonPathConditionLessThan": ".json_path_condition_less_than",
+    "JsonPathConditionLessThanOrEqual": ".json_path_condition_less_than_or_equal",
+    "JsonPathConditionMatches": ".json_path_condition_matches",
+    "JsonPathConditionNot": ".json_path_condition_not",
+    "JsonPathConditionNotEquals": ".json_path_condition_not_equals",
+    "JsonPathConditionNotExists": ".json_path_condition_not_exists",
+    "JsonPathCondition_All": ".json_path_condition",
+    "JsonPathCondition_Any": ".json_path_condition",
+    "JsonPathCondition_Contains": ".json_path_condition",
+    "JsonPathCondition_Equals": ".json_path_condition",
+    "JsonPathCondition_Exists": ".json_path_condition",
+    "JsonPathCondition_GreaterThan": ".json_path_condition",
+    "JsonPathCondition_GreaterThanOrEqual": ".json_path_condition",
+    "JsonPathCondition_LessThan": ".json_path_condition",
+    "JsonPathCondition_LessThanOrEqual": ".json_path_condition",
+    "JsonPathCondition_Matches": ".json_path_condition",
+    "JsonPathCondition_Not": ".json_path_condition",
+    "JsonPathCondition_NotEquals": ".json_path_condition",
+    "JsonPathCondition_NotExists": ".json_path_condition",
     "JudgeContentFilter": ".judge_content_filter",
     "JudgeContentFilterDirection": ".judge_content_filter_direction",
     "JudgeContentFilterFallback": ".judge_content_filter_fallback",
@@ -476,6 +572,11 @@ _dynamic_imports: typing.Dict[str, str] = {
     "LegacyInitCapability": ".legacy_init_capability",
     "LifecyclePolicy": ".lifecycle_policy",
     "ListSessionsResponse": ".list_sessions_response",
+    "MappingPart": ".mapping_part",
+    "MappingPartLiteral": ".mapping_part_literal",
+    "MappingPartSource": ".mapping_part_source",
+    "MappingPart_Literal": ".mapping_part",
+    "MappingPart_Source": ".mapping_part",
     "PaginatedKnowledgeResponse": ".paginated_knowledge_response",
     "PaginatedSandboxResponse": ".paginated_sandbox_response",
     "PaginatedSnapshotResponse": ".paginated_snapshot_response",
@@ -487,8 +588,19 @@ _dynamic_imports: typing.Dict[str, str] = {
     "RegexContentFilterDirection": ".regex_content_filter_direction",
     "RegistryProvider": ".registry_provider",
     "RuleReorderItem": ".rule_reorder_item",
+    "RunSectionInput": ".run_section_input",
+    "RunSectionInputTimeout": ".run_section_input_timeout",
+    "RunSectionOutput": ".run_section_output",
+    "RunSectionOutputTimeout": ".run_section_output_timeout",
+    "SandboxConfig": ".sandbox_config",
+    "SandboxConfigInit": ".sandbox_config_init",
+    "SandboxConfigInit_Custom": ".sandbox_config_init",
+    "SandboxConfigInit_Full": ".sandbox_config_init",
+    "SandboxConfigInit_Minimal": ".sandbox_config_init",
+    "SandboxConfigMode": ".sandbox_config_mode",
     "SandboxInit": ".sandbox_init",
     "SandboxInitCustom": ".sandbox_init_custom",
+    "SandboxInitCustomCapabilitiesItem": ".sandbox_init_custom_capabilities_item",
     "SandboxInitFull": ".sandbox_init_full",
     "SandboxInitMinimal": ".sandbox_init_minimal",
     "SandboxInit_Custom": ".sandbox_init",
@@ -497,6 +609,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SandboxResponse": ".sandbox_response",
     "SandboxResult": ".sandbox_result",
     "SandboxSpec": ".sandbox_spec",
+    "ScheduleSection": ".schedule_section",
     "SessionInfo": ".session_info",
     "SessionStatus": ".session_status",
     "SetupScript": ".setup_script",
@@ -517,6 +630,11 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SizeLimitContentFilterDirection": ".size_limit_content_filter_direction",
     "SnapshotResponse": ".snapshot_response",
     "SnapshotResult": ".snapshot_result",
+    "SnapshotStepAction": ".snapshot_step_action",
+    "TaskInput": ".task_input",
+    "TaskOutput": ".task_output",
+    "TaskStep": ".task_step",
+    "TaskStepExec": ".task_step_exec",
     "TenantRegionsResponse": ".tenant_regions_response",
     "TimestampCheck": ".timestamp_check",
     "ValidationError": ".validation_error",
@@ -536,6 +654,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ValueSource_Path": ".value_source",
     "ValueSource_Query": ".value_source",
     "ValueSource_RawBody": ".value_source",
+    "VerificationGate": ".verification_gate",
+    "VerificationSection": ".verification_section",
 }
 
 
@@ -710,6 +830,7 @@ __all__ = [
     "IncomingWebhookAuthZeroAuthType",
     "IncomingWebhookAutoResumePolicy",
     "IncomingWebhookCondition",
+    "IncomingWebhookConditionEquals",
     "IncomingWebhookGitSource",
     "IncomingWebhookRule",
     "IncomingWebhookSandboxLifecycle",
@@ -737,14 +858,48 @@ __all__ = [
     "IsloErrorCode",
     "JobDeployRequest",
     "JobListItem",
+    "JobManifestInput",
+    "JobManifestOutput",
     "JobParamDefinition",
     "JobParamMapping",
+    "JobParamMappingParts",
+    "JobParamMappingSource",
+    "JobParamSpec",
+    "JobParamSpecType",
     "JobResponse",
     "JobRunResponse",
     "JobRunStatus",
     "JobRunStepTimelineEntry",
     "JobScheduleResponse",
+    "JobSection",
     "JobVersionResponse",
+    "JsonPathCondition",
+    "JsonPathConditionAll",
+    "JsonPathConditionAny",
+    "JsonPathConditionContains",
+    "JsonPathConditionEquals",
+    "JsonPathConditionExists",
+    "JsonPathConditionGreaterThan",
+    "JsonPathConditionGreaterThanOrEqual",
+    "JsonPathConditionLessThan",
+    "JsonPathConditionLessThanOrEqual",
+    "JsonPathConditionMatches",
+    "JsonPathConditionNot",
+    "JsonPathConditionNotEquals",
+    "JsonPathConditionNotExists",
+    "JsonPathCondition_All",
+    "JsonPathCondition_Any",
+    "JsonPathCondition_Contains",
+    "JsonPathCondition_Equals",
+    "JsonPathCondition_Exists",
+    "JsonPathCondition_GreaterThan",
+    "JsonPathCondition_GreaterThanOrEqual",
+    "JsonPathCondition_LessThan",
+    "JsonPathCondition_LessThanOrEqual",
+    "JsonPathCondition_Matches",
+    "JsonPathCondition_Not",
+    "JsonPathCondition_NotEquals",
+    "JsonPathCondition_NotExists",
     "JudgeContentFilter",
     "JudgeContentFilterDirection",
     "JudgeContentFilterFallback",
@@ -760,6 +915,11 @@ __all__ = [
     "LegacyInitCapability",
     "LifecyclePolicy",
     "ListSessionsResponse",
+    "MappingPart",
+    "MappingPartLiteral",
+    "MappingPartSource",
+    "MappingPart_Literal",
+    "MappingPart_Source",
     "PaginatedKnowledgeResponse",
     "PaginatedSandboxResponse",
     "PaginatedSnapshotResponse",
@@ -771,8 +931,19 @@ __all__ = [
     "RegexContentFilterDirection",
     "RegistryProvider",
     "RuleReorderItem",
+    "RunSectionInput",
+    "RunSectionInputTimeout",
+    "RunSectionOutput",
+    "RunSectionOutputTimeout",
+    "SandboxConfig",
+    "SandboxConfigInit",
+    "SandboxConfigInit_Custom",
+    "SandboxConfigInit_Full",
+    "SandboxConfigInit_Minimal",
+    "SandboxConfigMode",
     "SandboxInit",
     "SandboxInitCustom",
+    "SandboxInitCustomCapabilitiesItem",
     "SandboxInitFull",
     "SandboxInitMinimal",
     "SandboxInit_Custom",
@@ -781,6 +952,7 @@ __all__ = [
     "SandboxResponse",
     "SandboxResult",
     "SandboxSpec",
+    "ScheduleSection",
     "SessionInfo",
     "SessionStatus",
     "SetupScript",
@@ -801,6 +973,11 @@ __all__ = [
     "SizeLimitContentFilterDirection",
     "SnapshotResponse",
     "SnapshotResult",
+    "SnapshotStepAction",
+    "TaskInput",
+    "TaskOutput",
+    "TaskStep",
+    "TaskStepExec",
     "TenantRegionsResponse",
     "TimestampCheck",
     "ValidationError",
@@ -820,4 +997,6 @@ __all__ = [
     "ValueSource_Path",
     "ValueSource_Query",
     "ValueSource_RawBody",
+    "VerificationGate",
+    "VerificationSection",
 ]

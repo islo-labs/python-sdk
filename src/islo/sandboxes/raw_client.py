@@ -153,7 +153,7 @@ class RawSandboxesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[SandboxResponse]:
         """
-        Create a new sandbox for the authenticated tenant.
+        Create a new sandbox VM with the requested resources.
 
         Parameters
         ----------
@@ -1541,7 +1541,7 @@ class AsyncRawSandboxesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[SandboxResponse]:
         """
-        Create a new sandbox for the authenticated tenant.
+        Create a new sandbox VM with the requested resources.
 
         Parameters
         ----------

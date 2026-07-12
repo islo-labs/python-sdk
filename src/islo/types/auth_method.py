@@ -2,4 +2,37 @@
 
 import typing
 
-AuthMethod = typing.Union[typing.Literal["oauth", "api_key"], typing.Any]
+from ..core import enum
+
+T_Result = typing.TypeVar("T_Result")
+
+
+class AuthMethod(enum.StrEnum):
+    """
+    Authentication method supported by an integration.
+    """
+
+    OAUTH = "oauth"
+    API_KEY = "api_key"
+    _UNKNOWN = "__AUTHMETHOD_UNKNOWN__"
+    """
+    This member is used for forward compatibility. If the value is not recognized by the enum, it will be stored here, and the raw value is accessible through `.value`.
+    """
+
+    @classmethod
+    def _missing_(cls, value: typing.Any) -> "AuthMethod":
+        unknown = cls._UNKNOWN
+        unknown._value_ = value
+        return unknown
+
+    def visit(
+        self,
+        oauth: typing.Callable[[], T_Result],
+        api_key: typing.Callable[[], T_Result],
+        _unknown_member: typing.Callable[[str], T_Result],
+    ) -> T_Result:
+        if self is AuthMethod.OAUTH:
+            return oauth()
+        if self is AuthMethod.API_KEY:
+            return api_key()
+        return _unknown_member(self._value_)

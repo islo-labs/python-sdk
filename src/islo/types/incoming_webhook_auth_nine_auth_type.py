@@ -2,4 +2,27 @@
 
 import typing
 
-IncomingWebhookAuthNineAuthType = typing.Union[typing.Literal["ip_allowlist"], typing.Any]
+from ..core import enum
+
+T_Result = typing.TypeVar("T_Result")
+
+
+class IncomingWebhookAuthNineAuthType(enum.StrEnum):
+    IP_ALLOWLIST = "ip_allowlist"
+    _UNKNOWN = "__INCOMINGWEBHOOKAUTHNINEAUTHTYPE_UNKNOWN__"
+    """
+    This member is used for forward compatibility. If the value is not recognized by the enum, it will be stored here, and the raw value is accessible through `.value`.
+    """
+
+    @classmethod
+    def _missing_(cls, value: typing.Any) -> "IncomingWebhookAuthNineAuthType":
+        unknown = cls._UNKNOWN
+        unknown._value_ = value
+        return unknown
+
+    def visit(
+        self, ip_allowlist: typing.Callable[[], T_Result], _unknown_member: typing.Callable[[str], T_Result]
+    ) -> T_Result:
+        if self is IncomingWebhookAuthNineAuthType.IP_ALLOWLIST:
+            return ip_allowlist()
+        return _unknown_member(self._value_)

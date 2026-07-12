@@ -8,7 +8,7 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 class ExecResultResponse(UniversalBaseModel):
     """
-    Response from exec result query
+    Captured async exec result response.
     """
 
     exec_id: str

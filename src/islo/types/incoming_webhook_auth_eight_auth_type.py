@@ -2,4 +2,25 @@
 
 import typing
 
-IncomingWebhookAuthEightAuthType = typing.Union[typing.Literal["jwt"], typing.Any]
+from ..core import enum
+
+T_Result = typing.TypeVar("T_Result")
+
+
+class IncomingWebhookAuthEightAuthType(enum.StrEnum):
+    JWT = "jwt"
+    _UNKNOWN = "__INCOMINGWEBHOOKAUTHEIGHTAUTHTYPE_UNKNOWN__"
+    """
+    This member is used for forward compatibility. If the value is not recognized by the enum, it will be stored here, and the raw value is accessible through `.value`.
+    """
+
+    @classmethod
+    def _missing_(cls, value: typing.Any) -> "IncomingWebhookAuthEightAuthType":
+        unknown = cls._UNKNOWN
+        unknown._value_ = value
+        return unknown
+
+    def visit(self, jwt: typing.Callable[[], T_Result], _unknown_member: typing.Callable[[str], T_Result]) -> T_Result:
+        if self is IncomingWebhookAuthEightAuthType.JWT:
+            return jwt()
+        return _unknown_member(self._value_)

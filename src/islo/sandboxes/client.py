@@ -127,7 +127,7 @@ class SandboxesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SandboxResponse:
         """
-        Create a new sandbox for the authenticated tenant.
+        Create a new sandbox VM with the requested resources.
 
         Parameters
         ----------
@@ -922,7 +922,7 @@ class AsyncSandboxesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SandboxResponse:
         """
-        Create a new sandbox for the authenticated tenant.
+        Create a new sandbox VM with the requested resources.
 
         Parameters
         ----------
