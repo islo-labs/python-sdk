@@ -1,5 +1,7 @@
 """Tests for generated Pydantic types."""
 
+from datetime import UTC, datetime
+
 from islo.types import (
     ErrorResponse,
     SandboxResponse,
@@ -47,9 +49,11 @@ class TestSandboxResponse:
             status="running",
             image="ubuntu:22.04",
             created_at="2026-05-28T00:00:00Z",
+            deleted_at="2026-05-29T00:00:00Z",
             spec=SandboxSpec(vcpus=2, memory_mb=4096, disk_gb=10),
         )
         assert sandbox.name == "test-sandbox"
         assert sandbox.status == "running"
         assert sandbox.spec.vcpus == 2
-        assert sandbox.created_at == "2026-05-28T00:00:00Z"
+        assert sandbox.created_at == datetime(2026, 5, 28, tzinfo=UTC)
+        assert sandbox.deleted_at == datetime(2026, 5, 29, tzinfo=UTC)
