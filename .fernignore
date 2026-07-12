@@ -20,12 +20,8 @@ tests/
 # publishes to PyPI via Trusted Publishing, and pushes the v<version> tag.
 .github/workflows/release.yml
 
-# Own toolchain. Fern's Python generator emits a Poetry-flavored project
-# (pyproject.toml [build-system] = poetry-core, ci.yml runs poetry publish).
-# We want uv as the actual toolchain, so we keep these under our control
-# and tell Fern to leave them alone on every regen.
-pyproject.toml
-uv.lock
+# CI stays under our control; package metadata is generated so Fern's SDK
+# version bump reaches pyproject.toml and uv.lock automatically.
 .github/workflows/ci.yml
 
 # Project's .gitignore — Fern would otherwise rewrite it (drops our entries
