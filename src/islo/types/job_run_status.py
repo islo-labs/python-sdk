@@ -2,4 +2,45 @@
 
 import typing
 
-JobRunStatus = typing.Union[typing.Literal["pending", "running", "succeeded", "failed", "cancelled"], typing.Any]
+from ..core import enum
+
+T_Result = typing.TypeVar("T_Result")
+
+
+class JobRunStatus(enum.StrEnum):
+    PENDING = "pending"
+    RUNNING = "running"
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+    _UNKNOWN = "__JOBRUNSTATUS_UNKNOWN__"
+    """
+    This member is used for forward compatibility. If the value is not recognized by the enum, it will be stored here, and the raw value is accessible through `.value`.
+    """
+
+    @classmethod
+    def _missing_(cls, value: typing.Any) -> "JobRunStatus":
+        unknown = cls._UNKNOWN
+        unknown._value_ = value
+        return unknown
+
+    def visit(
+        self,
+        pending: typing.Callable[[], T_Result],
+        running: typing.Callable[[], T_Result],
+        succeeded: typing.Callable[[], T_Result],
+        failed: typing.Callable[[], T_Result],
+        cancelled: typing.Callable[[], T_Result],
+        _unknown_member: typing.Callable[[str], T_Result],
+    ) -> T_Result:
+        if self is JobRunStatus.PENDING:
+            return pending()
+        if self is JobRunStatus.RUNNING:
+            return running()
+        if self is JobRunStatus.SUCCEEDED:
+            return succeeded()
+        if self is JobRunStatus.FAILED:
+            return failed()
+        if self is JobRunStatus.CANCELLED:
+            return cancelled()
+        return _unknown_member(self._value_)

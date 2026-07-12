@@ -2,4 +2,25 @@
 
 import typing
 
-IncomingWebhookAuthOneAuthType = typing.Union[typing.Literal["all"], typing.Any]
+from ..core import enum
+
+T_Result = typing.TypeVar("T_Result")
+
+
+class IncomingWebhookAuthOneAuthType(enum.StrEnum):
+    ALL = "all"
+    _UNKNOWN = "__INCOMINGWEBHOOKAUTHONEAUTHTYPE_UNKNOWN__"
+    """
+    This member is used for forward compatibility. If the value is not recognized by the enum, it will be stored here, and the raw value is accessible through `.value`.
+    """
+
+    @classmethod
+    def _missing_(cls, value: typing.Any) -> "IncomingWebhookAuthOneAuthType":
+        unknown = cls._UNKNOWN
+        unknown._value_ = value
+        return unknown
+
+    def visit(self, all_: typing.Callable[[], T_Result], _unknown_member: typing.Callable[[str], T_Result]) -> T_Result:
+        if self is IncomingWebhookAuthOneAuthType.ALL:
+            return all_()
+        return _unknown_member(self._value_)

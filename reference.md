@@ -2655,7 +2655,7 @@ client.container_registries.update_container_registry(
 <dd>
 
 ```python
-from islo import Islo
+from islo import Islo, JobManifestInput, JobSection, RunSectionInput, TaskInput, TaskStep
 from islo.environment import IsloEnvironment
 
 client = Islo(
@@ -2665,9 +2665,21 @@ client = Islo(
 
 client.jobs.validate_job_manifest(
     name="name",
-    manifest={
-        "key": "value"
-    },
+    manifest=JobManifestInput(
+        job=JobSection(
+            name="name",
+        ),
+        run=RunSectionInput(
+            tasks=[
+                TaskInput(
+                    name="name",
+                    steps=[
+                        TaskStep()
+                    ],
+                )
+            ],
+        ),
+    ),
 )
 
 ```
@@ -2725,7 +2737,7 @@ client.jobs.validate_job_manifest(
 <dd>
 
 ```python
-from islo import Islo
+from islo import Islo, JobManifestInput, JobSection, RunSectionInput, TaskInput, TaskStep
 from islo.environment import IsloEnvironment
 
 client = Islo(
@@ -2735,9 +2747,21 @@ client = Islo(
 
 client.jobs.deploy_job(
     name="name",
-    manifest={
-        "key": "value"
-    },
+    manifest=JobManifestInput(
+        job=JobSection(
+            name="name",
+        ),
+        run=RunSectionInput(
+            tasks=[
+                TaskInput(
+                    name="name",
+                    steps=[
+                        TaskStep()
+                    ],
+                )
+            ],
+        ),
+    ),
 )
 
 ```
@@ -2804,6 +2828,65 @@ client = Islo(
 )
 
 client.jobs.get_job(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">delete_job</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.jobs.delete_job(
     name="name",
 )
 
@@ -3726,7 +3809,7 @@ client.sandboxes.list_sandboxes()
 <dl>
 <dd>
 
-Create a new sandbox for the authenticated tenant.
+Create a new sandbox VM with the requested resources.
 </dd>
 </dl>
 </dd>

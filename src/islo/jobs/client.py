@@ -5,6 +5,7 @@ import typing
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
 from ..types.job_list_item import JobListItem
+from ..types.job_manifest_input import JobManifestInput
 from ..types.job_response import JobResponse
 from ..types.job_run_response import JobRunResponse
 from ..types.job_schedule_response import JobScheduleResponse
@@ -31,19 +32,15 @@ class JobsClient:
         return self._raw_client
 
     def validate_job_manifest(
-        self,
-        name: str,
-        *,
-        manifest: typing.Dict[str, typing.Any],
-        request_options: typing.Optional[RequestOptions] = None,
+        self, name: str, *, manifest: JobManifestInput, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
         Parameters
         ----------
         name : str
 
-        manifest : typing.Dict[str, typing.Any]
-            Parsed job.toml content as JSON object
+        manifest : JobManifestInput
+            Job manifest (authored as TOML or JSON, stored as JSON)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -54,7 +51,14 @@ class JobsClient:
 
         Examples
         --------
-        from islo import Islo
+        from islo import (
+            Islo,
+            JobManifestInput,
+            JobSection,
+            RunSectionInput,
+            TaskInput,
+            TaskStep,
+        )
         from islo.environment import IsloEnvironment
 
         client = Islo(
@@ -63,26 +67,34 @@ class JobsClient:
         )
         client.jobs.validate_job_manifest(
             name="name",
-            manifest={"key": "value"},
+            manifest=JobManifestInput(
+                job=JobSection(
+                    name="name",
+                ),
+                run=RunSectionInput(
+                    tasks=[
+                        TaskInput(
+                            name="name",
+                            steps=[TaskStep()],
+                        )
+                    ],
+                ),
+            ),
         )
         """
         _response = self._raw_client.validate_job_manifest(name, manifest=manifest, request_options=request_options)
         return _response.data
 
     def deploy_job(
-        self,
-        name: str,
-        *,
-        manifest: typing.Dict[str, typing.Any],
-        request_options: typing.Optional[RequestOptions] = None,
+        self, name: str, *, manifest: JobManifestInput, request_options: typing.Optional[RequestOptions] = None
     ) -> JobVersionResponse:
         """
         Parameters
         ----------
         name : str
 
-        manifest : typing.Dict[str, typing.Any]
-            Parsed job.toml content as JSON object
+        manifest : JobManifestInput
+            Job manifest (authored as TOML or JSON, stored as JSON)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -94,7 +106,14 @@ class JobsClient:
 
         Examples
         --------
-        from islo import Islo
+        from islo import (
+            Islo,
+            JobManifestInput,
+            JobSection,
+            RunSectionInput,
+            TaskInput,
+            TaskStep,
+        )
         from islo.environment import IsloEnvironment
 
         client = Islo(
@@ -103,7 +122,19 @@ class JobsClient:
         )
         client.jobs.deploy_job(
             name="name",
-            manifest={"key": "value"},
+            manifest=JobManifestInput(
+                job=JobSection(
+                    name="name",
+                ),
+                run=RunSectionInput(
+                    tasks=[
+                        TaskInput(
+                            name="name",
+                            steps=[TaskStep()],
+                        )
+                    ],
+                ),
+            ),
         )
         """
         _response = self._raw_client.deploy_job(name, manifest=manifest, request_options=request_options)
@@ -137,6 +168,35 @@ class JobsClient:
         )
         """
         _response = self._raw_client.get_job(name, request_options=request_options)
+        return _response.data
+
+    def delete_job(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.jobs.delete_job(
+            name="name",
+        )
+        """
+        _response = self._raw_client.delete_job(name, request_options=request_options)
         return _response.data
 
     def list_jobs(
@@ -456,19 +516,15 @@ class AsyncJobsClient:
         return self._raw_client
 
     async def validate_job_manifest(
-        self,
-        name: str,
-        *,
-        manifest: typing.Dict[str, typing.Any],
-        request_options: typing.Optional[RequestOptions] = None,
+        self, name: str, *, manifest: JobManifestInput, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
         Parameters
         ----------
         name : str
 
-        manifest : typing.Dict[str, typing.Any]
-            Parsed job.toml content as JSON object
+        manifest : JobManifestInput
+            Job manifest (authored as TOML or JSON, stored as JSON)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -481,7 +537,14 @@ class AsyncJobsClient:
         --------
         import asyncio
 
-        from islo import AsyncIslo
+        from islo import (
+            AsyncIslo,
+            JobManifestInput,
+            JobSection,
+            RunSectionInput,
+            TaskInput,
+            TaskStep,
+        )
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
@@ -493,7 +556,19 @@ class AsyncJobsClient:
         async def main() -> None:
             await client.jobs.validate_job_manifest(
                 name="name",
-                manifest={"key": "value"},
+                manifest=JobManifestInput(
+                    job=JobSection(
+                        name="name",
+                    ),
+                    run=RunSectionInput(
+                        tasks=[
+                            TaskInput(
+                                name="name",
+                                steps=[TaskStep()],
+                            )
+                        ],
+                    ),
+                ),
             )
 
 
@@ -505,19 +580,15 @@ class AsyncJobsClient:
         return _response.data
 
     async def deploy_job(
-        self,
-        name: str,
-        *,
-        manifest: typing.Dict[str, typing.Any],
-        request_options: typing.Optional[RequestOptions] = None,
+        self, name: str, *, manifest: JobManifestInput, request_options: typing.Optional[RequestOptions] = None
     ) -> JobVersionResponse:
         """
         Parameters
         ----------
         name : str
 
-        manifest : typing.Dict[str, typing.Any]
-            Parsed job.toml content as JSON object
+        manifest : JobManifestInput
+            Job manifest (authored as TOML or JSON, stored as JSON)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -531,7 +602,14 @@ class AsyncJobsClient:
         --------
         import asyncio
 
-        from islo import AsyncIslo
+        from islo import (
+            AsyncIslo,
+            JobManifestInput,
+            JobSection,
+            RunSectionInput,
+            TaskInput,
+            TaskStep,
+        )
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
@@ -543,7 +621,19 @@ class AsyncJobsClient:
         async def main() -> None:
             await client.jobs.deploy_job(
                 name="name",
-                manifest={"key": "value"},
+                manifest=JobManifestInput(
+                    job=JobSection(
+                        name="name",
+                    ),
+                    run=RunSectionInput(
+                        tasks=[
+                            TaskInput(
+                                name="name",
+                                steps=[TaskStep()],
+                            )
+                        ],
+                    ),
+                ),
             )
 
 
@@ -588,6 +678,43 @@ class AsyncJobsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.get_job(name, request_options=request_options)
+        return _response.data
+
+    async def delete_job(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.jobs.delete_job(
+                name="name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.delete_job(name, request_options=request_options)
         return _response.data
 
     async def list_jobs(

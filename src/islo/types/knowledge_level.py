@@ -2,4 +2,37 @@
 
 import typing
 
-KnowledgeLevel = typing.Union[typing.Literal["episodic", "procedural", "declarative"], typing.Any]
+from ..core import enum
+
+T_Result = typing.TypeVar("T_Result")
+
+
+class KnowledgeLevel(enum.StrEnum):
+    EPISODIC = "episodic"
+    PROCEDURAL = "procedural"
+    DECLARATIVE = "declarative"
+    _UNKNOWN = "__KNOWLEDGELEVEL_UNKNOWN__"
+    """
+    This member is used for forward compatibility. If the value is not recognized by the enum, it will be stored here, and the raw value is accessible through `.value`.
+    """
+
+    @classmethod
+    def _missing_(cls, value: typing.Any) -> "KnowledgeLevel":
+        unknown = cls._UNKNOWN
+        unknown._value_ = value
+        return unknown
+
+    def visit(
+        self,
+        episodic: typing.Callable[[], T_Result],
+        procedural: typing.Callable[[], T_Result],
+        declarative: typing.Callable[[], T_Result],
+        _unknown_member: typing.Callable[[str], T_Result],
+    ) -> T_Result:
+        if self is KnowledgeLevel.EPISODIC:
+            return episodic()
+        if self is KnowledgeLevel.PROCEDURAL:
+            return procedural()
+        if self is KnowledgeLevel.DECLARATIVE:
+            return declarative()
+        return _unknown_member(self._value_)

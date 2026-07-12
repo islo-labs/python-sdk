@@ -102,6 +102,7 @@ class WebhooksClient:
         from islo import (
             IdempotencyConfig_Header,
             IncomingWebhookAuthZero,
+            IncomingWebhookAuthZeroAuthType,
             IncomingWebhookTarget_FixedSandboxName,
             Islo,
         )
@@ -113,7 +114,7 @@ class WebhooksClient:
         )
         client.webhooks.create_incoming_webhook(
             auth=IncomingWebhookAuthZero(
-                auth_type="none",
+                auth_type=IncomingWebhookAuthZeroAuthType.NONE,
             ),
             idempotency=IdempotencyConfig_Header(
                 name="name",
@@ -367,6 +368,7 @@ class AsyncWebhooksClient:
             AsyncIslo,
             IdempotencyConfig_Header,
             IncomingWebhookAuthZero,
+            IncomingWebhookAuthZeroAuthType,
             IncomingWebhookTarget_FixedSandboxName,
         )
         from islo.environment import IsloEnvironment
@@ -380,7 +382,7 @@ class AsyncWebhooksClient:
         async def main() -> None:
             await client.webhooks.create_incoming_webhook(
                 auth=IncomingWebhookAuthZero(
-                    auth_type="none",
+                    auth_type=IncomingWebhookAuthZeroAuthType.NONE,
                 ),
                 idempotency=IdempotencyConfig_Header(
                     name="name",
