@@ -20,9 +20,12 @@ tests/
 # publishes to PyPI via Trusted Publishing, and pushes the v<version> tag.
 .github/workflows/release.yml
 
-# CI stays under our control; package metadata is generated so Fern's SDK
-# version bump reaches pyproject.toml and uv.lock automatically.
+# Own package tooling. Fern's Python generator still rewrites pyproject.toml to
+# a Poetry layout and deletes uv.lock, so keep these under SDK repo control.
+pyproject.toml
+uv.lock
 .github/workflows/ci.yml
+.github/workflows/sync-fern-version.yml
 
 # Project's .gitignore — Fern would otherwise rewrite it (drops our entries
 # for poetry.lock, requirements.txt, .astro/, node_modules/, .DS_Store).

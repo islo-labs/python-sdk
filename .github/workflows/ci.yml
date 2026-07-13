@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
   pull_request:
@@ -19,6 +20,7 @@ jobs:
         with:
           version: "latest"
           enable-cache: true
+      - run: python scripts/sync_fern_version.py --check
       - run: uv sync --dev
       - run: uv run ruff check .
       - run: uv run ruff format --check .
