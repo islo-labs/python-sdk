@@ -25,6 +25,7 @@ tests/
 pyproject.toml
 uv.lock
 .github/workflows/ci.yml
+.github/workflows/sync-fern-version.yml
 
 # Project's .gitignore — Fern would otherwise rewrite it (drops our entries
 # for poetry.lock, requirements.txt, .astro/, node_modules/, .DS_Store).
