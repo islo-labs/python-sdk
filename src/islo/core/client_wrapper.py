@@ -28,12 +28,12 @@ class BaseClientWrapper:
         import platform
 
         headers: typing.Dict[str, str] = {
-            "User-Agent": "islo/0.3.11",
+            "User-Agent": "islo/0.3.12",
             "X-Fern-Language": "Python",
             "X-Fern-Runtime": f"python/{platform.python_version()}",
             "X-Fern-Platform": f"{platform.system().lower()}/{platform.release()}",
             "X-Fern-SDK-Name": "islo",
-            "X-Fern-SDK-Version": "0.3.11",
+            "X-Fern-SDK-Version": "0.3.12",
             **(self.get_custom_headers() or {}),
         }
         api_key = self._get_api_key()

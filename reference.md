@@ -4207,6 +4207,79 @@ client.sandboxes.delete_sandbox(
 </dl>
 </details>
 
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">sandbox_creation_events</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Server-sent events for live sandbox creation progress.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.sandbox_creation_events(
+    sandbox_name="sandbox_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">exec_in_sandbox</a>(...) -> ExecResponse</code></summary>
 <dl>
 <dd>
@@ -4271,7 +4344,7 @@ client.sandboxes.exec_in_sandbox(
 <dl>
 <dd>
 
-**command:** `typing.List[str]` — Command to execute.
+**request:** `ExecRequest` 
     
 </dd>
 </dl>
@@ -4279,7 +4352,75 @@ client.sandboxes.exec_in_sandbox(
 <dl>
 <dd>
 
-**env:** `typing.Optional[typing.Dict[str, typing.Optional[str]]]` — Environment variables to inject into this execution session.
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">exec_in_sandbox_stream</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Stream command stdout, stderr, and exit events as Server-Sent Events.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandboxes.exec_in_sandbox_stream(
+    sandbox_name="sandbox_name",
+    command=[
+        "command"
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sandbox_name:** `str` — Sandbox name
     
 </dd>
 </dl>
@@ -4287,23 +4428,7 @@ client.sandboxes.exec_in_sandbox(
 <dl>
 <dd>
 
-**timeout_secs:** `typing.Optional[int]` — Optional client-side timeout hint. Currently accepted for API compatibility.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**user:** `typing.Optional[str]` — User to run the command as (e.g., "islo"). If not provided, uses image default.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**workdir:** `typing.Optional[str]` — Working directory for command execution inside the sandbox.
+**request:** `ExecRequest` 
     
 </dd>
 </dl>
@@ -4405,7 +4530,7 @@ client.sandboxes.get_exec_result(
 </dl>
 </details>
 
-<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">download_file</a>(...)</code></summary>
+<details><summary><code>client.sandboxes.<a href="src/islo/sandboxes/client.py">download_file</a>(...) -> typing.Iterator[bytes]</code></summary>
 <dl>
 <dd>
 
@@ -4525,6 +4650,7 @@ client = Islo(
 client.sandboxes.upload_file(
     sandbox_name="sandbox_name",
     path="path",
+    file="example_file",
 )
 
 ```
@@ -4550,6 +4676,14 @@ client.sandboxes.upload_file(
 <dd>
 
 **path:** `str` — Destination path inside the sandbox
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `core.File` 
     
 </dd>
 </dl>
@@ -4689,6 +4823,7 @@ client = Islo(
 client.sandboxes.upload_archive(
     sandbox_name="sandbox_name",
     path="path",
+    file="example_file",
 )
 
 ```
@@ -4714,6 +4849,14 @@ client.sandboxes.upload_archive(
 <dd>
 
 **path:** `str` — Destination directory inside the sandbox
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `core.File` 
     
 </dd>
 </dl>
@@ -6218,6 +6361,201 @@ client.webhooks.update_incoming_webhook(
 <dd>
 
 **target:** `typing.Optional[IncomingWebhookTarget]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.webhooks.<a href="src/islo/webhooks/client.py">list_webhook_deliveries</a>(...) -> typing.List[WebhookDeliverySummary]</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List delivery events for an incoming webhook, with optional status and date filters.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.webhooks.list_webhook_deliveries(
+    webhook_id="webhook_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**webhook_id:** `str` — Incoming webhook ID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[IngressEventStatus]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**from:** `typing.Optional[datetime.datetime]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**to:** `typing.Optional[datetime.datetime]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.webhooks.<a href="src/islo/webhooks/client.py">get_webhook_delivery</a>(...) -> WebhookDeliveryDetail</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get full detail for a single webhook delivery event, including a truncated body preview and action attempts.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.webhooks.get_webhook_delivery(
+    webhook_id="webhook_id",
+    event_id="event_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**webhook_id:** `str` — Incoming webhook ID
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**event_id:** `str` — Delivery event ID
     
 </dd>
 </dl>
