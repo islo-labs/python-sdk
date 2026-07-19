@@ -73,6 +73,7 @@ if typing.TYPE_CHECKING:
     from .empty_result import EmptyResult
     from .error_code import ErrorCode
     from .error_response import ErrorResponse
+    from .exec_request import ExecRequest
     from .exec_response import ExecResponse
     from .exec_result import ExecResult
     from .exec_result_response import ExecResultResponse
@@ -188,6 +189,8 @@ if typing.TYPE_CHECKING:
     from .inference_model_catalog_entry import InferenceModelCatalogEntry
     from .inference_models_response import InferenceModelsResponse
     from .inference_provider import InferenceProvider
+    from .ingress_action_status import IngressActionStatus
+    from .ingress_event_status import IngressEventStatus
     from .init_capability import InitCapability
     from .integration_detail_response import IntegrationDetailResponse
     from .integration_level import IntegrationLevel
@@ -284,6 +287,7 @@ if typing.TYPE_CHECKING:
         SandboxConfigInit_Minimal,
     )
     from .sandbox_config_mode import SandboxConfigMode
+    from .sandbox_file_upload_form import SandboxFileUploadForm
     from .sandbox_init import SandboxInit, SandboxInit_Custom, SandboxInit_Full, SandboxInit_Minimal
     from .sandbox_init_custom import SandboxInitCustom
     from .sandbox_init_custom_capabilities_item import SandboxInitCustomCapabilitiesItem
@@ -337,6 +341,9 @@ if typing.TYPE_CHECKING:
     from .value_source_raw_body import ValueSourceRawBody
     from .verification_gate import VerificationGate
     from .verification_section import VerificationSection
+    from .webhook_action_attempt import WebhookActionAttempt
+    from .webhook_delivery_detail import WebhookDeliveryDetail
+    from .webhook_delivery_summary import WebhookDeliverySummary
 _dynamic_imports: typing.Dict[str, str] = {
     "AllIntegrationsPolicy": ".all_integrations_policy",
     "AuthMethod": ".auth_method",
@@ -401,6 +408,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "EmptyResult": ".empty_result",
     "ErrorCode": ".error_code",
     "ErrorResponse": ".error_response",
+    "ExecRequest": ".exec_request",
     "ExecResponse": ".exec_response",
     "ExecResult": ".exec_result",
     "ExecResultResponse": ".exec_result_response",
@@ -504,6 +512,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "InferenceModelCatalogEntry": ".inference_model_catalog_entry",
     "InferenceModelsResponse": ".inference_models_response",
     "InferenceProvider": ".inference_provider",
+    "IngressActionStatus": ".ingress_action_status",
+    "IngressEventStatus": ".ingress_event_status",
     "InitCapability": ".init_capability",
     "IntegrationDetailResponse": ".integration_detail_response",
     "IntegrationLevel": ".integration_level",
@@ -598,6 +608,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SandboxConfigInit_Full": ".sandbox_config_init",
     "SandboxConfigInit_Minimal": ".sandbox_config_init",
     "SandboxConfigMode": ".sandbox_config_mode",
+    "SandboxFileUploadForm": ".sandbox_file_upload_form",
     "SandboxInit": ".sandbox_init",
     "SandboxInitCustom": ".sandbox_init_custom",
     "SandboxInitCustomCapabilitiesItem": ".sandbox_init_custom_capabilities_item",
@@ -656,6 +667,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ValueSource_RawBody": ".value_source",
     "VerificationGate": ".verification_gate",
     "VerificationSection": ".verification_section",
+    "WebhookActionAttempt": ".webhook_action_attempt",
+    "WebhookDeliveryDetail": ".webhook_delivery_detail",
+    "WebhookDeliverySummary": ".webhook_delivery_summary",
 }
 
 
@@ -744,6 +758,7 @@ __all__ = [
     "EmptyResult",
     "ErrorCode",
     "ErrorResponse",
+    "ExecRequest",
     "ExecResponse",
     "ExecResult",
     "ExecResultResponse",
@@ -847,6 +862,8 @@ __all__ = [
     "InferenceModelCatalogEntry",
     "InferenceModelsResponse",
     "InferenceProvider",
+    "IngressActionStatus",
+    "IngressEventStatus",
     "InitCapability",
     "IntegrationDetailResponse",
     "IntegrationLevel",
@@ -941,6 +958,7 @@ __all__ = [
     "SandboxConfigInit_Full",
     "SandboxConfigInit_Minimal",
     "SandboxConfigMode",
+    "SandboxFileUploadForm",
     "SandboxInit",
     "SandboxInitCustom",
     "SandboxInitCustomCapabilitiesItem",
@@ -999,4 +1017,7 @@ __all__ = [
     "ValueSource_RawBody",
     "VerificationGate",
     "VerificationSection",
+    "WebhookActionAttempt",
+    "WebhookDeliveryDetail",
+    "WebhookDeliverySummary",
 ]

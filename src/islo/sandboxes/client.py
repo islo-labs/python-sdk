@@ -2,6 +2,7 @@
 
 import typing
 
+from .. import core
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
 from ..types.create_session_response import CreateSessionResponse
@@ -302,6 +303,40 @@ class SandboxesClient:
         _response = self._raw_client.delete_sandbox(sandbox_name, request_options=request_options)
         return _response.data
 
+    def sandbox_creation_events(
+        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Server-sent events for live sandbox creation progress.
+
+        Parameters
+        ----------
+        sandbox_name : str
+            Sandbox name
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.sandboxes.sandbox_creation_events(
+            sandbox_name="sandbox_name",
+        )
+        """
+        _response = self._raw_client.sandbox_creation_events(sandbox_name, request_options=request_options)
+        return _response.data
+
     def exec_in_sandbox(
         self,
         sandbox_name: str,
@@ -369,6 +404,72 @@ class SandboxesClient:
         )
         return _response.data
 
+    def exec_in_sandbox_stream(
+        self,
+        sandbox_name: str,
+        *,
+        command: typing.Sequence[str],
+        env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
+        timeout_secs: typing.Optional[int] = OMIT,
+        user: typing.Optional[str] = OMIT,
+        workdir: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> None:
+        """
+        Stream command stdout, stderr, and exit events as Server-Sent Events.
+
+        Parameters
+        ----------
+        sandbox_name : str
+            Sandbox name
+
+        command : typing.Sequence[str]
+            Command to execute.
+
+        env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+            Environment variables to inject into this execution session.
+
+        timeout_secs : typing.Optional[int]
+            Optional client-side timeout hint. Currently accepted for API compatibility.
+
+        user : typing.Optional[str]
+            User to run the command as (e.g., "islo"). If not provided, uses image default.
+
+        workdir : typing.Optional[str]
+            Working directory for command execution inside the sandbox.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.sandboxes.exec_in_sandbox_stream(
+            sandbox_name="sandbox_name",
+            command=["command"],
+        )
+        """
+        _response = self._raw_client.exec_in_sandbox_stream(
+            sandbox_name,
+            command=command,
+            env=env,
+            timeout_secs=timeout_secs,
+            user=user,
+            workdir=workdir,
+            request_options=request_options,
+        )
+        return _response.data
+
     def get_exec_result(
         self, sandbox_name: str, exec_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ExecResultResponse:
@@ -410,7 +511,7 @@ class SandboxesClient:
 
     def download_file(
         self, sandbox_name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> None:
+    ) -> typing.Iterator[bytes]:
         """
         Download a file from a sandbox.
 
@@ -423,11 +524,12 @@ class SandboxesClient:
             File path inside the sandbox
 
         request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
+            Request-specific configuration. You can pass in configuration such as `chunk_size`, and more to customize the request and response.
 
         Returns
         -------
-        None
+        typing.Iterator[bytes]
+            File contents
 
         Examples
         --------
@@ -443,11 +545,11 @@ class SandboxesClient:
             path="path",
         )
         """
-        _response = self._raw_client.download_file(sandbox_name, path=path, request_options=request_options)
-        return _response.data
+        with self._raw_client.download_file(sandbox_name, path=path, request_options=request_options) as r:
+            yield from r.data
 
     def upload_file(
-        self, sandbox_name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
+        self, sandbox_name: str, *, path: str, file: core.File, request_options: typing.Optional[RequestOptions] = None
     ) -> FileUploadStatusResponse:
         """
         Upload a file to a path inside a sandbox.
@@ -459,6 +561,9 @@ class SandboxesClient:
 
         path : str
             Destination path inside the sandbox
+
+        file : core.File
+            See core.File for more documentation
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -482,7 +587,7 @@ class SandboxesClient:
             path="path",
         )
         """
-        _response = self._raw_client.upload_file(sandbox_name, path=path, request_options=request_options)
+        _response = self._raw_client.upload_file(sandbox_name, path=path, file=file, request_options=request_options)
         return _response.data
 
     def download_archive(
@@ -524,7 +629,7 @@ class SandboxesClient:
         return _response.data
 
     def upload_archive(
-        self, sandbox_name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
+        self, sandbox_name: str, *, path: str, file: core.File, request_options: typing.Optional[RequestOptions] = None
     ) -> FileUploadStatusResponse:
         """
         Upload and extract an archive into a sandbox directory.
@@ -536,6 +641,9 @@ class SandboxesClient:
 
         path : str
             Destination directory inside the sandbox
+
+        file : core.File
+            See core.File for more documentation
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -559,7 +667,7 @@ class SandboxesClient:
             path="path",
         )
         """
-        _response = self._raw_client.upload_archive(sandbox_name, path=path, request_options=request_options)
+        _response = self._raw_client.upload_archive(sandbox_name, path=path, file=file, request_options=request_options)
         return _response.data
 
     def pause_sandbox(
@@ -1129,6 +1237,48 @@ class AsyncSandboxesClient:
         _response = await self._raw_client.delete_sandbox(sandbox_name, request_options=request_options)
         return _response.data
 
+    async def sandbox_creation_events(
+        self, sandbox_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Server-sent events for live sandbox creation progress.
+
+        Parameters
+        ----------
+        sandbox_name : str
+            Sandbox name
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.sandbox_creation_events(
+                sandbox_name="sandbox_name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.sandbox_creation_events(sandbox_name, request_options=request_options)
+        return _response.data
+
     async def exec_in_sandbox(
         self,
         sandbox_name: str,
@@ -1204,6 +1354,80 @@ class AsyncSandboxesClient:
         )
         return _response.data
 
+    async def exec_in_sandbox_stream(
+        self,
+        sandbox_name: str,
+        *,
+        command: typing.Sequence[str],
+        env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
+        timeout_secs: typing.Optional[int] = OMIT,
+        user: typing.Optional[str] = OMIT,
+        workdir: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> None:
+        """
+        Stream command stdout, stderr, and exit events as Server-Sent Events.
+
+        Parameters
+        ----------
+        sandbox_name : str
+            Sandbox name
+
+        command : typing.Sequence[str]
+            Command to execute.
+
+        env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+            Environment variables to inject into this execution session.
+
+        timeout_secs : typing.Optional[int]
+            Optional client-side timeout hint. Currently accepted for API compatibility.
+
+        user : typing.Optional[str]
+            User to run the command as (e.g., "islo"). If not provided, uses image default.
+
+        workdir : typing.Optional[str]
+            Working directory for command execution inside the sandbox.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.sandboxes.exec_in_sandbox_stream(
+                sandbox_name="sandbox_name",
+                command=["command"],
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.exec_in_sandbox_stream(
+            sandbox_name,
+            command=command,
+            env=env,
+            timeout_secs=timeout_secs,
+            user=user,
+            workdir=workdir,
+            request_options=request_options,
+        )
+        return _response.data
+
     async def get_exec_result(
         self, sandbox_name: str, exec_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ExecResultResponse:
@@ -1253,7 +1477,7 @@ class AsyncSandboxesClient:
 
     async def download_file(
         self, sandbox_name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
-    ) -> None:
+    ) -> typing.AsyncIterator[bytes]:
         """
         Download a file from a sandbox.
 
@@ -1266,11 +1490,12 @@ class AsyncSandboxesClient:
             File path inside the sandbox
 
         request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
+            Request-specific configuration. You can pass in configuration such as `chunk_size`, and more to customize the request and response.
 
         Returns
         -------
-        None
+        typing.AsyncIterator[bytes]
+            File contents
 
         Examples
         --------
@@ -1294,11 +1519,12 @@ class AsyncSandboxesClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.download_file(sandbox_name, path=path, request_options=request_options)
-        return _response.data
+        async with self._raw_client.download_file(sandbox_name, path=path, request_options=request_options) as r:
+            async for _chunk in r.data:
+                yield _chunk
 
     async def upload_file(
-        self, sandbox_name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
+        self, sandbox_name: str, *, path: str, file: core.File, request_options: typing.Optional[RequestOptions] = None
     ) -> FileUploadStatusResponse:
         """
         Upload a file to a path inside a sandbox.
@@ -1310,6 +1536,9 @@ class AsyncSandboxesClient:
 
         path : str
             Destination path inside the sandbox
+
+        file : core.File
+            See core.File for more documentation
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1341,7 +1570,9 @@ class AsyncSandboxesClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.upload_file(sandbox_name, path=path, request_options=request_options)
+        _response = await self._raw_client.upload_file(
+            sandbox_name, path=path, file=file, request_options=request_options
+        )
         return _response.data
 
     async def download_archive(
@@ -1391,7 +1622,7 @@ class AsyncSandboxesClient:
         return _response.data
 
     async def upload_archive(
-        self, sandbox_name: str, *, path: str, request_options: typing.Optional[RequestOptions] = None
+        self, sandbox_name: str, *, path: str, file: core.File, request_options: typing.Optional[RequestOptions] = None
     ) -> FileUploadStatusResponse:
         """
         Upload and extract an archive into a sandbox directory.
@@ -1403,6 +1634,9 @@ class AsyncSandboxesClient:
 
         path : str
             Destination directory inside the sandbox
+
+        file : core.File
+            See core.File for more documentation
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1434,7 +1668,9 @@ class AsyncSandboxesClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.upload_archive(sandbox_name, path=path, request_options=request_options)
+        _response = await self._raw_client.upload_archive(
+            sandbox_name, path=path, file=file, request_options=request_options
+        )
         return _response.data
 
     async def pause_sandbox(
