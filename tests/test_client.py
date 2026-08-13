@@ -1,5 +1,7 @@
 """Tests for the custom Islo client (api_key auth, env var detection, defaults)."""
 
+import httpx
+import pytest
 from pytest_httpx import HTTPXMock
 
 from islo import AsyncIslo, Islo
@@ -122,6 +124,38 @@ class TestIsloClient:
         assert not hasattr(client, "compute")
         assert not hasattr(client, "sessions")
 
+    def test_close_closes_owned_http_client(self, monkeypatch):
+        monkeypatch.delenv("ISLO_API_KEY", raising=False)
+        client = Islo()
+
+        client.close()
+        client.close()
+
+        assert client._httpx_client.is_closed is True
+
+    def test_close_leaves_injected_http_client_open(self, monkeypatch):
+        monkeypatch.delenv("ISLO_API_KEY", raising=False)
+        http = httpx.Client()
+        client = Islo(httpx_client=http)
+
+        client.close()
+
+        assert http.is_closed is False
+        http.close()
+
+    def test_context_manager_closes_owned_http_client(self, monkeypatch):
+        monkeypatch.delenv("ISLO_API_KEY", raising=False)
+
+        with Islo() as client:
+            assert client._httpx_client.is_closed is False
+
+        assert client._httpx_client.is_closed is True
+
+    def test_none_follow_redirects_preserves_httpx_default(self, monkeypatch):
+        monkeypatch.delenv("ISLO_API_KEY", raising=False)
+        with Islo(follow_redirects=None) as client:
+            assert client._httpx_client.follow_redirects is False
+
 
 class TestAsyncIsloClient:
     def test_default_base_url(self, monkeypatch):
@@ -148,6 +182,42 @@ class TestAsyncIsloClient:
 
         client = AsyncIslo(async_token=my_token)
         assert client._client_wrapper._async_token is my_token
+
+    @pytest.mark.asyncio
+    async def test_aclose_closes_owned_http_client(self, monkeypatch):
+        monkeypatch.delenv("ISLO_API_KEY", raising=False)
+        client = AsyncIslo()
+
+        await client.aclose()
+        await client.aclose()
+
+        assert client._httpx_client.is_closed is True
+
+    @pytest.mark.asyncio
+    async def test_aclose_leaves_injected_http_client_open(self, monkeypatch):
+        monkeypatch.delenv("ISLO_API_KEY", raising=False)
+        http = httpx.AsyncClient()
+        client = AsyncIslo(httpx_client=http)
+
+        await client.aclose()
+
+        assert http.is_closed is False
+        await http.aclose()
+
+    @pytest.mark.asyncio
+    async def test_async_context_manager_closes_owned_http_client(self, monkeypatch):
+        monkeypatch.delenv("ISLO_API_KEY", raising=False)
+
+        async with AsyncIslo() as client:
+            assert client._httpx_client.is_closed is False
+
+        assert client._httpx_client.is_closed is True
+
+    @pytest.mark.asyncio
+    async def test_none_follow_redirects_preserves_httpx_default(self, monkeypatch):
+        monkeypatch.delenv("ISLO_API_KEY", raising=False)
+        async with AsyncIslo(follow_redirects=None) as client:
+            assert client._httpx_client.follow_redirects is False
 
 
 class TestTokenProviderIntegration:

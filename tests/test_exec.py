@@ -35,6 +35,13 @@ class TestExecResult:
         result = ExecResult(stdout="", stderr="", exit_code=-1, timed_out=True)
         assert result.timed_out is True
 
+    def test_extended_metadata_defaults_are_backwards_compatible(self):
+        result = ExecResult(stdout="", stderr="", exit_code=0)
+        assert result.status == "completed"
+        assert result.truncated is False
+        assert result.exec_id is None
+        assert result.remote_may_be_running is False
+
 
 class TestExecAndWait:
     @pytest.mark.asyncio
@@ -88,6 +95,39 @@ class TestExecAndWait:
 
         assert result.timed_out is True
         assert result.exit_code == -1
+        assert result.status == "client_timeout"
+        assert result.exec_id == "timeout-exec"
+        assert result.remote_may_be_running is True
+        assert result.stdout == ""
+        assert client.sandboxes.exec_in_sandbox.call_args.kwargs["timeout_secs"] == 1
+
+    @pytest.mark.asyncio
+    async def test_server_timeout_status_is_preserved(self):
+        exec_resp = MagicMock(exec_id="server-timeout")
+        timeout_resp = MagicMock(status="timeout", exit_code=None, stdout="partial", stderr="deadline", truncated=True)
+
+        client = MagicMock()
+        client.sandboxes.exec_in_sandbox = AsyncMock(return_value=exec_resp)
+        client.sandboxes.get_exec_result = AsyncMock(return_value=timeout_resp)
+
+        result = await exec_and_wait(client, "sb", ["sleep", "999"])
+
+        assert result.timed_out is True
+        assert result.status == "timeout"
+        assert result.truncated is True
+        assert result.exec_id == "server-timeout"
+        assert result.remote_may_be_running is False
+
+    @pytest.mark.asyncio
+    async def test_rejects_invalid_timing_configuration(self):
+        client = MagicMock()
+
+        with pytest.raises(ValueError, match="timeout must be"):
+            await exec_and_wait(client, "sb", ["cmd"], timeout=0)
+        with pytest.raises(ValueError, match="timeout must be"):
+            await exec_and_wait(client, "sb", ["cmd"], timeout=True)
+        with pytest.raises(ValueError, match="poll_interval must be"):
+            await exec_and_wait(client, "sb", ["cmd"], poll_interval=float("inf"))
 
     @pytest.mark.asyncio
     async def test_failed_status(self):
@@ -103,6 +143,8 @@ class TestExecAndWait:
         assert result.exit_code == -1
         assert result.stdout == "partial"
         assert result.stderr == "crash"
+        assert result.status == "failed"
+        assert result.exec_id == "fail-exec"
 
     @pytest.mark.asyncio
     async def test_passes_optional_params(self):
@@ -126,6 +168,19 @@ class TestExecAndWait:
         assert call_kwargs.kwargs["workdir"] == "/app"
         assert call_kwargs.kwargs["env"] == {"FOO": "bar"}
         assert call_kwargs.kwargs["user"] == "islo"
+
+    @pytest.mark.asyncio
+    async def test_passes_rounded_timeout_hint(self):
+        exec_resp = MagicMock(exec_id="timeout-hint")
+        done_resp = MagicMock(status="completed", exit_code=0, stdout="", stderr="", truncated=False)
+
+        client = MagicMock()
+        client.sandboxes.exec_in_sandbox = AsyncMock(return_value=exec_resp)
+        client.sandboxes.get_exec_result = AsyncMock(return_value=done_resp)
+
+        await exec_and_wait(client, "sb", ["cmd"], timeout=1.2)
+
+        assert client.sandboxes.exec_in_sandbox.call_args.kwargs["timeout_secs"] == 2
 
     @pytest.mark.asyncio
     async def test_retries_on_transient_5xx(self):
@@ -220,6 +275,48 @@ class TestExecAndWaitSync:
         assert result.stdout == "ok\n"
         assert result.exit_code == 0
         assert result.timed_out is False
+        assert result.exec_id == "sync-exec"
+
+    def test_server_timeout_status_is_preserved(self):
+        exec_resp = MagicMock(exec_id="sync-server-timeout")
+        result_resp = MagicMock(status="timeout", exit_code=None, stdout="partial", stderr="", truncated=True)
+
+        client = MagicMock()
+        client.sandboxes.exec_in_sandbox.return_value = exec_resp
+        client.sandboxes.get_exec_result.return_value = result_resp
+
+        result = exec_and_wait_sync(client, "sb", ["cmd"])
+
+        assert result.timed_out is True
+        assert result.status == "timeout"
+        assert result.truncated is True
+        assert result.exec_id == "sync-server-timeout"
+
+    def test_client_timeout_preserves_last_result_and_marks_remote_unknown(self):
+        exec_resp = MagicMock(exec_id="sync-client-timeout")
+        running_resp = MagicMock(status="running", exit_code=None, stdout="partial", stderr="", truncated=False)
+
+        client = MagicMock()
+        client.sandboxes.exec_in_sandbox.return_value = exec_resp
+        client.sandboxes.get_exec_result.return_value = running_resp
+
+        result = exec_and_wait_sync(client, "sb", ["cmd"], timeout=0.001, poll_interval=0.001)
+
+        assert result.status == "client_timeout"
+        assert result.stdout == "partial"
+        assert result.exec_id == "sync-client-timeout"
+        assert result.remote_may_be_running is True
+        assert client.sandboxes.exec_in_sandbox.call_args.kwargs["timeout_secs"] == 1
+
+    def test_rejects_invalid_timing_configuration(self):
+        client = MagicMock()
+
+        with pytest.raises(ValueError, match="timeout must be"):
+            exec_and_wait_sync(client, "sb", ["cmd"], timeout=float("nan"))
+        with pytest.raises(ValueError, match="poll_interval must be"):
+            exec_and_wait_sync(client, "sb", ["cmd"], poll_interval=0)
+        with pytest.raises(ValueError, match="poll_interval must be"):
+            exec_and_wait_sync(client, "sb", ["cmd"], poll_interval=True)
 
     def test_polls_until_complete(self):
         exec_resp = MagicMock(exec_id="sync-poll")

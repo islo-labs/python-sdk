@@ -113,6 +113,17 @@ class Islo(BaseIslo):
             environment=environment,
         )
         resolved_token = _resolve_auth(resolved_environment.control, api_key)
+        if httpx_client is not None:
+            resolved_httpx_client = httpx_client
+        elif follow_redirects is not None:
+            resolved_httpx_client = httpx.Client(
+                timeout=timeout if timeout is not None else 60.0,
+                follow_redirects=follow_redirects,
+            )
+        else:
+            resolved_httpx_client = httpx.Client(timeout=timeout if timeout is not None else 60.0)
+        self._httpx_client = resolved_httpx_client
+        self._owns_httpx_client = httpx_client is None
 
         super().__init__(
             environment=resolved_environment,
@@ -120,9 +131,26 @@ class Islo(BaseIslo):
             headers=headers,
             timeout=timeout,
             follow_redirects=follow_redirects,
-            httpx_client=httpx_client,
+            httpx_client=resolved_httpx_client,
             logging=logging,
         )
+
+    def close(self) -> None:
+        """Close the internally created HTTP client.
+
+        A caller-provided `httpx_client` remains caller-owned and is not closed.
+        Calling `close` more than once is safe.
+        """
+        if self._owns_httpx_client and not self._httpx_client.is_closed:
+            self._httpx_client.close()
+
+    def __enter__(self) -> Islo:
+        """Return this client for use as a context manager."""
+        return self
+
+    def __exit__(self, *args: object) -> None:
+        """Close resources owned by this client."""
+        self.close()
 
 
 class AsyncIslo(AsyncBaseIslo):
@@ -176,6 +204,17 @@ class AsyncIslo(AsyncBaseIslo):
             environment=environment,
         )
         resolved_async_token = _resolve_async_auth(resolved_environment.control, api_key, async_token)
+        if httpx_client is not None:
+            resolved_httpx_client = httpx_client
+        elif follow_redirects is not None:
+            resolved_httpx_client = httpx.AsyncClient(
+                timeout=timeout if timeout is not None else 60.0,
+                follow_redirects=follow_redirects,
+            )
+        else:
+            resolved_httpx_client = httpx.AsyncClient(timeout=timeout if timeout is not None else 60.0)
+        self._httpx_client = resolved_httpx_client
+        self._owns_httpx_client = httpx_client is None
 
         super().__init__(
             environment=resolved_environment,
@@ -183,6 +222,23 @@ class AsyncIslo(AsyncBaseIslo):
             async_token=resolved_async_token,
             timeout=timeout,
             follow_redirects=follow_redirects,
-            httpx_client=httpx_client,
+            httpx_client=resolved_httpx_client,
             logging=logging,
         )
+
+    async def aclose(self) -> None:
+        """Close the internally created async HTTP client.
+
+        A caller-provided `httpx_client` remains caller-owned and is not closed.
+        Calling `aclose` more than once is safe.
+        """
+        if self._owns_httpx_client and not self._httpx_client.is_closed:
+            await self._httpx_client.aclose()
+
+    async def __aenter__(self) -> AsyncIslo:
+        """Return this client for use as an async context manager."""
+        return self
+
+    async def __aexit__(self, *args: object) -> None:
+        """Close resources owned by this client."""
+        await self.aclose()

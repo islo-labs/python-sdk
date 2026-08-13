@@ -11,6 +11,7 @@ The Islo Python library provides convenient access to the Islo APIs from Python.
 - [Quick Start](#quick-start)
 - [Authentication](#authentication)
 - [Configuration](#configuration)
+- [Command Wait Results](#command-wait-results)
 - [Async Support](#async-support)
 - [Development](#development)
 - [Reference](#reference)
@@ -35,27 +36,21 @@ pip install islo
 
 ```python
 from islo import Islo
+from islo.custom import exec_and_wait_sync
 
 # Automatically reads ISLO_API_KEY from environment
-client = Islo()
-
-# Create a sandbox
-sandbox = client.sandboxes.create_sandbox(
-    name="my-sandbox",
-    image="ubuntu:22.04",
-    vcpus=2,
-    memory_mb=4096,
-)
-
-# Execute a command
-result = client.sandboxes.exec_in_sandbox(
-    sandbox_name=sandbox.name,
-    command=["echo", "hello world"],
-)
-print(result.exit_code)
-
-# Clean up
-client.sandboxes.delete_sandbox(sandbox_name=sandbox.name)
+with Islo() as client:
+    sandbox = client.sandboxes.create_sandbox(
+        name="my-sandbox",
+        image="ubuntu:22.04",
+        vcpus=2,
+        memory_mb=4096,
+    )
+    try:
+        result = exec_and_wait_sync(client, sandbox.name, ["echo", "hello world"], timeout=30)
+        print(result.stdout, result.exit_code)
+    finally:
+        client.sandboxes.delete_sandbox(sandbox_name=sandbox.name)
 ```
 
 ## Authentication
@@ -73,20 +68,16 @@ client = Islo()  # Picks up ISLO_API_KEY automatically
 ### Explicit token
 
 ```python
-client = Islo(token="your-api-key")
+client = Islo(api_key="your-api-key")
 ```
 
 ### Auto-refreshing token provider
 
 ```python
 from islo import Islo
-from islo.custom import SyncTokenProvider
 
-provider = SyncTokenProvider(
-    base_url="https://api.islo.dev",
-    access_key="your-access-key",
-)
-client = Islo(token=provider)
+# API keys are exchanged for a session token and refreshed automatically.
+client = Islo(api_key="your-api-key")
 ```
 
 ## Configuration
@@ -96,6 +87,18 @@ client = Islo(token=provider)
 | `ISLO_API_KEY` | Bearer token for authentication | — |
 | `ISLO_BASE_URL` | API base URL | `https://api.islo.dev` |
 
+## Command Wait Results
+
+`exec_and_wait` and `exec_and_wait_sync` return stdout, stderr, exit code,
+provider status, truncation state, and the exec ID. A provider `timeout` status
+sets `timed_out=True`. If only the client polling deadline expires, the result
+uses `status="client_timeout"` and `remote_may_be_running=True`; the API does not
+currently expose per-exec cancellation, so a local deadline is not proof that
+the remote process stopped.
+
+Finite timeouts are rounded up and forwarded as `timeout_secs` while the client
+also enforces a monotonic polling deadline.
+
 ## Async Support
 
 ```python
@@ -103,9 +106,9 @@ import asyncio
 from islo import AsyncIslo
 
 async def main():
-    client = AsyncIslo()
-    sandboxes = await client.sandboxes.list_sandboxes()
-    print(f"Found {len(sandboxes.items)} sandboxes")
+    async with AsyncIslo() as client:
+        sandboxes = await client.sandboxes.list_sandboxes()
+        print(f"Found {len(sandboxes.items)} sandboxes")
 
 asyncio.run(main())
 ```
@@ -274,6 +277,9 @@ client = Islo(
     ),
 )
 ```
+
+An injected `httpx_client` remains caller-owned. Close it after closing the Islo
+client.
 
 ## Contributing
 
