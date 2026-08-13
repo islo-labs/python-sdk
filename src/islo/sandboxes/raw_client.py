@@ -138,6 +138,7 @@ class RawSandboxesClient:
         cache_key: typing.Optional[str] = OMIT,
         disk_gb: typing.Optional[int] = OMIT,
         env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
+        environment: typing.Optional[str] = OMIT,
         gateway_profile: typing.Optional[str] = OMIT,
         image: typing.Optional[str] = OMIT,
         init: typing.Optional[SandboxInit] = OMIT,
@@ -163,6 +164,9 @@ class RawSandboxesClient:
         disk_gb : typing.Optional[int]
 
         env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+
+        environment : typing.Optional[str]
+            Environment for sandbox env and environment-owned gateway injection.
 
         gateway_profile : typing.Optional[str]
 
@@ -206,6 +210,7 @@ class RawSandboxesClient:
                 "cache_key": cache_key,
                 "disk_gb": disk_gb,
                 "env": env,
+                "environment": environment,
                 "gateway_profile": gateway_profile,
                 "image": image,
                 "init": convert_and_respect_annotation_metadata(
@@ -1716,6 +1721,7 @@ class AsyncRawSandboxesClient:
         cache_key: typing.Optional[str] = OMIT,
         disk_gb: typing.Optional[int] = OMIT,
         env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
+        environment: typing.Optional[str] = OMIT,
         gateway_profile: typing.Optional[str] = OMIT,
         image: typing.Optional[str] = OMIT,
         init: typing.Optional[SandboxInit] = OMIT,
@@ -1741,6 +1747,9 @@ class AsyncRawSandboxesClient:
         disk_gb : typing.Optional[int]
 
         env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+
+        environment : typing.Optional[str]
+            Environment for sandbox env and environment-owned gateway injection.
 
         gateway_profile : typing.Optional[str]
 
@@ -1784,6 +1793,7 @@ class AsyncRawSandboxesClient:
                 "cache_key": cache_key,
                 "disk_gb": disk_gb,
                 "env": env,
+                "environment": environment,
                 "gateway_profile": gateway_profile,
                 "image": image,
                 "init": convert_and_respect_annotation_metadata(

@@ -5,12 +5,12 @@ import typing
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
 from .sandbox_config import SandboxConfig
-from .task_step import TaskStep
+from .task_step_input import TaskStepInput
 
 
 class TaskInput(UniversalBaseModel):
     name: str
     sandbox: typing.Optional[SandboxConfig] = None
-    steps: typing.List[TaskStep]
+    steps: typing.List[TaskStepInput]
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

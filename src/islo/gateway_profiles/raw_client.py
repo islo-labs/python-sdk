@@ -12,6 +12,7 @@ from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.conflict_error import ConflictError
+from ..errors.forbidden_error import ForbiddenError
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
@@ -177,6 +178,17 @@ class RawGatewayProfilesClient:
                         ),
                     ),
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -317,6 +329,17 @@ class RawGatewayProfilesClient:
                         ),
                     ),
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -445,6 +468,17 @@ class RawGatewayProfilesClient:
                         ),
                     ),
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -492,14 +526,14 @@ class RawGatewayProfilesClient:
         profile_id: str,
         *,
         host_pattern: str,
-        priority: typing.Optional[int] = OMIT,
         path_pattern: typing.Optional[str] = OMIT,
         methods: typing.Optional[typing.Sequence[str]] = OMIT,
-        action: typing.Optional[GatewayAction] = OMIT,
         rate_limit_rpm: typing.Optional[int] = OMIT,
-        provider_key: typing.Optional[str] = OMIT,
         auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
         content_filter: typing.Optional[GatewayRuleCreateContentFilter] = OMIT,
+        priority: typing.Optional[int] = OMIT,
+        action: typing.Optional[GatewayAction] = OMIT,
+        provider_key: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[GatewayRuleResponse]:
         """
@@ -509,21 +543,21 @@ class RawGatewayProfilesClient:
 
         host_pattern : str
 
-        priority : typing.Optional[int]
-
         path_pattern : typing.Optional[str]
 
         methods : typing.Optional[typing.Sequence[str]]
 
-        action : typing.Optional[GatewayAction]
-
         rate_limit_rpm : typing.Optional[int]
-
-        provider_key : typing.Optional[str]
 
         auth_strategy : typing.Optional[AuthStrategySchema]
 
         content_filter : typing.Optional[GatewayRuleCreateContentFilter]
+
+        priority : typing.Optional[int]
+
+        action : typing.Optional[GatewayAction]
+
+        provider_key : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -538,13 +572,10 @@ class RawGatewayProfilesClient:
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "priority": priority,
                 "host_pattern": host_pattern,
                 "path_pattern": path_pattern,
                 "methods": methods,
-                "action": action,
                 "rate_limit_rpm": rate_limit_rpm,
-                "provider_key": provider_key,
                 "auth_strategy": convert_and_respect_annotation_metadata(
                     object_=auth_strategy, annotation=typing.Optional[AuthStrategySchema], direction="write"
                 ),
@@ -553,6 +584,9 @@ class RawGatewayProfilesClient:
                     annotation=typing.Optional[GatewayRuleCreateContentFilter],
                     direction="write",
                 ),
+                "priority": priority,
+                "action": action,
+                "provider_key": provider_key,
             },
             headers={
                 "content-type": "application/json",
@@ -572,6 +606,17 @@ class RawGatewayProfilesClient:
                 return HttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -640,6 +685,17 @@ class RawGatewayProfilesClient:
                 return HttpResponse(response=_response, data=None)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -777,6 +833,17 @@ class RawGatewayProfilesClient:
                         ),
                     ),
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -857,6 +924,17 @@ class RawGatewayProfilesClient:
                 return HttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -1043,6 +1121,17 @@ class AsyncRawGatewayProfilesClient:
                         ),
                     ),
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 409:
                 raise ConflictError(
                     headers=dict(_response.headers),
@@ -1183,6 +1272,17 @@ class AsyncRawGatewayProfilesClient:
                         ),
                     ),
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -1311,6 +1411,17 @@ class AsyncRawGatewayProfilesClient:
                         ),
                     ),
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -1358,14 +1469,14 @@ class AsyncRawGatewayProfilesClient:
         profile_id: str,
         *,
         host_pattern: str,
-        priority: typing.Optional[int] = OMIT,
         path_pattern: typing.Optional[str] = OMIT,
         methods: typing.Optional[typing.Sequence[str]] = OMIT,
-        action: typing.Optional[GatewayAction] = OMIT,
         rate_limit_rpm: typing.Optional[int] = OMIT,
-        provider_key: typing.Optional[str] = OMIT,
         auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
         content_filter: typing.Optional[GatewayRuleCreateContentFilter] = OMIT,
+        priority: typing.Optional[int] = OMIT,
+        action: typing.Optional[GatewayAction] = OMIT,
+        provider_key: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[GatewayRuleResponse]:
         """
@@ -1375,21 +1486,21 @@ class AsyncRawGatewayProfilesClient:
 
         host_pattern : str
 
-        priority : typing.Optional[int]
-
         path_pattern : typing.Optional[str]
 
         methods : typing.Optional[typing.Sequence[str]]
 
-        action : typing.Optional[GatewayAction]
-
         rate_limit_rpm : typing.Optional[int]
-
-        provider_key : typing.Optional[str]
 
         auth_strategy : typing.Optional[AuthStrategySchema]
 
         content_filter : typing.Optional[GatewayRuleCreateContentFilter]
+
+        priority : typing.Optional[int]
+
+        action : typing.Optional[GatewayAction]
+
+        provider_key : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1404,13 +1515,10 @@ class AsyncRawGatewayProfilesClient:
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "priority": priority,
                 "host_pattern": host_pattern,
                 "path_pattern": path_pattern,
                 "methods": methods,
-                "action": action,
                 "rate_limit_rpm": rate_limit_rpm,
-                "provider_key": provider_key,
                 "auth_strategy": convert_and_respect_annotation_metadata(
                     object_=auth_strategy, annotation=typing.Optional[AuthStrategySchema], direction="write"
                 ),
@@ -1419,6 +1527,9 @@ class AsyncRawGatewayProfilesClient:
                     annotation=typing.Optional[GatewayRuleCreateContentFilter],
                     direction="write",
                 ),
+                "priority": priority,
+                "action": action,
+                "provider_key": provider_key,
             },
             headers={
                 "content-type": "application/json",
@@ -1438,6 +1549,17 @@ class AsyncRawGatewayProfilesClient:
                 return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -1506,6 +1628,17 @@ class AsyncRawGatewayProfilesClient:
                 return AsyncHttpResponse(response=_response, data=None)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -1643,6 +1776,17 @@ class AsyncRawGatewayProfilesClient:
                         ),
                     ),
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -1723,6 +1867,17 @@ class AsyncRawGatewayProfilesClient:
                 return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,

@@ -28,6 +28,11 @@ class InferenceModelCatalogEntry(UniversalBaseModel):
         FieldMetadata(alias="cached_input_cents_per_1m_tokens"),
         pydantic.Field(alias="cached_input_cents_per_1m_tokens", default=None),
     ]
+    cache_write_input_cents_per1m_tokens: typing_extensions.Annotated[
+        typing.Optional[str],
+        FieldMetadata(alias="cache_write_input_cents_per_1m_tokens"),
+        pydantic.Field(alias="cache_write_input_cents_per_1m_tokens", default=None),
+    ]
     output_cents_per1m_tokens: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="output_cents_per_1m_tokens"),

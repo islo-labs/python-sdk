@@ -15,6 +15,7 @@ if typing.TYPE_CHECKING:
     from .compute_events.client import AsyncComputeEventsClient, ComputeEventsClient
     from .container_registries.client import AsyncContainerRegistriesClient, ContainerRegistriesClient
     from .credits.client import AsyncCreditsClient, CreditsClient
+    from .environments.client import AsyncEnvironmentsClient, EnvironmentsClient
     from .gateway_profiles.client import AsyncGatewayProfilesClient, GatewayProfilesClient
     from .inference.client import AsyncInferenceClient, InferenceClient
     from .integrations.client import AsyncIntegrationsClient, IntegrationsClient
@@ -95,6 +96,7 @@ class BaseIslo:
         self._credits: typing.Optional[CreditsClient] = None
         self._integrations: typing.Optional[IntegrationsClient] = None
         self._gateway_profiles: typing.Optional[GatewayProfilesClient] = None
+        self._environments: typing.Optional[EnvironmentsClient] = None
         self._cloud_roles: typing.Optional[CloudRolesClient] = None
         self._inference: typing.Optional[InferenceClient] = None
         self._container_registries: typing.Optional[ContainerRegistriesClient] = None
@@ -145,6 +147,14 @@ class BaseIslo:
 
             self._gateway_profiles = GatewayProfilesClient(client_wrapper=self._client_wrapper)
         return self._gateway_profiles
+
+    @property
+    def environments(self):
+        if self._environments is None:
+            from .environments.client import EnvironmentsClient  # noqa: E402
+
+            self._environments = EnvironmentsClient(client_wrapper=self._client_wrapper)
+        return self._environments
 
     @property
     def cloud_roles(self):
@@ -299,6 +309,7 @@ class AsyncBaseIslo:
         self._credits: typing.Optional[AsyncCreditsClient] = None
         self._integrations: typing.Optional[AsyncIntegrationsClient] = None
         self._gateway_profiles: typing.Optional[AsyncGatewayProfilesClient] = None
+        self._environments: typing.Optional[AsyncEnvironmentsClient] = None
         self._cloud_roles: typing.Optional[AsyncCloudRolesClient] = None
         self._inference: typing.Optional[AsyncInferenceClient] = None
         self._container_registries: typing.Optional[AsyncContainerRegistriesClient] = None
@@ -349,6 +360,14 @@ class AsyncBaseIslo:
 
             self._gateway_profiles = AsyncGatewayProfilesClient(client_wrapper=self._client_wrapper)
         return self._gateway_profiles
+
+    @property
+    def environments(self):
+        if self._environments is None:
+            from .environments.client import AsyncEnvironmentsClient  # noqa: E402
+
+            self._environments = AsyncEnvironmentsClient(client_wrapper=self._client_wrapper)
+        return self._environments
 
     @property
     def cloud_roles(self):

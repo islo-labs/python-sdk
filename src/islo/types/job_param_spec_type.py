@@ -2,41 +2,7 @@
 
 import typing
 
-from ..core import enum
+from .job_param_spec_type_one import JobParamSpecTypeOne
+from .job_param_spec_type_zero import JobParamSpecTypeZero
 
-T_Result = typing.TypeVar("T_Result")
-
-
-class JobParamSpecType(enum.StrEnum):
-    STRING = "string"
-    INTEGER = "integer"
-    NUMBER = "number"
-    BOOLEAN = "boolean"
-    _UNKNOWN = "__JOBPARAMSPECTYPE_UNKNOWN__"
-    """
-    This member is used for forward compatibility. If the value is not recognized by the enum, it will be stored here, and the raw value is accessible through `.value`.
-    """
-
-    @classmethod
-    def _missing_(cls, value: typing.Any) -> "JobParamSpecType":
-        unknown = cls._UNKNOWN
-        unknown._value_ = value
-        return unknown
-
-    def visit(
-        self,
-        string: typing.Callable[[], T_Result],
-        integer: typing.Callable[[], T_Result],
-        number: typing.Callable[[], T_Result],
-        boolean: typing.Callable[[], T_Result],
-        _unknown_member: typing.Callable[[str], T_Result],
-    ) -> T_Result:
-        if self is JobParamSpecType.STRING:
-            return string()
-        if self is JobParamSpecType.INTEGER:
-            return integer()
-        if self is JobParamSpecType.NUMBER:
-            return number()
-        if self is JobParamSpecType.BOOLEAN:
-            return boolean()
-        return _unknown_member(self._value_)
+JobParamSpecType = typing.Union[JobParamSpecTypeZero, JobParamSpecTypeOne]

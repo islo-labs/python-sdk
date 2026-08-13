@@ -93,6 +93,7 @@ class TestIsloClient:
             "compute_events",
             "container_registries",
             "credits",
+            "environments",
             "gateway_profiles",
             "inference",
             "integrations",

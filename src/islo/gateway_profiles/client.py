@@ -262,14 +262,14 @@ class GatewayProfilesClient:
         profile_id: str,
         *,
         host_pattern: str,
-        priority: typing.Optional[int] = OMIT,
         path_pattern: typing.Optional[str] = OMIT,
         methods: typing.Optional[typing.Sequence[str]] = OMIT,
-        action: typing.Optional[GatewayAction] = OMIT,
         rate_limit_rpm: typing.Optional[int] = OMIT,
-        provider_key: typing.Optional[str] = OMIT,
         auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
         content_filter: typing.Optional[GatewayRuleCreateContentFilter] = OMIT,
+        priority: typing.Optional[int] = OMIT,
+        action: typing.Optional[GatewayAction] = OMIT,
+        provider_key: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayRuleResponse:
         """
@@ -279,21 +279,21 @@ class GatewayProfilesClient:
 
         host_pattern : str
 
-        priority : typing.Optional[int]
-
         path_pattern : typing.Optional[str]
 
         methods : typing.Optional[typing.Sequence[str]]
 
-        action : typing.Optional[GatewayAction]
-
         rate_limit_rpm : typing.Optional[int]
-
-        provider_key : typing.Optional[str]
 
         auth_strategy : typing.Optional[AuthStrategySchema]
 
         content_filter : typing.Optional[GatewayRuleCreateContentFilter]
+
+        priority : typing.Optional[int]
+
+        action : typing.Optional[GatewayAction]
+
+        provider_key : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -320,14 +320,14 @@ class GatewayProfilesClient:
         _response = self._raw_client.create_gateway_rule(
             profile_id,
             host_pattern=host_pattern,
-            priority=priority,
             path_pattern=path_pattern,
             methods=methods,
-            action=action,
             rate_limit_rpm=rate_limit_rpm,
-            provider_key=provider_key,
             auth_strategy=auth_strategy,
             content_filter=content_filter,
+            priority=priority,
+            action=action,
+            provider_key=provider_key,
             request_options=request_options,
         )
         return _response.data
@@ -772,14 +772,14 @@ class AsyncGatewayProfilesClient:
         profile_id: str,
         *,
         host_pattern: str,
-        priority: typing.Optional[int] = OMIT,
         path_pattern: typing.Optional[str] = OMIT,
         methods: typing.Optional[typing.Sequence[str]] = OMIT,
-        action: typing.Optional[GatewayAction] = OMIT,
         rate_limit_rpm: typing.Optional[int] = OMIT,
-        provider_key: typing.Optional[str] = OMIT,
         auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
         content_filter: typing.Optional[GatewayRuleCreateContentFilter] = OMIT,
+        priority: typing.Optional[int] = OMIT,
+        action: typing.Optional[GatewayAction] = OMIT,
+        provider_key: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayRuleResponse:
         """
@@ -789,21 +789,21 @@ class AsyncGatewayProfilesClient:
 
         host_pattern : str
 
-        priority : typing.Optional[int]
-
         path_pattern : typing.Optional[str]
 
         methods : typing.Optional[typing.Sequence[str]]
 
-        action : typing.Optional[GatewayAction]
-
         rate_limit_rpm : typing.Optional[int]
-
-        provider_key : typing.Optional[str]
 
         auth_strategy : typing.Optional[AuthStrategySchema]
 
         content_filter : typing.Optional[GatewayRuleCreateContentFilter]
+
+        priority : typing.Optional[int]
+
+        action : typing.Optional[GatewayAction]
+
+        provider_key : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -838,14 +838,14 @@ class AsyncGatewayProfilesClient:
         _response = await self._raw_client.create_gateway_rule(
             profile_id,
             host_pattern=host_pattern,
-            priority=priority,
             path_pattern=path_pattern,
             methods=methods,
-            action=action,
             rate_limit_rpm=rate_limit_rpm,
-            provider_key=provider_key,
             auth_strategy=auth_strategy,
             content_filter=content_filter,
+            priority=priority,
+            action=action,
+            provider_key=provider_key,
             request_options=request_options,
         )
         return _response.data

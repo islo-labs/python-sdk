@@ -57,7 +57,7 @@ class JobsClient:
             JobSection,
             RunSectionInput,
             TaskInput,
-            TaskStep,
+            TaskStepInput,
         )
         from islo.environment import IsloEnvironment
 
@@ -75,7 +75,7 @@ class JobsClient:
                     tasks=[
                         TaskInput(
                             name="name",
-                            steps=[TaskStep()],
+                            steps=[TaskStepInput()],
                         )
                     ],
                 ),
@@ -112,7 +112,7 @@ class JobsClient:
             JobSection,
             RunSectionInput,
             TaskInput,
-            TaskStep,
+            TaskStepInput,
         )
         from islo.environment import IsloEnvironment
 
@@ -130,7 +130,7 @@ class JobsClient:
                     tasks=[
                         TaskInput(
                             name="name",
-                            steps=[TaskStep()],
+                            steps=[TaskStepInput()],
                         )
                     ],
                 ),
@@ -543,7 +543,7 @@ class AsyncJobsClient:
             JobSection,
             RunSectionInput,
             TaskInput,
-            TaskStep,
+            TaskStepInput,
         )
         from islo.environment import IsloEnvironment
 
@@ -564,7 +564,7 @@ class AsyncJobsClient:
                         tasks=[
                             TaskInput(
                                 name="name",
-                                steps=[TaskStep()],
+                                steps=[TaskStepInput()],
                             )
                         ],
                     ),
@@ -608,7 +608,7 @@ class AsyncJobsClient:
             JobSection,
             RunSectionInput,
             TaskInput,
-            TaskStep,
+            TaskStepInput,
         )
         from islo.environment import IsloEnvironment
 
@@ -629,7 +629,7 @@ class AsyncJobsClient:
                         tasks=[
                             TaskInput(
                                 name="name",
-                                steps=[TaskStep()],
+                                steps=[TaskStepInput()],
                             )
                         ],
                     ),

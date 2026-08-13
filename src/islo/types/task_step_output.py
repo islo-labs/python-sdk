@@ -5,10 +5,11 @@ import typing
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
 from .snapshot_step_action import SnapshotStepAction
-from .task_step_exec import TaskStepExec
+from .task_step_output_exec import TaskStepOutputExec
+from .task_step_output_run_agent import TaskStepOutputRunAgent
 
 
-class TaskStep(UniversalBaseModel):
+class TaskStepOutput(UniversalBaseModel):
     """
     One compute action per step.
     """
@@ -17,7 +18,8 @@ class TaskStep(UniversalBaseModel):
     workdir: typing.Optional[str] = None
     timeout: typing.Optional[int] = None
     user: typing.Optional[str] = None
-    exec: typing.Optional[TaskStepExec] = None
+    exec: typing.Optional[TaskStepOutputExec] = None
+    run_agent: typing.Optional[TaskStepOutputRunAgent] = None
     snapshot: typing.Optional[SnapshotStepAction] = None
     pause: typing.Optional[bool] = None
     resume: typing.Optional[bool] = None

@@ -12,6 +12,7 @@ from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.bad_request_error import BadRequestError
+from ..errors.forbidden_error import ForbiddenError
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
@@ -24,6 +25,8 @@ from ..types.integration_detail_response import IntegrationDetailResponse
 from ..types.integration_level import IntegrationLevel
 from ..types.integration_list_response import IntegrationListResponse
 from ..types.integration_providers_response import IntegrationProvidersResponse
+from ..types.trigger_catalog_item import TriggerCatalogItem
+from ..types.trigger_catalog_list_response import TriggerCatalogListResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -75,6 +78,99 @@ class RawIntegrationsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    def list_integration_triggers(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[TriggerCatalogListResponse]:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[TriggerCatalogListResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "integrations/triggers",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    TriggerCatalogListResponse,
+                    parse_obj_as(
+                        type_=TriggerCatalogListResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_integration_trigger(
+        self, provider: str, trigger_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[TriggerCatalogItem]:
+        """
+        Parameters
+        ----------
+        provider : str
+
+        trigger_name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[TriggerCatalogItem]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"integrations/triggers/{jsonable_encoder(provider)}/{jsonable_encoder(trigger_name)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    TriggerCatalogItem,
+                    parse_obj_as(
+                        type_=TriggerCatalogItem,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
     def list_integrations(
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[IntegrationListResponse]:
@@ -117,6 +213,17 @@ class RawIntegrationsClient:
                 return HttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -186,6 +293,17 @@ class RawIntegrationsClient:
                 return HttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -276,6 +394,17 @@ class RawIntegrationsClient:
                 )
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -382,6 +511,17 @@ class RawIntegrationsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -451,6 +591,17 @@ class RawIntegrationsClient:
                 return HttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -566,6 +717,17 @@ class RawIntegrationsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -577,6 +739,56 @@ class RawIntegrationsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def list_connected_integration_triggers(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[TriggerCatalogListResponse]:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[TriggerCatalogListResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "integrations/triggers/connected",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    TriggerCatalogListResponse,
+                    parse_obj_as(
+                        type_=TriggerCatalogListResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -643,6 +855,99 @@ class AsyncRawIntegrationsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    async def list_integration_triggers(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[TriggerCatalogListResponse]:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[TriggerCatalogListResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "integrations/triggers",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    TriggerCatalogListResponse,
+                    parse_obj_as(
+                        type_=TriggerCatalogListResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_integration_trigger(
+        self, provider: str, trigger_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[TriggerCatalogItem]:
+        """
+        Parameters
+        ----------
+        provider : str
+
+        trigger_name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[TriggerCatalogItem]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"integrations/triggers/{jsonable_encoder(provider)}/{jsonable_encoder(trigger_name)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    TriggerCatalogItem,
+                    parse_obj_as(
+                        type_=TriggerCatalogItem,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
     async def list_integrations(
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[IntegrationListResponse]:
@@ -685,6 +990,17 @@ class AsyncRawIntegrationsClient:
                 return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -754,6 +1070,17 @@ class AsyncRawIntegrationsClient:
                 return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -844,6 +1171,17 @@ class AsyncRawIntegrationsClient:
                 )
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -950,6 +1288,17 @@ class AsyncRawIntegrationsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -1019,6 +1368,17 @@ class AsyncRawIntegrationsClient:
                 return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -1134,6 +1494,17 @@ class AsyncRawIntegrationsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -1145,6 +1516,56 @@ class AsyncRawIntegrationsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def list_connected_integration_triggers(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[TriggerCatalogListResponse]:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[TriggerCatalogListResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "integrations/triggers/connected",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    TriggerCatalogListResponse,
+                    parse_obj_as(
+                        type_=TriggerCatalogListResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
