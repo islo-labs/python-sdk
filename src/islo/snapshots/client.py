@@ -73,7 +73,7 @@ class SnapshotsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SnapshotResponse:
         """
-        Create a snapshot from a running sandbox.
+        Create a snapshot from a running sandbox. By default, waits for capture and returns a ready snapshot. Send `Prefer: respond-async` to return immediately with a saving snapshot.
 
         Parameters
         ----------
@@ -87,7 +87,7 @@ class SnapshotsClient:
         Returns
         -------
         SnapshotResponse
-            Successful Response
+            Snapshot saved and ready
 
         Examples
         --------
@@ -242,7 +242,7 @@ class AsyncSnapshotsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SnapshotResponse:
         """
-        Create a snapshot from a running sandbox.
+        Create a snapshot from a running sandbox. By default, waits for capture and returns a ready snapshot. Send `Prefer: respond-async` to return immediately with a saving snapshot.
 
         Parameters
         ----------
@@ -256,7 +256,7 @@ class AsyncSnapshotsClient:
         Returns
         -------
         SnapshotResponse
-            Successful Response
+            Snapshot saved and ready
 
         Examples
         --------

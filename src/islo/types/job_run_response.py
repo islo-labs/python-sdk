@@ -15,6 +15,7 @@ class JobRunResponse(UniversalBaseModel):
     status: str
     region: typing.Optional[str] = None
     run_params: typing.Dict[str, typing.Any]
+    result_payload: typing.Optional[typing.Dict[str, typing.Any]] = None
     step_timeline: typing.List[JobRunStepTimelineEntry]
     artifact_refs: typing.List[typing.Dict[str, typing.Any]]
     started_at: typing.Optional[dt.datetime] = None

@@ -2,4 +2,4 @@
 
 import typing
 
-TaskStepExec = typing.Union[typing.List[str], str]
+TaskStepInputExec = typing.Union[typing.List[str], str]

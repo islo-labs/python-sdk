@@ -15,6 +15,7 @@ class ErrorCode(enum.StrEnum):
     SANDBOX_NOT_FOUND = "SANDBOX_NOT_FOUND"
     SANDBOX_ALREADY_EXISTS = "SANDBOX_ALREADY_EXISTS"
     SANDBOX_INVALID_STATE = "SANDBOX_INVALID_STATE"
+    SANDBOX_PROVISIONING_FAILED = "SANDBOX_PROVISIONING_FAILED"
     RESOURCE_NOT_FOUND = "RESOURCE_NOT_FOUND"
     FILE_NOT_FOUND = "FILE_NOT_FOUND"
     COMMAND_NOT_FOUND = "COMMAND_NOT_FOUND"
@@ -50,6 +51,7 @@ class ErrorCode(enum.StrEnum):
         sandbox_not_found: typing.Callable[[], T_Result],
         sandbox_already_exists: typing.Callable[[], T_Result],
         sandbox_invalid_state: typing.Callable[[], T_Result],
+        sandbox_provisioning_failed: typing.Callable[[], T_Result],
         resource_not_found: typing.Callable[[], T_Result],
         file_not_found: typing.Callable[[], T_Result],
         command_not_found: typing.Callable[[], T_Result],
@@ -81,6 +83,8 @@ class ErrorCode(enum.StrEnum):
             return sandbox_already_exists()
         if self is ErrorCode.SANDBOX_INVALID_STATE:
             return sandbox_invalid_state()
+        if self is ErrorCode.SANDBOX_PROVISIONING_FAILED:
+            return sandbox_provisioning_failed()
         if self is ErrorCode.RESOURCE_NOT_FOUND:
             return resource_not_found()
         if self is ErrorCode.FILE_NOT_FOUND:

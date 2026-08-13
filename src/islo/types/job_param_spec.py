@@ -4,11 +4,13 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .job_param_spec_items import JobParamSpecItems
 from .job_param_spec_type import JobParamSpecType
 
 
 class JobParamSpec(UniversalBaseModel):
     type: JobParamSpecType
+    items: typing.Optional[JobParamSpecItems] = None
     required: typing.Optional[bool] = None
     default: typing.Optional[typing.Any] = None
     description: typing.Optional[str] = None

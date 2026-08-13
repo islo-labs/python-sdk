@@ -9,6 +9,7 @@ T_Result = typing.TypeVar("T_Result")
 
 class ClientInferenceApi(enum.StrEnum):
     OPENAI_CHAT_COMPLETIONS = "openai_chat_completions"
+    OPENAI_RESPONSES = "openai_responses"
     ANTHROPIC_MESSAGES = "anthropic_messages"
     _UNKNOWN = "__CLIENTINFERENCEAPI_UNKNOWN__"
     """
@@ -24,11 +25,14 @@ class ClientInferenceApi(enum.StrEnum):
     def visit(
         self,
         openai_chat_completions: typing.Callable[[], T_Result],
+        openai_responses: typing.Callable[[], T_Result],
         anthropic_messages: typing.Callable[[], T_Result],
         _unknown_member: typing.Callable[[str], T_Result],
     ) -> T_Result:
         if self is ClientInferenceApi.OPENAI_CHAT_COMPLETIONS:
             return openai_chat_completions()
+        if self is ClientInferenceApi.OPENAI_RESPONSES:
+            return openai_responses()
         if self is ClientInferenceApi.ANTHROPIC_MESSAGES:
             return anthropic_messages()
         return _unknown_member(self._value_)

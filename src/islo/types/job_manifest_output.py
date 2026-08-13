@@ -4,6 +4,7 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .job_output_spec import JobOutputSpec
 from .job_section import JobSection
 from .run_section_output import RunSectionOutput
 from .schedule_section import ScheduleSection
@@ -19,5 +20,6 @@ class JobManifestOutput(UniversalBaseModel):
     run: RunSectionOutput
     schedule: typing.Optional[ScheduleSection] = None
     verification: typing.Optional[VerificationSection] = None
+    outputs: typing.Optional[typing.Dict[str, typing.Optional[JobOutputSpec]]] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

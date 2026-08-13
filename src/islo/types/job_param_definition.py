@@ -4,15 +4,14 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .job_param_definition_items import JobParamDefinitionItems
+from .job_param_definition_type import JobParamDefinitionType
 
 
 class JobParamDefinition(UniversalBaseModel):
     name: str
-    type: str = pydantic.Field()
-    """
-    string | integer | number | boolean
-    """
-
+    type: JobParamDefinitionType
+    items: typing.Optional[JobParamDefinitionItems] = None
     required: typing.Optional[bool] = None
     default: typing.Optional[typing.Any] = None
     description: typing.Optional[str] = None

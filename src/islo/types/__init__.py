@@ -71,6 +71,17 @@ if typing.TYPE_CHECKING:
     from .custom_service_create_response import CustomServiceCreateResponse
     from .custom_services_response import CustomServicesResponse
     from .empty_result import EmptyResult
+    from .environment_entry_kind import EnvironmentEntryKind
+    from .environment_entry_placement import EnvironmentEntryPlacement
+    from .environment_entry_response import EnvironmentEntryResponse
+    from .environment_gateway_rule_input import EnvironmentGatewayRuleInput
+    from .environment_gateway_rule_response import EnvironmentGatewayRuleResponse
+    from .environment_list_item import EnvironmentListItem
+    from .environment_response import EnvironmentResponse
+    from .environment_secret_input import EnvironmentSecretInput
+    from .environment_secret_update_input import EnvironmentSecretUpdateInput
+    from .environment_variable_input import EnvironmentVariableInput
+    from .environment_variable_input_placement import EnvironmentVariableInputPlacement
     from .error_code import ErrorCode
     from .error_response import ErrorResponse
     from .exec_request import ExecRequest
@@ -204,12 +215,20 @@ if typing.TYPE_CHECKING:
     from .job_list_item import JobListItem
     from .job_manifest_input import JobManifestInput
     from .job_manifest_output import JobManifestOutput
+    from .job_output_spec import JobOutputSpec
+    from .job_output_spec_items import JobOutputSpecItems
+    from .job_output_spec_type import JobOutputSpecType
     from .job_param_definition import JobParamDefinition
+    from .job_param_definition_items import JobParamDefinitionItems
+    from .job_param_definition_type import JobParamDefinitionType
     from .job_param_mapping import JobParamMapping
     from .job_param_mapping_parts import JobParamMappingParts
     from .job_param_mapping_source import JobParamMappingSource
     from .job_param_spec import JobParamSpec
+    from .job_param_spec_items import JobParamSpecItems
     from .job_param_spec_type import JobParamSpecType
+    from .job_param_spec_type_one import JobParamSpecTypeOne
+    from .job_param_spec_type_zero import JobParamSpecTypeZero
     from .job_response import JobResponse
     from .job_run_response import JobRunResponse
     from .job_run_status import JobRunStatus
@@ -251,6 +270,8 @@ if typing.TYPE_CHECKING:
     from .judge_content_filter_fallback import JudgeContentFilterFallback
     from .judge_content_filter_provider_key import JudgeContentFilterProviderKey
     from .jwt_verifier import JwtVerifier
+    from .knowledge_binding import KnowledgeBinding
+    from .knowledge_binding_type import KnowledgeBindingType
     from .knowledge_item_list_response import KnowledgeItemListResponse
     from .knowledge_item_response import KnowledgeItemResponse
     from .knowledge_level import KnowledgeLevel
@@ -261,6 +282,7 @@ if typing.TYPE_CHECKING:
     from .legacy_init_capability import LegacyInitCapability
     from .lifecycle_policy import LifecyclePolicy
     from .list_sessions_response import ListSessionsResponse
+    from .literal_binding import LiteralBinding
     from .mapping_part import MappingPart, MappingPart_Literal, MappingPart_Source
     from .mapping_part_literal import MappingPartLiteral
     from .mapping_part_source import MappingPartSource
@@ -275,6 +297,22 @@ if typing.TYPE_CHECKING:
     from .regex_content_filter_direction import RegexContentFilterDirection
     from .registry_provider import RegistryProvider
     from .rule_reorder_item import RuleReorderItem
+    from .run_agent_exec_step_action import RunAgentExecStepAction
+    from .run_agent_exec_step_action_command import RunAgentExecStepActionCommand
+    from .run_agent_exec_step_action_harness import RunAgentExecStepActionHarness
+    from .run_agent_session_step_action import RunAgentSessionStepAction
+    from .run_agent_session_step_action_command import RunAgentSessionStepActionCommand
+    from .run_agent_session_step_action_harness import RunAgentSessionStepActionHarness
+    from .run_agent_session_step_action_prompt import (
+        RunAgentSessionStepActionPrompt,
+        RunAgentSessionStepActionPrompt_Knowledge,
+        RunAgentSessionStepActionPrompt_Literal,
+    )
+    from .run_agent_session_step_action_resume_prompt import (
+        RunAgentSessionStepActionResumePrompt,
+        RunAgentSessionStepActionResumePrompt_Knowledge,
+        RunAgentSessionStepActionResumePrompt_Literal,
+    )
     from .run_section_input import RunSectionInput
     from .run_section_input_timeout import RunSectionInputTimeout
     from .run_section_output import RunSectionOutput
@@ -316,10 +354,24 @@ if typing.TYPE_CHECKING:
     from .snapshot_step_action import SnapshotStepAction
     from .task_input import TaskInput
     from .task_output import TaskOutput
-    from .task_step import TaskStep
-    from .task_step_exec import TaskStepExec
+    from .task_step_input import TaskStepInput
+    from .task_step_input_exec import TaskStepInputExec
+    from .task_step_input_run_agent import (
+        TaskStepInputRunAgent,
+        TaskStepInputRunAgent_Exec,
+        TaskStepInputRunAgent_Session,
+    )
+    from .task_step_output import TaskStepOutput
+    from .task_step_output_exec import TaskStepOutputExec
+    from .task_step_output_run_agent import (
+        TaskStepOutputRunAgent,
+        TaskStepOutputRunAgent_Exec,
+        TaskStepOutputRunAgent_Session,
+    )
     from .tenant_regions_response import TenantRegionsResponse
     from .timestamp_check import TimestampCheck
+    from .trigger_catalog_item import TriggerCatalogItem
+    from .trigger_catalog_list_response import TriggerCatalogListResponse
     from .validation_error import ValidationError
     from .validation_error_loc_item import ValidationErrorLocItem
     from .value_source import (
@@ -406,6 +458,17 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CustomServiceCreateResponse": ".custom_service_create_response",
     "CustomServicesResponse": ".custom_services_response",
     "EmptyResult": ".empty_result",
+    "EnvironmentEntryKind": ".environment_entry_kind",
+    "EnvironmentEntryPlacement": ".environment_entry_placement",
+    "EnvironmentEntryResponse": ".environment_entry_response",
+    "EnvironmentGatewayRuleInput": ".environment_gateway_rule_input",
+    "EnvironmentGatewayRuleResponse": ".environment_gateway_rule_response",
+    "EnvironmentListItem": ".environment_list_item",
+    "EnvironmentResponse": ".environment_response",
+    "EnvironmentSecretInput": ".environment_secret_input",
+    "EnvironmentSecretUpdateInput": ".environment_secret_update_input",
+    "EnvironmentVariableInput": ".environment_variable_input",
+    "EnvironmentVariableInputPlacement": ".environment_variable_input_placement",
     "ErrorCode": ".error_code",
     "ErrorResponse": ".error_response",
     "ExecRequest": ".exec_request",
@@ -527,12 +590,20 @@ _dynamic_imports: typing.Dict[str, str] = {
     "JobListItem": ".job_list_item",
     "JobManifestInput": ".job_manifest_input",
     "JobManifestOutput": ".job_manifest_output",
+    "JobOutputSpec": ".job_output_spec",
+    "JobOutputSpecItems": ".job_output_spec_items",
+    "JobOutputSpecType": ".job_output_spec_type",
     "JobParamDefinition": ".job_param_definition",
+    "JobParamDefinitionItems": ".job_param_definition_items",
+    "JobParamDefinitionType": ".job_param_definition_type",
     "JobParamMapping": ".job_param_mapping",
     "JobParamMappingParts": ".job_param_mapping_parts",
     "JobParamMappingSource": ".job_param_mapping_source",
     "JobParamSpec": ".job_param_spec",
+    "JobParamSpecItems": ".job_param_spec_items",
     "JobParamSpecType": ".job_param_spec_type",
+    "JobParamSpecTypeOne": ".job_param_spec_type_one",
+    "JobParamSpecTypeZero": ".job_param_spec_type_zero",
     "JobResponse": ".job_response",
     "JobRunResponse": ".job_run_response",
     "JobRunStatus": ".job_run_status",
@@ -572,6 +643,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "JudgeContentFilterFallback": ".judge_content_filter_fallback",
     "JudgeContentFilterProviderKey": ".judge_content_filter_provider_key",
     "JwtVerifier": ".jwt_verifier",
+    "KnowledgeBinding": ".knowledge_binding",
+    "KnowledgeBindingType": ".knowledge_binding_type",
     "KnowledgeItemListResponse": ".knowledge_item_list_response",
     "KnowledgeItemResponse": ".knowledge_item_response",
     "KnowledgeLevel": ".knowledge_level",
@@ -582,6 +655,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "LegacyInitCapability": ".legacy_init_capability",
     "LifecyclePolicy": ".lifecycle_policy",
     "ListSessionsResponse": ".list_sessions_response",
+    "LiteralBinding": ".literal_binding",
     "MappingPart": ".mapping_part",
     "MappingPartLiteral": ".mapping_part_literal",
     "MappingPartSource": ".mapping_part_source",
@@ -598,6 +672,18 @@ _dynamic_imports: typing.Dict[str, str] = {
     "RegexContentFilterDirection": ".regex_content_filter_direction",
     "RegistryProvider": ".registry_provider",
     "RuleReorderItem": ".rule_reorder_item",
+    "RunAgentExecStepAction": ".run_agent_exec_step_action",
+    "RunAgentExecStepActionCommand": ".run_agent_exec_step_action_command",
+    "RunAgentExecStepActionHarness": ".run_agent_exec_step_action_harness",
+    "RunAgentSessionStepAction": ".run_agent_session_step_action",
+    "RunAgentSessionStepActionCommand": ".run_agent_session_step_action_command",
+    "RunAgentSessionStepActionHarness": ".run_agent_session_step_action_harness",
+    "RunAgentSessionStepActionPrompt": ".run_agent_session_step_action_prompt",
+    "RunAgentSessionStepActionPrompt_Knowledge": ".run_agent_session_step_action_prompt",
+    "RunAgentSessionStepActionPrompt_Literal": ".run_agent_session_step_action_prompt",
+    "RunAgentSessionStepActionResumePrompt": ".run_agent_session_step_action_resume_prompt",
+    "RunAgentSessionStepActionResumePrompt_Knowledge": ".run_agent_session_step_action_resume_prompt",
+    "RunAgentSessionStepActionResumePrompt_Literal": ".run_agent_session_step_action_resume_prompt",
     "RunSectionInput": ".run_section_input",
     "RunSectionInputTimeout": ".run_section_input_timeout",
     "RunSectionOutput": ".run_section_output",
@@ -644,10 +730,20 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SnapshotStepAction": ".snapshot_step_action",
     "TaskInput": ".task_input",
     "TaskOutput": ".task_output",
-    "TaskStep": ".task_step",
-    "TaskStepExec": ".task_step_exec",
+    "TaskStepInput": ".task_step_input",
+    "TaskStepInputExec": ".task_step_input_exec",
+    "TaskStepInputRunAgent": ".task_step_input_run_agent",
+    "TaskStepInputRunAgent_Exec": ".task_step_input_run_agent",
+    "TaskStepInputRunAgent_Session": ".task_step_input_run_agent",
+    "TaskStepOutput": ".task_step_output",
+    "TaskStepOutputExec": ".task_step_output_exec",
+    "TaskStepOutputRunAgent": ".task_step_output_run_agent",
+    "TaskStepOutputRunAgent_Exec": ".task_step_output_run_agent",
+    "TaskStepOutputRunAgent_Session": ".task_step_output_run_agent",
     "TenantRegionsResponse": ".tenant_regions_response",
     "TimestampCheck": ".timestamp_check",
+    "TriggerCatalogItem": ".trigger_catalog_item",
+    "TriggerCatalogListResponse": ".trigger_catalog_list_response",
     "ValidationError": ".validation_error",
     "ValidationErrorLocItem": ".validation_error_loc_item",
     "ValueSource": ".value_source",
@@ -756,6 +852,17 @@ __all__ = [
     "CustomServiceCreateResponse",
     "CustomServicesResponse",
     "EmptyResult",
+    "EnvironmentEntryKind",
+    "EnvironmentEntryPlacement",
+    "EnvironmentEntryResponse",
+    "EnvironmentGatewayRuleInput",
+    "EnvironmentGatewayRuleResponse",
+    "EnvironmentListItem",
+    "EnvironmentResponse",
+    "EnvironmentSecretInput",
+    "EnvironmentSecretUpdateInput",
+    "EnvironmentVariableInput",
+    "EnvironmentVariableInputPlacement",
     "ErrorCode",
     "ErrorResponse",
     "ExecRequest",
@@ -877,12 +984,20 @@ __all__ = [
     "JobListItem",
     "JobManifestInput",
     "JobManifestOutput",
+    "JobOutputSpec",
+    "JobOutputSpecItems",
+    "JobOutputSpecType",
     "JobParamDefinition",
+    "JobParamDefinitionItems",
+    "JobParamDefinitionType",
     "JobParamMapping",
     "JobParamMappingParts",
     "JobParamMappingSource",
     "JobParamSpec",
+    "JobParamSpecItems",
     "JobParamSpecType",
+    "JobParamSpecTypeOne",
+    "JobParamSpecTypeZero",
     "JobResponse",
     "JobRunResponse",
     "JobRunStatus",
@@ -922,6 +1037,8 @@ __all__ = [
     "JudgeContentFilterFallback",
     "JudgeContentFilterProviderKey",
     "JwtVerifier",
+    "KnowledgeBinding",
+    "KnowledgeBindingType",
     "KnowledgeItemListResponse",
     "KnowledgeItemResponse",
     "KnowledgeLevel",
@@ -932,6 +1049,7 @@ __all__ = [
     "LegacyInitCapability",
     "LifecyclePolicy",
     "ListSessionsResponse",
+    "LiteralBinding",
     "MappingPart",
     "MappingPartLiteral",
     "MappingPartSource",
@@ -948,6 +1066,18 @@ __all__ = [
     "RegexContentFilterDirection",
     "RegistryProvider",
     "RuleReorderItem",
+    "RunAgentExecStepAction",
+    "RunAgentExecStepActionCommand",
+    "RunAgentExecStepActionHarness",
+    "RunAgentSessionStepAction",
+    "RunAgentSessionStepActionCommand",
+    "RunAgentSessionStepActionHarness",
+    "RunAgentSessionStepActionPrompt",
+    "RunAgentSessionStepActionPrompt_Knowledge",
+    "RunAgentSessionStepActionPrompt_Literal",
+    "RunAgentSessionStepActionResumePrompt",
+    "RunAgentSessionStepActionResumePrompt_Knowledge",
+    "RunAgentSessionStepActionResumePrompt_Literal",
     "RunSectionInput",
     "RunSectionInputTimeout",
     "RunSectionOutput",
@@ -994,10 +1124,20 @@ __all__ = [
     "SnapshotStepAction",
     "TaskInput",
     "TaskOutput",
-    "TaskStep",
-    "TaskStepExec",
+    "TaskStepInput",
+    "TaskStepInputExec",
+    "TaskStepInputRunAgent",
+    "TaskStepInputRunAgent_Exec",
+    "TaskStepInputRunAgent_Session",
+    "TaskStepOutput",
+    "TaskStepOutputExec",
+    "TaskStepOutputRunAgent",
+    "TaskStepOutputRunAgent_Exec",
+    "TaskStepOutputRunAgent_Session",
     "TenantRegionsResponse",
     "TimestampCheck",
+    "TriggerCatalogItem",
+    "TriggerCatalogListResponse",
     "ValidationError",
     "ValidationErrorLocItem",
     "ValueSource",

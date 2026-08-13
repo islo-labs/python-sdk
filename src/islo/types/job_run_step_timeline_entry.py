@@ -12,6 +12,8 @@ class JobRunStepTimelineEntry(UniversalBaseModel):
     action: str
     status: str
     task_name: str
+    sandbox_name: typing.Optional[str] = None
+    agent_session_id: typing.Optional[str] = None
     started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
     error_message: typing.Optional[str] = None

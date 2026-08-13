@@ -99,7 +99,7 @@ class RawSnapshotsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[SnapshotResponse]:
         """
-        Create a snapshot from a running sandbox.
+        Create a snapshot from a running sandbox. By default, waits for capture and returns a ready snapshot. Send `Prefer: respond-async` to return immediately with a saving snapshot.
 
         Parameters
         ----------
@@ -113,7 +113,7 @@ class RawSnapshotsClient:
         Returns
         -------
         HttpResponse[SnapshotResponse]
-            Successful Response
+            Snapshot saved and ready
         """
         _response = self._client_wrapper.httpx_client.request(
             "snapshots/",
@@ -307,6 +307,17 @@ class RawSnapshotsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
@@ -393,7 +404,7 @@ class AsyncRawSnapshotsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[SnapshotResponse]:
         """
-        Create a snapshot from a running sandbox.
+        Create a snapshot from a running sandbox. By default, waits for capture and returns a ready snapshot. Send `Prefer: respond-async` to return immediately with a saving snapshot.
 
         Parameters
         ----------
@@ -407,7 +418,7 @@ class AsyncRawSnapshotsClient:
         Returns
         -------
         AsyncHttpResponse[SnapshotResponse]
-            Successful Response
+            Snapshot saved and ready
         """
         _response = await self._client_wrapper.httpx_client.request(
             "snapshots/",
@@ -597,6 +608,17 @@ class AsyncRawSnapshotsClient:
                         typing.Any,
                         parse_obj_as(
                             type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

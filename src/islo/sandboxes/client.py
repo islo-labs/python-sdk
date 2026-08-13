@@ -111,6 +111,7 @@ class SandboxesClient:
         cache_key: typing.Optional[str] = OMIT,
         disk_gb: typing.Optional[int] = OMIT,
         env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
+        environment: typing.Optional[str] = OMIT,
         gateway_profile: typing.Optional[str] = OMIT,
         image: typing.Optional[str] = OMIT,
         init: typing.Optional[SandboxInit] = OMIT,
@@ -136,6 +137,9 @@ class SandboxesClient:
         disk_gb : typing.Optional[int]
 
         env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+
+        environment : typing.Optional[str]
+            Environment for sandbox env and environment-owned gateway injection.
 
         gateway_profile : typing.Optional[str]
 
@@ -186,6 +190,7 @@ class SandboxesClient:
             cache_key=cache_key,
             disk_gb=disk_gb,
             env=env,
+            environment=environment,
             gateway_profile=gateway_profile,
             image=image,
             init=init,
@@ -1009,6 +1014,7 @@ class AsyncSandboxesClient:
         cache_key: typing.Optional[str] = OMIT,
         disk_gb: typing.Optional[int] = OMIT,
         env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
+        environment: typing.Optional[str] = OMIT,
         gateway_profile: typing.Optional[str] = OMIT,
         image: typing.Optional[str] = OMIT,
         init: typing.Optional[SandboxInit] = OMIT,
@@ -1034,6 +1040,9 @@ class AsyncSandboxesClient:
         disk_gb : typing.Optional[int]
 
         env : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+
+        environment : typing.Optional[str]
+            Environment for sandbox env and environment-owned gateway injection.
 
         gateway_profile : typing.Optional[str]
 
@@ -1092,6 +1101,7 @@ class AsyncSandboxesClient:
             cache_key=cache_key,
             disk_gb=disk_gb,
             env=env,
+            environment=environment,
             gateway_profile=gateway_profile,
             image=image,
             init=init,
