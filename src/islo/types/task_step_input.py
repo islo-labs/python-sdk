@@ -6,6 +6,7 @@ import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
 from .snapshot_step_action import SnapshotStepAction
 from .task_step_input_exec import TaskStepInputExec
+from .task_step_input_outputs import TaskStepInputOutputs
 from .task_step_input_run_agent import TaskStepInputRunAgent
 
 
@@ -26,5 +27,6 @@ class TaskStepInput(UniversalBaseModel):
     delete: typing.Optional[bool] = None
     upload: typing.Optional[str] = None
     download: typing.Optional[str] = None
+    outputs: typing.Optional[TaskStepInputOutputs] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

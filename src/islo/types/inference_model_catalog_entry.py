@@ -8,6 +8,7 @@ from ..core.pydantic_utilities import UniversalBaseModel
 from ..core.serialization import FieldMetadata
 from .client_inference_api import ClientInferenceApi
 from .inference_provider import InferenceProvider
+from .pricing_tier import PricingTier
 
 
 class InferenceModelCatalogEntry(UniversalBaseModel):
@@ -38,5 +39,6 @@ class InferenceModelCatalogEntry(UniversalBaseModel):
         FieldMetadata(alias="output_cents_per_1m_tokens"),
         pydantic.Field(alias="output_cents_per_1m_tokens", default=None),
     ]
+    pricing_tiers: typing.Optional[typing.List[PricingTier]] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

@@ -5,6 +5,7 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .artifact_ref import ArtifactRef
 from .job_run_step_timeline_entry import JobRunStepTimelineEntry
 
 
@@ -17,7 +18,7 @@ class JobRunResponse(UniversalBaseModel):
     run_params: typing.Dict[str, typing.Any]
     result_payload: typing.Optional[typing.Dict[str, typing.Any]] = None
     step_timeline: typing.List[JobRunStepTimelineEntry]
-    artifact_refs: typing.List[typing.Dict[str, typing.Any]]
+    artifact_refs: typing.List[ArtifactRef]
     started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
     error_message: typing.Optional[str] = None

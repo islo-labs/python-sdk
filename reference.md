@@ -3699,7 +3699,7 @@ client.jobs.get_job_version(
 </dl>
 </details>
 
-<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">list_job_runs</a>(...) -> typing.List[JobRunResponse]</code></summary>
+<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">list_job_runs</a>(...) -> typing.List[JobRunListItem]</code></summary>
 <dl>
 <dd>
 
@@ -3925,6 +3925,82 @@ client.jobs.get_job_run(
 </dl>
 </details>
 
+<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">stop_job_run</a>(...) -> JobRunResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.jobs.stop_job_run(
+    name="name",
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**reason:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">get_job_schedule</a>(...) -> JobScheduleResponse</code></summary>
 <dl>
 <dd>
@@ -4044,7 +4120,7 @@ client.jobs.delete_job_schedule(
 </details>
 
 ## JobRuns
-<details><summary><code>client.job_runs.<a href="src/islo/job_runs/client.py">list_all_job_runs</a>(...) -> typing.List[JobRunResponse]</code></summary>
+<details><summary><code>client.job_runs.<a href="src/islo/job_runs/client.py">list_all_job_runs</a>(...) -> typing.List[JobRunListItem]</code></summary>
 <dl>
 <dd>
 

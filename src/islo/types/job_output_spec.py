@@ -5,6 +5,7 @@ import typing
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
 from .job_output_spec_items import JobOutputSpecItems
+from .job_output_spec_reduce import JobOutputSpecReduce
 from .job_output_spec_type import JobOutputSpecType
 
 
@@ -14,5 +15,6 @@ class JobOutputSpec(UniversalBaseModel):
     required: typing.Optional[bool] = None
     description: typing.Optional[str] = None
     enum: typing.Optional[typing.List[typing.Any]] = None
+    reduce: typing.Optional[JobOutputSpecReduce] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
