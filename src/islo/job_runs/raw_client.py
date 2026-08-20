@@ -11,6 +11,7 @@ from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
+from ..types.job_run_list_item import JobRunListItem
 from ..types.job_run_response import JobRunResponse
 from ..types.job_run_status import JobRunStatus
 from pydantic import ValidationError
@@ -27,7 +28,7 @@ class RawJobRunsClient:
         offset: typing.Optional[int] = None,
         status: typing.Optional[JobRunStatus] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[typing.List[JobRunResponse]]:
+    ) -> HttpResponse[typing.List[JobRunListItem]]:
         """
         Parameters
         ----------
@@ -43,7 +44,7 @@ class RawJobRunsClient:
 
         Returns
         -------
-        HttpResponse[typing.List[JobRunResponse]]
+        HttpResponse[typing.List[JobRunListItem]]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -60,9 +61,9 @@ class RawJobRunsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[JobRunResponse],
+                    typing.List[JobRunListItem],
                     parse_obj_as(
-                        type_=typing.List[JobRunResponse],  # type: ignore
+                        type_=typing.List[JobRunListItem],  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -151,7 +152,7 @@ class AsyncRawJobRunsClient:
         offset: typing.Optional[int] = None,
         status: typing.Optional[JobRunStatus] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[typing.List[JobRunResponse]]:
+    ) -> AsyncHttpResponse[typing.List[JobRunListItem]]:
         """
         Parameters
         ----------
@@ -167,7 +168,7 @@ class AsyncRawJobRunsClient:
 
         Returns
         -------
-        AsyncHttpResponse[typing.List[JobRunResponse]]
+        AsyncHttpResponse[typing.List[JobRunListItem]]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -184,9 +185,9 @@ class AsyncRawJobRunsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[JobRunResponse],
+                    typing.List[JobRunListItem],
                     parse_obj_as(
-                        type_=typing.List[JobRunResponse],  # type: ignore
+                        type_=typing.List[JobRunListItem],  # type: ignore
                         object_=_response.json(),
                     ),
                 )
