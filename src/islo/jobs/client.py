@@ -7,6 +7,7 @@ from ..core.request_options import RequestOptions
 from ..types.job_list_item import JobListItem
 from ..types.job_manifest_input import JobManifestInput
 from ..types.job_response import JobResponse
+from ..types.job_run_list_item import JobRunListItem
 from ..types.job_run_response import JobRunResponse
 from ..types.job_schedule_response import JobScheduleResponse
 from ..types.job_version_response import JobVersionResponse
@@ -320,7 +321,7 @@ class JobsClient:
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[JobRunResponse]:
+    ) -> typing.List[JobRunListItem]:
         """
         Parameters
         ----------
@@ -335,7 +336,7 @@ class JobsClient:
 
         Returns
         -------
-        typing.List[JobRunResponse]
+        typing.List[JobRunListItem]
             Successful Response
 
         Examples
@@ -862,7 +863,7 @@ class AsyncJobsClient:
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[JobRunResponse]:
+    ) -> typing.List[JobRunListItem]:
         """
         Parameters
         ----------
@@ -877,7 +878,7 @@ class AsyncJobsClient:
 
         Returns
         -------
-        typing.List[JobRunResponse]
+        typing.List[JobRunListItem]
             Successful Response
 
         Examples

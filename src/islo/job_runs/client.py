@@ -4,6 +4,7 @@ import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
+from ..types.job_run_list_item import JobRunListItem
 from ..types.job_run_response import JobRunResponse
 from ..types.job_run_status import JobRunStatus
 from .raw_client import AsyncRawJobRunsClient, RawJobRunsClient
@@ -31,7 +32,7 @@ class JobRunsClient:
         offset: typing.Optional[int] = None,
         status: typing.Optional[JobRunStatus] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[JobRunResponse]:
+    ) -> typing.List[JobRunListItem]:
         """
         Parameters
         ----------
@@ -47,7 +48,7 @@ class JobRunsClient:
 
         Returns
         -------
-        typing.List[JobRunResponse]
+        typing.List[JobRunListItem]
             Successful Response
 
         Examples
@@ -121,7 +122,7 @@ class AsyncJobRunsClient:
         offset: typing.Optional[int] = None,
         status: typing.Optional[JobRunStatus] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[JobRunResponse]:
+    ) -> typing.List[JobRunListItem]:
         """
         Parameters
         ----------
@@ -137,7 +138,7 @@ class AsyncJobRunsClient:
 
         Returns
         -------
-        typing.List[JobRunResponse]
+        typing.List[JobRunListItem]
             Successful Response
 
         Examples

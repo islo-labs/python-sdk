@@ -231,6 +231,7 @@ if typing.TYPE_CHECKING:
     from .job_param_spec_type_zero import JobParamSpecTypeZero
     from .job_response import JobResponse
     from .job_run_response import JobRunResponse
+    from .job_run_list_item import JobRunListItem
     from .job_run_status import JobRunStatus
     from .job_run_step_timeline_entry import JobRunStepTimelineEntry
     from .job_schedule_response import JobScheduleResponse
@@ -605,6 +606,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "JobParamSpecTypeOne": ".job_param_spec_type_one",
     "JobParamSpecTypeZero": ".job_param_spec_type_zero",
     "JobResponse": ".job_response",
+    "JobRunListItem": ".job_run_list_item",
     "JobRunResponse": ".job_run_response",
     "JobRunStatus": ".job_run_status",
     "JobRunStepTimelineEntry": ".job_run_step_timeline_entry",
