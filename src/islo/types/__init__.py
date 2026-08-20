@@ -247,6 +247,7 @@ if typing.TYPE_CHECKING:
     from .job_response import JobResponse
     from .job_run_list_item import JobRunListItem
     from .job_run_response import JobRunResponse
+    from .job_run_list_item import JobRunListItem
     from .job_run_status import JobRunStatus
     from .job_run_step_timeline_entry import JobRunStepTimelineEntry
     from .job_schedule_response import JobScheduleResponse
