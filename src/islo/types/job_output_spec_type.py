@@ -12,7 +12,6 @@ class JobOutputSpecType(enum.StrEnum):
     INTEGER = "integer"
     NUMBER = "number"
     BOOLEAN = "boolean"
-    OBJECT = "object"
     ARRAY = "array"
     _UNKNOWN = "__JOBOUTPUTSPECTYPE_UNKNOWN__"
     """
@@ -31,7 +30,6 @@ class JobOutputSpecType(enum.StrEnum):
         integer: typing.Callable[[], T_Result],
         number: typing.Callable[[], T_Result],
         boolean: typing.Callable[[], T_Result],
-        object: typing.Callable[[], T_Result],
         array: typing.Callable[[], T_Result],
         _unknown_member: typing.Callable[[str], T_Result],
     ) -> T_Result:
@@ -43,8 +41,6 @@ class JobOutputSpecType(enum.StrEnum):
             return number()
         if self is JobOutputSpecType.BOOLEAN:
             return boolean()
-        if self is JobOutputSpecType.OBJECT:
-            return object()
         if self is JobOutputSpecType.ARRAY:
             return array()
         return _unknown_member(self._value_)

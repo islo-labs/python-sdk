@@ -6,7 +6,17 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
+    from .agent_result import AgentResult
     from .all_integrations_policy import AllIntegrationsPolicy
+    from .artifact_ref import ArtifactRef
+    from .artifact_ref_external_ref import (
+        ArtifactRefExternalRef,
+        ArtifactRefExternalRef_Github,
+        ArtifactRefExternalRef_Islo,
+        ArtifactRefExternalRef_Linear,
+        ArtifactRefExternalRef_Slack,
+        ArtifactRefExternalRef_Url,
+    )
     from .auth_method import AuthMethod
     from .auth_strategy_schema import AuthStrategySchema
     from .auth_strategy_schema_mode import AuthStrategySchemaMode
@@ -53,6 +63,7 @@ if typing.TYPE_CHECKING:
     from .compute_event_detail_response import ComputeEventDetailResponse
     from .compute_event_detail_response_result import (
         ComputeEventDetailResponseResult,
+        ComputeEventDetailResponseResult_Agent,
         ComputeEventDetailResponseResult_Empty,
         ComputeEventDetailResponseResult_Exec,
         ComputeEventDetailResponseResult_Sandbox,
@@ -103,6 +114,7 @@ if typing.TYPE_CHECKING:
         GatewayProfileResponseIntegrationPolicy_Custom,
     )
     from .gateway_rule_response import GatewayRuleResponse
+    from .git_hub_external_ref import GitHubExternalRef
     from .git_source import GitSource
     from .header_equals_verifier import HeaderEqualsVerifier
     from .hmac_algorithm import HmacAlgorithm
@@ -211,12 +223,15 @@ if typing.TYPE_CHECKING:
     from .integration_status import IntegrationStatus
     from .ip_allowlist_verifier import IpAllowlistVerifier
     from .islo_error_code import IsloErrorCode
+    from .islo_knowledge_item_external_ref import IsloKnowledgeItemExternalRef
+    from .islo_knowledge_item_external_ref_kind import IsloKnowledgeItemExternalRefKind
     from .job_deploy_request import JobDeployRequest
     from .job_list_item import JobListItem
     from .job_manifest_input import JobManifestInput
     from .job_manifest_output import JobManifestOutput
     from .job_output_spec import JobOutputSpec
     from .job_output_spec_items import JobOutputSpecItems
+    from .job_output_spec_reduce import JobOutputSpecReduce
     from .job_output_spec_type import JobOutputSpecType
     from .job_param_definition import JobParamDefinition
     from .job_param_definition_items import JobParamDefinitionItems
@@ -230,8 +245,8 @@ if typing.TYPE_CHECKING:
     from .job_param_spec_type_one import JobParamSpecTypeOne
     from .job_param_spec_type_zero import JobParamSpecTypeZero
     from .job_response import JobResponse
-    from .job_run_response import JobRunResponse
     from .job_run_list_item import JobRunListItem
+    from .job_run_response import JobRunResponse
     from .job_run_status import JobRunStatus
     from .job_run_step_timeline_entry import JobRunStepTimelineEntry
     from .job_schedule_response import JobScheduleResponse
@@ -266,6 +281,7 @@ if typing.TYPE_CHECKING:
     from .json_path_condition_not import JsonPathConditionNot
     from .json_path_condition_not_equals import JsonPathConditionNotEquals
     from .json_path_condition_not_exists import JsonPathConditionNotExists
+    from .json_value import JsonValue
     from .judge_content_filter import JudgeContentFilter
     from .judge_content_filter_direction import JudgeContentFilterDirection
     from .judge_content_filter_fallback import JudgeContentFilterFallback
@@ -282,6 +298,7 @@ if typing.TYPE_CHECKING:
     from .knowledge_status import KnowledgeStatus
     from .legacy_init_capability import LegacyInitCapability
     from .lifecycle_policy import LifecyclePolicy
+    from .linear_external_ref import LinearExternalRef
     from .list_sessions_response import ListSessionsResponse
     from .literal_binding import LiteralBinding
     from .mapping_part import MappingPart, MappingPart_Literal, MappingPart_Source
@@ -292,6 +309,7 @@ if typing.TYPE_CHECKING:
     from .paginated_snapshot_response import PaginatedSnapshotResponse
     from .payload_mapping import PayloadMapping
     from .payload_mapping_type import PayloadMappingType
+    from .pricing_tier import PricingTier
     from .provider_app import ProviderApp
     from .query_equals_verifier import QueryEqualsVerifier
     from .regex_content_filter import RegexContentFilter
@@ -350,13 +368,17 @@ if typing.TYPE_CHECKING:
     from .signed_payload_template import SignedPayloadTemplate
     from .size_limit_content_filter import SizeLimitContentFilter
     from .size_limit_content_filter_direction import SizeLimitContentFilterDirection
+    from .slack_message_external_ref import SlackMessageExternalRef
+    from .slack_message_external_ref_kind import SlackMessageExternalRefKind
     from .snapshot_response import SnapshotResponse
     from .snapshot_result import SnapshotResult
     from .snapshot_step_action import SnapshotStepAction
+    from .step_output_claim import StepOutputClaim
     from .task_input import TaskInput
     from .task_output import TaskOutput
     from .task_step_input import TaskStepInput
     from .task_step_input_exec import TaskStepInputExec
+    from .task_step_input_outputs import TaskStepInputOutputs
     from .task_step_input_run_agent import (
         TaskStepInputRunAgent,
         TaskStepInputRunAgent_Exec,
@@ -364,6 +386,7 @@ if typing.TYPE_CHECKING:
     )
     from .task_step_output import TaskStepOutput
     from .task_step_output_exec import TaskStepOutputExec
+    from .task_step_output_outputs import TaskStepOutputOutputs
     from .task_step_output_run_agent import (
         TaskStepOutputRunAgent,
         TaskStepOutputRunAgent_Exec,
@@ -373,6 +396,8 @@ if typing.TYPE_CHECKING:
     from .timestamp_check import TimestampCheck
     from .trigger_catalog_item import TriggerCatalogItem
     from .trigger_catalog_list_response import TriggerCatalogListResponse
+    from .url_external_ref import UrlExternalRef
+    from .url_external_ref_kind import UrlExternalRefKind
     from .validation_error import ValidationError
     from .validation_error_loc_item import ValidationErrorLocItem
     from .value_source import (
@@ -398,7 +423,15 @@ if typing.TYPE_CHECKING:
     from .webhook_delivery_detail import WebhookDeliveryDetail
     from .webhook_delivery_summary import WebhookDeliverySummary
 _dynamic_imports: typing.Dict[str, str] = {
+    "AgentResult": ".agent_result",
     "AllIntegrationsPolicy": ".all_integrations_policy",
+    "ArtifactRef": ".artifact_ref",
+    "ArtifactRefExternalRef": ".artifact_ref_external_ref",
+    "ArtifactRefExternalRef_Github": ".artifact_ref_external_ref",
+    "ArtifactRefExternalRef_Islo": ".artifact_ref_external_ref",
+    "ArtifactRefExternalRef_Linear": ".artifact_ref_external_ref",
+    "ArtifactRefExternalRef_Slack": ".artifact_ref_external_ref",
+    "ArtifactRefExternalRef_Url": ".artifact_ref_external_ref",
     "AuthMethod": ".auth_method",
     "AuthStrategySchema": ".auth_strategy_schema",
     "AuthStrategySchemaMode": ".auth_strategy_schema_mode",
@@ -442,6 +475,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CloudRoleType": ".cloud_role_type",
     "ComputeEventDetailResponse": ".compute_event_detail_response",
     "ComputeEventDetailResponseResult": ".compute_event_detail_response_result",
+    "ComputeEventDetailResponseResult_Agent": ".compute_event_detail_response_result",
     "ComputeEventDetailResponseResult_Empty": ".compute_event_detail_response_result",
     "ComputeEventDetailResponseResult_Exec": ".compute_event_detail_response_result",
     "ComputeEventDetailResponseResult_Sandbox": ".compute_event_detail_response_result",
@@ -487,6 +521,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "GatewayProfileResponseIntegrationPolicy_All": ".gateway_profile_response_integration_policy",
     "GatewayProfileResponseIntegrationPolicy_Custom": ".gateway_profile_response_integration_policy",
     "GatewayRuleResponse": ".gateway_rule_response",
+    "GitHubExternalRef": ".git_hub_external_ref",
     "GitSource": ".git_source",
     "HeaderEqualsVerifier": ".header_equals_verifier",
     "HmacAlgorithm": ".hmac_algorithm",
@@ -587,12 +622,15 @@ _dynamic_imports: typing.Dict[str, str] = {
     "IntegrationStatus": ".integration_status",
     "IpAllowlistVerifier": ".ip_allowlist_verifier",
     "IsloErrorCode": ".islo_error_code",
+    "IsloKnowledgeItemExternalRef": ".islo_knowledge_item_external_ref",
+    "IsloKnowledgeItemExternalRefKind": ".islo_knowledge_item_external_ref_kind",
     "JobDeployRequest": ".job_deploy_request",
     "JobListItem": ".job_list_item",
     "JobManifestInput": ".job_manifest_input",
     "JobManifestOutput": ".job_manifest_output",
     "JobOutputSpec": ".job_output_spec",
     "JobOutputSpecItems": ".job_output_spec_items",
+    "JobOutputSpecReduce": ".job_output_spec_reduce",
     "JobOutputSpecType": ".job_output_spec_type",
     "JobParamDefinition": ".job_param_definition",
     "JobParamDefinitionItems": ".job_param_definition_items",
@@ -640,6 +678,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "JsonPathCondition_Not": ".json_path_condition",
     "JsonPathCondition_NotEquals": ".json_path_condition",
     "JsonPathCondition_NotExists": ".json_path_condition",
+    "JsonValue": ".json_value",
     "JudgeContentFilter": ".judge_content_filter",
     "JudgeContentFilterDirection": ".judge_content_filter_direction",
     "JudgeContentFilterFallback": ".judge_content_filter_fallback",
@@ -656,6 +695,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "KnowledgeStatus": ".knowledge_status",
     "LegacyInitCapability": ".legacy_init_capability",
     "LifecyclePolicy": ".lifecycle_policy",
+    "LinearExternalRef": ".linear_external_ref",
     "ListSessionsResponse": ".list_sessions_response",
     "LiteralBinding": ".literal_binding",
     "MappingPart": ".mapping_part",
@@ -668,6 +708,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "PaginatedSnapshotResponse": ".paginated_snapshot_response",
     "PayloadMapping": ".payload_mapping",
     "PayloadMappingType": ".payload_mapping_type",
+    "PricingTier": ".pricing_tier",
     "ProviderApp": ".provider_app",
     "QueryEqualsVerifier": ".query_equals_verifier",
     "RegexContentFilter": ".regex_content_filter",
@@ -727,18 +768,23 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SignedPayload_Template": ".signed_payload",
     "SizeLimitContentFilter": ".size_limit_content_filter",
     "SizeLimitContentFilterDirection": ".size_limit_content_filter_direction",
+    "SlackMessageExternalRef": ".slack_message_external_ref",
+    "SlackMessageExternalRefKind": ".slack_message_external_ref_kind",
     "SnapshotResponse": ".snapshot_response",
     "SnapshotResult": ".snapshot_result",
     "SnapshotStepAction": ".snapshot_step_action",
+    "StepOutputClaim": ".step_output_claim",
     "TaskInput": ".task_input",
     "TaskOutput": ".task_output",
     "TaskStepInput": ".task_step_input",
     "TaskStepInputExec": ".task_step_input_exec",
+    "TaskStepInputOutputs": ".task_step_input_outputs",
     "TaskStepInputRunAgent": ".task_step_input_run_agent",
     "TaskStepInputRunAgent_Exec": ".task_step_input_run_agent",
     "TaskStepInputRunAgent_Session": ".task_step_input_run_agent",
     "TaskStepOutput": ".task_step_output",
     "TaskStepOutputExec": ".task_step_output_exec",
+    "TaskStepOutputOutputs": ".task_step_output_outputs",
     "TaskStepOutputRunAgent": ".task_step_output_run_agent",
     "TaskStepOutputRunAgent_Exec": ".task_step_output_run_agent",
     "TaskStepOutputRunAgent_Session": ".task_step_output_run_agent",
@@ -746,6 +792,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "TimestampCheck": ".timestamp_check",
     "TriggerCatalogItem": ".trigger_catalog_item",
     "TriggerCatalogListResponse": ".trigger_catalog_list_response",
+    "UrlExternalRef": ".url_external_ref",
+    "UrlExternalRefKind": ".url_external_ref_kind",
     "ValidationError": ".validation_error",
     "ValidationErrorLocItem": ".validation_error_loc_item",
     "ValueSource": ".value_source",
@@ -793,7 +841,15 @@ def __dir__():
 
 
 __all__ = [
+    "AgentResult",
     "AllIntegrationsPolicy",
+    "ArtifactRef",
+    "ArtifactRefExternalRef",
+    "ArtifactRefExternalRef_Github",
+    "ArtifactRefExternalRef_Islo",
+    "ArtifactRefExternalRef_Linear",
+    "ArtifactRefExternalRef_Slack",
+    "ArtifactRefExternalRef_Url",
     "AuthMethod",
     "AuthStrategySchema",
     "AuthStrategySchemaMode",
@@ -837,6 +893,7 @@ __all__ = [
     "CloudRoleType",
     "ComputeEventDetailResponse",
     "ComputeEventDetailResponseResult",
+    "ComputeEventDetailResponseResult_Agent",
     "ComputeEventDetailResponseResult_Empty",
     "ComputeEventDetailResponseResult_Exec",
     "ComputeEventDetailResponseResult_Sandbox",
@@ -882,6 +939,7 @@ __all__ = [
     "GatewayProfileResponseIntegrationPolicy_All",
     "GatewayProfileResponseIntegrationPolicy_Custom",
     "GatewayRuleResponse",
+    "GitHubExternalRef",
     "GitSource",
     "HeaderEqualsVerifier",
     "HmacAlgorithm",
@@ -982,12 +1040,15 @@ __all__ = [
     "IntegrationStatus",
     "IpAllowlistVerifier",
     "IsloErrorCode",
+    "IsloKnowledgeItemExternalRef",
+    "IsloKnowledgeItemExternalRefKind",
     "JobDeployRequest",
     "JobListItem",
     "JobManifestInput",
     "JobManifestOutput",
     "JobOutputSpec",
     "JobOutputSpecItems",
+    "JobOutputSpecReduce",
     "JobOutputSpecType",
     "JobParamDefinition",
     "JobParamDefinitionItems",
@@ -1001,6 +1062,7 @@ __all__ = [
     "JobParamSpecTypeOne",
     "JobParamSpecTypeZero",
     "JobResponse",
+    "JobRunListItem",
     "JobRunResponse",
     "JobRunStatus",
     "JobRunStepTimelineEntry",
@@ -1034,6 +1096,7 @@ __all__ = [
     "JsonPathCondition_Not",
     "JsonPathCondition_NotEquals",
     "JsonPathCondition_NotExists",
+    "JsonValue",
     "JudgeContentFilter",
     "JudgeContentFilterDirection",
     "JudgeContentFilterFallback",
@@ -1050,6 +1113,7 @@ __all__ = [
     "KnowledgeStatus",
     "LegacyInitCapability",
     "LifecyclePolicy",
+    "LinearExternalRef",
     "ListSessionsResponse",
     "LiteralBinding",
     "MappingPart",
@@ -1062,6 +1126,7 @@ __all__ = [
     "PaginatedSnapshotResponse",
     "PayloadMapping",
     "PayloadMappingType",
+    "PricingTier",
     "ProviderApp",
     "QueryEqualsVerifier",
     "RegexContentFilter",
@@ -1121,18 +1186,23 @@ __all__ = [
     "SignedPayload_Template",
     "SizeLimitContentFilter",
     "SizeLimitContentFilterDirection",
+    "SlackMessageExternalRef",
+    "SlackMessageExternalRefKind",
     "SnapshotResponse",
     "SnapshotResult",
     "SnapshotStepAction",
+    "StepOutputClaim",
     "TaskInput",
     "TaskOutput",
     "TaskStepInput",
     "TaskStepInputExec",
+    "TaskStepInputOutputs",
     "TaskStepInputRunAgent",
     "TaskStepInputRunAgent_Exec",
     "TaskStepInputRunAgent_Session",
     "TaskStepOutput",
     "TaskStepOutputExec",
+    "TaskStepOutputOutputs",
     "TaskStepOutputRunAgent",
     "TaskStepOutputRunAgent_Exec",
     "TaskStepOutputRunAgent_Session",
@@ -1140,6 +1210,8 @@ __all__ = [
     "TimestampCheck",
     "TriggerCatalogItem",
     "TriggerCatalogListResponse",
+    "UrlExternalRef",
+    "UrlExternalRefKind",
     "ValidationError",
     "ValidationErrorLocItem",
     "ValueSource",

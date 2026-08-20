@@ -439,6 +439,48 @@ class JobsClient:
         _response = self._raw_client.get_job_run(name, run_id, request_options=request_options)
         return _response.data
 
+    def stop_job_run(
+        self,
+        name: str,
+        run_id: str,
+        *,
+        reason: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> JobRunResponse:
+        """
+        Parameters
+        ----------
+        name : str
+
+        run_id : str
+
+        reason : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        JobRunResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.jobs.stop_job_run(
+            name="name",
+            run_id="run_id",
+        )
+        """
+        _response = self._raw_client.stop_job_run(name, run_id, reason=reason, request_options=request_options)
+        return _response.data
+
     def get_job_schedule(
         self, name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> JobScheduleResponse:
@@ -1005,6 +1047,56 @@ class AsyncJobsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.get_job_run(name, run_id, request_options=request_options)
+        return _response.data
+
+    async def stop_job_run(
+        self,
+        name: str,
+        run_id: str,
+        *,
+        reason: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> JobRunResponse:
+        """
+        Parameters
+        ----------
+        name : str
+
+        run_id : str
+
+        reason : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        JobRunResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.jobs.stop_job_run(
+                name="name",
+                run_id="run_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.stop_job_run(name, run_id, reason=reason, request_options=request_options)
         return _response.data
 
     async def get_job_schedule(

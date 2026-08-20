@@ -7,6 +7,20 @@ import typing
 import pydantic
 import typing_extensions
 from ..core.pydantic_utilities import UniversalBaseModel
+from .json_value import JsonValue
+
+
+class ComputeEventDetailResponseResult_Agent(UniversalBaseModel):
+    type: typing.Literal["agent"] = "agent"
+    mode: typing.Optional[str] = None
+    harness: typing.Optional[str] = None
+    status: typing.Optional[str] = None
+    outcome: typing.Optional[str] = None
+    agent_session_id: typing.Optional[str] = None
+    output_text: typing.Optional[str] = None
+    outputs: typing.Optional[typing.Dict[str, typing.Optional[JsonValue]]] = None
+
+    model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 
 
 class ComputeEventDetailResponseResult_Empty(UniversalBaseModel):
@@ -40,12 +54,14 @@ class ComputeEventDetailResponseResult_Snapshot(UniversalBaseModel):
     type: typing.Literal["snapshot"] = "snapshot"
     id: typing.Optional[str] = None
     name: typing.Optional[str] = None
+    status: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 
 
 ComputeEventDetailResponseResult = typing_extensions.Annotated[
     typing.Union[
+        ComputeEventDetailResponseResult_Agent,
         ComputeEventDetailResponseResult_Empty,
         ComputeEventDetailResponseResult_Exec,
         ComputeEventDetailResponseResult_Sandbox,
