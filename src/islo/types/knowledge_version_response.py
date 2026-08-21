@@ -7,25 +7,17 @@ import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
 from .knowledge_level import KnowledgeLevel
 from .knowledge_link_response import KnowledgeLinkResponse
-from .knowledge_status import KnowledgeStatus
 
 
-class KnowledgeItemResponse(UniversalBaseModel):
+class KnowledgeVersionResponse(UniversalBaseModel):
     id: str
-    slug: str = pydantic.Field()
-    """
-    Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
-    """
-
+    version_number: int
     level: KnowledgeLevel
     format: str
     body: str
     metadata: typing.Dict[str, typing.Any]
-    status: KnowledgeStatus
     links: typing.List[KnowledgeLinkResponse]
+    content_hash: str
     created_at: dt.datetime
-    updated_at: dt.datetime
-    version_id: typing.Optional[str] = None
-    version_number: typing.Optional[int] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
