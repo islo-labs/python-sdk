@@ -8,7 +8,9 @@ from ..types.knowledge_item_response import KnowledgeItemResponse
 from ..types.knowledge_level import KnowledgeLevel
 from ..types.knowledge_link_input import KnowledgeLinkInput
 from ..types.knowledge_status import KnowledgeStatus
+from ..types.knowledge_version_response import KnowledgeVersionResponse
 from ..types.paginated_knowledge_response import PaginatedKnowledgeResponse
+from ..types.paginated_knowledge_version_response import PaginatedKnowledgeVersionResponse
 from .raw_client import AsyncRawKnowledgeClient, RawKnowledgeClient
 
 # this is used as the default value for optional parameters
@@ -271,6 +273,124 @@ class KnowledgeClient:
             status=status,
             links=links,
             request_options=request_options,
+        )
+        return _response.data
+
+    def list_knowledge_versions(
+        self,
+        identifier: str,
+        *,
+        cursor: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> PaginatedKnowledgeVersionResponse:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        cursor : typing.Optional[str]
+
+        limit : typing.Optional[int]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        PaginatedKnowledgeVersionResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.knowledge.list_knowledge_versions(
+            identifier="identifier",
+        )
+        """
+        _response = self._raw_client.list_knowledge_versions(
+            identifier, cursor=cursor, limit=limit, request_options=request_options
+        )
+        return _response.data
+
+    def get_knowledge_version(
+        self, identifier: str, version_number: int, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> KnowledgeVersionResponse:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        version_number : int
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        KnowledgeVersionResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.knowledge.get_knowledge_version(
+            identifier="identifier",
+            version_number=1,
+        )
+        """
+        _response = self._raw_client.get_knowledge_version(identifier, version_number, request_options=request_options)
+        return _response.data
+
+    def restore_knowledge_version(
+        self, identifier: str, *, version_number: int, request_options: typing.Optional[RequestOptions] = None
+    ) -> KnowledgeItemResponse:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        version_number : int
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        KnowledgeItemResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.knowledge.restore_knowledge_version(
+            identifier="identifier",
+            version_number=1,
+        )
+        """
+        _response = self._raw_client.restore_knowledge_version(
+            identifier, version_number=version_number, request_options=request_options
         )
         return _response.data
 
@@ -573,5 +693,149 @@ class AsyncKnowledgeClient:
             status=status,
             links=links,
             request_options=request_options,
+        )
+        return _response.data
+
+    async def list_knowledge_versions(
+        self,
+        identifier: str,
+        *,
+        cursor: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> PaginatedKnowledgeVersionResponse:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        cursor : typing.Optional[str]
+
+        limit : typing.Optional[int]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        PaginatedKnowledgeVersionResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.knowledge.list_knowledge_versions(
+                identifier="identifier",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_knowledge_versions(
+            identifier, cursor=cursor, limit=limit, request_options=request_options
+        )
+        return _response.data
+
+    async def get_knowledge_version(
+        self, identifier: str, version_number: int, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> KnowledgeVersionResponse:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        version_number : int
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        KnowledgeVersionResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.knowledge.get_knowledge_version(
+                identifier="identifier",
+                version_number=1,
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_knowledge_version(
+            identifier, version_number, request_options=request_options
+        )
+        return _response.data
+
+    async def restore_knowledge_version(
+        self, identifier: str, *, version_number: int, request_options: typing.Optional[RequestOptions] = None
+    ) -> KnowledgeItemResponse:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        version_number : int
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        KnowledgeItemResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.knowledge.restore_knowledge_version(
+                identifier="identifier",
+                version_number=1,
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.restore_knowledge_version(
+            identifier, version_number=version_number, request_options=request_options
         )
         return _response.data

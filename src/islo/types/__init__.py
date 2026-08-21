@@ -247,7 +247,6 @@ if typing.TYPE_CHECKING:
     from .job_response import JobResponse
     from .job_run_list_item import JobRunListItem
     from .job_run_response import JobRunResponse
-    from .job_run_list_item import JobRunListItem
     from .job_run_status import JobRunStatus
     from .job_run_step_timeline_entry import JobRunStepTimelineEntry
     from .job_schedule_response import JobScheduleResponse
@@ -297,6 +296,8 @@ if typing.TYPE_CHECKING:
     from .knowledge_link_response import KnowledgeLinkResponse
     from .knowledge_link_type import KnowledgeLinkType
     from .knowledge_status import KnowledgeStatus
+    from .knowledge_version_list_response import KnowledgeVersionListResponse
+    from .knowledge_version_response import KnowledgeVersionResponse
     from .legacy_init_capability import LegacyInitCapability
     from .lifecycle_policy import LifecyclePolicy
     from .linear_external_ref import LinearExternalRef
@@ -306,6 +307,7 @@ if typing.TYPE_CHECKING:
     from .mapping_part_literal import MappingPartLiteral
     from .mapping_part_source import MappingPartSource
     from .paginated_knowledge_response import PaginatedKnowledgeResponse
+    from .paginated_knowledge_version_response import PaginatedKnowledgeVersionResponse
     from .paginated_sandbox_response import PaginatedSandboxResponse
     from .paginated_snapshot_response import PaginatedSnapshotResponse
     from .payload_mapping import PayloadMapping
@@ -694,6 +696,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "KnowledgeLinkResponse": ".knowledge_link_response",
     "KnowledgeLinkType": ".knowledge_link_type",
     "KnowledgeStatus": ".knowledge_status",
+    "KnowledgeVersionListResponse": ".knowledge_version_list_response",
+    "KnowledgeVersionResponse": ".knowledge_version_response",
     "LegacyInitCapability": ".legacy_init_capability",
     "LifecyclePolicy": ".lifecycle_policy",
     "LinearExternalRef": ".linear_external_ref",
@@ -705,6 +709,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "MappingPart_Literal": ".mapping_part",
     "MappingPart_Source": ".mapping_part",
     "PaginatedKnowledgeResponse": ".paginated_knowledge_response",
+    "PaginatedKnowledgeVersionResponse": ".paginated_knowledge_version_response",
     "PaginatedSandboxResponse": ".paginated_sandbox_response",
     "PaginatedSnapshotResponse": ".paginated_snapshot_response",
     "PayloadMapping": ".payload_mapping",
@@ -1112,6 +1117,8 @@ __all__ = [
     "KnowledgeLinkResponse",
     "KnowledgeLinkType",
     "KnowledgeStatus",
+    "KnowledgeVersionListResponse",
+    "KnowledgeVersionResponse",
     "LegacyInitCapability",
     "LifecyclePolicy",
     "LinearExternalRef",
@@ -1123,6 +1130,7 @@ __all__ = [
     "MappingPart_Literal",
     "MappingPart_Source",
     "PaginatedKnowledgeResponse",
+    "PaginatedKnowledgeVersionResponse",
     "PaginatedSandboxResponse",
     "PaginatedSnapshotResponse",
     "PayloadMapping",

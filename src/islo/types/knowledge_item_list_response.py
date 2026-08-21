@@ -22,5 +22,6 @@ class KnowledgeItemListResponse(UniversalBaseModel):
     links: typing.List[KnowledgeLinkResponse]
     created_at: dt.datetime
     updated_at: dt.datetime
+    version_number: typing.Optional[int] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
