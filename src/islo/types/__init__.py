@@ -7,7 +7,27 @@ from importlib import import_module
 
 if typing.TYPE_CHECKING:
     from .agent_result import AgentResult
+    from .agentic_transition_input import AgenticTransitionInput
+    from .agentic_transition_input_instructions import (
+        AgenticTransitionInputInstructions,
+        AgenticTransitionInputInstructions_Knowledge,
+        AgenticTransitionInputInstructions_Literal,
+    )
+    from .agentic_transition_option import AgenticTransitionOption
+    from .agentic_transition_option_params_value import (
+        AgenticTransitionOptionParamsValue,
+        AgenticTransitionOptionParamsValue_Input,
+        AgenticTransitionOptionParamsValue_Literal,
+        AgenticTransitionOptionParamsValue_Output,
+    )
+    from .agentic_transition_output import AgenticTransitionOutput
+    from .agentic_transition_output_instructions import (
+        AgenticTransitionOutputInstructions,
+        AgenticTransitionOutputInstructions_Knowledge,
+        AgenticTransitionOutputInstructions_Literal,
+    )
     from .all_integrations_policy import AllIntegrationsPolicy
+    from .always_condition import AlwaysCondition
     from .artifact_ref import ArtifactRef
     from .artifact_ref_external_ref import (
         ArtifactRefExternalRef,
@@ -55,11 +75,15 @@ if typing.TYPE_CHECKING:
     from .auto_resume_policy import AutoResumePolicy
     from .basic_auth_verifier import BasicAuthVerifier
     from .bearer_static_verifier import BearerStaticVerifier
+    from .binary_condition_input import BinaryConditionInput
+    from .binary_condition_output import BinaryConditionOutput
     from .client_inference_api import ClientInferenceApi
     from .cloud_provider import CloudProvider
     from .cloud_role_ref import CloudRoleRef
     from .cloud_role_response import CloudRoleResponse
     from .cloud_role_type import CloudRoleType
+    from .compound_condition_input import CompoundConditionInput
+    from .compound_condition_output import CompoundConditionOutput
     from .compute_event_detail_response import ComputeEventDetailResponse
     from .compute_event_detail_response_result import (
         ComputeEventDetailResponseResult,
@@ -70,6 +94,27 @@ if typing.TYPE_CHECKING:
         ComputeEventDetailResponseResult_Snapshot,
     )
     from .compute_region_response import ComputeRegionResponse
+    from .condition_operand import (
+        ConditionOperand,
+        ConditionOperand_Literal,
+        ConditionOperand_Stage,
+        ConditionOperand_Transition,
+        ConditionOperand_Trigger,
+    )
+    from .conditional_transition_input import ConditionalTransitionInput
+    from .conditional_transition_input_params_value import (
+        ConditionalTransitionInputParamsValue,
+        ConditionalTransitionInputParamsValue_Input,
+        ConditionalTransitionInputParamsValue_Literal,
+        ConditionalTransitionInputParamsValue_Output,
+    )
+    from .conditional_transition_output import ConditionalTransitionOutput
+    from .conditional_transition_output_params_value import (
+        ConditionalTransitionOutputParamsValue,
+        ConditionalTransitionOutputParamsValue_Input,
+        ConditionalTransitionOutputParamsValue_Literal,
+        ConditionalTransitionOutputParamsValue_Output,
+    )
     from .connection_status import ConnectionStatus
     from .container_registry_response import ContainerRegistryResponse
     from .content_type_content_filter import ContentTypeContentFilter
@@ -115,6 +160,8 @@ if typing.TYPE_CHECKING:
     )
     from .gateway_rule_response import GatewayRuleResponse
     from .git_hub_external_ref import GitHubExternalRef
+    from .git_hub_repository_selector import GitHubRepositorySelector
+    from .git_hub_repository_selector_kind import GitHubRepositorySelectorKind
     from .git_source import GitSource
     from .header_equals_verifier import HeaderEqualsVerifier
     from .hmac_algorithm import HmacAlgorithm
@@ -215,12 +262,27 @@ if typing.TYPE_CHECKING:
     from .ingress_action_status import IngressActionStatus
     from .ingress_event_status import IngressEventStatus
     from .init_capability import InitCapability
+    from .input_binding import InputBinding
     from .integration_detail_response import IntegrationDetailResponse
     from .integration_level import IntegrationLevel
     from .integration_list_response import IntegrationListResponse
     from .integration_provider import IntegrationProvider
     from .integration_providers_response import IntegrationProvidersResponse
     from .integration_status import IntegrationStatus
+    from .integration_trigger_section_input import IntegrationTriggerSectionInput
+    from .integration_trigger_section_input_selector import (
+        IntegrationTriggerSectionInputSelector,
+        IntegrationTriggerSectionInputSelector_Github,
+        IntegrationTriggerSectionInputSelector_Linear,
+        IntegrationTriggerSectionInputSelector_Slack,
+    )
+    from .integration_trigger_section_output import IntegrationTriggerSectionOutput
+    from .integration_trigger_section_output_selector import (
+        IntegrationTriggerSectionOutputSelector,
+        IntegrationTriggerSectionOutputSelector_Github,
+        IntegrationTriggerSectionOutputSelector_Linear,
+        IntegrationTriggerSectionOutputSelector_Slack,
+    )
     from .ip_allowlist_verifier import IpAllowlistVerifier
     from .islo_error_code import IsloErrorCode
     from .islo_knowledge_item_external_ref import IsloKnowledgeItemExternalRef
@@ -300,12 +362,93 @@ if typing.TYPE_CHECKING:
     from .knowledge_version_response import KnowledgeVersionResponse
     from .legacy_init_capability import LegacyInitCapability
     from .lifecycle_policy import LifecyclePolicy
+    from .line_agent_config import LineAgentConfig
+    from .line_agent_config_instructions import (
+        LineAgentConfigInstructions,
+        LineAgentConfigInstructions_Knowledge,
+        LineAgentConfigInstructions_Literal,
+    )
+    from .line_condition_input import (
+        LineConditionInput,
+        LineConditionInput_All,
+        LineConditionInput_Always,
+        LineConditionInput_Any,
+        LineConditionInput_Contains,
+        LineConditionInput_Eq,
+        LineConditionInput_Exists,
+        LineConditionInput_Falsy,
+        LineConditionInput_Missing,
+        LineConditionInput_Ne,
+        LineConditionInput_Not,
+        LineConditionInput_NotContains,
+        LineConditionInput_Truthy,
+    )
+    from .line_condition_output import (
+        LineConditionOutput,
+        LineConditionOutput_All,
+        LineConditionOutput_Always,
+        LineConditionOutput_Any,
+        LineConditionOutput_Contains,
+        LineConditionOutput_Eq,
+        LineConditionOutput_Exists,
+        LineConditionOutput_Falsy,
+        LineConditionOutput_Missing,
+        LineConditionOutput_Ne,
+        LineConditionOutput_Not,
+        LineConditionOutput_NotContains,
+        LineConditionOutput_Truthy,
+    )
+    from .line_deploy_request import LineDeployRequest
+    from .line_event_response import LineEventResponse
+    from .line_limits_input import LineLimitsInput
+    from .line_limits_input_budget_usd import LineLimitsInputBudgetUsd
+    from .line_limits_output import LineLimitsOutput
+    from .line_manifest_input import LineManifestInput
+    from .line_manifest_input_transitions_item import (
+        LineManifestInputTransitionsItem,
+        LineManifestInputTransitionsItem_Agentic,
+        LineManifestInputTransitionsItem_Conditional,
+    )
+    from .line_manifest_input_trigger import (
+        LineManifestInputTrigger,
+        LineManifestInputTrigger_IntegrationTrigger,
+        LineManifestInputTrigger_Manual,
+        LineManifestInputTrigger_Schedule,
+        LineManifestInputTrigger_Webhook,
+    )
+    from .line_manifest_output import LineManifestOutput
+    from .line_manifest_output_transitions_item import (
+        LineManifestOutputTransitionsItem,
+        LineManifestOutputTransitionsItem_Agentic,
+        LineManifestOutputTransitionsItem_Conditional,
+    )
+    from .line_manifest_output_trigger import (
+        LineManifestOutputTrigger,
+        LineManifestOutputTrigger_IntegrationTrigger,
+        LineManifestOutputTrigger_Manual,
+        LineManifestOutputTrigger_Schedule,
+        LineManifestOutputTrigger_Webhook,
+    )
+    from .line_response import LineResponse
+    from .line_run_list_item import LineRunListItem
+    from .line_run_response import LineRunResponse
+    from .line_run_retry_action import LineRunRetryAction
+    from .line_schedule_response import LineScheduleResponse
+    from .line_section import LineSection
+    from .line_stage import LineStage
+    from .line_version_response import LineVersionResponse
     from .linear_external_ref import LinearExternalRef
+    from .linear_issue_selector import LinearIssueSelector
+    from .linear_issue_selector_kind import LinearIssueSelectorKind
     from .list_sessions_response import ListSessionsResponse
     from .literal_binding import LiteralBinding
+    from .manual_trigger_section import ManualTriggerSection
     from .mapping_part import MappingPart, MappingPart_Literal, MappingPart_Source
     from .mapping_part_literal import MappingPartLiteral
     from .mapping_part_source import MappingPartSource
+    from .not_condition_input import NotConditionInput
+    from .not_condition_output import NotConditionOutput
+    from .output_binding import OutputBinding
     from .paginated_knowledge_response import PaginatedKnowledgeResponse
     from .paginated_knowledge_version_response import PaginatedKnowledgeVersionResponse
     from .paginated_sandbox_response import PaginatedSandboxResponse
@@ -318,6 +461,9 @@ if typing.TYPE_CHECKING:
     from .regex_content_filter import RegexContentFilter
     from .regex_content_filter_direction import RegexContentFilterDirection
     from .registry_provider import RegistryProvider
+    from .resolved_stage import ResolvedStage
+    from .resolved_stage_harness import ResolvedStageHarness
+    from .resolved_stage_kind import ResolvedStageKind
     from .rule_reorder_item import RuleReorderItem
     from .run_agent_exec_step_action import RunAgentExecStepAction
     from .run_agent_exec_step_action_command import RunAgentExecStepActionCommand
@@ -357,6 +503,8 @@ if typing.TYPE_CHECKING:
     from .sandbox_result import SandboxResult
     from .sandbox_spec import SandboxSpec
     from .schedule_section import ScheduleSection
+    from .schedule_trigger_section import ScheduleTriggerSection
+    from .selector_scope import SelectorScope
     from .session_info import SessionInfo
     from .session_status import SessionStatus
     from .setup_script import SetupScript
@@ -371,11 +519,14 @@ if typing.TYPE_CHECKING:
     from .signed_payload_template import SignedPayloadTemplate
     from .size_limit_content_filter import SizeLimitContentFilter
     from .size_limit_content_filter_direction import SizeLimitContentFilterDirection
+    from .slack_channel_selector import SlackChannelSelector
+    from .slack_channel_selector_kind import SlackChannelSelectorKind
     from .slack_message_external_ref import SlackMessageExternalRef
     from .slack_message_external_ref_kind import SlackMessageExternalRefKind
     from .snapshot_response import SnapshotResponse
     from .snapshot_result import SnapshotResult
     from .snapshot_step_action import SnapshotStepAction
+    from .stage_operand import StageOperand
     from .step_output_claim import StepOutputClaim
     from .task_input import TaskInput
     from .task_output import TaskOutput
@@ -397,8 +548,14 @@ if typing.TYPE_CHECKING:
     )
     from .tenant_regions_response import TenantRegionsResponse
     from .timestamp_check import TimestampCheck
+    from .transition_operand import TransitionOperand
     from .trigger_catalog_item import TriggerCatalogItem
     from .trigger_catalog_list_response import TriggerCatalogListResponse
+    from .trigger_operand import TriggerOperand
+    from .trigger_path_binding import TriggerPathBinding
+    from .trigger_path_binding_type import TriggerPathBindingType
+    from .unary_condition_input import UnaryConditionInput
+    from .unary_condition_output import UnaryConditionOutput
     from .url_external_ref import UrlExternalRef
     from .url_external_ref_kind import UrlExternalRefKind
     from .validation_error import ValidationError
@@ -425,9 +582,24 @@ if typing.TYPE_CHECKING:
     from .webhook_action_attempt import WebhookActionAttempt
     from .webhook_delivery_detail import WebhookDeliveryDetail
     from .webhook_delivery_summary import WebhookDeliverySummary
+    from .webhook_trigger_section import WebhookTriggerSection
 _dynamic_imports: typing.Dict[str, str] = {
     "AgentResult": ".agent_result",
+    "AgenticTransitionInput": ".agentic_transition_input",
+    "AgenticTransitionInputInstructions": ".agentic_transition_input_instructions",
+    "AgenticTransitionInputInstructions_Knowledge": ".agentic_transition_input_instructions",
+    "AgenticTransitionInputInstructions_Literal": ".agentic_transition_input_instructions",
+    "AgenticTransitionOption": ".agentic_transition_option",
+    "AgenticTransitionOptionParamsValue": ".agentic_transition_option_params_value",
+    "AgenticTransitionOptionParamsValue_Input": ".agentic_transition_option_params_value",
+    "AgenticTransitionOptionParamsValue_Literal": ".agentic_transition_option_params_value",
+    "AgenticTransitionOptionParamsValue_Output": ".agentic_transition_option_params_value",
+    "AgenticTransitionOutput": ".agentic_transition_output",
+    "AgenticTransitionOutputInstructions": ".agentic_transition_output_instructions",
+    "AgenticTransitionOutputInstructions_Knowledge": ".agentic_transition_output_instructions",
+    "AgenticTransitionOutputInstructions_Literal": ".agentic_transition_output_instructions",
     "AllIntegrationsPolicy": ".all_integrations_policy",
+    "AlwaysCondition": ".always_condition",
     "ArtifactRef": ".artifact_ref",
     "ArtifactRefExternalRef": ".artifact_ref_external_ref",
     "ArtifactRefExternalRef_Github": ".artifact_ref_external_ref",
@@ -471,11 +643,15 @@ _dynamic_imports: typing.Dict[str, str] = {
     "AutoResumePolicy": ".auto_resume_policy",
     "BasicAuthVerifier": ".basic_auth_verifier",
     "BearerStaticVerifier": ".bearer_static_verifier",
+    "BinaryConditionInput": ".binary_condition_input",
+    "BinaryConditionOutput": ".binary_condition_output",
     "ClientInferenceApi": ".client_inference_api",
     "CloudProvider": ".cloud_provider",
     "CloudRoleRef": ".cloud_role_ref",
     "CloudRoleResponse": ".cloud_role_response",
     "CloudRoleType": ".cloud_role_type",
+    "CompoundConditionInput": ".compound_condition_input",
+    "CompoundConditionOutput": ".compound_condition_output",
     "ComputeEventDetailResponse": ".compute_event_detail_response",
     "ComputeEventDetailResponseResult": ".compute_event_detail_response_result",
     "ComputeEventDetailResponseResult_Agent": ".compute_event_detail_response_result",
@@ -484,6 +660,21 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ComputeEventDetailResponseResult_Sandbox": ".compute_event_detail_response_result",
     "ComputeEventDetailResponseResult_Snapshot": ".compute_event_detail_response_result",
     "ComputeRegionResponse": ".compute_region_response",
+    "ConditionOperand": ".condition_operand",
+    "ConditionOperand_Literal": ".condition_operand",
+    "ConditionOperand_Stage": ".condition_operand",
+    "ConditionOperand_Transition": ".condition_operand",
+    "ConditionOperand_Trigger": ".condition_operand",
+    "ConditionalTransitionInput": ".conditional_transition_input",
+    "ConditionalTransitionInputParamsValue": ".conditional_transition_input_params_value",
+    "ConditionalTransitionInputParamsValue_Input": ".conditional_transition_input_params_value",
+    "ConditionalTransitionInputParamsValue_Literal": ".conditional_transition_input_params_value",
+    "ConditionalTransitionInputParamsValue_Output": ".conditional_transition_input_params_value",
+    "ConditionalTransitionOutput": ".conditional_transition_output",
+    "ConditionalTransitionOutputParamsValue": ".conditional_transition_output_params_value",
+    "ConditionalTransitionOutputParamsValue_Input": ".conditional_transition_output_params_value",
+    "ConditionalTransitionOutputParamsValue_Literal": ".conditional_transition_output_params_value",
+    "ConditionalTransitionOutputParamsValue_Output": ".conditional_transition_output_params_value",
     "ConnectionStatus": ".connection_status",
     "ContainerRegistryResponse": ".container_registry_response",
     "ContentTypeContentFilter": ".content_type_content_filter",
@@ -525,6 +716,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "GatewayProfileResponseIntegrationPolicy_Custom": ".gateway_profile_response_integration_policy",
     "GatewayRuleResponse": ".gateway_rule_response",
     "GitHubExternalRef": ".git_hub_external_ref",
+    "GitHubRepositorySelector": ".git_hub_repository_selector",
+    "GitHubRepositorySelectorKind": ".git_hub_repository_selector_kind",
     "GitSource": ".git_source",
     "HeaderEqualsVerifier": ".header_equals_verifier",
     "HmacAlgorithm": ".hmac_algorithm",
@@ -617,12 +810,23 @@ _dynamic_imports: typing.Dict[str, str] = {
     "IngressActionStatus": ".ingress_action_status",
     "IngressEventStatus": ".ingress_event_status",
     "InitCapability": ".init_capability",
+    "InputBinding": ".input_binding",
     "IntegrationDetailResponse": ".integration_detail_response",
     "IntegrationLevel": ".integration_level",
     "IntegrationListResponse": ".integration_list_response",
     "IntegrationProvider": ".integration_provider",
     "IntegrationProvidersResponse": ".integration_providers_response",
     "IntegrationStatus": ".integration_status",
+    "IntegrationTriggerSectionInput": ".integration_trigger_section_input",
+    "IntegrationTriggerSectionInputSelector": ".integration_trigger_section_input_selector",
+    "IntegrationTriggerSectionInputSelector_Github": ".integration_trigger_section_input_selector",
+    "IntegrationTriggerSectionInputSelector_Linear": ".integration_trigger_section_input_selector",
+    "IntegrationTriggerSectionInputSelector_Slack": ".integration_trigger_section_input_selector",
+    "IntegrationTriggerSectionOutput": ".integration_trigger_section_output",
+    "IntegrationTriggerSectionOutputSelector": ".integration_trigger_section_output_selector",
+    "IntegrationTriggerSectionOutputSelector_Github": ".integration_trigger_section_output_selector",
+    "IntegrationTriggerSectionOutputSelector_Linear": ".integration_trigger_section_output_selector",
+    "IntegrationTriggerSectionOutputSelector_Slack": ".integration_trigger_section_output_selector",
     "IpAllowlistVerifier": ".ip_allowlist_verifier",
     "IsloErrorCode": ".islo_error_code",
     "IsloKnowledgeItemExternalRef": ".islo_knowledge_item_external_ref",
@@ -700,14 +904,81 @@ _dynamic_imports: typing.Dict[str, str] = {
     "KnowledgeVersionResponse": ".knowledge_version_response",
     "LegacyInitCapability": ".legacy_init_capability",
     "LifecyclePolicy": ".lifecycle_policy",
+    "LineAgentConfig": ".line_agent_config",
+    "LineAgentConfigInstructions": ".line_agent_config_instructions",
+    "LineAgentConfigInstructions_Knowledge": ".line_agent_config_instructions",
+    "LineAgentConfigInstructions_Literal": ".line_agent_config_instructions",
+    "LineConditionInput": ".line_condition_input",
+    "LineConditionInput_All": ".line_condition_input",
+    "LineConditionInput_Always": ".line_condition_input",
+    "LineConditionInput_Any": ".line_condition_input",
+    "LineConditionInput_Contains": ".line_condition_input",
+    "LineConditionInput_Eq": ".line_condition_input",
+    "LineConditionInput_Exists": ".line_condition_input",
+    "LineConditionInput_Falsy": ".line_condition_input",
+    "LineConditionInput_Missing": ".line_condition_input",
+    "LineConditionInput_Ne": ".line_condition_input",
+    "LineConditionInput_Not": ".line_condition_input",
+    "LineConditionInput_NotContains": ".line_condition_input",
+    "LineConditionInput_Truthy": ".line_condition_input",
+    "LineConditionOutput": ".line_condition_output",
+    "LineConditionOutput_All": ".line_condition_output",
+    "LineConditionOutput_Always": ".line_condition_output",
+    "LineConditionOutput_Any": ".line_condition_output",
+    "LineConditionOutput_Contains": ".line_condition_output",
+    "LineConditionOutput_Eq": ".line_condition_output",
+    "LineConditionOutput_Exists": ".line_condition_output",
+    "LineConditionOutput_Falsy": ".line_condition_output",
+    "LineConditionOutput_Missing": ".line_condition_output",
+    "LineConditionOutput_Ne": ".line_condition_output",
+    "LineConditionOutput_Not": ".line_condition_output",
+    "LineConditionOutput_NotContains": ".line_condition_output",
+    "LineConditionOutput_Truthy": ".line_condition_output",
+    "LineDeployRequest": ".line_deploy_request",
+    "LineEventResponse": ".line_event_response",
+    "LineLimitsInput": ".line_limits_input",
+    "LineLimitsInputBudgetUsd": ".line_limits_input_budget_usd",
+    "LineLimitsOutput": ".line_limits_output",
+    "LineManifestInput": ".line_manifest_input",
+    "LineManifestInputTransitionsItem": ".line_manifest_input_transitions_item",
+    "LineManifestInputTransitionsItem_Agentic": ".line_manifest_input_transitions_item",
+    "LineManifestInputTransitionsItem_Conditional": ".line_manifest_input_transitions_item",
+    "LineManifestInputTrigger": ".line_manifest_input_trigger",
+    "LineManifestInputTrigger_IntegrationTrigger": ".line_manifest_input_trigger",
+    "LineManifestInputTrigger_Manual": ".line_manifest_input_trigger",
+    "LineManifestInputTrigger_Schedule": ".line_manifest_input_trigger",
+    "LineManifestInputTrigger_Webhook": ".line_manifest_input_trigger",
+    "LineManifestOutput": ".line_manifest_output",
+    "LineManifestOutputTransitionsItem": ".line_manifest_output_transitions_item",
+    "LineManifestOutputTransitionsItem_Agentic": ".line_manifest_output_transitions_item",
+    "LineManifestOutputTransitionsItem_Conditional": ".line_manifest_output_transitions_item",
+    "LineManifestOutputTrigger": ".line_manifest_output_trigger",
+    "LineManifestOutputTrigger_IntegrationTrigger": ".line_manifest_output_trigger",
+    "LineManifestOutputTrigger_Manual": ".line_manifest_output_trigger",
+    "LineManifestOutputTrigger_Schedule": ".line_manifest_output_trigger",
+    "LineManifestOutputTrigger_Webhook": ".line_manifest_output_trigger",
+    "LineResponse": ".line_response",
+    "LineRunListItem": ".line_run_list_item",
+    "LineRunResponse": ".line_run_response",
+    "LineRunRetryAction": ".line_run_retry_action",
+    "LineScheduleResponse": ".line_schedule_response",
+    "LineSection": ".line_section",
+    "LineStage": ".line_stage",
+    "LineVersionResponse": ".line_version_response",
     "LinearExternalRef": ".linear_external_ref",
+    "LinearIssueSelector": ".linear_issue_selector",
+    "LinearIssueSelectorKind": ".linear_issue_selector_kind",
     "ListSessionsResponse": ".list_sessions_response",
     "LiteralBinding": ".literal_binding",
+    "ManualTriggerSection": ".manual_trigger_section",
     "MappingPart": ".mapping_part",
     "MappingPartLiteral": ".mapping_part_literal",
     "MappingPartSource": ".mapping_part_source",
     "MappingPart_Literal": ".mapping_part",
     "MappingPart_Source": ".mapping_part",
+    "NotConditionInput": ".not_condition_input",
+    "NotConditionOutput": ".not_condition_output",
+    "OutputBinding": ".output_binding",
     "PaginatedKnowledgeResponse": ".paginated_knowledge_response",
     "PaginatedKnowledgeVersionResponse": ".paginated_knowledge_version_response",
     "PaginatedSandboxResponse": ".paginated_sandbox_response",
@@ -720,6 +991,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "RegexContentFilter": ".regex_content_filter",
     "RegexContentFilterDirection": ".regex_content_filter_direction",
     "RegistryProvider": ".registry_provider",
+    "ResolvedStage": ".resolved_stage",
+    "ResolvedStageHarness": ".resolved_stage_harness",
+    "ResolvedStageKind": ".resolved_stage_kind",
     "RuleReorderItem": ".rule_reorder_item",
     "RunAgentExecStepAction": ".run_agent_exec_step_action",
     "RunAgentExecStepActionCommand": ".run_agent_exec_step_action_command",
@@ -756,6 +1030,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SandboxResult": ".sandbox_result",
     "SandboxSpec": ".sandbox_spec",
     "ScheduleSection": ".schedule_section",
+    "ScheduleTriggerSection": ".schedule_trigger_section",
+    "SelectorScope": ".selector_scope",
     "SessionInfo": ".session_info",
     "SessionStatus": ".session_status",
     "SetupScript": ".setup_script",
@@ -774,11 +1050,14 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SignedPayload_Template": ".signed_payload",
     "SizeLimitContentFilter": ".size_limit_content_filter",
     "SizeLimitContentFilterDirection": ".size_limit_content_filter_direction",
+    "SlackChannelSelector": ".slack_channel_selector",
+    "SlackChannelSelectorKind": ".slack_channel_selector_kind",
     "SlackMessageExternalRef": ".slack_message_external_ref",
     "SlackMessageExternalRefKind": ".slack_message_external_ref_kind",
     "SnapshotResponse": ".snapshot_response",
     "SnapshotResult": ".snapshot_result",
     "SnapshotStepAction": ".snapshot_step_action",
+    "StageOperand": ".stage_operand",
     "StepOutputClaim": ".step_output_claim",
     "TaskInput": ".task_input",
     "TaskOutput": ".task_output",
@@ -796,8 +1075,14 @@ _dynamic_imports: typing.Dict[str, str] = {
     "TaskStepOutputRunAgent_Session": ".task_step_output_run_agent",
     "TenantRegionsResponse": ".tenant_regions_response",
     "TimestampCheck": ".timestamp_check",
+    "TransitionOperand": ".transition_operand",
     "TriggerCatalogItem": ".trigger_catalog_item",
     "TriggerCatalogListResponse": ".trigger_catalog_list_response",
+    "TriggerOperand": ".trigger_operand",
+    "TriggerPathBinding": ".trigger_path_binding",
+    "TriggerPathBindingType": ".trigger_path_binding_type",
+    "UnaryConditionInput": ".unary_condition_input",
+    "UnaryConditionOutput": ".unary_condition_output",
     "UrlExternalRef": ".url_external_ref",
     "UrlExternalRefKind": ".url_external_ref_kind",
     "ValidationError": ".validation_error",
@@ -822,6 +1107,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "WebhookActionAttempt": ".webhook_action_attempt",
     "WebhookDeliveryDetail": ".webhook_delivery_detail",
     "WebhookDeliverySummary": ".webhook_delivery_summary",
+    "WebhookTriggerSection": ".webhook_trigger_section",
 }
 
 
@@ -848,7 +1134,21 @@ def __dir__():
 
 __all__ = [
     "AgentResult",
+    "AgenticTransitionInput",
+    "AgenticTransitionInputInstructions",
+    "AgenticTransitionInputInstructions_Knowledge",
+    "AgenticTransitionInputInstructions_Literal",
+    "AgenticTransitionOption",
+    "AgenticTransitionOptionParamsValue",
+    "AgenticTransitionOptionParamsValue_Input",
+    "AgenticTransitionOptionParamsValue_Literal",
+    "AgenticTransitionOptionParamsValue_Output",
+    "AgenticTransitionOutput",
+    "AgenticTransitionOutputInstructions",
+    "AgenticTransitionOutputInstructions_Knowledge",
+    "AgenticTransitionOutputInstructions_Literal",
     "AllIntegrationsPolicy",
+    "AlwaysCondition",
     "ArtifactRef",
     "ArtifactRefExternalRef",
     "ArtifactRefExternalRef_Github",
@@ -892,11 +1192,15 @@ __all__ = [
     "AutoResumePolicy",
     "BasicAuthVerifier",
     "BearerStaticVerifier",
+    "BinaryConditionInput",
+    "BinaryConditionOutput",
     "ClientInferenceApi",
     "CloudProvider",
     "CloudRoleRef",
     "CloudRoleResponse",
     "CloudRoleType",
+    "CompoundConditionInput",
+    "CompoundConditionOutput",
     "ComputeEventDetailResponse",
     "ComputeEventDetailResponseResult",
     "ComputeEventDetailResponseResult_Agent",
@@ -905,6 +1209,21 @@ __all__ = [
     "ComputeEventDetailResponseResult_Sandbox",
     "ComputeEventDetailResponseResult_Snapshot",
     "ComputeRegionResponse",
+    "ConditionOperand",
+    "ConditionOperand_Literal",
+    "ConditionOperand_Stage",
+    "ConditionOperand_Transition",
+    "ConditionOperand_Trigger",
+    "ConditionalTransitionInput",
+    "ConditionalTransitionInputParamsValue",
+    "ConditionalTransitionInputParamsValue_Input",
+    "ConditionalTransitionInputParamsValue_Literal",
+    "ConditionalTransitionInputParamsValue_Output",
+    "ConditionalTransitionOutput",
+    "ConditionalTransitionOutputParamsValue",
+    "ConditionalTransitionOutputParamsValue_Input",
+    "ConditionalTransitionOutputParamsValue_Literal",
+    "ConditionalTransitionOutputParamsValue_Output",
     "ConnectionStatus",
     "ContainerRegistryResponse",
     "ContentTypeContentFilter",
@@ -946,6 +1265,8 @@ __all__ = [
     "GatewayProfileResponseIntegrationPolicy_Custom",
     "GatewayRuleResponse",
     "GitHubExternalRef",
+    "GitHubRepositorySelector",
+    "GitHubRepositorySelectorKind",
     "GitSource",
     "HeaderEqualsVerifier",
     "HmacAlgorithm",
@@ -1038,12 +1359,23 @@ __all__ = [
     "IngressActionStatus",
     "IngressEventStatus",
     "InitCapability",
+    "InputBinding",
     "IntegrationDetailResponse",
     "IntegrationLevel",
     "IntegrationListResponse",
     "IntegrationProvider",
     "IntegrationProvidersResponse",
     "IntegrationStatus",
+    "IntegrationTriggerSectionInput",
+    "IntegrationTriggerSectionInputSelector",
+    "IntegrationTriggerSectionInputSelector_Github",
+    "IntegrationTriggerSectionInputSelector_Linear",
+    "IntegrationTriggerSectionInputSelector_Slack",
+    "IntegrationTriggerSectionOutput",
+    "IntegrationTriggerSectionOutputSelector",
+    "IntegrationTriggerSectionOutputSelector_Github",
+    "IntegrationTriggerSectionOutputSelector_Linear",
+    "IntegrationTriggerSectionOutputSelector_Slack",
     "IpAllowlistVerifier",
     "IsloErrorCode",
     "IsloKnowledgeItemExternalRef",
@@ -1121,14 +1453,81 @@ __all__ = [
     "KnowledgeVersionResponse",
     "LegacyInitCapability",
     "LifecyclePolicy",
+    "LineAgentConfig",
+    "LineAgentConfigInstructions",
+    "LineAgentConfigInstructions_Knowledge",
+    "LineAgentConfigInstructions_Literal",
+    "LineConditionInput",
+    "LineConditionInput_All",
+    "LineConditionInput_Always",
+    "LineConditionInput_Any",
+    "LineConditionInput_Contains",
+    "LineConditionInput_Eq",
+    "LineConditionInput_Exists",
+    "LineConditionInput_Falsy",
+    "LineConditionInput_Missing",
+    "LineConditionInput_Ne",
+    "LineConditionInput_Not",
+    "LineConditionInput_NotContains",
+    "LineConditionInput_Truthy",
+    "LineConditionOutput",
+    "LineConditionOutput_All",
+    "LineConditionOutput_Always",
+    "LineConditionOutput_Any",
+    "LineConditionOutput_Contains",
+    "LineConditionOutput_Eq",
+    "LineConditionOutput_Exists",
+    "LineConditionOutput_Falsy",
+    "LineConditionOutput_Missing",
+    "LineConditionOutput_Ne",
+    "LineConditionOutput_Not",
+    "LineConditionOutput_NotContains",
+    "LineConditionOutput_Truthy",
+    "LineDeployRequest",
+    "LineEventResponse",
+    "LineLimitsInput",
+    "LineLimitsInputBudgetUsd",
+    "LineLimitsOutput",
+    "LineManifestInput",
+    "LineManifestInputTransitionsItem",
+    "LineManifestInputTransitionsItem_Agentic",
+    "LineManifestInputTransitionsItem_Conditional",
+    "LineManifestInputTrigger",
+    "LineManifestInputTrigger_IntegrationTrigger",
+    "LineManifestInputTrigger_Manual",
+    "LineManifestInputTrigger_Schedule",
+    "LineManifestInputTrigger_Webhook",
+    "LineManifestOutput",
+    "LineManifestOutputTransitionsItem",
+    "LineManifestOutputTransitionsItem_Agentic",
+    "LineManifestOutputTransitionsItem_Conditional",
+    "LineManifestOutputTrigger",
+    "LineManifestOutputTrigger_IntegrationTrigger",
+    "LineManifestOutputTrigger_Manual",
+    "LineManifestOutputTrigger_Schedule",
+    "LineManifestOutputTrigger_Webhook",
+    "LineResponse",
+    "LineRunListItem",
+    "LineRunResponse",
+    "LineRunRetryAction",
+    "LineScheduleResponse",
+    "LineSection",
+    "LineStage",
+    "LineVersionResponse",
     "LinearExternalRef",
+    "LinearIssueSelector",
+    "LinearIssueSelectorKind",
     "ListSessionsResponse",
     "LiteralBinding",
+    "ManualTriggerSection",
     "MappingPart",
     "MappingPartLiteral",
     "MappingPartSource",
     "MappingPart_Literal",
     "MappingPart_Source",
+    "NotConditionInput",
+    "NotConditionOutput",
+    "OutputBinding",
     "PaginatedKnowledgeResponse",
     "PaginatedKnowledgeVersionResponse",
     "PaginatedSandboxResponse",
@@ -1141,6 +1540,9 @@ __all__ = [
     "RegexContentFilter",
     "RegexContentFilterDirection",
     "RegistryProvider",
+    "ResolvedStage",
+    "ResolvedStageHarness",
+    "ResolvedStageKind",
     "RuleReorderItem",
     "RunAgentExecStepAction",
     "RunAgentExecStepActionCommand",
@@ -1177,6 +1579,8 @@ __all__ = [
     "SandboxResult",
     "SandboxSpec",
     "ScheduleSection",
+    "ScheduleTriggerSection",
+    "SelectorScope",
     "SessionInfo",
     "SessionStatus",
     "SetupScript",
@@ -1195,11 +1599,14 @@ __all__ = [
     "SignedPayload_Template",
     "SizeLimitContentFilter",
     "SizeLimitContentFilterDirection",
+    "SlackChannelSelector",
+    "SlackChannelSelectorKind",
     "SlackMessageExternalRef",
     "SlackMessageExternalRefKind",
     "SnapshotResponse",
     "SnapshotResult",
     "SnapshotStepAction",
+    "StageOperand",
     "StepOutputClaim",
     "TaskInput",
     "TaskOutput",
@@ -1217,8 +1624,14 @@ __all__ = [
     "TaskStepOutputRunAgent_Session",
     "TenantRegionsResponse",
     "TimestampCheck",
+    "TransitionOperand",
     "TriggerCatalogItem",
     "TriggerCatalogListResponse",
+    "TriggerOperand",
+    "TriggerPathBinding",
+    "TriggerPathBindingType",
+    "UnaryConditionInput",
+    "UnaryConditionOutput",
     "UrlExternalRef",
     "UrlExternalRefKind",
     "ValidationError",
@@ -1243,4 +1656,5 @@ __all__ = [
     "WebhookActionAttempt",
     "WebhookDeliveryDetail",
     "WebhookDeliverySummary",
+    "WebhookTriggerSection",
 ]

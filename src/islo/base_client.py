@@ -16,6 +16,7 @@ if typing.TYPE_CHECKING:
     from .container_registries.client import AsyncContainerRegistriesClient, ContainerRegistriesClient
     from .credits.client import AsyncCreditsClient, CreditsClient
     from .environments.client import AsyncEnvironmentsClient, EnvironmentsClient
+    from .factory.client import AsyncFactoryClient, FactoryClient
     from .gateway_profiles.client import AsyncGatewayProfilesClient, GatewayProfilesClient
     from .inference.client import AsyncInferenceClient, InferenceClient
     from .integrations.client import AsyncIntegrationsClient, IntegrationsClient
@@ -102,6 +103,7 @@ class BaseIslo:
         self._container_registries: typing.Optional[ContainerRegistriesClient] = None
         self._jobs: typing.Optional[JobsClient] = None
         self._job_runs: typing.Optional[JobRunsClient] = None
+        self._factory: typing.Optional[FactoryClient] = None
         self._compute_events: typing.Optional[ComputeEventsClient] = None
         self._sandboxes: typing.Optional[SandboxesClient] = None
         self._shares: typing.Optional[SharesClient] = None
@@ -195,6 +197,14 @@ class BaseIslo:
 
             self._job_runs = JobRunsClient(client_wrapper=self._client_wrapper)
         return self._job_runs
+
+    @property
+    def factory(self):
+        if self._factory is None:
+            from .factory.client import FactoryClient  # noqa: E402
+
+            self._factory = FactoryClient(client_wrapper=self._client_wrapper)
+        return self._factory
 
     @property
     def compute_events(self):
@@ -315,6 +325,7 @@ class AsyncBaseIslo:
         self._container_registries: typing.Optional[AsyncContainerRegistriesClient] = None
         self._jobs: typing.Optional[AsyncJobsClient] = None
         self._job_runs: typing.Optional[AsyncJobRunsClient] = None
+        self._factory: typing.Optional[AsyncFactoryClient] = None
         self._compute_events: typing.Optional[AsyncComputeEventsClient] = None
         self._sandboxes: typing.Optional[AsyncSandboxesClient] = None
         self._shares: typing.Optional[AsyncSharesClient] = None
@@ -408,6 +419,14 @@ class AsyncBaseIslo:
 
             self._job_runs = AsyncJobRunsClient(client_wrapper=self._client_wrapper)
         return self._job_runs
+
+    @property
+    def factory(self):
+        if self._factory is None:
+            from .factory.client import AsyncFactoryClient  # noqa: E402
+
+            self._factory = AsyncFactoryClient(client_wrapper=self._client_wrapper)
+        return self._factory
 
     @property
     def compute_events(self):
