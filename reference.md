@@ -4835,7 +4835,7 @@ client.factory.list_factory_line_versions(
 </dl>
 </details>
 
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_line_runs_for_line</a>(...) -> typing.List[LineRunListItem]</code></summary>
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_line_runs_for_line</a>(...) -> typing.List[LineRunSummary]</code></summary>
 <dl>
 <dd>
 
@@ -4910,7 +4910,7 @@ client.factory.list_factory_line_runs_for_line(
 </dl>
 </details>
 
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">trigger_factory_line_run</a>(...) -> LineRunResponse</code></summary>
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">trigger_factory_line_run</a>(...) -> LineRunDetail</code></summary>
 <dl>
 <dd>
 
@@ -5001,7 +5001,7 @@ client.factory.trigger_factory_line_run(
 </dl>
 </details>
 
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_line_runs</a>(...) -> typing.List[LineRunListItem]</code></summary>
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_line_runs</a>(...) -> typing.List[LineRunSummary]</code></summary>
 <dl>
 <dd>
 
@@ -5082,7 +5082,7 @@ client.factory.list_factory_line_runs()
 </dl>
 </details>
 
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">get_factory_line_run</a>(...) -> LineRunResponse</code></summary>
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">get_factory_line_run</a>(...) -> LineRunDetail</code></summary>
 <dl>
 <dd>
 
@@ -5104,6 +5104,79 @@ client = Islo(
 )
 
 client.factory.get_factory_line_run(
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">get_factory_line_run_debug</a>(...) -> LineRunDebugResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Per-stage and per-step diagnostics for one line run, including the last failed stage attempt's first failing step, each step's exit code and output tails, and the sandbox environment each stage ran in.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.get_factory_line_run_debug(
     run_id="run_id",
 )
 

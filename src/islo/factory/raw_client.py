@@ -11,13 +11,15 @@ from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
 from ..core.serialization import convert_and_respect_annotation_metadata
+from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.error_response import ErrorResponse
 from ..types.line_manifest_input import LineManifestInput
 from ..types.line_response import LineResponse
-from ..types.line_run_list_item import LineRunListItem
-from ..types.line_run_response import LineRunResponse
+from ..types.line_run_debug_response import LineRunDebugResponse
+from ..types.line_run_detail import LineRunDetail
+from ..types.line_run_summary import LineRunSummary
 from ..types.line_schedule_response import LineScheduleResponse
 from ..types.line_version_response import LineVersionResponse
 from pydantic import ValidationError
@@ -358,7 +360,7 @@ class RawFactoryClient:
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[typing.List[LineRunListItem]]:
+    ) -> HttpResponse[typing.List[LineRunSummary]]:
         """
         Parameters
         ----------
@@ -373,7 +375,7 @@ class RawFactoryClient:
 
         Returns
         -------
-        HttpResponse[typing.List[LineRunListItem]]
+        HttpResponse[typing.List[LineRunSummary]]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -389,9 +391,9 @@ class RawFactoryClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[LineRunListItem],
+                    typing.List[LineRunSummary],
                     parse_obj_as(
-                        type_=typing.List[LineRunListItem],  # type: ignore
+                        type_=typing.List[LineRunSummary],  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -425,7 +427,7 @@ class RawFactoryClient:
         params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         trigger_payload: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[LineRunResponse]:
+    ) -> HttpResponse[LineRunDetail]:
         """
         Parameters
         ----------
@@ -446,7 +448,7 @@ class RawFactoryClient:
 
         Returns
         -------
-        HttpResponse[LineRunResponse]
+        HttpResponse[LineRunDetail]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -468,9 +470,9 @@ class RawFactoryClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    LineRunResponse,
+                    LineRunDetail,
                     parse_obj_as(
-                        type_=LineRunResponse,  # type: ignore
+                        type_=LineRunDetail,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -503,7 +505,7 @@ class RawFactoryClient:
         status: typing.Optional[str] = None,
         line_name: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[typing.List[LineRunListItem]]:
+    ) -> HttpResponse[typing.List[LineRunSummary]]:
         """
         Parameters
         ----------
@@ -522,7 +524,7 @@ class RawFactoryClient:
 
         Returns
         -------
-        HttpResponse[typing.List[LineRunListItem]]
+        HttpResponse[typing.List[LineRunSummary]]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -540,9 +542,9 @@ class RawFactoryClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[LineRunListItem],
+                    typing.List[LineRunSummary],
                     parse_obj_as(
-                        type_=typing.List[LineRunListItem],  # type: ignore
+                        type_=typing.List[LineRunSummary],  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -569,7 +571,7 @@ class RawFactoryClient:
 
     def get_factory_line_run(
         self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[LineRunResponse]:
+    ) -> HttpResponse[LineRunDetail]:
         """
         Parameters
         ----------
@@ -580,7 +582,7 @@ class RawFactoryClient:
 
         Returns
         -------
-        HttpResponse[LineRunResponse]
+        HttpResponse[LineRunDetail]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -592,13 +594,78 @@ class RawFactoryClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    LineRunResponse,
+                    LineRunDetail,
                     parse_obj_as(
-                        type_=LineRunResponse,  # type: ignore
+                        type_=LineRunDetail,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_factory_line_run_debug(
+        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[LineRunDebugResponse]:
+        """
+        Per-stage and per-step diagnostics for one line run, including the last failed stage attempt's first failing step, each step's exit code and output tails, and the sandbox environment each stage ran in.
+
+        Parameters
+        ----------
+        run_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[LineRunDebugResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{jsonable_encoder(run_id)}/debug",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    LineRunDebugResponse,
+                    parse_obj_as(
+                        type_=LineRunDebugResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -1121,7 +1188,7 @@ class AsyncRawFactoryClient:
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[typing.List[LineRunListItem]]:
+    ) -> AsyncHttpResponse[typing.List[LineRunSummary]]:
         """
         Parameters
         ----------
@@ -1136,7 +1203,7 @@ class AsyncRawFactoryClient:
 
         Returns
         -------
-        AsyncHttpResponse[typing.List[LineRunListItem]]
+        AsyncHttpResponse[typing.List[LineRunSummary]]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1152,9 +1219,9 @@ class AsyncRawFactoryClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[LineRunListItem],
+                    typing.List[LineRunSummary],
                     parse_obj_as(
-                        type_=typing.List[LineRunListItem],  # type: ignore
+                        type_=typing.List[LineRunSummary],  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1188,7 +1255,7 @@ class AsyncRawFactoryClient:
         params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         trigger_payload: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[LineRunResponse]:
+    ) -> AsyncHttpResponse[LineRunDetail]:
         """
         Parameters
         ----------
@@ -1209,7 +1276,7 @@ class AsyncRawFactoryClient:
 
         Returns
         -------
-        AsyncHttpResponse[LineRunResponse]
+        AsyncHttpResponse[LineRunDetail]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1231,9 +1298,9 @@ class AsyncRawFactoryClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    LineRunResponse,
+                    LineRunDetail,
                     parse_obj_as(
-                        type_=LineRunResponse,  # type: ignore
+                        type_=LineRunDetail,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1266,7 +1333,7 @@ class AsyncRawFactoryClient:
         status: typing.Optional[str] = None,
         line_name: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[typing.List[LineRunListItem]]:
+    ) -> AsyncHttpResponse[typing.List[LineRunSummary]]:
         """
         Parameters
         ----------
@@ -1285,7 +1352,7 @@ class AsyncRawFactoryClient:
 
         Returns
         -------
-        AsyncHttpResponse[typing.List[LineRunListItem]]
+        AsyncHttpResponse[typing.List[LineRunSummary]]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1303,9 +1370,9 @@ class AsyncRawFactoryClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[LineRunListItem],
+                    typing.List[LineRunSummary],
                     parse_obj_as(
-                        type_=typing.List[LineRunListItem],  # type: ignore
+                        type_=typing.List[LineRunSummary],  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1332,7 +1399,7 @@ class AsyncRawFactoryClient:
 
     async def get_factory_line_run(
         self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[LineRunResponse]:
+    ) -> AsyncHttpResponse[LineRunDetail]:
         """
         Parameters
         ----------
@@ -1343,7 +1410,7 @@ class AsyncRawFactoryClient:
 
         Returns
         -------
-        AsyncHttpResponse[LineRunResponse]
+        AsyncHttpResponse[LineRunDetail]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1355,13 +1422,78 @@ class AsyncRawFactoryClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    LineRunResponse,
+                    LineRunDetail,
                     parse_obj_as(
-                        type_=LineRunResponse,  # type: ignore
+                        type_=LineRunDetail,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_factory_line_run_debug(
+        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[LineRunDebugResponse]:
+        """
+        Per-stage and per-step diagnostics for one line run, including the last failed stage attempt's first failing step, each step's exit code and output tails, and the sandbox environment each stage ran in.
+
+        Parameters
+        ----------
+        run_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[LineRunDebugResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{jsonable_encoder(run_id)}/debug",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    LineRunDebugResponse,
+                    parse_obj_as(
+                        type_=LineRunDebugResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),

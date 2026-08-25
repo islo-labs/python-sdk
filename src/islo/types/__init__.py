@@ -37,6 +37,7 @@ if typing.TYPE_CHECKING:
         ArtifactRefExternalRef_Slack,
         ArtifactRefExternalRef_Url,
     )
+    from .artifact_summary import ArtifactSummary
     from .auth_method import AuthMethod
     from .auth_strategy_schema import AuthStrategySchema
     from .auth_strategy_schema_mode import AuthStrategySchemaMode
@@ -144,6 +145,8 @@ if typing.TYPE_CHECKING:
     from .exec_response import ExecResponse
     from .exec_result import ExecResult
     from .exec_result_response import ExecResultResponse
+    from .factory_failure_code import FactoryFailureCode
+    from .factory_failure_domain import FactoryFailureDomain
     from .file_upload_status_response import FileUploadStatusResponse
     from .gateway_action import GatewayAction
     from .gateway_profile_detail_response import GatewayProfileDetailResponse
@@ -399,7 +402,6 @@ if typing.TYPE_CHECKING:
         LineConditionOutput_Truthy,
     )
     from .line_deploy_request import LineDeployRequest
-    from .line_event_response import LineEventResponse
     from .line_limits_input import LineLimitsInput
     from .line_limits_input_budget_usd import LineLimitsInputBudgetUsd
     from .line_limits_output import LineLimitsOutput
@@ -430,9 +432,17 @@ if typing.TYPE_CHECKING:
         LineManifestOutputTrigger_Webhook,
     )
     from .line_response import LineResponse
-    from .line_run_list_item import LineRunListItem
-    from .line_run_response import LineRunResponse
+    from .line_run_debug_environment import LineRunDebugEnvironment
+    from .line_run_debug_response import LineRunDebugResponse
+    from .line_run_debug_stage import LineRunDebugStage
+    from .line_run_debug_step import LineRunDebugStep
+    from .line_run_detail import LineRunDetail
+    from .line_run_failure import LineRunFailure
+    from .line_run_failure_summary import LineRunFailureSummary
     from .line_run_retry_action import LineRunRetryAction
+    from .line_run_stage_detail import LineRunStageDetail
+    from .line_run_stage_summary import LineRunStageSummary
+    from .line_run_summary import LineRunSummary
     from .line_schedule_response import LineScheduleResponse
     from .line_section import LineSection
     from .line_stage import LineStage
@@ -471,6 +481,7 @@ if typing.TYPE_CHECKING:
     from .run_agent_session_step_action import RunAgentSessionStepAction
     from .run_agent_session_step_action_command import RunAgentSessionStepActionCommand
     from .run_agent_session_step_action_harness import RunAgentSessionStepActionHarness
+    from .run_agent_session_step_action_model_provider import RunAgentSessionStepActionModelProvider
     from .run_agent_session_step_action_prompt import (
         RunAgentSessionStepActionPrompt,
         RunAgentSessionStepActionPrompt_Knowledge,
@@ -554,6 +565,7 @@ if typing.TYPE_CHECKING:
     from .trigger_operand import TriggerOperand
     from .trigger_path_binding import TriggerPathBinding
     from .trigger_path_binding_type import TriggerPathBindingType
+    from .trigger_summary import TriggerSummary
     from .unary_condition_input import UnaryConditionInput
     from .unary_condition_output import UnaryConditionOutput
     from .url_external_ref import UrlExternalRef
@@ -607,6 +619,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ArtifactRefExternalRef_Linear": ".artifact_ref_external_ref",
     "ArtifactRefExternalRef_Slack": ".artifact_ref_external_ref",
     "ArtifactRefExternalRef_Url": ".artifact_ref_external_ref",
+    "ArtifactSummary": ".artifact_summary",
     "AuthMethod": ".auth_method",
     "AuthStrategySchema": ".auth_strategy_schema",
     "AuthStrategySchemaMode": ".auth_strategy_schema_mode",
@@ -704,6 +717,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ExecResponse": ".exec_response",
     "ExecResult": ".exec_result",
     "ExecResultResponse": ".exec_result_response",
+    "FactoryFailureCode": ".factory_failure_code",
+    "FactoryFailureDomain": ".factory_failure_domain",
     "FileUploadStatusResponse": ".file_upload_status_response",
     "GatewayAction": ".gateway_action",
     "GatewayProfileDetailResponse": ".gateway_profile_detail_response",
@@ -935,7 +950,6 @@ _dynamic_imports: typing.Dict[str, str] = {
     "LineConditionOutput_NotContains": ".line_condition_output",
     "LineConditionOutput_Truthy": ".line_condition_output",
     "LineDeployRequest": ".line_deploy_request",
-    "LineEventResponse": ".line_event_response",
     "LineLimitsInput": ".line_limits_input",
     "LineLimitsInputBudgetUsd": ".line_limits_input_budget_usd",
     "LineLimitsOutput": ".line_limits_output",
@@ -958,9 +972,17 @@ _dynamic_imports: typing.Dict[str, str] = {
     "LineManifestOutputTrigger_Schedule": ".line_manifest_output_trigger",
     "LineManifestOutputTrigger_Webhook": ".line_manifest_output_trigger",
     "LineResponse": ".line_response",
-    "LineRunListItem": ".line_run_list_item",
-    "LineRunResponse": ".line_run_response",
+    "LineRunDebugEnvironment": ".line_run_debug_environment",
+    "LineRunDebugResponse": ".line_run_debug_response",
+    "LineRunDebugStage": ".line_run_debug_stage",
+    "LineRunDebugStep": ".line_run_debug_step",
+    "LineRunDetail": ".line_run_detail",
+    "LineRunFailure": ".line_run_failure",
+    "LineRunFailureSummary": ".line_run_failure_summary",
     "LineRunRetryAction": ".line_run_retry_action",
+    "LineRunStageDetail": ".line_run_stage_detail",
+    "LineRunStageSummary": ".line_run_stage_summary",
+    "LineRunSummary": ".line_run_summary",
     "LineScheduleResponse": ".line_schedule_response",
     "LineSection": ".line_section",
     "LineStage": ".line_stage",
@@ -1001,6 +1023,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "RunAgentSessionStepAction": ".run_agent_session_step_action",
     "RunAgentSessionStepActionCommand": ".run_agent_session_step_action_command",
     "RunAgentSessionStepActionHarness": ".run_agent_session_step_action_harness",
+    "RunAgentSessionStepActionModelProvider": ".run_agent_session_step_action_model_provider",
     "RunAgentSessionStepActionPrompt": ".run_agent_session_step_action_prompt",
     "RunAgentSessionStepActionPrompt_Knowledge": ".run_agent_session_step_action_prompt",
     "RunAgentSessionStepActionPrompt_Literal": ".run_agent_session_step_action_prompt",
@@ -1081,6 +1104,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "TriggerOperand": ".trigger_operand",
     "TriggerPathBinding": ".trigger_path_binding",
     "TriggerPathBindingType": ".trigger_path_binding_type",
+    "TriggerSummary": ".trigger_summary",
     "UnaryConditionInput": ".unary_condition_input",
     "UnaryConditionOutput": ".unary_condition_output",
     "UrlExternalRef": ".url_external_ref",
@@ -1156,6 +1180,7 @@ __all__ = [
     "ArtifactRefExternalRef_Linear",
     "ArtifactRefExternalRef_Slack",
     "ArtifactRefExternalRef_Url",
+    "ArtifactSummary",
     "AuthMethod",
     "AuthStrategySchema",
     "AuthStrategySchemaMode",
@@ -1253,6 +1278,8 @@ __all__ = [
     "ExecResponse",
     "ExecResult",
     "ExecResultResponse",
+    "FactoryFailureCode",
+    "FactoryFailureDomain",
     "FileUploadStatusResponse",
     "GatewayAction",
     "GatewayProfileDetailResponse",
@@ -1484,7 +1511,6 @@ __all__ = [
     "LineConditionOutput_NotContains",
     "LineConditionOutput_Truthy",
     "LineDeployRequest",
-    "LineEventResponse",
     "LineLimitsInput",
     "LineLimitsInputBudgetUsd",
     "LineLimitsOutput",
@@ -1507,9 +1533,17 @@ __all__ = [
     "LineManifestOutputTrigger_Schedule",
     "LineManifestOutputTrigger_Webhook",
     "LineResponse",
-    "LineRunListItem",
-    "LineRunResponse",
+    "LineRunDebugEnvironment",
+    "LineRunDebugResponse",
+    "LineRunDebugStage",
+    "LineRunDebugStep",
+    "LineRunDetail",
+    "LineRunFailure",
+    "LineRunFailureSummary",
     "LineRunRetryAction",
+    "LineRunStageDetail",
+    "LineRunStageSummary",
+    "LineRunSummary",
     "LineScheduleResponse",
     "LineSection",
     "LineStage",
@@ -1550,6 +1584,7 @@ __all__ = [
     "RunAgentSessionStepAction",
     "RunAgentSessionStepActionCommand",
     "RunAgentSessionStepActionHarness",
+    "RunAgentSessionStepActionModelProvider",
     "RunAgentSessionStepActionPrompt",
     "RunAgentSessionStepActionPrompt_Knowledge",
     "RunAgentSessionStepActionPrompt_Literal",
@@ -1630,6 +1665,7 @@ __all__ = [
     "TriggerOperand",
     "TriggerPathBinding",
     "TriggerPathBindingType",
+    "TriggerSummary",
     "UnaryConditionInput",
     "UnaryConditionOutput",
     "UrlExternalRef",

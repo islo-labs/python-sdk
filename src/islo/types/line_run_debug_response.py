@@ -5,20 +5,21 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
-from .line_event_response import LineEventResponse
+from .line_run_debug_stage import LineRunDebugStage
+from .line_run_failure_summary import LineRunFailureSummary
 
 
-class LineRunListItem(UniversalBaseModel):
+class LineRunDebugResponse(UniversalBaseModel):
     id: str
     line_name: str
+    line_version_id: typing.Optional[str] = None
     status: str
     triggered_by: str
-    trigger_payload: typing.Optional[typing.Dict[str, typing.Any]] = None
+    region: typing.Optional[str] = None
     started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
-    created_at: dt.datetime
     error_message: typing.Optional[str] = None
-    stage_history: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None
-    events: typing.Optional[typing.List[LineEventResponse]] = None
+    failure_summary: typing.Optional[LineRunFailureSummary] = None
+    stages: typing.Optional[typing.List[LineRunDebugStage]] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

@@ -5,26 +5,28 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
-from .line_event_response import LineEventResponse
+from .line_run_failure import LineRunFailure
 from .line_run_retry_action import LineRunRetryAction
+from .line_run_stage_detail import LineRunStageDetail
+from .trigger_summary import TriggerSummary
 
 
-class LineRunResponse(UniversalBaseModel):
+class LineRunDetail(UniversalBaseModel):
     id: str
     line_name: str
     line_version_id: str
     workflow_run_id: str
     status: str
-    triggered_by: str
-    trigger_payload: typing.Dict[str, typing.Any]
+    trigger: TriggerSummary
     region: typing.Optional[str] = None
-    run_params: typing.Dict[str, typing.Any]
+    run_params: typing.Optional[typing.Dict[str, typing.Any]] = None
     result_payload: typing.Optional[typing.Dict[str, typing.Any]] = None
     error_message: typing.Optional[str] = None
-    iteration_count: int
+    iteration_count: typing.Optional[int] = None
     budget_used_usd: typing.Optional[str] = None
     retry: typing.Optional[LineRunRetryAction] = None
-    events: typing.Optional[typing.List[LineEventResponse]] = None
+    stages: typing.Optional[typing.List[LineRunStageDetail]] = None
+    failure: typing.Optional[LineRunFailure] = None
     started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
     created_at: dt.datetime
