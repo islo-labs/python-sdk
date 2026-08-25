@@ -17,6 +17,8 @@ class ComputeEventDetailResponse(UniversalBaseModel):
     error_details: typing.Optional[typing.Dict[str, typing.Any]] = None
     started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
+    session_name: typing.Optional[str] = None
+    sandbox_name: typing.Optional[str] = None
     result: ComputeEventDetailResponseResult
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

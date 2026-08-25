@@ -7,6 +7,7 @@ from ..core.pydantic_utilities import UniversalBaseModel
 from .knowledge_binding import KnowledgeBinding
 from .run_agent_session_step_action_command import RunAgentSessionStepActionCommand
 from .run_agent_session_step_action_harness import RunAgentSessionStepActionHarness
+from .run_agent_session_step_action_model_provider import RunAgentSessionStepActionModelProvider
 from .run_agent_session_step_action_prompt import RunAgentSessionStepActionPrompt
 from .run_agent_session_step_action_resume_prompt import RunAgentSessionStepActionResumePrompt
 
@@ -14,6 +15,7 @@ from .run_agent_session_step_action_resume_prompt import RunAgentSessionStepActi
 class RunAgentSessionStepAction(UniversalBaseModel):
     harness: RunAgentSessionStepActionHarness
     model: typing.Optional[str] = None
+    model_provider: typing.Optional[RunAgentSessionStepActionModelProvider] = None
     prompt: typing.Optional[RunAgentSessionStepActionPrompt] = None
     resume_prompt: typing.Optional[RunAgentSessionStepActionResumePrompt] = None
     knowledge: typing.Optional[typing.List[KnowledgeBinding]] = None

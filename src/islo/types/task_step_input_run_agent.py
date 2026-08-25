@@ -12,6 +12,7 @@ from .run_agent_exec_step_action_command import RunAgentExecStepActionCommand
 from .run_agent_exec_step_action_harness import RunAgentExecStepActionHarness
 from .run_agent_session_step_action_command import RunAgentSessionStepActionCommand
 from .run_agent_session_step_action_harness import RunAgentSessionStepActionHarness
+from .run_agent_session_step_action_model_provider import RunAgentSessionStepActionModelProvider
 from .run_agent_session_step_action_prompt import RunAgentSessionStepActionPrompt
 from .run_agent_session_step_action_resume_prompt import RunAgentSessionStepActionResumePrompt
 
@@ -29,6 +30,7 @@ class TaskStepInputRunAgent_Session(UniversalBaseModel):
     mode: typing.Literal["session"] = "session"
     harness: RunAgentSessionStepActionHarness
     model: typing.Optional[str] = None
+    model_provider: typing.Optional[RunAgentSessionStepActionModelProvider] = None
     prompt: typing.Optional[RunAgentSessionStepActionPrompt] = None
     resume_prompt: typing.Optional[RunAgentSessionStepActionResumePrompt] = None
     knowledge: typing.Optional[typing.List[KnowledgeBinding]] = None

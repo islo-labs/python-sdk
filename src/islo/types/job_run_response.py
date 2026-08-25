@@ -24,6 +24,7 @@ class JobRunResponse(UniversalBaseModel):
     error_message: typing.Optional[str] = None
     error_code: typing.Optional[str] = None
     error_details: typing.Optional[typing.Dict[str, typing.Any]] = None
+    failure_class: typing.Optional[str] = None
     created_at: dt.datetime
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

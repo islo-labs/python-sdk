@@ -19,6 +19,8 @@ class JobRunStepTimelineEntry(UniversalBaseModel):
     error_message: typing.Optional[str] = None
     error_code: typing.Optional[str] = None
     error_details: typing.Optional[typing.Dict[str, typing.Any]] = None
+    failure_class: typing.Optional[str] = None
+    exit_code: typing.Optional[int] = None
     compute_command_id: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

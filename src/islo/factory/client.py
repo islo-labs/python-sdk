@@ -6,8 +6,9 @@ from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
 from ..types.line_manifest_input import LineManifestInput
 from ..types.line_response import LineResponse
-from ..types.line_run_list_item import LineRunListItem
-from ..types.line_run_response import LineRunResponse
+from ..types.line_run_debug_response import LineRunDebugResponse
+from ..types.line_run_detail import LineRunDetail
+from ..types.line_run_summary import LineRunSummary
 from ..types.line_schedule_response import LineScheduleResponse
 from ..types.line_version_response import LineVersionResponse
 from .raw_client import AsyncRawFactoryClient, RawFactoryClient
@@ -264,7 +265,7 @@ class FactoryClient:
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[LineRunListItem]:
+    ) -> typing.List[LineRunSummary]:
         """
         Parameters
         ----------
@@ -279,7 +280,7 @@ class FactoryClient:
 
         Returns
         -------
-        typing.List[LineRunListItem]
+        typing.List[LineRunSummary]
             Successful Response
 
         Examples
@@ -309,7 +310,7 @@ class FactoryClient:
         params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         trigger_payload: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> LineRunResponse:
+    ) -> LineRunDetail:
         """
         Parameters
         ----------
@@ -330,7 +331,7 @@ class FactoryClient:
 
         Returns
         -------
-        LineRunResponse
+        LineRunDetail
             Successful Response
 
         Examples
@@ -364,7 +365,7 @@ class FactoryClient:
         status: typing.Optional[str] = None,
         line_name: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[LineRunListItem]:
+    ) -> typing.List[LineRunSummary]:
         """
         Parameters
         ----------
@@ -383,7 +384,7 @@ class FactoryClient:
 
         Returns
         -------
-        typing.List[LineRunListItem]
+        typing.List[LineRunSummary]
             Successful Response
 
         Examples
@@ -404,7 +405,7 @@ class FactoryClient:
 
     def get_factory_line_run(
         self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> LineRunResponse:
+    ) -> LineRunDetail:
         """
         Parameters
         ----------
@@ -415,7 +416,7 @@ class FactoryClient:
 
         Returns
         -------
-        LineRunResponse
+        LineRunDetail
             Successful Response
 
         Examples
@@ -432,6 +433,40 @@ class FactoryClient:
         )
         """
         _response = self._raw_client.get_factory_line_run(run_id, request_options=request_options)
+        return _response.data
+
+    def get_factory_line_run_debug(
+        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> LineRunDebugResponse:
+        """
+        Per-stage and per-step diagnostics for one line run, including the last failed stage attempt's first failing step, each step's exit code and output tails, and the sandbox environment each stage ran in.
+
+        Parameters
+        ----------
+        run_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineRunDebugResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.factory.get_factory_line_run_debug(
+            run_id="run_id",
+        )
+        """
+        _response = self._raw_client.get_factory_line_run_debug(run_id, request_options=request_options)
         return _response.data
 
     def get_factory_line_schedule(
@@ -837,7 +872,7 @@ class AsyncFactoryClient:
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[LineRunListItem]:
+    ) -> typing.List[LineRunSummary]:
         """
         Parameters
         ----------
@@ -852,7 +887,7 @@ class AsyncFactoryClient:
 
         Returns
         -------
-        typing.List[LineRunListItem]
+        typing.List[LineRunSummary]
             Successful Response
 
         Examples
@@ -890,7 +925,7 @@ class AsyncFactoryClient:
         params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         trigger_payload: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> LineRunResponse:
+    ) -> LineRunDetail:
         """
         Parameters
         ----------
@@ -911,7 +946,7 @@ class AsyncFactoryClient:
 
         Returns
         -------
-        LineRunResponse
+        LineRunDetail
             Successful Response
 
         Examples
@@ -953,7 +988,7 @@ class AsyncFactoryClient:
         status: typing.Optional[str] = None,
         line_name: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[LineRunListItem]:
+    ) -> typing.List[LineRunSummary]:
         """
         Parameters
         ----------
@@ -972,7 +1007,7 @@ class AsyncFactoryClient:
 
         Returns
         -------
-        typing.List[LineRunListItem]
+        typing.List[LineRunSummary]
             Successful Response
 
         Examples
@@ -1001,7 +1036,7 @@ class AsyncFactoryClient:
 
     async def get_factory_line_run(
         self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> LineRunResponse:
+    ) -> LineRunDetail:
         """
         Parameters
         ----------
@@ -1012,7 +1047,7 @@ class AsyncFactoryClient:
 
         Returns
         -------
-        LineRunResponse
+        LineRunDetail
             Successful Response
 
         Examples
@@ -1037,6 +1072,48 @@ class AsyncFactoryClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.get_factory_line_run(run_id, request_options=request_options)
+        return _response.data
+
+    async def get_factory_line_run_debug(
+        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> LineRunDebugResponse:
+        """
+        Per-stage and per-step diagnostics for one line run, including the last failed stage attempt's first failing step, each step's exit code and output tails, and the sandbox environment each stage ran in.
+
+        Parameters
+        ----------
+        run_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineRunDebugResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.factory.get_factory_line_run_debug(
+                run_id="run_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_factory_line_run_debug(run_id, request_options=request_options)
         return _response.data
 
     async def get_factory_line_schedule(
