@@ -8,9 +8,14 @@ T_Result = typing.TypeVar("T_Result")
 
 
 class RunAgentSessionStepActionHarness(enum.StrEnum):
+    """
+    Session outputs require claude, codex, cursor, or opencode.
+    """
+
     CODEX = "codex"
     CURSOR = "cursor"
     CLAUDE = "claude"
+    OPENCODE = "opencode"
     _UNKNOWN = "__RUNAGENTSESSIONSTEPACTIONHARNESS_UNKNOWN__"
     """
     This member is used for forward compatibility. If the value is not recognized by the enum, it will be stored here, and the raw value is accessible through `.value`.
@@ -27,6 +32,7 @@ class RunAgentSessionStepActionHarness(enum.StrEnum):
         codex: typing.Callable[[], T_Result],
         cursor: typing.Callable[[], T_Result],
         claude: typing.Callable[[], T_Result],
+        opencode: typing.Callable[[], T_Result],
         _unknown_member: typing.Callable[[str], T_Result],
     ) -> T_Result:
         if self is RunAgentSessionStepActionHarness.CODEX:
@@ -35,4 +41,6 @@ class RunAgentSessionStepActionHarness(enum.StrEnum):
             return cursor()
         if self is RunAgentSessionStepActionHarness.CLAUDE:
             return claude()
+        if self is RunAgentSessionStepActionHarness.OPENCODE:
+            return opencode()
         return _unknown_member(self._value_)

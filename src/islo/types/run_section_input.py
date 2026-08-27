@@ -13,7 +13,11 @@ class RunSectionInput(UniversalBaseModel):
     fail_fast: typing.Optional[bool] = None
     fanout: typing.Optional[bool] = None
     concurrency: typing.Optional[int] = None
-    workdir: typing.Optional[str] = None
+    workdir: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Working directory for every exec and run_agent step. Defaults to ".". Falls back to run.sandbox.workdir when omitted.
+    """
+
     timeout: typing.Optional[RunSectionInputTimeout] = None
     region: typing.Optional[str] = None
     teardown_on_complete: typing.Optional[bool] = None

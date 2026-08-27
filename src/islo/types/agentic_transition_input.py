@@ -14,7 +14,7 @@ class AgenticTransitionInput(UniversalBaseModel):
     id: str
     from_: typing_extensions.Annotated[str, FieldMetadata(alias="from"), pydantic.Field(alias="from")]
     instructions: AgenticTransitionInputInstructions
-    options: typing.List[AgenticTransitionOption]
+    options: typing.Optional[typing.List[AgenticTransitionOption]] = None
     label: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

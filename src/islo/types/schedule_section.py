@@ -7,7 +7,11 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class ScheduleSection(UniversalBaseModel):
-    cron: str
+    cron: str = pydantic.Field()
+    """
+    Cron expression; validated at deploy time. Every param the schedule uses must have a default before you add [schedule].
+    """
+
     timezone: typing.Optional[str] = None
     enabled: typing.Optional[bool] = None
 

@@ -18,8 +18,6 @@ class FactoryFailureCode(enum.StrEnum):
     NO_ROUTE = "no_route"
     AMBIGUOUS_TRANSITION = "ambiguous_transition"
     AMBIGUOUS_AGENTIC_TRANSITION = "ambiguous_agentic_transition"
-    AGENTIC_TRANSITION_NO_OPTIONS = "agentic_transition_no_options"
-    WAIT_WITHOUT_RESUME = "wait_without_resume"
     TRANSITION_PARAMS_INVALID = "transition_params_invalid"
     MAX_ITERATIONS_EXHAUSTED = "max_iterations_exhausted"
     JOB_RESULT_INVALID = "job_result_invalid"
@@ -27,16 +25,15 @@ class FactoryFailureCode(enum.StrEnum):
     STAGE_PARAMS_INVALID = "stage_params_invalid"
     LINE_STATE_INVALID = "line_state_invalid"
     DISPATCH_FAILED = "dispatch_failed"
-    DECISION_PAYLOAD_INVALID = "decision_payload_invalid"
     CONTROL_PAYLOAD_INVALID = "control_payload_invalid"
     CONTROL_TARGET_INVALID = "control_target_invalid"
     CONTROL_MISSING_ID = "control_missing_id"
     CONTROL_WAIT_EXPIRED = "control_wait_expired"
     CONTROL_WAIT_UNKNOWN_SELECTION = "control_wait_unknown_selection"
+    CONTROL_STOP_NOT_APPLIED = "control_stop_not_applied"
     RETRY_SNAPSHOT_INVALID = "retry_snapshot_invalid"
-    DECISION_OPTION_NOT_ALLOWED = "decision_option_not_allowed"
-    DECISION_STOP_INVALID = "decision_stop_invalid"
     STAGE_FAILED = "stage_failed"
+    ROUTING_WAIT_EXPIRED = "routing_wait_expired"
     USER_CANCELLED = "user_cancelled"
     UNKNOWN = "unknown"
     _UNKNOWN = "__FACTORYFAILURECODE_UNKNOWN__"
@@ -58,8 +55,6 @@ class FactoryFailureCode(enum.StrEnum):
         no_route: typing.Callable[[], T_Result],
         ambiguous_transition: typing.Callable[[], T_Result],
         ambiguous_agentic_transition: typing.Callable[[], T_Result],
-        agentic_transition_no_options: typing.Callable[[], T_Result],
-        wait_without_resume: typing.Callable[[], T_Result],
         transition_params_invalid: typing.Callable[[], T_Result],
         max_iterations_exhausted: typing.Callable[[], T_Result],
         job_result_invalid: typing.Callable[[], T_Result],
@@ -67,16 +62,15 @@ class FactoryFailureCode(enum.StrEnum):
         stage_params_invalid: typing.Callable[[], T_Result],
         line_state_invalid: typing.Callable[[], T_Result],
         dispatch_failed: typing.Callable[[], T_Result],
-        decision_payload_invalid: typing.Callable[[], T_Result],
         control_payload_invalid: typing.Callable[[], T_Result],
         control_target_invalid: typing.Callable[[], T_Result],
         control_missing_id: typing.Callable[[], T_Result],
         control_wait_expired: typing.Callable[[], T_Result],
         control_wait_unknown_selection: typing.Callable[[], T_Result],
+        control_stop_not_applied: typing.Callable[[], T_Result],
         retry_snapshot_invalid: typing.Callable[[], T_Result],
-        decision_option_not_allowed: typing.Callable[[], T_Result],
-        decision_stop_invalid: typing.Callable[[], T_Result],
         stage_failed: typing.Callable[[], T_Result],
+        routing_wait_expired: typing.Callable[[], T_Result],
         user_cancelled: typing.Callable[[], T_Result],
         unknown: typing.Callable[[], T_Result],
         _unknown_member: typing.Callable[[str], T_Result],
@@ -93,10 +87,6 @@ class FactoryFailureCode(enum.StrEnum):
             return ambiguous_transition()
         if self is FactoryFailureCode.AMBIGUOUS_AGENTIC_TRANSITION:
             return ambiguous_agentic_transition()
-        if self is FactoryFailureCode.AGENTIC_TRANSITION_NO_OPTIONS:
-            return agentic_transition_no_options()
-        if self is FactoryFailureCode.WAIT_WITHOUT_RESUME:
-            return wait_without_resume()
         if self is FactoryFailureCode.TRANSITION_PARAMS_INVALID:
             return transition_params_invalid()
         if self is FactoryFailureCode.MAX_ITERATIONS_EXHAUSTED:
@@ -111,8 +101,6 @@ class FactoryFailureCode(enum.StrEnum):
             return line_state_invalid()
         if self is FactoryFailureCode.DISPATCH_FAILED:
             return dispatch_failed()
-        if self is FactoryFailureCode.DECISION_PAYLOAD_INVALID:
-            return decision_payload_invalid()
         if self is FactoryFailureCode.CONTROL_PAYLOAD_INVALID:
             return control_payload_invalid()
         if self is FactoryFailureCode.CONTROL_TARGET_INVALID:
@@ -123,14 +111,14 @@ class FactoryFailureCode(enum.StrEnum):
             return control_wait_expired()
         if self is FactoryFailureCode.CONTROL_WAIT_UNKNOWN_SELECTION:
             return control_wait_unknown_selection()
+        if self is FactoryFailureCode.CONTROL_STOP_NOT_APPLIED:
+            return control_stop_not_applied()
         if self is FactoryFailureCode.RETRY_SNAPSHOT_INVALID:
             return retry_snapshot_invalid()
-        if self is FactoryFailureCode.DECISION_OPTION_NOT_ALLOWED:
-            return decision_option_not_allowed()
-        if self is FactoryFailureCode.DECISION_STOP_INVALID:
-            return decision_stop_invalid()
         if self is FactoryFailureCode.STAGE_FAILED:
             return stage_failed()
+        if self is FactoryFailureCode.ROUTING_WAIT_EXPIRED:
+            return routing_wait_expired()
         if self is FactoryFailureCode.USER_CANCELLED:
             return user_cancelled()
         if self is FactoryFailureCode.UNKNOWN:

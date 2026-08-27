@@ -10,8 +10,13 @@ from ..core.serialization import FieldMetadata
 
 class StepOutputClaim(UniversalBaseModel):
     from_: typing_extensions.Annotated[
-        typing.Optional[str], FieldMetadata(alias="from"), pydantic.Field(alias="from", default=None)
+        typing.Optional[str],
+        FieldMetadata(alias="from"),
+        pydantic.Field(alias="from", default=None, description="Writer key. Defaults to the job output key."),
     ]
-    required: typing.Optional[bool] = None
+    required: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    May tighten the job-level required flag, not loosen it.
+    """
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

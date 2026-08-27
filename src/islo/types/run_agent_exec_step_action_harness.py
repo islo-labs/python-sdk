@@ -11,6 +11,7 @@ class RunAgentExecStepActionHarness(enum.StrEnum):
     CODEX = "codex"
     CURSOR = "cursor"
     CLAUDE = "claude"
+    OPENCODE = "opencode"
     CUSTOM = "custom"
     _UNKNOWN = "__RUNAGENTEXECSTEPACTIONHARNESS_UNKNOWN__"
     """
@@ -28,6 +29,7 @@ class RunAgentExecStepActionHarness(enum.StrEnum):
         codex: typing.Callable[[], T_Result],
         cursor: typing.Callable[[], T_Result],
         claude: typing.Callable[[], T_Result],
+        opencode: typing.Callable[[], T_Result],
         custom: typing.Callable[[], T_Result],
         _unknown_member: typing.Callable[[str], T_Result],
     ) -> T_Result:
@@ -37,6 +39,8 @@ class RunAgentExecStepActionHarness(enum.StrEnum):
             return cursor()
         if self is RunAgentExecStepActionHarness.CLAUDE:
             return claude()
+        if self is RunAgentExecStepActionHarness.OPENCODE:
+            return opencode()
         if self is RunAgentExecStepActionHarness.CUSTOM:
             return custom()
         return _unknown_member(self._value_)

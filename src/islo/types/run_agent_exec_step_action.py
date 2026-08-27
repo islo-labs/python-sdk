@@ -9,6 +9,10 @@ from .run_agent_exec_step_action_harness import RunAgentExecStepActionHarness
 
 
 class RunAgentExecStepAction(UniversalBaseModel):
+    """
+    Exec-mode agent step. Uses the $ISLO_OUTPUT side channel like exec.
+    """
+
     harness: RunAgentExecStepActionHarness
     command: RunAgentExecStepActionCommand
     model: typing.Optional[str] = None

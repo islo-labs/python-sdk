@@ -15,6 +15,9 @@ class JobSection(UniversalBaseModel):
 
     version: typing.Optional[str] = None
     description: typing.Optional[str] = None
-    params: typing.Optional[typing.Dict[str, typing.Optional[JobParamSpec]]] = None
+    params: typing.Optional[typing.Dict[str, typing.Optional[JobParamSpec]]] = pydantic.Field(default=None)
+    """
+    Declared run parameters. Reference as {{name}} in manifest strings (substitution and undeclared-reference checks walk the whole manifest, not only step fields). Reserved: {{run_id}}.
+    """
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

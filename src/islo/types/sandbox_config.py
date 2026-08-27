@@ -17,8 +17,16 @@ class SandboxConfig(UniversalBaseModel):
     """
 
     mode: typing.Optional[SandboxConfigMode] = None
-    name: typing.Optional[str] = None
-    image: typing.Optional[str] = None
+    name: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Required for ensure/reuse. Supports {{param}} substitution.
+    """
+
+    image: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Required for provision/ensure.
+    """
+
     vcpus: typing.Optional[int] = None
     memory_mb: typing.Optional[int] = None
     disk_gb: typing.Optional[int] = None
@@ -27,7 +35,11 @@ class SandboxConfig(UniversalBaseModel):
     environment: typing.Optional[str] = None
     init: typing.Optional[SandboxConfigInit] = None
     internet_enabled: typing.Optional[bool] = None
-    workdir: typing.Optional[str] = None
+    workdir: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Sandbox default working directory. Used when [run].workdir is omitted.
+    """
+
     cache_key: typing.Optional[str] = None
     env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = None
     sources: typing.Optional[typing.List[GitSource]] = None
