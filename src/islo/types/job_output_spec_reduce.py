@@ -8,6 +8,10 @@ T_Result = typing.TypeVar("T_Result")
 
 
 class JobOutputSpecReduce(enum.StrEnum):
+    """
+    one: exactly one claiming step. last: last successful write in manifest task order. collect: published array of producer values (dense nulls for missing tasks); required collect must be claimed by every task. gather: concatenate arrays or collect scalars, skipping omissions.
+    """
+
     ONE = "one"
     LAST = "last"
     COLLECT = "collect"

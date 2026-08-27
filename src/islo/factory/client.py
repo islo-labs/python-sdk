@@ -12,6 +12,7 @@ from ..types.line_run_summary import LineRunSummary
 from ..types.line_schedule_response import LineScheduleResponse
 from ..types.line_version_response import LineVersionResponse
 from .raw_client import AsyncRawFactoryClient, RawFactoryClient
+from .types.line_update_status import LineUpdateStatus
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -213,6 +214,44 @@ class FactoryClient:
         )
         """
         _response = self._raw_client.get_factory_line(name, request_options=request_options)
+        return _response.data
+
+    def update_factory_line(
+        self,
+        name: str,
+        *,
+        status: typing.Optional[LineUpdateStatus] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> LineResponse:
+        """
+        Parameters
+        ----------
+        name : str
+
+        status : typing.Optional[LineUpdateStatus]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.factory.update_factory_line(
+            name="name",
+        )
+        """
+        _response = self._raw_client.update_factory_line(name, status=status, request_options=request_options)
         return _response.data
 
     def list_factory_line_versions(
@@ -812,6 +851,52 @@ class AsyncFactoryClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.get_factory_line(name, request_options=request_options)
+        return _response.data
+
+    async def update_factory_line(
+        self,
+        name: str,
+        *,
+        status: typing.Optional[LineUpdateStatus] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> LineResponse:
+        """
+        Parameters
+        ----------
+        name : str
+
+        status : typing.Optional[LineUpdateStatus]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.factory.update_factory_line(
+                name="name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.update_factory_line(name, status=status, request_options=request_options)
         return _response.data
 
     async def list_factory_line_versions(

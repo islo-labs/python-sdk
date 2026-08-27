@@ -6,8 +6,8 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from .types import LineUpdateStatus
-_dynamic_imports: typing.Dict[str, str] = {"LineUpdateStatus": ".types"}
+    from .line_update_status import LineUpdateStatus
+_dynamic_imports: typing.Dict[str, str] = {"LineUpdateStatus": ".line_update_status"}
 
 
 def __getattr__(attr_name: str) -> typing.Any:

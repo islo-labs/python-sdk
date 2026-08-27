@@ -13,7 +13,11 @@ from .run_agent_session_step_action_resume_prompt import RunAgentSessionStepActi
 
 
 class RunAgentSessionStepAction(UniversalBaseModel):
-    harness: RunAgentSessionStepActionHarness
+    harness: RunAgentSessionStepActionHarness = pydantic.Field()
+    """
+    Session outputs require claude, codex, cursor, or opencode.
+    """
+
     model: typing.Optional[str] = None
     model_provider: typing.Optional[RunAgentSessionStepActionModelProvider] = None
     prompt: typing.Optional[RunAgentSessionStepActionPrompt] = None

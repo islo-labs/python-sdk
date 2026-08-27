@@ -584,6 +584,7 @@ if typing.TYPE_CHECKING:
         EnvironmentUpdateEntriesItem_Secret,
         EnvironmentUpdateEntriesItem_Variable,
     )
+    from .factory import LineUpdateStatus
     from .gateway_profiles import (
         GatewayProfileCreateIntegrationPolicy,
         GatewayProfileCreateIntegrationPolicy_All,
@@ -1023,6 +1024,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "LineScheduleResponse": ".types",
     "LineSection": ".types",
     "LineStage": ".types",
+    "LineUpdateStatus": ".factory",
     "LineVersionResponse": ".types",
     "LinearExternalRef": ".types",
     "LinearIssueSelector": ".types",
@@ -1636,6 +1638,7 @@ __all__ = [
     "LineScheduleResponse",
     "LineSection",
     "LineStage",
+    "LineUpdateStatus",
     "LineVersionResponse",
     "LinearExternalRef",
     "LinearIssueSelector",
