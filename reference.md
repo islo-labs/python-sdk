@@ -109,6 +109,14 @@ client.knowledge.list_knowledge()
 <dl>
 <dd>
 
+**type:** `typing.Optional[KnowledgeLevel]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **tag:** `typing.Optional[str]` 
     
 </dd>
@@ -184,8 +192,6 @@ client = Islo(
 
 client.knowledge.create_knowledge(
     slug="slug",
-    level="episodic",
-    body="body",
 )
 
 ```
@@ -210,7 +216,7 @@ client.knowledge.create_knowledge(
 <dl>
 <dd>
 
-**level:** `KnowledgeLevel` 
+**level:** `typing.Optional[KnowledgeLevel]` 
     
 </dd>
 </dl>
@@ -218,7 +224,7 @@ client.knowledge.create_knowledge(
 <dl>
 <dd>
 
-**body:** `str` 
+**type:** `typing.Optional[KnowledgeLevel]` 
     
 </dd>
 </dl>
@@ -227,6 +233,14 @@ client.knowledge.create_knowledge(
 <dd>
 
 **format:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**body:** `typing.Optional[str]` 
     
 </dd>
 </dl>
@@ -243,6 +257,74 @@ client.knowledge.create_knowledge(
 <dd>
 
 **links:** `typing.Optional[typing.List[KnowledgeLinkInput]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">create_knowledge_media</a>(...) -> KnowledgeItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.create_knowledge_media(
+    file="example_file",
+    item="item",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**item:** `str` — JSON metadata for the knowledge item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `core.File` — Media file (max 10 MiB)
     
 </dd>
 </dl>
@@ -435,6 +517,14 @@ client.knowledge.update_knowledge(
 <dl>
 <dd>
 
+**type:** `typing.Optional[KnowledgeLevel]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **format:** `typing.Optional[str]` 
     
 </dd>
@@ -468,6 +558,133 @@ client.knowledge.update_knowledge(
 <dd>
 
 **links:** `typing.Optional[typing.List[KnowledgeLinkInput]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">get_knowledge_content</a>(...) -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.get_knowledge_content(
+    identifier="identifier",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">put_knowledge_content</a>(...) -> KnowledgeItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.put_knowledge_content(
+    identifier="identifier",
+    file="example_file",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `core.File` — Replacement content
     
 </dd>
 </dl>
@@ -584,6 +801,74 @@ client = Islo(
 )
 
 client.knowledge.get_knowledge_version(
+    identifier="identifier",
+    version_number=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**version_number:** `int` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">get_knowledge_version_content</a>(...) -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.get_knowledge_version_content(
     identifier="identifier",
     version_number=1,
 )
@@ -3005,6 +3290,115 @@ client.cloud_roles.update_cloud_role(
 <dd>
 
 **is_enabled:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## byo
+<details><summary><code>client.byo.<a href="src/islo/byo/client.py">get_byo_inference_status</a>() -> ByoStatusResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.byo.get_byo_inference_status()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.byo.<a href="src/islo/byo/client.py">start_byo_inference_setup</a>(...) -> ByoSetupResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.byo.start_byo_inference_setup(
+    source_kind="databricks",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**source_kind:** `ByoSourceKind` 
     
 </dd>
 </dl>

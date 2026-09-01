@@ -78,6 +78,12 @@ if typing.TYPE_CHECKING:
     from .bearer_static_verifier import BearerStaticVerifier
     from .binary_condition_input import BinaryConditionInput
     from .binary_condition_output import BinaryConditionOutput
+    from .byo_connection_state import ByoConnectionState
+    from .byo_provider_status import ByoProviderStatus
+    from .byo_setup_mode import ByoSetupMode
+    from .byo_setup_response import ByoSetupResponse
+    from .byo_source_kind import ByoSourceKind
+    from .byo_status_response import ByoStatusResponse
     from .client_inference_api import ClientInferenceApi
     from .cloud_provider import CloudProvider
     from .cloud_role_ref import CloudRoleRef
@@ -658,6 +664,12 @@ _dynamic_imports: typing.Dict[str, str] = {
     "BearerStaticVerifier": ".bearer_static_verifier",
     "BinaryConditionInput": ".binary_condition_input",
     "BinaryConditionOutput": ".binary_condition_output",
+    "ByoConnectionState": ".byo_connection_state",
+    "ByoProviderStatus": ".byo_provider_status",
+    "ByoSetupMode": ".byo_setup_mode",
+    "ByoSetupResponse": ".byo_setup_response",
+    "ByoSourceKind": ".byo_source_kind",
+    "ByoStatusResponse": ".byo_status_response",
     "ClientInferenceApi": ".client_inference_api",
     "CloudProvider": ".cloud_provider",
     "CloudRoleRef": ".cloud_role_ref",
@@ -1219,6 +1231,12 @@ __all__ = [
     "BearerStaticVerifier",
     "BinaryConditionInput",
     "BinaryConditionOutput",
+    "ByoConnectionState",
+    "ByoProviderStatus",
+    "ByoSetupMode",
+    "ByoSetupResponse",
+    "ByoSourceKind",
+    "ByoStatusResponse",
     "ClientInferenceApi",
     "CloudProvider",
     "CloudRoleRef",
