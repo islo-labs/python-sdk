@@ -4,11 +4,15 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .byo_setup_mode import ByoSetupMode
+from .byo_source_kind import ByoSourceKind
 
 
-class ScheduleTriggerSection(UniversalBaseModel):
-    cron: str
-    timezone: typing.Optional[str] = None
-    inputs: typing.Optional[typing.Dict[str, typing.Any]] = None
+class ByoSetupResponse(UniversalBaseModel):
+    setup_session_id: str
+    connection_id: str
+    source_kind: ByoSourceKind
+    setup_mode: ByoSetupMode
+    redirect_url: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

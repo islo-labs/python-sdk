@@ -11,6 +11,7 @@ from .core.logging import LogConfig, Logger
 from .environment import IsloEnvironment
 
 if typing.TYPE_CHECKING:
+    from .byo.client import AsyncByoClient, ByoClient
     from .cloud_roles.client import AsyncCloudRolesClient, CloudRolesClient
     from .compute_events.client import AsyncComputeEventsClient, ComputeEventsClient
     from .container_registries.client import AsyncContainerRegistriesClient, ContainerRegistriesClient
@@ -99,6 +100,7 @@ class BaseIslo:
         self._gateway_profiles: typing.Optional[GatewayProfilesClient] = None
         self._environments: typing.Optional[EnvironmentsClient] = None
         self._cloud_roles: typing.Optional[CloudRolesClient] = None
+        self._byo: typing.Optional[ByoClient] = None
         self._inference: typing.Optional[InferenceClient] = None
         self._container_registries: typing.Optional[ContainerRegistriesClient] = None
         self._jobs: typing.Optional[JobsClient] = None
@@ -165,6 +167,14 @@ class BaseIslo:
 
             self._cloud_roles = CloudRolesClient(client_wrapper=self._client_wrapper)
         return self._cloud_roles
+
+    @property
+    def byo(self):
+        if self._byo is None:
+            from .byo.client import ByoClient  # noqa: E402
+
+            self._byo = ByoClient(client_wrapper=self._client_wrapper)
+        return self._byo
 
     @property
     def inference(self):
@@ -321,6 +331,7 @@ class AsyncBaseIslo:
         self._gateway_profiles: typing.Optional[AsyncGatewayProfilesClient] = None
         self._environments: typing.Optional[AsyncEnvironmentsClient] = None
         self._cloud_roles: typing.Optional[AsyncCloudRolesClient] = None
+        self._byo: typing.Optional[AsyncByoClient] = None
         self._inference: typing.Optional[AsyncInferenceClient] = None
         self._container_registries: typing.Optional[AsyncContainerRegistriesClient] = None
         self._jobs: typing.Optional[AsyncJobsClient] = None
@@ -387,6 +398,14 @@ class AsyncBaseIslo:
 
             self._cloud_roles = AsyncCloudRolesClient(client_wrapper=self._client_wrapper)
         return self._cloud_roles
+
+    @property
+    def byo(self):
+        if self._byo is None:
+            from .byo.client import AsyncByoClient  # noqa: E402
+
+            self._byo = AsyncByoClient(client_wrapper=self._client_wrapper)
+        return self._byo
 
     @property
     def inference(self):

@@ -147,8 +147,6 @@ client = Islo(
 
 client.knowledge.create_knowledge(
     slug="slug",
-    level="episodic",
-    body="body",
 )
 ```
 
@@ -182,8 +180,6 @@ client = AsyncIslo(
 async def main() -> None:
     await client.knowledge.create_knowledge(
         slug="slug",
-        level="episodic",
-        body="body",
     )
 
 

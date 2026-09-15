@@ -12,6 +12,7 @@ class InferenceProvider(enum.StrEnum):
     THESEAN = "thesean"
     DATABRICKS = "databricks"
     ALIEN = "alien"
+    VALARAI = "valarai"
     _UNKNOWN = "__INFERENCEPROVIDER_UNKNOWN__"
     """
     This member is used for forward compatibility. If the value is not recognized by the enum, it will be stored here, and the raw value is accessible through `.value`.
@@ -29,6 +30,7 @@ class InferenceProvider(enum.StrEnum):
         thesean: typing.Callable[[], T_Result],
         databricks: typing.Callable[[], T_Result],
         alien: typing.Callable[[], T_Result],
+        valarai: typing.Callable[[], T_Result],
         _unknown_member: typing.Callable[[str], T_Result],
     ) -> T_Result:
         if self is InferenceProvider.FIREWORKS:
@@ -39,4 +41,6 @@ class InferenceProvider(enum.StrEnum):
             return databricks()
         if self is InferenceProvider.ALIEN:
             return alien()
+        if self is InferenceProvider.VALARAI:
+            return valarai()
         return _unknown_member(self._value_)

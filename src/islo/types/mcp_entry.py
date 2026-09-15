@@ -6,9 +6,12 @@ import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
 
 
-class ScheduleTriggerSection(UniversalBaseModel):
-    cron: str
-    timezone: typing.Optional[str] = None
-    inputs: typing.Optional[typing.Dict[str, typing.Any]] = None
+class McpEntry(UniversalBaseModel):
+    """
+    One MCP server descriptor in a run_agent step.
+    """
+
+    key: str
+    url: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
