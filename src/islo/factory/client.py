@@ -547,6 +547,7 @@ class FactoryClient:
         cron: str,
         timezone: typing.Optional[str] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
+        inputs: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> LineScheduleResponse:
         """
@@ -559,6 +560,8 @@ class FactoryClient:
         timezone : typing.Optional[str]
 
         enabled : typing.Optional[bool]
+
+        inputs : typing.Optional[typing.Dict[str, typing.Any]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -583,7 +586,7 @@ class FactoryClient:
         )
         """
         _response = self._raw_client.upsert_factory_line_schedule(
-            name, cron=cron, timezone=timezone, enabled=enabled, request_options=request_options
+            name, cron=cron, timezone=timezone, enabled=enabled, inputs=inputs, request_options=request_options
         )
         return _response.data
 
@@ -1248,6 +1251,7 @@ class AsyncFactoryClient:
         cron: str,
         timezone: typing.Optional[str] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
+        inputs: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> LineScheduleResponse:
         """
@@ -1260,6 +1264,8 @@ class AsyncFactoryClient:
         timezone : typing.Optional[str]
 
         enabled : typing.Optional[bool]
+
+        inputs : typing.Optional[typing.Dict[str, typing.Any]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1292,7 +1298,7 @@ class AsyncFactoryClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.upsert_factory_line_schedule(
-            name, cron=cron, timezone=timezone, enabled=enabled, request_options=request_options
+            name, cron=cron, timezone=timezone, enabled=enabled, inputs=inputs, request_options=request_options
         )
         return _response.data
 

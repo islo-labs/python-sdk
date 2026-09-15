@@ -4,11 +4,10 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .byo_provider_status import ByoProviderStatus
 
 
-class ScheduleTriggerSection(UniversalBaseModel):
-    cron: str
-    timezone: typing.Optional[str] = None
-    inputs: typing.Optional[typing.Dict[str, typing.Any]] = None
+class ByoStatusResponse(UniversalBaseModel):
+    statuses: typing.List[ByoProviderStatus]
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

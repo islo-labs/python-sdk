@@ -8,6 +8,7 @@ import pydantic
 import typing_extensions
 from ..core.pydantic_utilities import UniversalBaseModel
 from .knowledge_binding import KnowledgeBinding
+from .mcp_entry import McpEntry
 from .run_agent_exec_step_action_command import RunAgentExecStepActionCommand
 from .run_agent_exec_step_action_harness import RunAgentExecStepActionHarness
 from .run_agent_session_step_action_command import RunAgentSessionStepActionCommand
@@ -31,11 +32,13 @@ class TaskStepInputRunAgent_Session(UniversalBaseModel):
     harness: RunAgentSessionStepActionHarness
     model: typing.Optional[str] = None
     model_provider: typing.Optional[RunAgentSessionStepActionModelProvider] = None
+    effort: typing.Optional[str] = None
     prompt: typing.Optional[RunAgentSessionStepActionPrompt] = None
     resume_prompt: typing.Optional[RunAgentSessionStepActionResumePrompt] = None
     knowledge: typing.Optional[typing.List[KnowledgeBinding]] = None
     session: typing.Optional[str] = None
     command: typing.Optional[RunAgentSessionStepActionCommand] = None
+    mcp: typing.Optional[typing.List[McpEntry]] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 

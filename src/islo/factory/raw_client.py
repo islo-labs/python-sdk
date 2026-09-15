@@ -833,6 +833,7 @@ class RawFactoryClient:
         cron: str,
         timezone: typing.Optional[str] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
+        inputs: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[LineScheduleResponse]:
         """
@@ -845,6 +846,8 @@ class RawFactoryClient:
         timezone : typing.Optional[str]
 
         enabled : typing.Optional[bool]
+
+        inputs : typing.Optional[typing.Dict[str, typing.Any]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -862,6 +865,7 @@ class RawFactoryClient:
                 "cron": cron,
                 "timezone": timezone,
                 "enabled": enabled,
+                "inputs": inputs,
             },
             headers={
                 "content-type": "application/json",
@@ -1748,6 +1752,7 @@ class AsyncRawFactoryClient:
         cron: str,
         timezone: typing.Optional[str] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
+        inputs: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[LineScheduleResponse]:
         """
@@ -1760,6 +1765,8 @@ class AsyncRawFactoryClient:
         timezone : typing.Optional[str]
 
         enabled : typing.Optional[bool]
+
+        inputs : typing.Optional[typing.Dict[str, typing.Any]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1777,6 +1784,7 @@ class AsyncRawFactoryClient:
                 "cron": cron,
                 "timezone": timezone,
                 "enabled": enabled,
+                "inputs": inputs,
             },
             headers={
                 "content-type": "application/json",
