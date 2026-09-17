@@ -8,6 +8,9 @@ src/islo/client.py
 # Hand-written extensions: token providers, exec helpers, file helpers
 src/islo/custom/
 
+# Public examples use the hand-written Islo wrapper
+README.md
+
 # Project-level tooling that lives outside the generated SDK
 Justfile
 .pre-commit-config.yaml
