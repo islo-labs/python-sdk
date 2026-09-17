@@ -6,7 +6,8 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
+from ..core.pagination import AsyncPager, SyncPager
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
@@ -15,6 +16,7 @@ from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.error_response import ErrorResponse
+from ..types.facets_response import FacetsResponse
 from ..types.line_manifest_input import LineManifestInput
 from ..types.line_response import LineResponse
 from ..types.line_run_debug_response import LineRunDebugResponse
@@ -22,6 +24,8 @@ from ..types.line_run_detail import LineRunDetail
 from ..types.line_run_summary import LineRunSummary
 from ..types.line_schedule_response import LineScheduleResponse
 from ..types.line_version_response import LineVersionResponse
+from ..types.list_page_line_run_summary import ListPageLineRunSummary
+from ..types.timestamp_range import TimestampRange
 from .types.line_update_status import LineUpdateStatus
 from pydantic import ValidationError
 
@@ -52,7 +56,7 @@ class RawFactoryClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/validate",
+            f"factory/lines/{encode_path_param(name)}/validate",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -120,7 +124,7 @@ class RawFactoryClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/deploy",
+            f"factory/lines/{encode_path_param(name)}/deploy",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -254,7 +258,7 @@ class RawFactoryClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}",
+            f"factory/lines/{encode_path_param(name)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -312,7 +316,7 @@ class RawFactoryClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}",
+            f"factory/lines/{encode_path_param(name)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
@@ -402,7 +406,7 @@ class RawFactoryClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/versions",
+            f"factory/lines/{encode_path_param(name)}/versions",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             params={
@@ -467,7 +471,7 @@ class RawFactoryClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/runs",
+            f"factory/lines/{encode_path_param(name)}/runs",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             params={
@@ -540,7 +544,7 @@ class RawFactoryClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/runs",
+            f"factory/lines/{encode_path_param(name)}/runs",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -590,10 +594,15 @@ class RawFactoryClient:
         *,
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
-        status: typing.Optional[str] = None,
-        line_name: typing.Optional[str] = None,
+        cursor: typing.Optional[str] = None,
+        sort: typing.Optional[str] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        line_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[typing.List[LineRunSummary]]:
+    ) -> SyncPager[LineRunSummary, ListPageLineRunSummary]:
         """
         Parameters
         ----------
@@ -601,18 +610,28 @@ class RawFactoryClient:
 
         offset : typing.Optional[int]
 
-        status : typing.Optional[str]
-            Filter by run status
+        cursor : typing.Optional[str]
 
-        line_name : typing.Optional[str]
-            Filter by line name
+        sort : typing.Optional[str]
+            Sort order. Allowed: -created_at, created_at
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        line_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[typing.List[LineRunSummary]]
+        SyncPager[LineRunSummary, ListPageLineRunSummary]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -622,17 +641,117 @@ class RawFactoryClient:
             params={
                 "limit": limit,
                 "offset": offset,
+                "cursor": cursor,
+                "sort": sort,
+                "include": include,
                 "status": status,
                 "line_name": line_name,
+                "created_at": convert_and_respect_annotation_metadata(
+                    object_=created_at, annotation=TimestampRange, direction="write"
+                ),
+                "q": q,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    ListPageLineRunSummary,
+                    parse_obj_as(
+                        type_=ListPageLineRunSummary,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+                _get_next = lambda: self.list_factory_line_runs(
+                    limit=limit,
+                    offset=offset,
+                    cursor=_parsed_next,
+                    sort=sort,
+                    include=include,
+                    status=status,
+                    line_name=line_name,
+                    created_at=created_at,
+                    q=q,
+                    request_options=request_options,
+                )
+                return SyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def list_factory_line_run_facets(
+        self,
+        *,
+        fields: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        line_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[FacetsResponse]:
+        """
+        Parameters
+        ----------
+        fields : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+            Facet fields to return (e.g. line_name, status)
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        line_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[FacetsResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "factory/line-runs/facets",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "fields": fields,
+                "status": status,
+                "line_name": line_name,
+                "created_at": convert_and_respect_annotation_metadata(
+                    object_=created_at, annotation=TimestampRange, direction="write"
+                ),
+                "q": q,
             },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[LineRunSummary],
+                    FacetsResponse,
                     parse_obj_as(
-                        type_=typing.List[LineRunSummary],  # type: ignore
+                        type_=FacetsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -674,7 +793,7 @@ class RawFactoryClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/line-runs/{jsonable_encoder(run_id)}",
+            f"factory/line-runs/{encode_path_param(run_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -728,7 +847,7 @@ class RawFactoryClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/line-runs/{jsonable_encoder(run_id)}/debug",
+            f"factory/line-runs/{encode_path_param(run_id)}/debug",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -791,7 +910,7 @@ class RawFactoryClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/schedule",
+            f"factory/lines/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -833,6 +952,7 @@ class RawFactoryClient:
         cron: str,
         timezone: typing.Optional[str] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
+        inputs: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[LineScheduleResponse]:
         """
@@ -846,6 +966,8 @@ class RawFactoryClient:
 
         enabled : typing.Optional[bool]
 
+        inputs : typing.Optional[typing.Dict[str, typing.Any]]
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -855,13 +977,14 @@ class RawFactoryClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/schedule",
+            f"factory/lines/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="PUT",
             json={
                 "cron": cron,
                 "timezone": timezone,
                 "enabled": enabled,
+                "inputs": inputs,
             },
             headers={
                 "content-type": "application/json",
@@ -915,7 +1038,7 @@ class RawFactoryClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/schedule",
+            f"factory/lines/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -967,7 +1090,7 @@ class AsyncRawFactoryClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/validate",
+            f"factory/lines/{encode_path_param(name)}/validate",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -1035,7 +1158,7 @@ class AsyncRawFactoryClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/deploy",
+            f"factory/lines/{encode_path_param(name)}/deploy",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -1169,7 +1292,7 @@ class AsyncRawFactoryClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}",
+            f"factory/lines/{encode_path_param(name)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1227,7 +1350,7 @@ class AsyncRawFactoryClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}",
+            f"factory/lines/{encode_path_param(name)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
@@ -1317,7 +1440,7 @@ class AsyncRawFactoryClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/versions",
+            f"factory/lines/{encode_path_param(name)}/versions",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             params={
@@ -1382,7 +1505,7 @@ class AsyncRawFactoryClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/runs",
+            f"factory/lines/{encode_path_param(name)}/runs",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             params={
@@ -1455,7 +1578,7 @@ class AsyncRawFactoryClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/runs",
+            f"factory/lines/{encode_path_param(name)}/runs",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -1505,10 +1628,15 @@ class AsyncRawFactoryClient:
         *,
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
-        status: typing.Optional[str] = None,
-        line_name: typing.Optional[str] = None,
+        cursor: typing.Optional[str] = None,
+        sort: typing.Optional[str] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        line_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[typing.List[LineRunSummary]]:
+    ) -> AsyncPager[LineRunSummary, ListPageLineRunSummary]:
         """
         Parameters
         ----------
@@ -1516,18 +1644,28 @@ class AsyncRawFactoryClient:
 
         offset : typing.Optional[int]
 
-        status : typing.Optional[str]
-            Filter by run status
+        cursor : typing.Optional[str]
 
-        line_name : typing.Optional[str]
-            Filter by line name
+        sort : typing.Optional[str]
+            Sort order. Allowed: -created_at, created_at
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        line_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[typing.List[LineRunSummary]]
+        AsyncPager[LineRunSummary, ListPageLineRunSummary]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1537,17 +1675,120 @@ class AsyncRawFactoryClient:
             params={
                 "limit": limit,
                 "offset": offset,
+                "cursor": cursor,
+                "sort": sort,
+                "include": include,
                 "status": status,
                 "line_name": line_name,
+                "created_at": convert_and_respect_annotation_metadata(
+                    object_=created_at, annotation=TimestampRange, direction="write"
+                ),
+                "q": q,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    ListPageLineRunSummary,
+                    parse_obj_as(
+                        type_=ListPageLineRunSummary,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+
+                async def _get_next():
+                    return await self.list_factory_line_runs(
+                        limit=limit,
+                        offset=offset,
+                        cursor=_parsed_next,
+                        sort=sort,
+                        include=include,
+                        status=status,
+                        line_name=line_name,
+                        created_at=created_at,
+                        q=q,
+                        request_options=request_options,
+                    )
+
+                return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def list_factory_line_run_facets(
+        self,
+        *,
+        fields: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        line_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[FacetsResponse]:
+        """
+        Parameters
+        ----------
+        fields : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+            Facet fields to return (e.g. line_name, status)
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        line_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[FacetsResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "factory/line-runs/facets",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "fields": fields,
+                "status": status,
+                "line_name": line_name,
+                "created_at": convert_and_respect_annotation_metadata(
+                    object_=created_at, annotation=TimestampRange, direction="write"
+                ),
+                "q": q,
             },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[LineRunSummary],
+                    FacetsResponse,
                     parse_obj_as(
-                        type_=typing.List[LineRunSummary],  # type: ignore
+                        type_=FacetsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1589,7 +1830,7 @@ class AsyncRawFactoryClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/line-runs/{jsonable_encoder(run_id)}",
+            f"factory/line-runs/{encode_path_param(run_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1643,7 +1884,7 @@ class AsyncRawFactoryClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/line-runs/{jsonable_encoder(run_id)}/debug",
+            f"factory/line-runs/{encode_path_param(run_id)}/debug",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1706,7 +1947,7 @@ class AsyncRawFactoryClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/schedule",
+            f"factory/lines/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1748,6 +1989,7 @@ class AsyncRawFactoryClient:
         cron: str,
         timezone: typing.Optional[str] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
+        inputs: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[LineScheduleResponse]:
         """
@@ -1761,6 +2003,8 @@ class AsyncRawFactoryClient:
 
         enabled : typing.Optional[bool]
 
+        inputs : typing.Optional[typing.Dict[str, typing.Any]]
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -1770,13 +2014,14 @@ class AsyncRawFactoryClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/schedule",
+            f"factory/lines/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="PUT",
             json={
                 "cron": cron,
                 "timezone": timezone,
                 "enabled": enabled,
+                "inputs": inputs,
             },
             headers={
                 "content-type": "application/json",
@@ -1830,7 +2075,7 @@ class AsyncRawFactoryClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/schedule",
+            f"factory/lines/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,

@@ -3,7 +3,9 @@
 import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+from ..core.pagination import AsyncPager, SyncPager
 from ..core.request_options import RequestOptions
+from ..types.facets_response import FacetsResponse
 from ..types.line_manifest_input import LineManifestInput
 from ..types.line_response import LineResponse
 from ..types.line_run_debug_response import LineRunDebugResponse
@@ -11,6 +13,8 @@ from ..types.line_run_detail import LineRunDetail
 from ..types.line_run_summary import LineRunSummary
 from ..types.line_schedule_response import LineScheduleResponse
 from ..types.line_version_response import LineVersionResponse
+from ..types.list_page_line_run_summary import ListPageLineRunSummary
+from ..types.timestamp_range import TimestampRange
 from .raw_client import AsyncRawFactoryClient, RawFactoryClient
 from .types.line_update_status import LineUpdateStatus
 
@@ -64,6 +68,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -124,6 +129,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -178,6 +184,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -206,6 +213,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -244,6 +252,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -285,6 +294,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -328,6 +338,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -379,6 +390,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -401,10 +413,15 @@ class FactoryClient:
         *,
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
-        status: typing.Optional[str] = None,
-        line_name: typing.Optional[str] = None,
+        cursor: typing.Optional[str] = None,
+        sort: typing.Optional[str] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        line_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[LineRunSummary]:
+    ) -> SyncPager[LineRunSummary, ListPageLineRunSummary]:
         """
         Parameters
         ----------
@@ -412,18 +429,28 @@ class FactoryClient:
 
         offset : typing.Optional[int]
 
-        status : typing.Optional[str]
-            Filter by run status
+        cursor : typing.Optional[str]
 
-        line_name : typing.Optional[str]
-            Filter by line name
+        sort : typing.Optional[str]
+            Sort order. Allowed: -created_at, created_at
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        line_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.List[LineRunSummary]
+        SyncPager[LineRunSummary, ListPageLineRunSummary]
             Successful Response
 
         Examples
@@ -432,13 +459,84 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-        client.factory.list_factory_line_runs()
+        response = client.factory.list_factory_line_runs()
+        for item in response:
+            yield item
+        # alternatively, you can paginate page-by-page
+        for page in response.iter_pages():
+            yield page
         """
-        _response = self._raw_client.list_factory_line_runs(
-            limit=limit, offset=offset, status=status, line_name=line_name, request_options=request_options
+        return self._raw_client.list_factory_line_runs(
+            limit=limit,
+            offset=offset,
+            cursor=cursor,
+            sort=sort,
+            include=include,
+            status=status,
+            line_name=line_name,
+            created_at=created_at,
+            q=q,
+            request_options=request_options,
+        )
+
+    def list_factory_line_run_facets(
+        self,
+        *,
+        fields: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        line_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> FacetsResponse:
+        """
+        Parameters
+        ----------
+        fields : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+            Facet fields to return (e.g. line_name, status)
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        line_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        FacetsResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.factory.list_factory_line_run_facets(
+            fields=["fields"],
+        )
+        """
+        _response = self._raw_client.list_factory_line_run_facets(
+            fields=fields,
+            status=status,
+            line_name=line_name,
+            created_at=created_at,
+            q=q,
+            request_options=request_options,
         )
         return _response.data
 
@@ -464,6 +562,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -498,6 +597,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -530,6 +630,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -547,6 +648,7 @@ class FactoryClient:
         cron: str,
         timezone: typing.Optional[str] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
+        inputs: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> LineScheduleResponse:
         """
@@ -559,6 +661,8 @@ class FactoryClient:
         timezone : typing.Optional[str]
 
         enabled : typing.Optional[bool]
+
+        inputs : typing.Optional[typing.Dict[str, typing.Any]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -574,6 +678,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -583,7 +688,7 @@ class FactoryClient:
         )
         """
         _response = self._raw_client.upsert_factory_line_schedule(
-            name, cron=cron, timezone=timezone, enabled=enabled, request_options=request_options
+            name, cron=cron, timezone=timezone, enabled=enabled, inputs=inputs, request_options=request_options
         )
         return _response.data
 
@@ -608,6 +713,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -667,6 +773,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -735,6 +842,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -797,6 +905,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -837,6 +946,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -883,6 +993,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -932,6 +1043,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -983,6 +1095,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -1042,6 +1155,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -1070,10 +1184,15 @@ class AsyncFactoryClient:
         *,
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
-        status: typing.Optional[str] = None,
-        line_name: typing.Optional[str] = None,
+        cursor: typing.Optional[str] = None,
+        sort: typing.Optional[str] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        line_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[LineRunSummary]:
+    ) -> AsyncPager[LineRunSummary, ListPageLineRunSummary]:
         """
         Parameters
         ----------
@@ -1081,18 +1200,28 @@ class AsyncFactoryClient:
 
         offset : typing.Optional[int]
 
-        status : typing.Optional[str]
-            Filter by run status
+        cursor : typing.Optional[str]
 
-        line_name : typing.Optional[str]
-            Filter by line name
+        sort : typing.Optional[str]
+            Sort order. Allowed: -created_at, created_at
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        line_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.List[LineRunSummary]
+        AsyncPager[LineRunSummary, ListPageLineRunSummary]
             Successful Response
 
         Examples
@@ -1103,19 +1232,99 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
 
 
         async def main() -> None:
-            await client.factory.list_factory_line_runs()
+            response = await client.factory.list_factory_line_runs()
+            async for item in response:
+                yield item
+
+            # alternatively, you can paginate page-by-page
+            async for page in response.iter_pages():
+                yield page
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.list_factory_line_runs(
-            limit=limit, offset=offset, status=status, line_name=line_name, request_options=request_options
+        return await self._raw_client.list_factory_line_runs(
+            limit=limit,
+            offset=offset,
+            cursor=cursor,
+            sort=sort,
+            include=include,
+            status=status,
+            line_name=line_name,
+            created_at=created_at,
+            q=q,
+            request_options=request_options,
+        )
+
+    async def list_factory_line_run_facets(
+        self,
+        *,
+        fields: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        line_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> FacetsResponse:
+        """
+        Parameters
+        ----------
+        fields : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+            Facet fields to return (e.g. line_name, status)
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        line_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        FacetsResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.factory.list_factory_line_run_facets(
+                fields=["fields"],
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_factory_line_run_facets(
+            fields=fields,
+            status=status,
+            line_name=line_name,
+            created_at=created_at,
+            q=q,
+            request_options=request_options,
         )
         return _response.data
 
@@ -1143,6 +1352,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -1185,6 +1395,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -1225,6 +1436,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -1248,6 +1460,7 @@ class AsyncFactoryClient:
         cron: str,
         timezone: typing.Optional[str] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
+        inputs: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> LineScheduleResponse:
         """
@@ -1260,6 +1473,8 @@ class AsyncFactoryClient:
         timezone : typing.Optional[str]
 
         enabled : typing.Optional[bool]
+
+        inputs : typing.Optional[typing.Dict[str, typing.Any]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1277,6 +1492,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -1292,7 +1508,7 @@ class AsyncFactoryClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.upsert_factory_line_schedule(
-            name, cron=cron, timezone=timezone, enabled=enabled, request_options=request_options
+            name, cron=cron, timezone=timezone, enabled=enabled, inputs=inputs, request_options=request_options
         )
         return _response.data
 
@@ -1319,6 +1535,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )

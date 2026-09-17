@@ -57,6 +57,7 @@ class EnvironmentsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -96,6 +97,7 @@ class EnvironmentsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -130,6 +132,7 @@ class EnvironmentsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -161,6 +164,7 @@ class EnvironmentsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -205,6 +209,7 @@ class EnvironmentsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -239,6 +244,7 @@ class EnvironmentsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -247,6 +253,39 @@ class EnvironmentsClient:
         )
         """
         _response = self._raw_client.set_default_environment(environment_ref, request_options=request_options)
+        return _response.data
+
+    def unset_default_environment(
+        self, environment_ref: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> EnvironmentResponse:
+        """
+        Parameters
+        ----------
+        environment_ref : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        EnvironmentResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.environments.unset_default_environment(
+            environment_ref="environment_ref",
+        )
+        """
+        _response = self._raw_client.unset_default_environment(environment_ref, request_options=request_options)
         return _response.data
 
 
@@ -295,6 +334,7 @@ class AsyncEnvironmentsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -344,6 +384,7 @@ class AsyncEnvironmentsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -386,6 +427,7 @@ class AsyncEnvironmentsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -425,6 +467,7 @@ class AsyncEnvironmentsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -477,6 +520,7 @@ class AsyncEnvironmentsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -519,6 +563,7 @@ class AsyncEnvironmentsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -533,4 +578,45 @@ class AsyncEnvironmentsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.set_default_environment(environment_ref, request_options=request_options)
+        return _response.data
+
+    async def unset_default_environment(
+        self, environment_ref: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> EnvironmentResponse:
+        """
+        Parameters
+        ----------
+        environment_ref : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        EnvironmentResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.environments.unset_default_environment(
+                environment_ref="environment_ref",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.unset_default_environment(environment_ref, request_options=request_options)
         return _response.data

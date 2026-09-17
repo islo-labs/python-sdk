@@ -14,6 +14,10 @@ class JobRunListItem(UniversalBaseModel):
     status: str
     region: typing.Optional[str] = None
     step_count: int
+    compute_cost_cents: typing.Optional[int] = None
+    inference_cost_cents: typing.Optional[int] = None
+    total_cost_cents: typing.Optional[int] = None
+    cost_rated_at: typing.Optional[dt.datetime] = None
     started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
     created_at: dt.datetime

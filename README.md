@@ -18,6 +18,7 @@ The Islo Python library provides convenient access to the Islo APIs from Python.
 - [Environments](#environments)
 - [Async Client](#async-client)
 - [Exception Handling](#exception-handling)
+- [Pagination](#pagination)
 - [Advanced](#advanced)
   - [Access Raw Response Data](#access-raw-response-data)
   - [Retries](#retries)
@@ -34,6 +35,7 @@ pip install islo
 ## Quick Start
 
 ```python
+import time
 from islo import Islo
 
 # Automatically reads ISLO_API_KEY from environment
@@ -48,11 +50,21 @@ sandbox = client.sandboxes.create_sandbox(
 )
 
 # Execute a command
-result = client.sandboxes.exec_in_sandbox(
+started = client.sandboxes.exec_in_sandbox(
     sandbox_name=sandbox.name,
     command=["echo", "hello world"],
 )
-print(result.exit_code)
+
+while True:
+    result = client.sandboxes.get_exec_result(
+        sandbox_name=sandbox.name,
+        exec_id=started.exec_id,
+    )
+    if result.status in {"completed", "failed", "timeout"}:
+        break
+    time.sleep(1)
+
+print(result.exit_code, result.stdout)
 
 # Clean up
 client.sandboxes.delete_sandbox(sandbox_name=sandbox.name)
@@ -73,28 +85,16 @@ client = Islo()  # Picks up ISLO_API_KEY automatically
 ### Explicit token
 
 ```python
-client = Islo(token="your-api-key")
-```
-
-### Auto-refreshing token provider
-
-```python
-from islo import Islo
-from islo.custom import SyncTokenProvider
-
-provider = SyncTokenProvider(
-    base_url="https://api.islo.dev",
-    access_key="your-access-key",
-)
-client = Islo(token=provider)
+client = Islo(api_key="your-api-key")
 ```
 
 ## Configuration
 
 | Environment Variable | Description | Default |
 |---------------------|-------------|---------|
-| `ISLO_API_KEY` | Bearer token for authentication | — |
-| `ISLO_BASE_URL` | API base URL | `https://api.islo.dev` |
+| `ISLO_API_KEY` | API key exchanged for a short-lived JWT | — |
+| `ISLO_BASE_URL` | Control-plane API base URL | `https://api.islo.dev` |
+| `ISLO_COMPUTE_URL` | Compute-plane API base URL | `https://ca.compute.islo.dev` |
 
 ## Async Support
 
@@ -143,12 +143,11 @@ from islo import Islo
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
 )
 
 client.knowledge.create_knowledge(
     slug="slug",
-    level="episodic",
-    body="body",
 )
 ```
 
@@ -176,14 +175,13 @@ from islo import AsyncIslo
 
 client = AsyncIslo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
 )
 
 
 async def main() -> None:
     await client.knowledge.create_knowledge(
         slug="slug",
-        level="episodic",
-        body="body",
     )
 
 
@@ -203,6 +201,30 @@ try:
 except ApiError as e:
     print(e.status_code)
     print(e.body)
+```
+
+## Pagination
+
+Paginated requests will return a `SyncPager` or `AsyncPager`, which can be used as generators for the underlying object.
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+)
+
+client.job_runs.list_all_job_runs()
+```
+
+```python
+# You can also iterate through pages and access the typed response per page
+pager = client.job_runs.list_all_job_runs(...)
+for page in pager.iter_pages():
+    print(page.response)  # access the typed response for each page
+    for item in page:
+        print(item)
 ```
 
 ## Advanced
@@ -228,11 +250,21 @@ The SDK is instrumented with automatic retries with exponential backoff. A reque
 as the request is deemed retryable and the number of retry attempts has not grown larger than the configured
 retry limit (default: 2).
 
-A request is deemed retryable when any of the following HTTP status codes is returned:
+Which status codes are retried depends on the `retryStatusCodes` generator configuration:
 
+**`legacy`** (current default): retries on
 - [408](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/408) (Timeout)
+- [409](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409) (Conflict)
 - [429](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) (Too Many Requests)
-- [5XX](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500) (Internal Server Errors)
+- [5XX](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#server_error_responses) (All server errors, including 500)
+
+**`recommended`**: retries on
+- [408](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/408) (Timeout)
+- [409](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409) (Conflict)
+- [429](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) (Too Many Requests)
+- [502](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502) (Bad Gateway)
+- [503](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503) (Service Unavailable)
+- [504](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/504) (Gateway Timeout)
 
 Use the `max_retries` request option to configure this behavior.
 
@@ -253,7 +285,7 @@ client = Islo(..., timeout=20.0)
 
 # Override timeout for a specific method
 client.knowledge.create_knowledge(..., request_options={
-    "timeout_in_seconds": 1
+    "timeout": 1
 })
 ```
 

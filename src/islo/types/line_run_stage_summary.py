@@ -14,6 +14,10 @@ class LineRunStageSummary(UniversalBaseModel):
     status: str
     outcome: typing.Optional[str] = None
     job_run_id: typing.Optional[str] = None
+    compute_cost_cents: typing.Optional[int] = None
+    inference_cost_cents: typing.Optional[int] = None
+    total_cost_cents: typing.Optional[int] = None
+    cost_rated_at: typing.Optional[dt.datetime] = None
     started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
     artifact_count: typing.Optional[int] = None
