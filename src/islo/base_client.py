@@ -11,6 +11,7 @@ from .core.logging import LogConfig, Logger
 from .environment import IsloEnvironment
 
 if typing.TYPE_CHECKING:
+    from .byo.client import AsyncByoClient, ByoClient
     from .cloud_roles.client import AsyncCloudRolesClient, CloudRolesClient
     from .compute_events.client import AsyncComputeEventsClient, ComputeEventsClient
     from .container_registries.client import AsyncContainerRegistriesClient, ContainerRegistriesClient
@@ -39,12 +40,22 @@ class BaseIslo:
     environment : IsloEnvironment
         The environment to use for requests from the client.
 
+    api_version : str
     api_key : typing.Optional[typing.Union[str, typing.Callable[[], str]]]
     headers : typing.Optional[typing.Dict[str, str]]
         Additional headers to send with every request.
 
     timeout : typing.Optional[float]
         The timeout to be used, in seconds, for requests. By default the timeout is 60 seconds, unless a custom httpx client is used, in which case this default is not enforced.
+
+    max_retries : typing.Optional[int]
+        The default maximum number of retries for failed requests. Defaults to 2. Per-request `max_retries` in `request_options` takes precedence over this value.
+
+    stream_reconnection_enabled : typing.Optional[bool]
+        Whether to automatically reconnect on stream disconnection for resumable streaming endpoints. Defaults to True. Per-request `stream_reconnection_enabled` in `request_options` takes precedence over this value.
+
+    max_stream_reconnection_attempts : typing.Optional[int]
+        The maximum number of reconnection attempts for resumable streaming endpoints. Defaults to no limit. Per-request `max_stream_reconnection_attempts` in `request_options` takes precedence over this value.
 
     follow_redirects : typing.Optional[bool]
         Whether the default httpx client follows redirects or not, this is irrelevant if a custom httpx client is passed in.
@@ -61,6 +72,7 @@ class BaseIslo:
     from islo.environment import IsloEnvironment
 
     client = Islo(
+        "2026-09-15",
         api_key="YOUR_API_KEY",
         environment=IsloEnvironment.PRODUCTION,
     )
@@ -70,18 +82,22 @@ class BaseIslo:
         self,
         *,
         environment: IsloEnvironment,
+        api_version: str = "2026-09-15",
         api_key: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = os.getenv("ISLO_API_KEY"),
         headers: typing.Optional[typing.Dict[str, str]] = None,
         timeout: typing.Optional[float] = None,
+        max_retries: typing.Optional[int] = None,
+        stream_reconnection_enabled: typing.Optional[bool] = None,
+        max_stream_reconnection_attempts: typing.Optional[int] = None,
         follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.Client] = None,
         logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
     ):
-        _defaulted_timeout = (
-            timeout if timeout is not None else 60 if httpx_client is None else httpx_client.timeout.read
-        )
+        _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
+        _defaulted_max_retries = max_retries if max_retries is not None else 2
         self._client_wrapper = SyncClientWrapper(
             environment=environment,
+            api_version=api_version,
             api_key=api_key,
             headers=headers,
             httpx_client=httpx_client
@@ -90,6 +106,9 @@ class BaseIslo:
             if follow_redirects is not None
             else httpx.Client(timeout=_defaulted_timeout),
             timeout=_defaulted_timeout,
+            max_retries=_defaulted_max_retries,
+            stream_reconnection_enabled=stream_reconnection_enabled,
+            max_stream_reconnection_attempts=max_stream_reconnection_attempts,
             logging=logging,
         )
         self._tenants: typing.Optional[TenantsClient] = None
@@ -99,6 +118,7 @@ class BaseIslo:
         self._gateway_profiles: typing.Optional[GatewayProfilesClient] = None
         self._environments: typing.Optional[EnvironmentsClient] = None
         self._cloud_roles: typing.Optional[CloudRolesClient] = None
+        self._byo: typing.Optional[ByoClient] = None
         self._inference: typing.Optional[InferenceClient] = None
         self._container_registries: typing.Optional[ContainerRegistriesClient] = None
         self._jobs: typing.Optional[JobsClient] = None
@@ -165,6 +185,14 @@ class BaseIslo:
 
             self._cloud_roles = CloudRolesClient(client_wrapper=self._client_wrapper)
         return self._cloud_roles
+
+    @property
+    def byo(self):
+        if self._byo is None:
+            from .byo.client import ByoClient  # noqa: E402
+
+            self._byo = ByoClient(client_wrapper=self._client_wrapper)
+        return self._byo
 
     @property
     def inference(self):
@@ -247,6 +275,24 @@ class BaseIslo:
         return self._webhooks
 
 
+def _make_default_async_client(
+    timeout: typing.Optional[float],
+    follow_redirects: typing.Optional[bool],
+) -> httpx.AsyncClient:
+    try:
+        import httpx_aiohttp  # type: ignore[import-not-found]
+    except ImportError:
+        pass
+    else:
+        if follow_redirects is not None:
+            return httpx_aiohttp.HttpxAiohttpClient(timeout=timeout, follow_redirects=follow_redirects)
+        return httpx_aiohttp.HttpxAiohttpClient(timeout=timeout)
+
+    if follow_redirects is not None:
+        return httpx.AsyncClient(timeout=timeout, follow_redirects=follow_redirects)
+    return httpx.AsyncClient(timeout=timeout)
+
+
 class AsyncBaseIslo:
     """
     Use this class to access the different functions within the SDK. You can instantiate any number of clients with different configuration that will propagate to these functions.
@@ -256,6 +302,7 @@ class AsyncBaseIslo:
     environment : IsloEnvironment
         The environment to use for requests from the client.
 
+    api_version : str
     api_key : typing.Optional[typing.Union[str, typing.Callable[[], str]]]
     headers : typing.Optional[typing.Dict[str, str]]
         Additional headers to send with every request.
@@ -265,6 +312,15 @@ class AsyncBaseIslo:
 
     timeout : typing.Optional[float]
         The timeout to be used, in seconds, for requests. By default the timeout is 60 seconds, unless a custom httpx client is used, in which case this default is not enforced.
+
+    max_retries : typing.Optional[int]
+        The default maximum number of retries for failed requests. Defaults to 2. Per-request `max_retries` in `request_options` takes precedence over this value.
+
+    stream_reconnection_enabled : typing.Optional[bool]
+        Whether to automatically reconnect on stream disconnection for resumable streaming endpoints. Defaults to True. Per-request `stream_reconnection_enabled` in `request_options` takes precedence over this value.
+
+    max_stream_reconnection_attempts : typing.Optional[int]
+        The maximum number of reconnection attempts for resumable streaming endpoints. Defaults to no limit. Per-request `max_stream_reconnection_attempts` in `request_options` takes precedence over this value.
 
     follow_redirects : typing.Optional[bool]
         Whether the default httpx client follows redirects or not, this is irrelevant if a custom httpx client is passed in.
@@ -281,6 +337,7 @@ class AsyncBaseIslo:
     from islo.environment import IsloEnvironment
 
     client = AsyncIslo(
+        "2026-09-15",
         api_key="YOUR_API_KEY",
         environment=IsloEnvironment.PRODUCTION,
     )
@@ -290,28 +347,33 @@ class AsyncBaseIslo:
         self,
         *,
         environment: IsloEnvironment,
+        api_version: str = "2026-09-15",
         api_key: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = os.getenv("ISLO_API_KEY"),
         headers: typing.Optional[typing.Dict[str, str]] = None,
         async_token: typing.Optional[typing.Callable[[], typing.Awaitable[str]]] = None,
         timeout: typing.Optional[float] = None,
+        max_retries: typing.Optional[int] = None,
+        stream_reconnection_enabled: typing.Optional[bool] = None,
+        max_stream_reconnection_attempts: typing.Optional[int] = None,
         follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.AsyncClient] = None,
         logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
     ):
-        _defaulted_timeout = (
-            timeout if timeout is not None else 60 if httpx_client is None else httpx_client.timeout.read
-        )
+        _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
+        _defaulted_max_retries = max_retries if max_retries is not None else 2
         self._client_wrapper = AsyncClientWrapper(
             environment=environment,
+            api_version=api_version,
             api_key=api_key,
             headers=headers,
             async_token=async_token,
             httpx_client=httpx_client
             if httpx_client is not None
-            else httpx.AsyncClient(timeout=_defaulted_timeout, follow_redirects=follow_redirects)
-            if follow_redirects is not None
-            else httpx.AsyncClient(timeout=_defaulted_timeout),
+            else _make_default_async_client(timeout=_defaulted_timeout, follow_redirects=follow_redirects),
             timeout=_defaulted_timeout,
+            max_retries=_defaulted_max_retries,
+            stream_reconnection_enabled=stream_reconnection_enabled,
+            max_stream_reconnection_attempts=max_stream_reconnection_attempts,
             logging=logging,
         )
         self._tenants: typing.Optional[AsyncTenantsClient] = None
@@ -321,6 +383,7 @@ class AsyncBaseIslo:
         self._gateway_profiles: typing.Optional[AsyncGatewayProfilesClient] = None
         self._environments: typing.Optional[AsyncEnvironmentsClient] = None
         self._cloud_roles: typing.Optional[AsyncCloudRolesClient] = None
+        self._byo: typing.Optional[AsyncByoClient] = None
         self._inference: typing.Optional[AsyncInferenceClient] = None
         self._container_registries: typing.Optional[AsyncContainerRegistriesClient] = None
         self._jobs: typing.Optional[AsyncJobsClient] = None
@@ -387,6 +450,14 @@ class AsyncBaseIslo:
 
             self._cloud_roles = AsyncCloudRolesClient(client_wrapper=self._client_wrapper)
         return self._cloud_roles
+
+    @property
+    def byo(self):
+        if self._byo is None:
+            from .byo.client import AsyncByoClient  # noqa: E402
+
+            self._byo = AsyncByoClient(client_wrapper=self._client_wrapper)
+        return self._byo
 
     @property
     def inference(self):

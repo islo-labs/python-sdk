@@ -18,6 +18,7 @@ The Islo Python library provides convenient access to the Islo APIs from Python.
 - [Environments](#environments)
 - [Async Client](#async-client)
 - [Exception Handling](#exception-handling)
+- [Pagination](#pagination)
 - [Advanced](#advanced)
   - [Access Raw Response Data](#access-raw-response-data)
   - [Retries](#retries)
@@ -143,12 +144,11 @@ from islo import Islo
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
 )
 
 client.knowledge.create_knowledge(
     slug="slug",
-    level="episodic",
-    body="body",
 )
 ```
 
@@ -176,14 +176,13 @@ from islo import AsyncIslo
 
 client = AsyncIslo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
 )
 
 
 async def main() -> None:
     await client.knowledge.create_knowledge(
         slug="slug",
-        level="episodic",
-        body="body",
     )
 
 
@@ -203,6 +202,30 @@ try:
 except ApiError as e:
     print(e.status_code)
     print(e.body)
+```
+
+## Pagination
+
+Paginated requests will return a `SyncPager` or `AsyncPager`, which can be used as generators for the underlying object.
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+)
+
+client.job_runs.list_all_job_runs()
+```
+
+```python
+# You can also iterate through pages and access the typed response per page
+pager = client.job_runs.list_all_job_runs(...)
+for page in pager.iter_pages():
+    print(page.response)  # access the typed response for each page
+    for item in page:
+        print(item)
 ```
 
 ## Advanced
@@ -228,11 +251,21 @@ The SDK is instrumented with automatic retries with exponential backoff. A reque
 as the request is deemed retryable and the number of retry attempts has not grown larger than the configured
 retry limit (default: 2).
 
-A request is deemed retryable when any of the following HTTP status codes is returned:
+Which status codes are retried depends on the `retryStatusCodes` generator configuration:
 
+**`legacy`** (current default): retries on
 - [408](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/408) (Timeout)
+- [409](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409) (Conflict)
 - [429](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) (Too Many Requests)
-- [5XX](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500) (Internal Server Errors)
+- [5XX](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#server_error_responses) (All server errors, including 500)
+
+**`recommended`**: retries on
+- [408](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/408) (Timeout)
+- [409](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409) (Conflict)
+- [429](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) (Too Many Requests)
+- [502](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502) (Bad Gateway)
+- [503](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503) (Service Unavailable)
+- [504](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/504) (Gateway Timeout)
 
 Use the `max_retries` request option to configure this behavior.
 
@@ -253,7 +286,7 @@ client = Islo(..., timeout=20.0)
 
 # Override timeout for a specific method
 client.knowledge.create_knowledge(..., request_options={
-    "timeout_in_seconds": 1
+    "timeout": 1
 })
 ```
 

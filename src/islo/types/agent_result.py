@@ -19,6 +19,7 @@ class AgentResult(UniversalBaseModel):
 
     mode: typing.Optional[str] = None
     harness: typing.Optional[str] = None
+    model: typing.Optional[str] = None
     status: typing.Optional[str] = None
     outcome: typing.Optional[str] = None
     agent_session_id: typing.Optional[str] = None

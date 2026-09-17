@@ -8,7 +8,7 @@ from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.datetime_utils import serialize_datetime
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
@@ -211,7 +211,7 @@ class RawWebhooksClient:
             Incoming webhook
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"webhooks/incoming/{jsonable_encoder(webhook_id)}",
+            f"webhooks/incoming/{encode_path_param(webhook_id)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
@@ -276,7 +276,7 @@ class RawWebhooksClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"webhooks/incoming/{jsonable_encoder(webhook_id)}",
+            f"webhooks/incoming/{encode_path_param(webhook_id)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="DELETE",
             request_options=request_options,
@@ -356,7 +356,7 @@ class RawWebhooksClient:
             Updated incoming webhook
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"webhooks/incoming/{jsonable_encoder(webhook_id)}",
+            f"webhooks/incoming/{encode_path_param(webhook_id)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="PATCH",
             json={
@@ -471,7 +471,7 @@ class RawWebhooksClient:
             Delivery list
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"webhooks/incoming/{jsonable_encoder(webhook_id)}/deliveries",
+            f"webhooks/incoming/{encode_path_param(webhook_id)}/deliveries",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             params={
@@ -547,7 +547,7 @@ class RawWebhooksClient:
             Delivery detail
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"webhooks/incoming/{jsonable_encoder(webhook_id)}/deliveries/{jsonable_encoder(event_id)}",
+            f"webhooks/incoming/{encode_path_param(webhook_id)}/deliveries/{encode_path_param(event_id)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
@@ -773,7 +773,7 @@ class AsyncRawWebhooksClient:
             Incoming webhook
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"webhooks/incoming/{jsonable_encoder(webhook_id)}",
+            f"webhooks/incoming/{encode_path_param(webhook_id)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
@@ -838,7 +838,7 @@ class AsyncRawWebhooksClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"webhooks/incoming/{jsonable_encoder(webhook_id)}",
+            f"webhooks/incoming/{encode_path_param(webhook_id)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="DELETE",
             request_options=request_options,
@@ -918,7 +918,7 @@ class AsyncRawWebhooksClient:
             Updated incoming webhook
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"webhooks/incoming/{jsonable_encoder(webhook_id)}",
+            f"webhooks/incoming/{encode_path_param(webhook_id)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="PATCH",
             json={
@@ -1033,7 +1033,7 @@ class AsyncRawWebhooksClient:
             Delivery list
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"webhooks/incoming/{jsonable_encoder(webhook_id)}/deliveries",
+            f"webhooks/incoming/{encode_path_param(webhook_id)}/deliveries",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             params={
@@ -1109,7 +1109,7 @@ class AsyncRawWebhooksClient:
             Delivery detail
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"webhooks/incoming/{jsonable_encoder(webhook_id)}/deliveries/{jsonable_encoder(event_id)}",
+            f"webhooks/incoming/{encode_path_param(webhook_id)}/deliveries/{encode_path_param(event_id)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
