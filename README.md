@@ -35,6 +35,7 @@ pip install islo
 ## Quick Start
 
 ```python
+import time
 from islo import Islo
 
 # Automatically reads ISLO_API_KEY from environment
@@ -49,11 +50,21 @@ sandbox = client.sandboxes.create_sandbox(
 )
 
 # Execute a command
-result = client.sandboxes.exec_in_sandbox(
+started = client.sandboxes.exec_in_sandbox(
     sandbox_name=sandbox.name,
     command=["echo", "hello world"],
 )
-print(result.exit_code)
+
+while True:
+    result = client.sandboxes.get_exec_result(
+        sandbox_name=sandbox.name,
+        exec_id=started.exec_id,
+    )
+    if result.status in {"completed", "failed", "timeout"}:
+        break
+    time.sleep(1)
+
+print(result.exit_code, result.stdout)
 
 # Clean up
 client.sandboxes.delete_sandbox(sandbox_name=sandbox.name)
@@ -74,28 +85,16 @@ client = Islo()  # Picks up ISLO_API_KEY automatically
 ### Explicit token
 
 ```python
-client = Islo(token="your-api-key")
-```
-
-### Auto-refreshing token provider
-
-```python
-from islo import Islo
-from islo.custom import SyncTokenProvider
-
-provider = SyncTokenProvider(
-    base_url="https://api.islo.dev",
-    access_key="your-access-key",
-)
-client = Islo(token=provider)
+client = Islo(api_key="your-api-key")
 ```
 
 ## Configuration
 
 | Environment Variable | Description | Default |
 |---------------------|-------------|---------|
-| `ISLO_API_KEY` | Bearer token for authentication | — |
-| `ISLO_BASE_URL` | API base URL | `https://api.islo.dev` |
+| `ISLO_API_KEY` | API key exchanged for a short-lived JWT | — |
+| `ISLO_BASE_URL` | Control-plane API base URL | `https://api.islo.dev` |
+| `ISLO_COMPUTE_URL` | Compute-plane API base URL | `https://ca.compute.islo.dev` |
 
 ## Async Support
 
