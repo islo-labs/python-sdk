@@ -1,7 +1,7 @@
 {
   "cliVersion": "5.46.1",
   "generatorName": "fernapi/fern-python-sdk",
-  "generatorVersion": "5.2.1",
+  "generatorVersion": "5.30.2",
   "generatorConfig": {
     "package_name": "islo",
     "client": {
@@ -20,6 +20,9 @@
       "extra_fields": "allow"
     }
   },
-  "originGitCommit": "9eeb6c2d35a5dabb0f93b910f50ed3b4b2edf6a9",
-  "sdkVersion": "0.3.19"
+  "originGitCommit": "0454cce017581ef068a5081bbe4f941ddf0e7248",
+  "originGitCommitIsDirty": false,
+  "invokedBy": "ci",
+  "ciProvider": "github",
+  "sdkVersion": "0.3.20"
 }

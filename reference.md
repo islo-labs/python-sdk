@@ -32,6 +32,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -82,6 +83,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -102,6 +104,14 @@ client.knowledge.list_knowledge()
 <dd>
 
 **level:** `typing.Optional[KnowledgeLevel]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**type:** `typing.Optional[KnowledgeLevel]` 
     
 </dd>
 </dl>
@@ -179,13 +189,12 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
 client.knowledge.create_knowledge(
     slug="slug",
-    level="episodic",
-    body="body",
 )
 
 ```
@@ -210,7 +219,7 @@ client.knowledge.create_knowledge(
 <dl>
 <dd>
 
-**level:** `KnowledgeLevel` 
+**level:** `typing.Optional[KnowledgeLevel]` 
     
 </dd>
 </dl>
@@ -218,7 +227,7 @@ client.knowledge.create_knowledge(
 <dl>
 <dd>
 
-**body:** `str` 
+**type:** `typing.Optional[KnowledgeLevel]` 
     
 </dd>
 </dl>
@@ -227,6 +236,14 @@ client.knowledge.create_knowledge(
 <dd>
 
 **format:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**body:** `typing.Optional[str]` 
     
 </dd>
 </dl>
@@ -243,6 +260,125 @@ client.knowledge.create_knowledge(
 <dd>
 
 **links:** `typing.Optional[typing.List[KnowledgeLinkInput]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">list_knowledge_tags</a>() -> KnowledgeTagsResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.list_knowledge_tags()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">create_knowledge_media</a>(...) -> KnowledgeItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.create_knowledge_media(
+    file="example_file",
+    item="item",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**item:** `str` — JSON metadata for the knowledge item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `core.File` — Media file
     
 </dd>
 </dl>
@@ -280,6 +416,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -339,6 +476,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -398,6 +536,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -428,6 +567,14 @@ client.knowledge.update_knowledge(
 <dd>
 
 **level:** `typing.Optional[KnowledgeLevel]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**type:** `typing.Optional[KnowledgeLevel]` 
     
 </dd>
 </dl>
@@ -487,6 +634,135 @@ client.knowledge.update_knowledge(
 </dl>
 </details>
 
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">get_knowledge_content</a>(...) -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.get_knowledge_content(
+    identifier="identifier",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">put_knowledge_content</a>(...) -> KnowledgeItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.put_knowledge_content(
+    identifier="identifier",
+    file="example_file",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `core.File` — Replacement content
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">list_knowledge_versions</a>(...) -> PaginatedKnowledgeVersionResponse</code></summary>
 <dl>
 <dd>
@@ -505,6 +781,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -580,10 +857,80 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
 client.knowledge.get_knowledge_version(
+    identifier="identifier",
+    version_number=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**version_number:** `int` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">get_knowledge_version_content</a>(...) -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.get_knowledge_version_content(
     identifier="identifier",
     version_number=1,
 )
@@ -648,6 +995,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -731,6 +1079,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -795,6 +1144,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -844,6 +1194,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -893,6 +1244,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -983,6 +1335,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1052,6 +1405,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1120,6 +1474,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1202,6 +1557,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1293,6 +1649,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1371,6 +1728,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1446,6 +1804,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1496,6 +1855,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1545,6 +1905,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1652,6 +2013,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1711,6 +2073,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1770,6 +2133,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1885,6 +2249,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -2017,6 +2382,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -2085,6 +2451,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -2225,6 +2592,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -2299,6 +2667,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -2364,6 +2733,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -2439,6 +2809,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -2498,6 +2869,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -2557,6 +2929,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -2640,10 +3013,71 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
 client.environments.set_default_environment(
+    environment_ref="environment_ref",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**environment_ref:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.environments.<a href="src/islo/environments/client.py">unset_default_environment</a>(...) -> EnvironmentResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.environments.unset_default_environment(
     environment_ref="environment_ref",
 )
 
@@ -2700,6 +3134,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -2752,16 +3187,17 @@ client.cloud_roles.list_cloud_roles()
 <dd>
 
 ```python
-from islo import Islo
+from islo import Islo, CloudProvider
 from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
 client.cloud_roles.create_cloud_role(
-    provider="aws",
+    provider=CloudProvider.AWS,
     role_arn="role_arn",
 )
 
@@ -2841,6 +3277,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -2900,6 +3337,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -2959,6 +3397,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -3024,6 +3463,117 @@ client.cloud_roles.update_cloud_role(
 </dl>
 </details>
 
+## byo
+<details><summary><code>client.byo.<a href="src/islo/byo/client.py">get_byo_inference_status</a>() -> ByoStatusResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.byo.get_byo_inference_status()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.byo.<a href="src/islo/byo/client.py">start_byo_inference_setup</a>(...) -> ByoSetupResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo, ByoSourceKind
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.byo.start_byo_inference_setup(
+    source_kind=ByoSourceKind.DATABRICKS,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**source_kind:** `ByoSourceKind` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## inference
 <details><summary><code>client.inference.<a href="src/islo/inference/client.py">list_inference_models</a>() -> InferenceModelsResponse</code></summary>
 <dl>
@@ -3043,6 +3593,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -3093,6 +3644,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -3137,16 +3689,17 @@ client.container_registries.list_container_registries()
 <dd>
 
 ```python
-from islo import Islo
+from islo import Islo, RegistryProvider
 from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
 client.container_registries.create_container_registry(
-    provider="ecr",
+    provider=RegistryProvider.ECR,
     registry_host="registry_host",
     cloud_role_id="cloud_role_id",
     region="region",
@@ -3236,6 +3789,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -3295,6 +3849,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -3354,6 +3909,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -3438,6 +3994,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -3520,6 +4077,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -3602,6 +4160,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -3661,6 +4220,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -3720,6 +4280,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -3785,6 +4346,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -3860,6 +4422,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -3928,6 +4491,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4003,6 +4567,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4086,6 +4651,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4154,6 +4720,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4230,6 +4797,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4289,6 +4857,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4331,7 +4900,7 @@ client.jobs.delete_job_schedule(
 </details>
 
 ## JobRuns
-<details><summary><code>client.job_runs.<a href="src/islo/job_runs/client.py">list_all_job_runs</a>(...) -> typing.List[JobRunListItem]</code></summary>
+<details><summary><code>client.job_runs.<a href="src/islo/job_runs/client.py">list_all_job_runs</a>(...) -> ListPageJobRunListItem</code></summary>
 <dl>
 <dd>
 
@@ -4349,6 +4918,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4384,7 +4954,149 @@ client.job_runs.list_all_job_runs()
 <dl>
 <dd>
 
-**status:** `typing.Optional[JobRunStatus]` — Filter by run status
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort:** `typing.Optional[str]` — Sort order. Allowed: -created_at, created_at
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**include:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**job_name:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_at:** `typing.Optional[TimestampRange]` — created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**q:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.job_runs.<a href="src/islo/job_runs/client.py">list_job_run_facets</a>(...) -> FacetsResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.job_runs.list_job_run_facets(
+    fields=[
+        "fields"
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**fields:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` — Facet fields to return (e.g. job_name, status)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**job_name:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_at:** `typing.Optional[TimestampRange]` — created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**q:** `typing.Optional[str]` 
     
 </dd>
 </dl>
@@ -4422,6 +5134,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4477,11 +5190,12 @@ client.job_runs.get_job_run_by_id(
 <dd>
 
 ```python
-from islo import Islo, LineManifestInput, LineSection, LineStage
+from islo import Islo, LineManifestInput, LineSection, LineManifestInputTrigger_IntegrationTrigger, IntegrationTriggerSectionInputSelector_Github, LineStage
 from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4491,14 +5205,11 @@ client.factory.validate_factory_line_manifest(
         line=LineSection(
             name="name",
         ),
-        trigger={
-            "type": "integration_trigger",
-            "provider": "provider",
-            "name": "name",
-            "selector": {
-                "provider": "github"
-            }
-        },
+        trigger=LineManifestInputTrigger_IntegrationTrigger(
+            provider="provider",
+            name="name",
+            selector=IntegrationTriggerSectionInputSelector_Github(),
+        ),
         stages=[
             LineStage(
                 id="id",
@@ -4563,11 +5274,12 @@ client.factory.validate_factory_line_manifest(
 <dd>
 
 ```python
-from islo import Islo, LineManifestInput, LineSection, LineStage
+from islo import Islo, LineManifestInput, LineSection, LineManifestInputTrigger_IntegrationTrigger, IntegrationTriggerSectionInputSelector_Github, LineStage
 from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4577,14 +5289,11 @@ client.factory.deploy_factory_line(
         line=LineSection(
             name="name",
         ),
-        trigger={
-            "type": "integration_trigger",
-            "provider": "provider",
-            "name": "name",
-            "selector": {
-                "provider": "github"
-            }
-        },
+        trigger=LineManifestInputTrigger_IntegrationTrigger(
+            provider="provider",
+            name="name",
+            selector=IntegrationTriggerSectionInputSelector_Github(),
+        ),
         stages=[
             LineStage(
                 id="id",
@@ -4654,6 +5363,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4719,6 +5429,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4778,6 +5489,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4845,6 +5557,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4920,6 +5633,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4995,6 +5709,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -5068,7 +5783,7 @@ client.factory.trigger_factory_line_run(
 </dl>
 </details>
 
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_line_runs</a>(...) -> typing.List[LineRunSummary]</code></summary>
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_line_runs</a>(...) -> ListPageLineRunSummary</code></summary>
 <dl>
 <dd>
 
@@ -5086,6 +5801,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -5121,7 +5837,7 @@ client.factory.list_factory_line_runs()
 <dl>
 <dd>
 
-**status:** `typing.Optional[str]` — Filter by run status
+**cursor:** `typing.Optional[str]` 
     
 </dd>
 </dl>
@@ -5129,7 +5845,141 @@ client.factory.list_factory_line_runs()
 <dl>
 <dd>
 
-**line_name:** `typing.Optional[str]` — Filter by line name
+**sort:** `typing.Optional[str]` — Sort order. Allowed: -created_at, created_at
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**include:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**line_name:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_at:** `typing.Optional[TimestampRange]` — created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**q:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_line_run_facets</a>(...) -> FacetsResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.list_factory_line_run_facets(
+    fields=[
+        "fields"
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**fields:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` — Facet fields to return (e.g. line_name, status)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**line_name:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_at:** `typing.Optional[TimestampRange]` — created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**q:** `typing.Optional[str]` 
     
 </dd>
 </dl>
@@ -5167,6 +6017,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -5240,6 +6091,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -5299,6 +6151,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -5358,6 +6211,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -5412,6 +6266,14 @@ client.factory.upsert_factory_line_schedule(
 <dl>
 <dd>
 
+**inputs:** `typing.Optional[typing.Dict[str, typing.Any]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -5442,6 +6304,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -5502,6 +6365,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -5576,6 +6440,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -5703,6 +6568,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -5902,6 +6768,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -5975,6 +6842,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6048,6 +6916,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6121,6 +6990,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6194,6 +7064,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6278,6 +7149,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6362,6 +7234,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6444,6 +7317,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6526,6 +7400,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6617,6 +7492,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6699,6 +7575,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6790,6 +7667,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6863,6 +7741,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6936,6 +7815,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7009,6 +7889,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7131,6 +8012,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7213,6 +8095,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7287,6 +8170,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7360,6 +8244,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7450,6 +8335,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7533,6 +8419,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7612,6 +8499,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7693,6 +8581,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7766,6 +8655,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7840,6 +8730,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7898,27 +8789,26 @@ Create a tenant-scoped incoming webhook receiver. The receiver URL accepts exter
 <dd>
 
 ```python
-from islo import Islo, IncomingWebhookAuthZero
+from islo import Islo, IncomingWebhookAuthZero, IncomingWebhookAuthZeroAuthType, IdempotencyConfig_Header, IncomingWebhookTarget_FixedSandboxName
 from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
 client.webhooks.create_incoming_webhook(
     auth=IncomingWebhookAuthZero(
-        auth_type="none",
+        auth_type=IncomingWebhookAuthZeroAuthType.NONE,
     ),
-    idempotency={
-        "source": "header",
-        "name": "name"
-    },
+    idempotency=IdempotencyConfig_Header(
+        name="name",
+    ),
     name="name",
-    target={
-        "target_type": "fixed_sandbox_name",
-        "sandbox_name": "sandbox_name"
-    },
+    target=IncomingWebhookTarget_FixedSandboxName(
+        sandbox_name="sandbox_name",
+    ),
 )
 
 ```
@@ -8027,6 +8917,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -8100,6 +8991,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -8173,6 +9065,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -8294,6 +9187,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -8407,6 +9301,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
