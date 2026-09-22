@@ -6,7 +6,7 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
@@ -237,7 +237,7 @@ class RawGatewayProfilesClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            f"gateway/profiles/{encode_path_param(profile_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -310,7 +310,7 @@ class RawGatewayProfilesClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            f"gateway/profiles/{encode_path_param(profile_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -425,7 +425,7 @@ class RawGatewayProfilesClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            f"gateway/profiles/{encode_path_param(profile_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
@@ -568,7 +568,7 @@ class RawGatewayProfilesClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}/rules",
+            f"gateway/profiles/{encode_path_param(profile_id)}/rules",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -675,7 +675,7 @@ class RawGatewayProfilesClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/{jsonable_encoder(rule_id)}",
+            f"gateway/profiles/{encode_path_param(profile_id)}/rules/{encode_path_param(rule_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -786,7 +786,7 @@ class RawGatewayProfilesClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/{jsonable_encoder(rule_id)}",
+            f"gateway/profiles/{encode_path_param(profile_id)}/rules/{encode_path_param(rule_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
@@ -898,7 +898,7 @@ class RawGatewayProfilesClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/reorder",
+            f"gateway/profiles/{encode_path_param(profile_id)}/rules/reorder",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -1180,7 +1180,7 @@ class AsyncRawGatewayProfilesClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            f"gateway/profiles/{encode_path_param(profile_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1253,7 +1253,7 @@ class AsyncRawGatewayProfilesClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            f"gateway/profiles/{encode_path_param(profile_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -1368,7 +1368,7 @@ class AsyncRawGatewayProfilesClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            f"gateway/profiles/{encode_path_param(profile_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
@@ -1511,7 +1511,7 @@ class AsyncRawGatewayProfilesClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}/rules",
+            f"gateway/profiles/{encode_path_param(profile_id)}/rules",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -1618,7 +1618,7 @@ class AsyncRawGatewayProfilesClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/{jsonable_encoder(rule_id)}",
+            f"gateway/profiles/{encode_path_param(profile_id)}/rules/{encode_path_param(rule_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -1729,7 +1729,7 @@ class AsyncRawGatewayProfilesClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/{jsonable_encoder(rule_id)}",
+            f"gateway/profiles/{encode_path_param(profile_id)}/rules/{encode_path_param(rule_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
@@ -1841,7 +1841,7 @@ class AsyncRawGatewayProfilesClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/reorder",
+            f"gateway/profiles/{encode_path_param(profile_id)}/rules/reorder",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={

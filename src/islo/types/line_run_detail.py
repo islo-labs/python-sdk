@@ -24,9 +24,14 @@ class LineRunDetail(UniversalBaseModel):
     error_message: typing.Optional[str] = None
     iteration_count: typing.Optional[int] = None
     budget_used_usd: typing.Optional[str] = None
+    compute_cost_cents: typing.Optional[int] = None
+    inference_cost_cents: typing.Optional[int] = None
+    total_cost_cents: typing.Optional[int] = None
+    cost_rated_at: typing.Optional[dt.datetime] = None
     retry: typing.Optional[LineRunRetryAction] = None
     stages: typing.Optional[typing.List[LineRunStageDetail]] = None
     failure: typing.Optional[LineRunFailure] = None
+    triggered_by_actor: typing.Optional[typing.Dict[str, typing.Any]] = None
     started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
     created_at: dt.datetime

@@ -57,6 +57,7 @@ class IntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -85,6 +86,7 @@ class IntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -117,6 +119,7 @@ class IntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -156,6 +159,7 @@ class IntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -192,6 +196,7 @@ class IntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -229,6 +234,7 @@ class IntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -244,24 +250,24 @@ class IntegrationsClient:
 
     def disconnect_custom_integration(
         self,
-        descope_app_id: str,
+        provider: str,
         *,
         scope: typing.Optional[IntegrationLevel] = None,
         delete_app: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Dict[str, typing.Any]:
         """
-        Disconnect a custom integration by its Descope app ID.
+        Disconnect a custom integration by its stable provider slug.
 
-        Authorization is by deterministic-ID prefix: only apps whose ID matches
-        ``cust-{tenant-prefix}-`` are accepted, which scopes the operation to the
-        caller's workspace without a DB lookup. ``scope`` selects which side's
-        tokens to revoke (per-user vs tenant-wide); ``delete_app=true`` removes
-        the Descope app entirely (affects every user in the workspace).
+        The provider is resolved only within the authenticated tenant's custom
+        service catalog, so callers cannot target another workspace. ``scope`` selects
+        which side's tokens to revoke (per-user vs tenant-wide);
+        ``delete_app=true`` removes the Descope app entirely (affects every user in
+        the workspace).
 
         Parameters
         ----------
-        descope_app_id : str
+        provider : str
 
         scope : typing.Optional[IntegrationLevel]
             Which token to revoke: 'user' (this user's personal) or 'tenant' (workspace)
@@ -283,15 +289,16 @@ class IntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
         client.integrations.disconnect_custom_integration(
-            descope_app_id="descope_app_id",
+            provider="provider",
         )
         """
         _response = self._raw_client.disconnect_custom_integration(
-            descope_app_id, scope=scope, delete_app=delete_app, request_options=request_options
+            provider, scope=scope, delete_app=delete_app, request_options=request_options
         )
         return _response.data
 
@@ -321,6 +328,7 @@ class IntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -370,6 +378,7 @@ class IntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -402,6 +411,7 @@ class IntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -450,6 +460,7 @@ class AsyncIntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -486,6 +497,7 @@ class AsyncIntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -526,6 +538,7 @@ class AsyncIntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -577,6 +590,7 @@ class AsyncIntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -621,6 +635,7 @@ class AsyncIntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -666,6 +681,7 @@ class AsyncIntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -687,24 +703,24 @@ class AsyncIntegrationsClient:
 
     async def disconnect_custom_integration(
         self,
-        descope_app_id: str,
+        provider: str,
         *,
         scope: typing.Optional[IntegrationLevel] = None,
         delete_app: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Dict[str, typing.Any]:
         """
-        Disconnect a custom integration by its Descope app ID.
+        Disconnect a custom integration by its stable provider slug.
 
-        Authorization is by deterministic-ID prefix: only apps whose ID matches
-        ``cust-{tenant-prefix}-`` are accepted, which scopes the operation to the
-        caller's workspace without a DB lookup. ``scope`` selects which side's
-        tokens to revoke (per-user vs tenant-wide); ``delete_app=true`` removes
-        the Descope app entirely (affects every user in the workspace).
+        The provider is resolved only within the authenticated tenant's custom
+        service catalog, so callers cannot target another workspace. ``scope`` selects
+        which side's tokens to revoke (per-user vs tenant-wide);
+        ``delete_app=true`` removes the Descope app entirely (affects every user in
+        the workspace).
 
         Parameters
         ----------
-        descope_app_id : str
+        provider : str
 
         scope : typing.Optional[IntegrationLevel]
             Which token to revoke: 'user' (this user's personal) or 'tenant' (workspace)
@@ -728,6 +744,7 @@ class AsyncIntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -735,14 +752,14 @@ class AsyncIntegrationsClient:
 
         async def main() -> None:
             await client.integrations.disconnect_custom_integration(
-                descope_app_id="descope_app_id",
+                provider="provider",
             )
 
 
         asyncio.run(main())
         """
         _response = await self._raw_client.disconnect_custom_integration(
-            descope_app_id, scope=scope, delete_app=delete_app, request_options=request_options
+            provider, scope=scope, delete_app=delete_app, request_options=request_options
         )
         return _response.data
 
@@ -774,6 +791,7 @@ class AsyncIntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -831,6 +849,7 @@ class AsyncIntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -871,6 +890,7 @@ class AsyncIntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )

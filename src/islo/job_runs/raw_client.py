@@ -6,14 +6,18 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
+from ..core.pagination import AsyncPager, SyncPager
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
+from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
+from ..types.facets_response import FacetsResponse
 from ..types.job_run_list_item import JobRunListItem
 from ..types.job_run_response import JobRunResponse
-from ..types.job_run_status import JobRunStatus
+from ..types.list_page_job_run_list_item import ListPageJobRunListItem
+from ..types.timestamp_range import TimestampRange
 from pydantic import ValidationError
 
 
@@ -26,9 +30,15 @@ class RawJobRunsClient:
         *,
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
-        status: typing.Optional[JobRunStatus] = None,
+        cursor: typing.Optional[str] = None,
+        sort: typing.Optional[str] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        job_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[typing.List[JobRunListItem]]:
+    ) -> SyncPager[JobRunListItem, ListPageJobRunListItem]:
         """
         Parameters
         ----------
@@ -36,15 +46,28 @@ class RawJobRunsClient:
 
         offset : typing.Optional[int]
 
-        status : typing.Optional[JobRunStatus]
-            Filter by run status
+        cursor : typing.Optional[str]
+
+        sort : typing.Optional[str]
+            Sort order. Allowed: -created_at, created_at
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        job_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[typing.List[JobRunListItem]]
+        SyncPager[JobRunListItem, ListPageJobRunListItem]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -54,16 +77,117 @@ class RawJobRunsClient:
             params={
                 "limit": limit,
                 "offset": offset,
+                "cursor": cursor,
+                "sort": sort,
+                "include": include,
                 "status": status,
+                "job_name": job_name,
+                "created_at": convert_and_respect_annotation_metadata(
+                    object_=created_at, annotation=TimestampRange, direction="write"
+                ),
+                "q": q,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    ListPageJobRunListItem,
+                    parse_obj_as(
+                        type_=ListPageJobRunListItem,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+                _get_next = lambda: self.list_all_job_runs(
+                    limit=limit,
+                    offset=offset,
+                    cursor=_parsed_next,
+                    sort=sort,
+                    include=include,
+                    status=status,
+                    job_name=job_name,
+                    created_at=created_at,
+                    q=q,
+                    request_options=request_options,
+                )
+                return SyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def list_job_run_facets(
+        self,
+        *,
+        fields: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        job_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[FacetsResponse]:
+        """
+        Parameters
+        ----------
+        fields : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+            Facet fields to return (e.g. job_name, status)
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        job_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[FacetsResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "job-runs/facets",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "fields": fields,
+                "status": status,
+                "job_name": job_name,
+                "created_at": convert_and_respect_annotation_metadata(
+                    object_=created_at, annotation=TimestampRange, direction="write"
+                ),
+                "q": q,
             },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[JobRunListItem],
+                    FacetsResponse,
                     parse_obj_as(
-                        type_=typing.List[JobRunListItem],  # type: ignore
+                        type_=FacetsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -105,7 +229,7 @@ class RawJobRunsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"job-runs/{jsonable_encoder(run_id)}",
+            f"job-runs/{encode_path_param(run_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -150,9 +274,15 @@ class AsyncRawJobRunsClient:
         *,
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
-        status: typing.Optional[JobRunStatus] = None,
+        cursor: typing.Optional[str] = None,
+        sort: typing.Optional[str] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        job_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[typing.List[JobRunListItem]]:
+    ) -> AsyncPager[JobRunListItem, ListPageJobRunListItem]:
         """
         Parameters
         ----------
@@ -160,15 +290,28 @@ class AsyncRawJobRunsClient:
 
         offset : typing.Optional[int]
 
-        status : typing.Optional[JobRunStatus]
-            Filter by run status
+        cursor : typing.Optional[str]
+
+        sort : typing.Optional[str]
+            Sort order. Allowed: -created_at, created_at
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        job_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[typing.List[JobRunListItem]]
+        AsyncPager[JobRunListItem, ListPageJobRunListItem]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -178,16 +321,120 @@ class AsyncRawJobRunsClient:
             params={
                 "limit": limit,
                 "offset": offset,
+                "cursor": cursor,
+                "sort": sort,
+                "include": include,
                 "status": status,
+                "job_name": job_name,
+                "created_at": convert_and_respect_annotation_metadata(
+                    object_=created_at, annotation=TimestampRange, direction="write"
+                ),
+                "q": q,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    ListPageJobRunListItem,
+                    parse_obj_as(
+                        type_=ListPageJobRunListItem,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+
+                async def _get_next():
+                    return await self.list_all_job_runs(
+                        limit=limit,
+                        offset=offset,
+                        cursor=_parsed_next,
+                        sort=sort,
+                        include=include,
+                        status=status,
+                        job_name=job_name,
+                        created_at=created_at,
+                        q=q,
+                        request_options=request_options,
+                    )
+
+                return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def list_job_run_facets(
+        self,
+        *,
+        fields: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        job_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[FacetsResponse]:
+        """
+        Parameters
+        ----------
+        fields : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+            Facet fields to return (e.g. job_name, status)
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        job_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[FacetsResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "job-runs/facets",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "fields": fields,
+                "status": status,
+                "job_name": job_name,
+                "created_at": convert_and_respect_annotation_metadata(
+                    object_=created_at, annotation=TimestampRange, direction="write"
+                ),
+                "q": q,
             },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[JobRunListItem],
+                    FacetsResponse,
                     parse_obj_as(
-                        type_=typing.List[JobRunListItem],  # type: ignore
+                        type_=FacetsResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -229,7 +476,7 @@ class AsyncRawJobRunsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"job-runs/{jsonable_encoder(run_id)}",
+            f"job-runs/{encode_path_param(run_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,

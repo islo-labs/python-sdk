@@ -8,6 +8,7 @@ from ..core.pydantic_utilities import UniversalBaseModel
 from .artifact_summary import ArtifactSummary
 from .line_run_failure import LineRunFailure
 from .line_run_stage_summary import LineRunStageSummary
+from .manager_turn_summary import ManagerTurnSummary
 from .trigger_summary import TriggerSummary
 
 
@@ -22,8 +23,14 @@ class LineRunSummary(UniversalBaseModel):
     stages: typing.Optional[typing.List[LineRunStageSummary]] = None
     artifact_count: typing.Optional[int] = None
     artifacts: typing.Optional[typing.List[ArtifactSummary]] = None
+    compute_cost_cents: typing.Optional[int] = None
+    inference_cost_cents: typing.Optional[int] = None
+    total_cost_cents: typing.Optional[int] = None
+    cost_rated_at: typing.Optional[dt.datetime] = None
     error_message: typing.Optional[str] = None
     failure: typing.Optional[LineRunFailure] = None
+    manager_turns: typing.Optional[typing.List[ManagerTurnSummary]] = None
+    triggered_by_actor: typing.Optional[typing.Dict[str, typing.Any]] = None
     started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
     created_at: dt.datetime

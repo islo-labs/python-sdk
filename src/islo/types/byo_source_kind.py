@@ -2,33 +2,33 @@
 
 import typing
 
-from ...core import enum
+from ..core import enum
 
 T_Result = typing.TypeVar("T_Result")
 
 
-class LineUpdateStatus(enum.StrEnum):
-    ACTIVE = "active"
-    PAUSED = "paused"
-    _UNKNOWN = "__LINEUPDATESTATUS_UNKNOWN__"
+class ByoSourceKind(enum.StrEnum):
+    DATABRICKS = "databricks"
+    AWS = "aws"
+    _UNKNOWN = "__BYOSOURCEKIND_UNKNOWN__"
     """
     This member is used for forward compatibility. If the value is not recognized by the enum, it will be stored here, and the raw value is accessible through `.value`.
     """
 
     @classmethod
-    def _missing_(cls, value: typing.Any) -> "LineUpdateStatus":
+    def _missing_(cls, value: typing.Any) -> "ByoSourceKind":
         unknown = cls._UNKNOWN
         unknown._value_ = value
         return unknown
 
     def visit(
         self,
-        active: typing.Callable[[], T_Result],
-        paused: typing.Callable[[], T_Result],
+        databricks: typing.Callable[[], T_Result],
+        aws: typing.Callable[[], T_Result],
         _unknown_member: typing.Callable[[str], T_Result],
     ) -> T_Result:
-        if self is LineUpdateStatus.ACTIVE:
-            return active()
-        if self is LineUpdateStatus.PAUSED:
-            return paused()
+        if self is ByoSourceKind.DATABRICKS:
+            return databricks()
+        if self is ByoSourceKind.AWS:
+            return aws()
         return _unknown_member(self._value_)

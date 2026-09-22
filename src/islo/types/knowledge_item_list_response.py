@@ -17,11 +17,13 @@ class KnowledgeItemListResponse(UniversalBaseModel):
     Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
     """
 
+    type: KnowledgeLevel
     level: KnowledgeLevel
     status: KnowledgeStatus
     links: typing.List[KnowledgeLinkResponse]
     created_at: dt.datetime
     updated_at: dt.datetime
     version_number: typing.Optional[int] = None
+    byte_size: typing.Optional[int] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

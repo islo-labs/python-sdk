@@ -6,7 +6,7 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
@@ -225,7 +225,7 @@ class RawEnvironmentsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"environments/{jsonable_encoder(environment_ref)}",
+            f"environments/{encode_path_param(environment_ref)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -298,7 +298,7 @@ class RawEnvironmentsClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"environments/{jsonable_encoder(environment_ref)}",
+            f"environments/{encode_path_param(environment_ref)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -377,7 +377,7 @@ class RawEnvironmentsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"environments/{jsonable_encoder(environment_ref)}",
+            f"environments/{encode_path_param(environment_ref)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
@@ -475,7 +475,7 @@ class RawEnvironmentsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"environments/{jsonable_encoder(environment_ref)}/default",
+            f"environments/{encode_path_param(environment_ref)}/default",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             request_options=request_options,
@@ -508,6 +508,91 @@ class RawEnvironmentsClient:
                         typing.Any,
                         parse_obj_as(
                             type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def unset_default_environment(
+        self, environment_ref: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[EnvironmentResponse]:
+        """
+        Parameters
+        ----------
+        environment_ref : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[EnvironmentResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"environments/{encode_path_param(environment_ref)}/default",
+            base_url=self._client_wrapper.get_environment().control,
+            method="DELETE",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    EnvironmentResponse,
+                    parse_obj_as(
+                        type_=EnvironmentResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -732,7 +817,7 @@ class AsyncRawEnvironmentsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"environments/{jsonable_encoder(environment_ref)}",
+            f"environments/{encode_path_param(environment_ref)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -805,7 +890,7 @@ class AsyncRawEnvironmentsClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"environments/{jsonable_encoder(environment_ref)}",
+            f"environments/{encode_path_param(environment_ref)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -884,7 +969,7 @@ class AsyncRawEnvironmentsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"environments/{jsonable_encoder(environment_ref)}",
+            f"environments/{encode_path_param(environment_ref)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
@@ -982,7 +1067,7 @@ class AsyncRawEnvironmentsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"environments/{jsonable_encoder(environment_ref)}/default",
+            f"environments/{encode_path_param(environment_ref)}/default",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             request_options=request_options,
@@ -1015,6 +1100,91 @@ class AsyncRawEnvironmentsClient:
                         typing.Any,
                         parse_obj_as(
                             type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def unset_default_environment(
+        self, environment_ref: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[EnvironmentResponse]:
+        """
+        Parameters
+        ----------
+        environment_ref : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[EnvironmentResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"environments/{encode_path_param(environment_ref)}/default",
+            base_url=self._client_wrapper.get_environment().control,
+            method="DELETE",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    EnvironmentResponse,
+                    parse_obj_as(
+                        type_=EnvironmentResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

@@ -6,7 +6,7 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
@@ -219,7 +219,7 @@ class RawCloudRolesClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"cloud-roles/{encode_path_param(role_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -303,7 +303,7 @@ class RawCloudRolesClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"cloud-roles/{encode_path_param(role_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -393,7 +393,7 @@ class RawCloudRolesClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"cloud-roles/{encode_path_param(role_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
@@ -666,7 +666,7 @@ class AsyncRawCloudRolesClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"cloud-roles/{encode_path_param(role_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -750,7 +750,7 @@ class AsyncRawCloudRolesClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"cloud-roles/{encode_path_param(role_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -840,7 +840,7 @@ class AsyncRawCloudRolesClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"cloud-roles/{encode_path_param(role_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={

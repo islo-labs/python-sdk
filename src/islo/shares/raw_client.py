@@ -6,7 +6,7 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
@@ -45,7 +45,7 @@ class RawSharesClient:
             Active shares
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares",
+            f"sandboxes/{encode_path_param(sandbox_name)}/shares",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
@@ -120,7 +120,7 @@ class RawSharesClient:
             Share created
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares",
+            f"sandboxes/{encode_path_param(sandbox_name)}/shares",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             json={
@@ -207,7 +207,7 @@ class RawSharesClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares/{jsonable_encoder(share_id)}",
+            f"sandboxes/{encode_path_param(sandbox_name)}/shares/{encode_path_param(share_id)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="DELETE",
             request_options=request_options,
@@ -271,7 +271,7 @@ class AsyncRawSharesClient:
             Active shares
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares",
+            f"sandboxes/{encode_path_param(sandbox_name)}/shares",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
@@ -346,7 +346,7 @@ class AsyncRawSharesClient:
             Share created
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares",
+            f"sandboxes/{encode_path_param(sandbox_name)}/shares",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             json={
@@ -433,7 +433,7 @@ class AsyncRawSharesClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/shares/{jsonable_encoder(share_id)}",
+            f"sandboxes/{encode_path_param(sandbox_name)}/shares/{encode_path_param(share_id)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="DELETE",
             request_options=request_options,

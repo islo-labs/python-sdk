@@ -4,10 +4,12 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .effort_catalog import EffortCatalog
 from .inference_model_catalog_entry import InferenceModelCatalogEntry
 
 
 class InferenceModelsResponse(UniversalBaseModel):
     models: typing.Optional[typing.List[InferenceModelCatalogEntry]] = None
+    effort: typing.Optional[EffortCatalog] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

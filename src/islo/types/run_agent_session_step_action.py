@@ -5,6 +5,7 @@ import typing
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
 from .knowledge_binding import KnowledgeBinding
+from .mcp_entry import McpEntry
 from .run_agent_session_step_action_command import RunAgentSessionStepActionCommand
 from .run_agent_session_step_action_harness import RunAgentSessionStepActionHarness
 from .run_agent_session_step_action_model_provider import RunAgentSessionStepActionModelProvider
@@ -20,10 +21,19 @@ class RunAgentSessionStepAction(UniversalBaseModel):
 
     model: typing.Optional[str] = None
     model_provider: typing.Optional[RunAgentSessionStepActionModelProvider] = None
+    effort: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Reasoning effort token. Requires model. Legal values come from the effort table on GET /inference/models, which is keyed by harness and optionally by model. For cursor the pair also resolves to a real model id, because cursor encodes effort in the id rather than taking a flag. Omit to use the harness default.
+    """
+
     prompt: typing.Optional[RunAgentSessionStepActionPrompt] = None
     resume_prompt: typing.Optional[RunAgentSessionStepActionResumePrompt] = None
     knowledge: typing.Optional[typing.List[KnowledgeBinding]] = None
     session: typing.Optional[str] = None
     command: typing.Optional[RunAgentSessionStepActionCommand] = None
+    mcp: typing.Optional[typing.List[McpEntry]] = pydantic.Field(default=None)
+    """
+    MCP server descriptors to make available to the agent. Each entry carries a key (unique label) and url (MCP endpoint). Duplicates by key are rejected.
+    """
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

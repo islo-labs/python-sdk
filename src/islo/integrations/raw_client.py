@@ -6,7 +6,7 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
@@ -136,7 +136,7 @@ class RawIntegrationsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"integrations/triggers/{jsonable_encoder(provider)}/{jsonable_encoder(trigger_name)}",
+            f"integrations/triggers/{encode_path_param(provider)}/{encode_path_param(trigger_name)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -436,24 +436,24 @@ class RawIntegrationsClient:
 
     def disconnect_custom_integration(
         self,
-        descope_app_id: str,
+        provider: str,
         *,
         scope: typing.Optional[IntegrationLevel] = None,
         delete_app: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[typing.Dict[str, typing.Any]]:
         """
-        Disconnect a custom integration by its Descope app ID.
+        Disconnect a custom integration by its stable provider slug.
 
-        Authorization is by deterministic-ID prefix: only apps whose ID matches
-        ``cust-{tenant-prefix}-`` are accepted, which scopes the operation to the
-        caller's workspace without a DB lookup. ``scope`` selects which side's
-        tokens to revoke (per-user vs tenant-wide); ``delete_app=true`` removes
-        the Descope app entirely (affects every user in the workspace).
+        The provider is resolved only within the authenticated tenant's custom
+        service catalog, so callers cannot target another workspace. ``scope`` selects
+        which side's tokens to revoke (per-user vs tenant-wide);
+        ``delete_app=true`` removes the Descope app entirely (affects every user in
+        the workspace).
 
         Parameters
         ----------
-        descope_app_id : str
+        provider : str
 
         scope : typing.Optional[IntegrationLevel]
             Which token to revoke: 'user' (this user's personal) or 'tenant' (workspace)
@@ -470,7 +470,7 @@ class RawIntegrationsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"integrations/custom/{jsonable_encoder(descope_app_id)}",
+            f"integrations/custom/{encode_path_param(provider)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             params={
@@ -574,7 +574,7 @@ class RawIntegrationsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"integrations/{jsonable_encoder(provider)}",
+            f"integrations/{encode_path_param(provider)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -676,7 +676,7 @@ class RawIntegrationsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"integrations/{jsonable_encoder(provider)}",
+            f"integrations/{encode_path_param(provider)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             params={
@@ -913,7 +913,7 @@ class AsyncRawIntegrationsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"integrations/triggers/{jsonable_encoder(provider)}/{jsonable_encoder(trigger_name)}",
+            f"integrations/triggers/{encode_path_param(provider)}/{encode_path_param(trigger_name)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1213,24 +1213,24 @@ class AsyncRawIntegrationsClient:
 
     async def disconnect_custom_integration(
         self,
-        descope_app_id: str,
+        provider: str,
         *,
         scope: typing.Optional[IntegrationLevel] = None,
         delete_app: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[typing.Dict[str, typing.Any]]:
         """
-        Disconnect a custom integration by its Descope app ID.
+        Disconnect a custom integration by its stable provider slug.
 
-        Authorization is by deterministic-ID prefix: only apps whose ID matches
-        ``cust-{tenant-prefix}-`` are accepted, which scopes the operation to the
-        caller's workspace without a DB lookup. ``scope`` selects which side's
-        tokens to revoke (per-user vs tenant-wide); ``delete_app=true`` removes
-        the Descope app entirely (affects every user in the workspace).
+        The provider is resolved only within the authenticated tenant's custom
+        service catalog, so callers cannot target another workspace. ``scope`` selects
+        which side's tokens to revoke (per-user vs tenant-wide);
+        ``delete_app=true`` removes the Descope app entirely (affects every user in
+        the workspace).
 
         Parameters
         ----------
-        descope_app_id : str
+        provider : str
 
         scope : typing.Optional[IntegrationLevel]
             Which token to revoke: 'user' (this user's personal) or 'tenant' (workspace)
@@ -1247,7 +1247,7 @@ class AsyncRawIntegrationsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"integrations/custom/{jsonable_encoder(descope_app_id)}",
+            f"integrations/custom/{encode_path_param(provider)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             params={
@@ -1351,7 +1351,7 @@ class AsyncRawIntegrationsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"integrations/{jsonable_encoder(provider)}",
+            f"integrations/{encode_path_param(provider)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1453,7 +1453,7 @@ class AsyncRawIntegrationsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"integrations/{jsonable_encoder(provider)}",
+            f"integrations/{encode_path_param(provider)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             params={

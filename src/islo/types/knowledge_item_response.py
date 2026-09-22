@@ -17,6 +17,7 @@ class KnowledgeItemResponse(UniversalBaseModel):
     Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
     """
 
+    type: KnowledgeLevel
     level: KnowledgeLevel
     format: str
     body: str
@@ -27,5 +28,6 @@ class KnowledgeItemResponse(UniversalBaseModel):
     updated_at: dt.datetime
     version_id: typing.Optional[str] = None
     version_number: typing.Optional[int] = None
+    byte_size: typing.Optional[int] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

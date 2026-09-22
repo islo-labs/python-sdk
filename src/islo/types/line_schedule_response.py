@@ -11,5 +11,6 @@ class LineScheduleResponse(UniversalBaseModel):
     timezone: str
     enabled: bool
     schedule_generation: int
+    inputs: typing.Optional[typing.Dict[str, typing.Any]] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

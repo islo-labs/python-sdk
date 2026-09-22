@@ -19,6 +19,10 @@ class JobRunResponse(UniversalBaseModel):
     result_payload: typing.Optional[typing.Dict[str, typing.Any]] = None
     step_timeline: typing.List[JobRunStepTimelineEntry]
     artifact_refs: typing.List[ArtifactRef]
+    compute_cost_cents: typing.Optional[int] = None
+    inference_cost_cents: typing.Optional[int] = None
+    total_cost_cents: typing.Optional[int] = None
+    cost_rated_at: typing.Optional[dt.datetime] = None
     started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
     error_message: typing.Optional[str] = None

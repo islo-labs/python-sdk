@@ -4,6 +4,7 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .job_param_definition import JobParamDefinition
 from .resolved_stage_harness import ResolvedStageHarness
 from .resolved_stage_kind import ResolvedStageKind
 
@@ -21,5 +22,6 @@ class ResolvedStage(UniversalBaseModel):
     agent_model: typing.Optional[str] = None
     agent_role: typing.Optional[str] = None
     runtime: typing.Optional[str] = None
+    params: typing.Optional[typing.List[JobParamDefinition]] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

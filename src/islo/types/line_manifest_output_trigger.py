@@ -32,6 +32,7 @@ class LineManifestOutputTrigger_Schedule(UniversalBaseModel):
     type: typing.Literal["schedule"] = "schedule"
     cron: str
     timezone: typing.Optional[str] = None
+    inputs: typing.Optional[typing.Dict[str, typing.Any]] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 

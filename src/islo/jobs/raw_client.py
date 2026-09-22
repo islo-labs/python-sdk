@@ -6,7 +6,7 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
@@ -52,7 +52,7 @@ class RawJobsClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/validate",
+            f"jobs/{encode_path_param(name)}/validate",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -120,7 +120,7 @@ class RawJobsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/deploy",
+            f"jobs/{encode_path_param(name)}/deploy",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -214,7 +214,7 @@ class RawJobsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}",
+            f"jobs/{encode_path_param(name)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -263,7 +263,7 @@ class RawJobsClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}",
+            f"jobs/{encode_path_param(name)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -379,7 +379,7 @@ class RawJobsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/versions",
+            f"jobs/{encode_path_param(name)}/versions",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             params={
@@ -437,7 +437,7 @@ class RawJobsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/versions/{jsonable_encoder(version_id)}",
+            f"jobs/{encode_path_param(name)}/versions/{encode_path_param(version_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -498,7 +498,7 @@ class RawJobsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/runs",
+            f"jobs/{encode_path_param(name)}/runs",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             params={
@@ -569,7 +569,7 @@ class RawJobsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/runs",
+            f"jobs/{encode_path_param(name)}/runs",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -632,7 +632,7 @@ class RawJobsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/runs/{jsonable_encoder(run_id)}",
+            f"jobs/{encode_path_param(name)}/runs/{encode_path_param(run_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -693,7 +693,7 @@ class RawJobsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/runs/{jsonable_encoder(run_id)}/stop",
+            f"jobs/{encode_path_param(name)}/runs/{encode_path_param(run_id)}/stop",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -752,7 +752,7 @@ class RawJobsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/schedule",
+            f"jobs/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -803,7 +803,7 @@ class RawJobsClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/schedule",
+            f"jobs/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -855,7 +855,7 @@ class AsyncRawJobsClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/validate",
+            f"jobs/{encode_path_param(name)}/validate",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -923,7 +923,7 @@ class AsyncRawJobsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/deploy",
+            f"jobs/{encode_path_param(name)}/deploy",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -1017,7 +1017,7 @@ class AsyncRawJobsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}",
+            f"jobs/{encode_path_param(name)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1068,7 +1068,7 @@ class AsyncRawJobsClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}",
+            f"jobs/{encode_path_param(name)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -1184,7 +1184,7 @@ class AsyncRawJobsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/versions",
+            f"jobs/{encode_path_param(name)}/versions",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             params={
@@ -1242,7 +1242,7 @@ class AsyncRawJobsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/versions/{jsonable_encoder(version_id)}",
+            f"jobs/{encode_path_param(name)}/versions/{encode_path_param(version_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1303,7 +1303,7 @@ class AsyncRawJobsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/runs",
+            f"jobs/{encode_path_param(name)}/runs",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             params={
@@ -1374,7 +1374,7 @@ class AsyncRawJobsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/runs",
+            f"jobs/{encode_path_param(name)}/runs",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -1437,7 +1437,7 @@ class AsyncRawJobsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/runs/{jsonable_encoder(run_id)}",
+            f"jobs/{encode_path_param(name)}/runs/{encode_path_param(run_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1498,7 +1498,7 @@ class AsyncRawJobsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/runs/{jsonable_encoder(run_id)}/stop",
+            f"jobs/{encode_path_param(name)}/runs/{encode_path_param(run_id)}/stop",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -1557,7 +1557,7 @@ class AsyncRawJobsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/schedule",
+            f"jobs/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1608,7 +1608,7 @@ class AsyncRawJobsClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/schedule",
+            f"jobs/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,

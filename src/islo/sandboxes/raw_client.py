@@ -8,7 +8,7 @@ from .. import core
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
@@ -322,7 +322,7 @@ class RawSandboxesClient:
             Sandbox details
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/-/by-id/{jsonable_encoder(id)}",
+            f"sandboxes/-/by-id/{encode_path_param(id)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
@@ -388,7 +388,7 @@ class RawSandboxesClient:
             Sandbox details
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}",
+            f"sandboxes/{encode_path_param(sandbox_name)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
@@ -453,7 +453,7 @@ class RawSandboxesClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}",
+            f"sandboxes/{encode_path_param(sandbox_name)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="DELETE",
             request_options=request_options,
@@ -511,7 +511,7 @@ class RawSandboxesClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/events",
+            f"sandboxes/{encode_path_param(sandbox_name)}/events",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
@@ -593,7 +593,7 @@ class RawSandboxesClient:
             Command execution started
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/exec",
+            f"sandboxes/{encode_path_param(sandbox_name)}/exec",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             json={
@@ -703,7 +703,7 @@ class RawSandboxesClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/exec/stream",
+            f"sandboxes/{encode_path_param(sandbox_name)}/exec/stream",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             json={
@@ -787,7 +787,7 @@ class RawSandboxesClient:
             Exec result
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/exec/{jsonable_encoder(exec_id)}",
+            f"sandboxes/{encode_path_param(sandbox_name)}/exec/{encode_path_param(exec_id)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
@@ -868,7 +868,7 @@ class RawSandboxesClient:
             File contents
         """
         with self._client_wrapper.httpx_client.stream(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/files",
+            f"sandboxes/{encode_path_param(sandbox_name)}/files",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             params={
@@ -949,7 +949,7 @@ class RawSandboxesClient:
             File uploaded
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/files",
+            f"sandboxes/{encode_path_param(sandbox_name)}/files",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             params={
@@ -1026,7 +1026,7 @@ class RawSandboxesClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/files-archive",
+            f"sandboxes/{encode_path_param(sandbox_name)}/files-archive",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             params={
@@ -1094,7 +1094,7 @@ class RawSandboxesClient:
             Archive uploaded and extracted
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/files-archive",
+            f"sandboxes/{encode_path_param(sandbox_name)}/files-archive",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             params={
@@ -1169,7 +1169,7 @@ class RawSandboxesClient:
             Sandbox paused
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/pause",
+            f"sandboxes/{encode_path_param(sandbox_name)}/pause",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             request_options=request_options,
@@ -1246,7 +1246,7 @@ class RawSandboxesClient:
             Sandbox resumed
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/resume",
+            f"sandboxes/{encode_path_param(sandbox_name)}/resume",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             request_options=request_options,
@@ -1345,7 +1345,7 @@ class RawSandboxesClient:
             Session list
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/sessions",
+            f"sandboxes/{encode_path_param(sandbox_name)}/sessions",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
@@ -1432,7 +1432,7 @@ class RawSandboxesClient:
             Session created
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/sessions",
+            f"sandboxes/{encode_path_param(sandbox_name)}/sessions",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             json={
@@ -1512,7 +1512,7 @@ class RawSandboxesClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/sessions/{jsonable_encoder(session)}",
+            f"sandboxes/{encode_path_param(sandbox_name)}/sessions/{encode_path_param(session)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="DELETE",
             request_options=request_options,
@@ -1570,7 +1570,7 @@ class RawSandboxesClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/stop",
+            f"sandboxes/{encode_path_param(sandbox_name)}/stop",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             request_options=request_options,
@@ -1905,7 +1905,7 @@ class AsyncRawSandboxesClient:
             Sandbox details
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/-/by-id/{jsonable_encoder(id)}",
+            f"sandboxes/-/by-id/{encode_path_param(id)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
@@ -1971,7 +1971,7 @@ class AsyncRawSandboxesClient:
             Sandbox details
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}",
+            f"sandboxes/{encode_path_param(sandbox_name)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
@@ -2036,7 +2036,7 @@ class AsyncRawSandboxesClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}",
+            f"sandboxes/{encode_path_param(sandbox_name)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="DELETE",
             request_options=request_options,
@@ -2094,7 +2094,7 @@ class AsyncRawSandboxesClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/events",
+            f"sandboxes/{encode_path_param(sandbox_name)}/events",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
@@ -2176,7 +2176,7 @@ class AsyncRawSandboxesClient:
             Command execution started
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/exec",
+            f"sandboxes/{encode_path_param(sandbox_name)}/exec",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             json={
@@ -2286,7 +2286,7 @@ class AsyncRawSandboxesClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/exec/stream",
+            f"sandboxes/{encode_path_param(sandbox_name)}/exec/stream",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             json={
@@ -2370,7 +2370,7 @@ class AsyncRawSandboxesClient:
             Exec result
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/exec/{jsonable_encoder(exec_id)}",
+            f"sandboxes/{encode_path_param(sandbox_name)}/exec/{encode_path_param(exec_id)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
@@ -2451,7 +2451,7 @@ class AsyncRawSandboxesClient:
             File contents
         """
         async with self._client_wrapper.httpx_client.stream(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/files",
+            f"sandboxes/{encode_path_param(sandbox_name)}/files",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             params={
@@ -2533,7 +2533,7 @@ class AsyncRawSandboxesClient:
             File uploaded
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/files",
+            f"sandboxes/{encode_path_param(sandbox_name)}/files",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             params={
@@ -2610,7 +2610,7 @@ class AsyncRawSandboxesClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/files-archive",
+            f"sandboxes/{encode_path_param(sandbox_name)}/files-archive",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             params={
@@ -2678,7 +2678,7 @@ class AsyncRawSandboxesClient:
             Archive uploaded and extracted
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/files-archive",
+            f"sandboxes/{encode_path_param(sandbox_name)}/files-archive",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             params={
@@ -2753,7 +2753,7 @@ class AsyncRawSandboxesClient:
             Sandbox paused
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/pause",
+            f"sandboxes/{encode_path_param(sandbox_name)}/pause",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             request_options=request_options,
@@ -2830,7 +2830,7 @@ class AsyncRawSandboxesClient:
             Sandbox resumed
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/resume",
+            f"sandboxes/{encode_path_param(sandbox_name)}/resume",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             request_options=request_options,
@@ -2929,7 +2929,7 @@ class AsyncRawSandboxesClient:
             Session list
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/sessions",
+            f"sandboxes/{encode_path_param(sandbox_name)}/sessions",
             base_url=self._client_wrapper.get_environment().compute,
             method="GET",
             request_options=request_options,
@@ -3016,7 +3016,7 @@ class AsyncRawSandboxesClient:
             Session created
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/sessions",
+            f"sandboxes/{encode_path_param(sandbox_name)}/sessions",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             json={
@@ -3096,7 +3096,7 @@ class AsyncRawSandboxesClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/sessions/{jsonable_encoder(session)}",
+            f"sandboxes/{encode_path_param(sandbox_name)}/sessions/{encode_path_param(session)}",
             base_url=self._client_wrapper.get_environment().compute,
             method="DELETE",
             request_options=request_options,
@@ -3154,7 +3154,7 @@ class AsyncRawSandboxesClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sandboxes/{jsonable_encoder(sandbox_name)}/stop",
+            f"sandboxes/{encode_path_param(sandbox_name)}/stop",
             base_url=self._client_wrapper.get_environment().compute,
             method="POST",
             request_options=request_options,

@@ -47,6 +47,7 @@ class ContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -92,6 +93,7 @@ class ContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -134,6 +136,7 @@ class ContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -163,6 +166,7 @@ class ContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -207,6 +211,7 @@ class ContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -261,6 +266,7 @@ class AsyncContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -314,6 +320,7 @@ class AsyncContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -364,6 +371,7 @@ class AsyncContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -403,6 +411,7 @@ class AsyncContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -455,6 +464,7 @@ class AsyncContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )

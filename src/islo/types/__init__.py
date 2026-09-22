@@ -7,6 +7,8 @@ from importlib import import_module
 
 if typing.TYPE_CHECKING:
     from .agent_result import AgentResult
+    from .agent_session_event_response import AgentSessionEventResponse
+    from .agent_session_list_item_response import AgentSessionListItemResponse
     from .agentic_transition_input import AgenticTransitionInput
     from .agentic_transition_input_instructions import (
         AgenticTransitionInputInstructions,
@@ -33,6 +35,7 @@ if typing.TYPE_CHECKING:
         ArtifactRefExternalRef,
         ArtifactRefExternalRef_Github,
         ArtifactRefExternalRef_Islo,
+        ArtifactRefExternalRef_Jira,
         ArtifactRefExternalRef_Linear,
         ArtifactRefExternalRef_Slack,
         ArtifactRefExternalRef_Url,
@@ -78,6 +81,12 @@ if typing.TYPE_CHECKING:
     from .bearer_static_verifier import BearerStaticVerifier
     from .binary_condition_input import BinaryConditionInput
     from .binary_condition_output import BinaryConditionOutput
+    from .byo_connection_state import ByoConnectionState
+    from .byo_provider_status import ByoProviderStatus
+    from .byo_setup_mode import ByoSetupMode
+    from .byo_setup_response import ByoSetupResponse
+    from .byo_source_kind import ByoSourceKind
+    from .byo_status_response import ByoStatusResponse
     from .client_inference_api import ClientInferenceApi
     from .cloud_provider import CloudProvider
     from .cloud_role_ref import CloudRoleRef
@@ -127,6 +136,14 @@ if typing.TYPE_CHECKING:
     from .custom_service import CustomService
     from .custom_service_create_response import CustomServiceCreateResponse
     from .custom_services_response import CustomServicesResponse
+    from .daily_artifacts import DailyArtifacts
+    from .daily_bucket import DailyBucket
+    from .display_hint import DisplayHint
+    from .effort_alias import EffortAlias
+    from .effort_alias_harness import EffortAliasHarness
+    from .effort_catalog import EffortCatalog
+    from .effort_level_rule import EffortLevelRule
+    from .effort_level_rule_harness import EffortLevelRuleHarness
     from .empty_result import EmptyResult
     from .environment_entry_kind import EnvironmentEntryKind
     from .environment_entry_placement import EnvironmentEntryPlacement
@@ -145,8 +162,15 @@ if typing.TYPE_CHECKING:
     from .exec_response import ExecResponse
     from .exec_result import ExecResult
     from .exec_result_response import ExecResultResponse
+    from .facets_response import FacetsResponse
+    from .factory_agent_turn_response import FactoryAgentTurnResponse
     from .factory_failure_code import FactoryFailureCode
     from .factory_failure_domain import FactoryFailureDomain
+    from .factory_metrics_response import FactoryMetricsResponse
+    from .factory_overview import FactoryOverview
+    from .factory_overview_item import FactoryOverviewItem
+    from .factory_response import FactoryResponse
+    from .factory_status import FactoryStatus
     from .file_upload_status_response import FileUploadStatusResponse
     from .gateway_action import GatewayAction
     from .gateway_profile_detail_response import GatewayProfileDetailResponse
@@ -290,6 +314,7 @@ if typing.TYPE_CHECKING:
     from .islo_error_code import IsloErrorCode
     from .islo_knowledge_item_external_ref import IsloKnowledgeItemExternalRef
     from .islo_knowledge_item_external_ref_kind import IsloKnowledgeItemExternalRefKind
+    from .jira_external_ref import JiraExternalRef
     from .job_deploy_request import JobDeployRequest
     from .job_list_item import JobListItem
     from .job_manifest_input import JobManifestInput
@@ -310,10 +335,11 @@ if typing.TYPE_CHECKING:
     from .job_param_spec_type_one import JobParamSpecTypeOne
     from .job_param_spec_type_zero import JobParamSpecTypeZero
     from .job_response import JobResponse
+    from .job_run_create import JobRunCreate
     from .job_run_list_item import JobRunListItem
     from .job_run_response import JobRunResponse
-    from .job_run_status import JobRunStatus
     from .job_run_step_timeline_entry import JobRunStepTimelineEntry
+    from .job_run_stop_request import JobRunStopRequest
     from .job_schedule_response import JobScheduleResponse
     from .job_section import JobSection
     from .job_version_response import JobVersionResponse
@@ -354,13 +380,17 @@ if typing.TYPE_CHECKING:
     from .jwt_verifier import JwtVerifier
     from .knowledge_binding import KnowledgeBinding
     from .knowledge_binding_type import KnowledgeBindingType
+    from .knowledge_item_create import KnowledgeItemCreate
     from .knowledge_item_list_response import KnowledgeItemListResponse
     from .knowledge_item_response import KnowledgeItemResponse
+    from .knowledge_item_update import KnowledgeItemUpdate
     from .knowledge_level import KnowledgeLevel
     from .knowledge_link_input import KnowledgeLinkInput
     from .knowledge_link_response import KnowledgeLinkResponse
     from .knowledge_link_type import KnowledgeLinkType
+    from .knowledge_restore_request import KnowledgeRestoreRequest
     from .knowledge_status import KnowledgeStatus
+    from .knowledge_tags_response import KnowledgeTagsResponse
     from .knowledge_version_list_response import KnowledgeVersionListResponse
     from .knowledge_version_response import KnowledgeVersionResponse
     from .legacy_init_capability import LegacyInitCapability
@@ -402,6 +432,8 @@ if typing.TYPE_CHECKING:
         LineConditionOutput_Truthy,
     )
     from .line_deploy_request import LineDeployRequest
+    from .line_event_page import LineEventPage
+    from .line_event_response import LineEventResponse
     from .line_limits_input import LineLimitsInput
     from .line_limits_input_budget_usd import LineLimitsInputBudgetUsd
     from .line_limits_output import LineLimitsOutput
@@ -432,6 +464,9 @@ if typing.TYPE_CHECKING:
         LineManifestOutputTrigger_Webhook,
     )
     from .line_response import LineResponse
+    from .line_run_ask_request import LineRunAskRequest
+    from .line_run_control_request import LineRunControlRequest
+    from .line_run_create import LineRunCreate
     from .line_run_debug_environment import LineRunDebugEnvironment
     from .line_run_debug_response import LineRunDebugResponse
     from .line_run_debug_stage import LineRunDebugStage
@@ -442,23 +477,32 @@ if typing.TYPE_CHECKING:
     from .line_run_retry_action import LineRunRetryAction
     from .line_run_stage_detail import LineRunStageDetail
     from .line_run_stage_summary import LineRunStageSummary
+    from .line_run_steer_request import LineRunSteerRequest
     from .line_run_summary import LineRunSummary
     from .line_schedule_response import LineScheduleResponse
+    from .line_schedule_update import LineScheduleUpdate
     from .line_section import LineSection
     from .line_stage import LineStage
+    from .line_update import LineUpdate
+    from .line_update_status import LineUpdateStatus
     from .line_version_response import LineVersionResponse
     from .linear_external_ref import LinearExternalRef
     from .linear_issue_selector import LinearIssueSelector
     from .linear_issue_selector_kind import LinearIssueSelectorKind
+    from .list_page_job_run_list_item import ListPageJobRunListItem
+    from .list_page_line_run_summary import ListPageLineRunSummary
     from .list_sessions_response import ListSessionsResponse
     from .literal_binding import LiteralBinding
+    from .manager_turn_summary import ManagerTurnSummary
     from .manual_trigger_section import ManualTriggerSection
     from .mapping_part import MappingPart, MappingPart_Literal, MappingPart_Source
     from .mapping_part_literal import MappingPartLiteral
     from .mapping_part_source import MappingPartSource
+    from .mcp_entry import McpEntry
     from .not_condition_input import NotConditionInput
     from .not_condition_output import NotConditionOutput
     from .output_binding import OutputBinding
+    from .paginated_agent_sessions_response import PaginatedAgentSessionsResponse
     from .paginated_knowledge_response import PaginatedKnowledgeResponse
     from .paginated_knowledge_version_response import PaginatedKnowledgeVersionResponse
     from .paginated_sandbox_response import PaginatedSandboxResponse
@@ -559,6 +603,7 @@ if typing.TYPE_CHECKING:
     )
     from .tenant_regions_response import TenantRegionsResponse
     from .timestamp_check import TimestampCheck
+    from .timestamp_range import TimestampRange
     from .transition_operand import TransitionOperand
     from .trigger_catalog_item import TriggerCatalogItem
     from .trigger_catalog_list_response import TriggerCatalogListResponse
@@ -597,6 +642,8 @@ if typing.TYPE_CHECKING:
     from .webhook_trigger_section import WebhookTriggerSection
 _dynamic_imports: typing.Dict[str, str] = {
     "AgentResult": ".agent_result",
+    "AgentSessionEventResponse": ".agent_session_event_response",
+    "AgentSessionListItemResponse": ".agent_session_list_item_response",
     "AgenticTransitionInput": ".agentic_transition_input",
     "AgenticTransitionInputInstructions": ".agentic_transition_input_instructions",
     "AgenticTransitionInputInstructions_Knowledge": ".agentic_transition_input_instructions",
@@ -616,6 +663,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ArtifactRefExternalRef": ".artifact_ref_external_ref",
     "ArtifactRefExternalRef_Github": ".artifact_ref_external_ref",
     "ArtifactRefExternalRef_Islo": ".artifact_ref_external_ref",
+    "ArtifactRefExternalRef_Jira": ".artifact_ref_external_ref",
     "ArtifactRefExternalRef_Linear": ".artifact_ref_external_ref",
     "ArtifactRefExternalRef_Slack": ".artifact_ref_external_ref",
     "ArtifactRefExternalRef_Url": ".artifact_ref_external_ref",
@@ -658,6 +706,12 @@ _dynamic_imports: typing.Dict[str, str] = {
     "BearerStaticVerifier": ".bearer_static_verifier",
     "BinaryConditionInput": ".binary_condition_input",
     "BinaryConditionOutput": ".binary_condition_output",
+    "ByoConnectionState": ".byo_connection_state",
+    "ByoProviderStatus": ".byo_provider_status",
+    "ByoSetupMode": ".byo_setup_mode",
+    "ByoSetupResponse": ".byo_setup_response",
+    "ByoSourceKind": ".byo_source_kind",
+    "ByoStatusResponse": ".byo_status_response",
     "ClientInferenceApi": ".client_inference_api",
     "CloudProvider": ".cloud_provider",
     "CloudRoleRef": ".cloud_role_ref",
@@ -699,6 +753,14 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CustomService": ".custom_service",
     "CustomServiceCreateResponse": ".custom_service_create_response",
     "CustomServicesResponse": ".custom_services_response",
+    "DailyArtifacts": ".daily_artifacts",
+    "DailyBucket": ".daily_bucket",
+    "DisplayHint": ".display_hint",
+    "EffortAlias": ".effort_alias",
+    "EffortAliasHarness": ".effort_alias_harness",
+    "EffortCatalog": ".effort_catalog",
+    "EffortLevelRule": ".effort_level_rule",
+    "EffortLevelRuleHarness": ".effort_level_rule_harness",
     "EmptyResult": ".empty_result",
     "EnvironmentEntryKind": ".environment_entry_kind",
     "EnvironmentEntryPlacement": ".environment_entry_placement",
@@ -717,8 +779,15 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ExecResponse": ".exec_response",
     "ExecResult": ".exec_result",
     "ExecResultResponse": ".exec_result_response",
+    "FacetsResponse": ".facets_response",
+    "FactoryAgentTurnResponse": ".factory_agent_turn_response",
     "FactoryFailureCode": ".factory_failure_code",
     "FactoryFailureDomain": ".factory_failure_domain",
+    "FactoryMetricsResponse": ".factory_metrics_response",
+    "FactoryOverview": ".factory_overview",
+    "FactoryOverviewItem": ".factory_overview_item",
+    "FactoryResponse": ".factory_response",
+    "FactoryStatus": ".factory_status",
     "FileUploadStatusResponse": ".file_upload_status_response",
     "GatewayAction": ".gateway_action",
     "GatewayProfileDetailResponse": ".gateway_profile_detail_response",
@@ -846,6 +915,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "IsloErrorCode": ".islo_error_code",
     "IsloKnowledgeItemExternalRef": ".islo_knowledge_item_external_ref",
     "IsloKnowledgeItemExternalRefKind": ".islo_knowledge_item_external_ref_kind",
+    "JiraExternalRef": ".jira_external_ref",
     "JobDeployRequest": ".job_deploy_request",
     "JobListItem": ".job_list_item",
     "JobManifestInput": ".job_manifest_input",
@@ -866,10 +936,11 @@ _dynamic_imports: typing.Dict[str, str] = {
     "JobParamSpecTypeOne": ".job_param_spec_type_one",
     "JobParamSpecTypeZero": ".job_param_spec_type_zero",
     "JobResponse": ".job_response",
+    "JobRunCreate": ".job_run_create",
     "JobRunListItem": ".job_run_list_item",
     "JobRunResponse": ".job_run_response",
-    "JobRunStatus": ".job_run_status",
     "JobRunStepTimelineEntry": ".job_run_step_timeline_entry",
+    "JobRunStopRequest": ".job_run_stop_request",
     "JobScheduleResponse": ".job_schedule_response",
     "JobSection": ".job_section",
     "JobVersionResponse": ".job_version_response",
@@ -908,13 +979,17 @@ _dynamic_imports: typing.Dict[str, str] = {
     "JwtVerifier": ".jwt_verifier",
     "KnowledgeBinding": ".knowledge_binding",
     "KnowledgeBindingType": ".knowledge_binding_type",
+    "KnowledgeItemCreate": ".knowledge_item_create",
     "KnowledgeItemListResponse": ".knowledge_item_list_response",
     "KnowledgeItemResponse": ".knowledge_item_response",
+    "KnowledgeItemUpdate": ".knowledge_item_update",
     "KnowledgeLevel": ".knowledge_level",
     "KnowledgeLinkInput": ".knowledge_link_input",
     "KnowledgeLinkResponse": ".knowledge_link_response",
     "KnowledgeLinkType": ".knowledge_link_type",
+    "KnowledgeRestoreRequest": ".knowledge_restore_request",
     "KnowledgeStatus": ".knowledge_status",
+    "KnowledgeTagsResponse": ".knowledge_tags_response",
     "KnowledgeVersionListResponse": ".knowledge_version_list_response",
     "KnowledgeVersionResponse": ".knowledge_version_response",
     "LegacyInitCapability": ".legacy_init_capability",
@@ -950,6 +1025,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "LineConditionOutput_NotContains": ".line_condition_output",
     "LineConditionOutput_Truthy": ".line_condition_output",
     "LineDeployRequest": ".line_deploy_request",
+    "LineEventPage": ".line_event_page",
+    "LineEventResponse": ".line_event_response",
     "LineLimitsInput": ".line_limits_input",
     "LineLimitsInputBudgetUsd": ".line_limits_input_budget_usd",
     "LineLimitsOutput": ".line_limits_output",
@@ -972,6 +1049,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "LineManifestOutputTrigger_Schedule": ".line_manifest_output_trigger",
     "LineManifestOutputTrigger_Webhook": ".line_manifest_output_trigger",
     "LineResponse": ".line_response",
+    "LineRunAskRequest": ".line_run_ask_request",
+    "LineRunControlRequest": ".line_run_control_request",
+    "LineRunCreate": ".line_run_create",
     "LineRunDebugEnvironment": ".line_run_debug_environment",
     "LineRunDebugResponse": ".line_run_debug_response",
     "LineRunDebugStage": ".line_run_debug_stage",
@@ -982,25 +1062,34 @@ _dynamic_imports: typing.Dict[str, str] = {
     "LineRunRetryAction": ".line_run_retry_action",
     "LineRunStageDetail": ".line_run_stage_detail",
     "LineRunStageSummary": ".line_run_stage_summary",
+    "LineRunSteerRequest": ".line_run_steer_request",
     "LineRunSummary": ".line_run_summary",
     "LineScheduleResponse": ".line_schedule_response",
+    "LineScheduleUpdate": ".line_schedule_update",
     "LineSection": ".line_section",
     "LineStage": ".line_stage",
+    "LineUpdate": ".line_update",
+    "LineUpdateStatus": ".line_update_status",
     "LineVersionResponse": ".line_version_response",
     "LinearExternalRef": ".linear_external_ref",
     "LinearIssueSelector": ".linear_issue_selector",
     "LinearIssueSelectorKind": ".linear_issue_selector_kind",
+    "ListPageJobRunListItem": ".list_page_job_run_list_item",
+    "ListPageLineRunSummary": ".list_page_line_run_summary",
     "ListSessionsResponse": ".list_sessions_response",
     "LiteralBinding": ".literal_binding",
+    "ManagerTurnSummary": ".manager_turn_summary",
     "ManualTriggerSection": ".manual_trigger_section",
     "MappingPart": ".mapping_part",
     "MappingPartLiteral": ".mapping_part_literal",
     "MappingPartSource": ".mapping_part_source",
     "MappingPart_Literal": ".mapping_part",
     "MappingPart_Source": ".mapping_part",
+    "McpEntry": ".mcp_entry",
     "NotConditionInput": ".not_condition_input",
     "NotConditionOutput": ".not_condition_output",
     "OutputBinding": ".output_binding",
+    "PaginatedAgentSessionsResponse": ".paginated_agent_sessions_response",
     "PaginatedKnowledgeResponse": ".paginated_knowledge_response",
     "PaginatedKnowledgeVersionResponse": ".paginated_knowledge_version_response",
     "PaginatedSandboxResponse": ".paginated_sandbox_response",
@@ -1098,6 +1187,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "TaskStepOutputRunAgent_Session": ".task_step_output_run_agent",
     "TenantRegionsResponse": ".tenant_regions_response",
     "TimestampCheck": ".timestamp_check",
+    "TimestampRange": ".timestamp_range",
     "TransitionOperand": ".transition_operand",
     "TriggerCatalogItem": ".trigger_catalog_item",
     "TriggerCatalogListResponse": ".trigger_catalog_list_response",
@@ -1158,6 +1248,8 @@ def __dir__():
 
 __all__ = [
     "AgentResult",
+    "AgentSessionEventResponse",
+    "AgentSessionListItemResponse",
     "AgenticTransitionInput",
     "AgenticTransitionInputInstructions",
     "AgenticTransitionInputInstructions_Knowledge",
@@ -1177,6 +1269,7 @@ __all__ = [
     "ArtifactRefExternalRef",
     "ArtifactRefExternalRef_Github",
     "ArtifactRefExternalRef_Islo",
+    "ArtifactRefExternalRef_Jira",
     "ArtifactRefExternalRef_Linear",
     "ArtifactRefExternalRef_Slack",
     "ArtifactRefExternalRef_Url",
@@ -1219,6 +1312,12 @@ __all__ = [
     "BearerStaticVerifier",
     "BinaryConditionInput",
     "BinaryConditionOutput",
+    "ByoConnectionState",
+    "ByoProviderStatus",
+    "ByoSetupMode",
+    "ByoSetupResponse",
+    "ByoSourceKind",
+    "ByoStatusResponse",
     "ClientInferenceApi",
     "CloudProvider",
     "CloudRoleRef",
@@ -1260,6 +1359,14 @@ __all__ = [
     "CustomService",
     "CustomServiceCreateResponse",
     "CustomServicesResponse",
+    "DailyArtifacts",
+    "DailyBucket",
+    "DisplayHint",
+    "EffortAlias",
+    "EffortAliasHarness",
+    "EffortCatalog",
+    "EffortLevelRule",
+    "EffortLevelRuleHarness",
     "EmptyResult",
     "EnvironmentEntryKind",
     "EnvironmentEntryPlacement",
@@ -1278,8 +1385,15 @@ __all__ = [
     "ExecResponse",
     "ExecResult",
     "ExecResultResponse",
+    "FacetsResponse",
+    "FactoryAgentTurnResponse",
     "FactoryFailureCode",
     "FactoryFailureDomain",
+    "FactoryMetricsResponse",
+    "FactoryOverview",
+    "FactoryOverviewItem",
+    "FactoryResponse",
+    "FactoryStatus",
     "FileUploadStatusResponse",
     "GatewayAction",
     "GatewayProfileDetailResponse",
@@ -1407,6 +1521,7 @@ __all__ = [
     "IsloErrorCode",
     "IsloKnowledgeItemExternalRef",
     "IsloKnowledgeItemExternalRefKind",
+    "JiraExternalRef",
     "JobDeployRequest",
     "JobListItem",
     "JobManifestInput",
@@ -1427,10 +1542,11 @@ __all__ = [
     "JobParamSpecTypeOne",
     "JobParamSpecTypeZero",
     "JobResponse",
+    "JobRunCreate",
     "JobRunListItem",
     "JobRunResponse",
-    "JobRunStatus",
     "JobRunStepTimelineEntry",
+    "JobRunStopRequest",
     "JobScheduleResponse",
     "JobSection",
     "JobVersionResponse",
@@ -1469,13 +1585,17 @@ __all__ = [
     "JwtVerifier",
     "KnowledgeBinding",
     "KnowledgeBindingType",
+    "KnowledgeItemCreate",
     "KnowledgeItemListResponse",
     "KnowledgeItemResponse",
+    "KnowledgeItemUpdate",
     "KnowledgeLevel",
     "KnowledgeLinkInput",
     "KnowledgeLinkResponse",
     "KnowledgeLinkType",
+    "KnowledgeRestoreRequest",
     "KnowledgeStatus",
+    "KnowledgeTagsResponse",
     "KnowledgeVersionListResponse",
     "KnowledgeVersionResponse",
     "LegacyInitCapability",
@@ -1511,6 +1631,8 @@ __all__ = [
     "LineConditionOutput_NotContains",
     "LineConditionOutput_Truthy",
     "LineDeployRequest",
+    "LineEventPage",
+    "LineEventResponse",
     "LineLimitsInput",
     "LineLimitsInputBudgetUsd",
     "LineLimitsOutput",
@@ -1533,6 +1655,9 @@ __all__ = [
     "LineManifestOutputTrigger_Schedule",
     "LineManifestOutputTrigger_Webhook",
     "LineResponse",
+    "LineRunAskRequest",
+    "LineRunControlRequest",
+    "LineRunCreate",
     "LineRunDebugEnvironment",
     "LineRunDebugResponse",
     "LineRunDebugStage",
@@ -1543,25 +1668,34 @@ __all__ = [
     "LineRunRetryAction",
     "LineRunStageDetail",
     "LineRunStageSummary",
+    "LineRunSteerRequest",
     "LineRunSummary",
     "LineScheduleResponse",
+    "LineScheduleUpdate",
     "LineSection",
     "LineStage",
+    "LineUpdate",
+    "LineUpdateStatus",
     "LineVersionResponse",
     "LinearExternalRef",
     "LinearIssueSelector",
     "LinearIssueSelectorKind",
+    "ListPageJobRunListItem",
+    "ListPageLineRunSummary",
     "ListSessionsResponse",
     "LiteralBinding",
+    "ManagerTurnSummary",
     "ManualTriggerSection",
     "MappingPart",
     "MappingPartLiteral",
     "MappingPartSource",
     "MappingPart_Literal",
     "MappingPart_Source",
+    "McpEntry",
     "NotConditionInput",
     "NotConditionOutput",
     "OutputBinding",
+    "PaginatedAgentSessionsResponse",
     "PaginatedKnowledgeResponse",
     "PaginatedKnowledgeVersionResponse",
     "PaginatedSandboxResponse",
@@ -1659,6 +1793,7 @@ __all__ = [
     "TaskStepOutputRunAgent_Session",
     "TenantRegionsResponse",
     "TimestampCheck",
+    "TimestampRange",
     "TransitionOperand",
     "TriggerCatalogItem",
     "TriggerCatalogListResponse",
