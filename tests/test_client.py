@@ -95,6 +95,7 @@ class TestIsloClient:
             "container_registries",
             "credits",
             "environments",
+            "factories",
             "factory",
             "gateway_profiles",
             "inference",
