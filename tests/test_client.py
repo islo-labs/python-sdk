@@ -126,6 +126,67 @@ class TestIsloClient:
         assert not hasattr(client, "sessions")
 
 
+class TestApiVersionHeader:
+    def test_default_version_reaches_request(self, httpx_mock: HTTPXMock, monkeypatch):
+        monkeypatch.delenv("ISLO_API_KEY", raising=False)
+        monkeypatch.delenv("ISLO_BASE_URL", raising=False)
+        monkeypatch.delenv("ISLO_COMPUTE_URL", raising=False)
+        httpx_mock.add_response(
+            url="https://api.islo.dev/credits/balance",
+            json={"balance_cents": 0},
+        )
+
+        Islo().credits.get_credit_balance()
+
+        assert httpx_mock.get_requests()[0].headers["X-Islo-Api-Version"] == "2026-09-15"
+
+    def test_positional_version_reaches_request(self, httpx_mock: HTTPXMock, monkeypatch):
+        monkeypatch.delenv("ISLO_API_KEY", raising=False)
+        httpx_mock.add_response(
+            url="https://api.islo.dev/credits/balance",
+            json={"balance_cents": 0},
+        )
+
+        Islo("2026-02-23").credits.get_credit_balance()
+
+        assert httpx_mock.get_requests()[0].headers["X-Islo-Api-Version"] == "2026-02-23"
+
+    def test_keyword_version_reaches_request(self, httpx_mock: HTTPXMock, monkeypatch):
+        monkeypatch.delenv("ISLO_API_KEY", raising=False)
+        httpx_mock.add_response(
+            url="https://api.islo.dev/credits/balance",
+            json={"balance_cents": 0},
+        )
+
+        Islo(api_version="2026-02-23").credits.get_credit_balance()
+
+        assert httpx_mock.get_requests()[0].headers["X-Islo-Api-Version"] == "2026-02-23"
+
+    async def test_async_default_version_reaches_request(self, httpx_mock: HTTPXMock, monkeypatch):
+        monkeypatch.delenv("ISLO_API_KEY", raising=False)
+        monkeypatch.delenv("ISLO_BASE_URL", raising=False)
+        monkeypatch.delenv("ISLO_COMPUTE_URL", raising=False)
+        httpx_mock.add_response(
+            url="https://api.islo.dev/credits/balance",
+            json={"balance_cents": 0},
+        )
+
+        await AsyncIslo().credits.get_credit_balance()
+
+        assert httpx_mock.get_requests()[0].headers["X-Islo-Api-Version"] == "2026-09-15"
+
+    async def test_async_explicit_version_reaches_request(self, httpx_mock: HTTPXMock, monkeypatch):
+        monkeypatch.delenv("ISLO_API_KEY", raising=False)
+        httpx_mock.add_response(
+            url="https://api.islo.dev/credits/balance",
+            json={"balance_cents": 0},
+        )
+
+        await AsyncIslo("2026-02-23").credits.get_credit_balance()
+
+        assert httpx_mock.get_requests()[0].headers["X-Islo-Api-Version"] == "2026-02-23"
+
+
 class TestAsyncIsloClient:
     def test_default_base_url(self, monkeypatch):
         monkeypatch.delenv("ISLO_BASE_URL", raising=False)

@@ -96,6 +96,17 @@ client = Islo(api_key="your-api-key")
 | `ISLO_BASE_URL` | Control-plane API base URL | `https://api.islo.dev` |
 | `ISLO_COMPUTE_URL` | Compute-plane API base URL | `https://ca.compute.islo.dev` |
 
+## Compatibility
+
+Pre-1.0. Requests that omit `X-Islo-Api-Version` still get server behavior `2026-02-23`. This SDK sends `2026-09-15` by default. Pass `Islo("2026-02-23")` or `api_version="2026-02-23"` to keep the previous server behavior.
+
+Client breaks in this release:
+
+- `list_all_job_runs` and `list_factory_line_runs` return cursor pages instead of lists.
+- `disconnect_custom_integration` takes the stable `provider` slug instead of `descope_app_id`.
+- `JobRunStatus` is removed. Status filters are plain strings.
+- Some request and response models moved into `islo.types`.
+
 ## Async Support
 
 ```python

@@ -89,6 +89,9 @@ class Islo(BaseIslo):
     compute_url : str, optional
         Compute-plane API base URL. Defaults to ``ISLO_COMPUTE_URL`` env var or
         ``https://ca.compute.islo.dev``.
+    api_version : str, optional
+        ``X-Islo-Api-Version`` sent on every request. Defaults to
+        ``2026-09-15``. Pass an older version to keep that server behavior.
     environment : IsloEnvironment, optional
         Fully resolved Fern environment. Explicit ``base_url`` and
         ``compute_url`` values override the corresponding URL.
@@ -96,6 +99,7 @@ class Islo(BaseIslo):
 
     def __init__(
         self,
+        api_version: str = "2026-09-15",
         *,
         api_key: str | None = None,
         base_url: str | None = None,
@@ -116,6 +120,7 @@ class Islo(BaseIslo):
 
         super().__init__(
             environment=resolved_environment,
+            api_version=api_version,
             api_key=resolved_token,
             headers=headers,
             timeout=timeout,
@@ -151,6 +156,9 @@ class AsyncIslo(AsyncBaseIslo):
     compute_url : str, optional
         Compute-plane API base URL. Defaults to ``ISLO_COMPUTE_URL`` env var or
         ``https://ca.compute.islo.dev``.
+    api_version : str, optional
+        ``X-Islo-Api-Version`` sent on every request. Defaults to
+        ``2026-09-15``. Pass an older version to keep that server behavior.
     environment : IsloEnvironment, optional
         Fully resolved Fern environment. Explicit ``base_url`` and
         ``compute_url`` values override the corresponding URL.
@@ -158,6 +166,7 @@ class AsyncIslo(AsyncBaseIslo):
 
     def __init__(
         self,
+        api_version: str = "2026-09-15",
         *,
         api_key: str | None = None,
         base_url: str | None = None,
@@ -179,6 +188,7 @@ class AsyncIslo(AsyncBaseIslo):
 
         super().__init__(
             environment=resolved_environment,
+            api_version=api_version,
             headers=headers,
             async_token=resolved_async_token,
             timeout=timeout,
