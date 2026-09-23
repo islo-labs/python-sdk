@@ -29,6 +29,9 @@ dependencies = [
     "typing_extensions>=4.0.0",
 ]
 
+[project.optional-dependencies]
+aiohttp = ["httpx-aiohttp>=0.1.8"]
+
 [project.urls]
 Homepage = "https://islo.dev"
 Repository = "https://github.com/islo-labs/islo-sdk"

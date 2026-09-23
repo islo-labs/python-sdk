@@ -98,7 +98,7 @@ client = Islo(api_key="your-api-key")
 
 ## Compatibility
 
-Pre-1.0. Requests that omit `X-Islo-Api-Version` still get server behavior `2026-02-23`. This SDK sends `2026-09-15` by default. Pass `Islo("2026-02-23")` or `api_version="2026-02-23"` to keep the previous server behavior.
+Pre-1.0. Requests that omit `X-Islo-Api-Version` still get server behavior `2026-02-23`. This SDK sends `2026-09-15` by default. Pass `api_version="2026-02-23"` to keep the previous server behavior. `api_version` is keyword-only, so `Islo("ak_...")` still raises `TypeError` instead of sending the key as the version header.
 
 Client breaks in this release:
 

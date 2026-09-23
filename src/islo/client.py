@@ -92,6 +92,13 @@ class Islo(BaseIslo):
     api_version : str, optional
         ``X-Islo-Api-Version`` sent on every request. Defaults to
         ``2026-09-15``. Pass an older version to keep that server behavior.
+        Keyword-only.
+    max_retries : int, optional
+        Retries for failed requests. Defaults to 2.
+    stream_reconnection_enabled : bool, optional
+        Reconnect resumable streams after a disconnect. Defaults to true.
+    max_stream_reconnection_attempts : int, optional
+        Cap on stream reconnection attempts. Defaults to no limit.
     environment : IsloEnvironment, optional
         Fully resolved Fern environment. Explicit ``base_url`` and
         ``compute_url`` values override the corresponding URL.
@@ -99,14 +106,17 @@ class Islo(BaseIslo):
 
     def __init__(
         self,
-        api_version: str = "2026-09-15",
         *,
+        api_version: str = "2026-09-15",
         api_key: str | None = None,
         base_url: str | None = None,
         compute_url: str | None = None,
         environment: IsloEnvironment | None = None,
         headers: dict[str, str] | None = None,
         timeout: float | None = None,
+        max_retries: int | None = None,
+        stream_reconnection_enabled: bool | None = None,
+        max_stream_reconnection_attempts: int | None = None,
         follow_redirects: bool | None = True,
         httpx_client: httpx.Client | None = None,
         logging: LogConfig | Logger | None = None,
@@ -124,6 +134,9 @@ class Islo(BaseIslo):
             api_key=resolved_token,
             headers=headers,
             timeout=timeout,
+            max_retries=max_retries,
+            stream_reconnection_enabled=stream_reconnection_enabled,
+            max_stream_reconnection_attempts=max_stream_reconnection_attempts,
             follow_redirects=follow_redirects,
             httpx_client=httpx_client,
             logging=logging,
@@ -159,6 +172,13 @@ class AsyncIslo(AsyncBaseIslo):
     api_version : str, optional
         ``X-Islo-Api-Version`` sent on every request. Defaults to
         ``2026-09-15``. Pass an older version to keep that server behavior.
+        Keyword-only.
+    max_retries : int, optional
+        Retries for failed requests. Defaults to 2.
+    stream_reconnection_enabled : bool, optional
+        Reconnect resumable streams after a disconnect. Defaults to true.
+    max_stream_reconnection_attempts : int, optional
+        Cap on stream reconnection attempts. Defaults to no limit.
     environment : IsloEnvironment, optional
         Fully resolved Fern environment. Explicit ``base_url`` and
         ``compute_url`` values override the corresponding URL.
@@ -166,8 +186,8 @@ class AsyncIslo(AsyncBaseIslo):
 
     def __init__(
         self,
-        api_version: str = "2026-09-15",
         *,
+        api_version: str = "2026-09-15",
         api_key: str | None = None,
         base_url: str | None = None,
         compute_url: str | None = None,
@@ -175,6 +195,9 @@ class AsyncIslo(AsyncBaseIslo):
         async_token: typing.Callable[[], typing.Awaitable[str]] | None = None,
         headers: dict[str, str] | None = None,
         timeout: float | None = None,
+        max_retries: int | None = None,
+        stream_reconnection_enabled: bool | None = None,
+        max_stream_reconnection_attempts: int | None = None,
         follow_redirects: bool | None = True,
         httpx_client: httpx.AsyncClient | None = None,
         logging: LogConfig | Logger | None = None,
@@ -192,6 +215,9 @@ class AsyncIslo(AsyncBaseIslo):
             headers=headers,
             async_token=resolved_async_token,
             timeout=timeout,
+            max_retries=max_retries,
+            stream_reconnection_enabled=stream_reconnection_enabled,
+            max_stream_reconnection_attempts=max_stream_reconnection_attempts,
             follow_redirects=follow_redirects,
             httpx_client=httpx_client,
             logging=logging,

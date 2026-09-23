@@ -73,7 +73,7 @@ For custom code that should persist across SDK regenerations:
 2. Add file patterns for files you want to preserve (similar to `.gitignore` syntax)
 3. Add your custom code to those files
 
-Files listed in `.fernignore` will not be overwritten when the SDK is regenerated.
+Files listed in `.fernignore` will not be overwritten when the SDK is regenerated. `README.md`, `pyproject.toml`, and `src/islo/client.py` are already listed, so new endpoints and options in those files have to be edited by hand after a regeneration.
 
 For more information, see the [Fern documentation on custom code](https://buildwithfern.com/learn/sdks/overview/custom-code).
 

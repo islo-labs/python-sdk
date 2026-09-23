@@ -1,5 +1,6 @@
 """Tests for the custom Islo client (api_key auth, env var detection, defaults)."""
 
+import pytest
 from pytest_httpx import HTTPXMock
 
 from islo import AsyncIslo, Islo
@@ -140,16 +141,9 @@ class TestApiVersionHeader:
 
         assert httpx_mock.get_requests()[0].headers["X-Islo-Api-Version"] == "2026-09-15"
 
-    def test_positional_version_reaches_request(self, httpx_mock: HTTPXMock, monkeypatch):
-        monkeypatch.delenv("ISLO_API_KEY", raising=False)
-        httpx_mock.add_response(
-            url="https://api.islo.dev/credits/balance",
-            json={"balance_cents": 0},
-        )
-
-        Islo("2026-02-23").credits.get_credit_balance()
-
-        assert httpx_mock.get_requests()[0].headers["X-Islo-Api-Version"] == "2026-02-23"
+    def test_positional_argument_is_rejected(self):
+        with pytest.raises(TypeError):
+            Islo("2026-02-23")
 
     def test_keyword_version_reaches_request(self, httpx_mock: HTTPXMock, monkeypatch):
         monkeypatch.delenv("ISLO_API_KEY", raising=False)
@@ -161,6 +155,18 @@ class TestApiVersionHeader:
         Islo(api_version="2026-02-23").credits.get_credit_balance()
 
         assert httpx_mock.get_requests()[0].headers["X-Islo-Api-Version"] == "2026-02-23"
+
+    def test_retry_options_reach_the_wrapper(self, monkeypatch):
+        monkeypatch.delenv("ISLO_API_KEY", raising=False)
+        client = Islo(
+            max_retries=0,
+            stream_reconnection_enabled=False,
+            max_stream_reconnection_attempts=1,
+        )
+        wrapper = client._client_wrapper
+        assert wrapper.get_max_retries() == 0
+        assert wrapper.get_stream_reconnection_enabled() is False
+        assert wrapper.get_max_stream_reconnection_attempts() == 1
 
     async def test_async_default_version_reaches_request(self, httpx_mock: HTTPXMock, monkeypatch):
         monkeypatch.delenv("ISLO_API_KEY", raising=False)
@@ -182,9 +188,13 @@ class TestApiVersionHeader:
             json={"balance_cents": 0},
         )
 
-        await AsyncIslo("2026-02-23").credits.get_credit_balance()
+        await AsyncIslo(api_version="2026-02-23").credits.get_credit_balance()
 
         assert httpx_mock.get_requests()[0].headers["X-Islo-Api-Version"] == "2026-02-23"
+
+    async def test_async_positional_argument_is_rejected(self):
+        with pytest.raises(TypeError):
+            AsyncIslo("ak_test")
 
 
 class TestAsyncIsloClient:
