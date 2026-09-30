@@ -13,11 +13,11 @@ from .trigger_path_binding import TriggerPathBinding
 
 class LineManifestInputTrigger_IntegrationTrigger(UniversalBaseModel):
     type: typing.Literal["integration_trigger"] = "integration_trigger"
-    provider: str
-    name: str
-    selector: IntegrationTriggerSectionInputSelector
     filters: typing.Optional[typing.List["LineConditionInput"]] = None
+    name: str
     outputs: typing.Optional[typing.Dict[str, TriggerPathBinding]] = None
+    provider: str
+    selector: IntegrationTriggerSectionInputSelector
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 
@@ -31,6 +31,7 @@ class LineManifestInputTrigger_Manual(UniversalBaseModel):
 class LineManifestInputTrigger_Schedule(UniversalBaseModel):
     type: typing.Literal["schedule"] = "schedule"
     cron: str
+    inputs: typing.Optional[typing.Dict[str, typing.Any]] = None
     timezone: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

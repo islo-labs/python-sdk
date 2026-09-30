@@ -10,7 +10,7 @@ from .selector_scope import SelectorScope
 
 class GitHubRepositorySelector(UniversalBaseModel):
     kind: typing.Optional[GitHubRepositorySelectorKind] = None
-    scope: typing.Optional[SelectorScope] = None
     repositories: typing.Optional[typing.List[str]] = None
+    scope: typing.Optional[SelectorScope] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

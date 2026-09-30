@@ -12,8 +12,8 @@ class IntegrationProvider(UniversalBaseModel):
     Information about an available provider.
     """
 
-    name: str
-    hosts: typing.List[str]
     apps: typing.List[ProviderApp]
+    hosts: typing.List[str]
+    name: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

@@ -11,11 +11,11 @@ class GitHubExternalRef(UniversalBaseModel):
     GitHub identity: PRs/issues use owner, repo, and number; comments use id.
     """
 
+    id: typing.Optional[str] = None
     kind: str
+    node_id: typing.Optional[str] = None
+    number: typing.Optional[int] = None
     owner: typing.Optional[str] = None
     repo: typing.Optional[str] = None
-    number: typing.Optional[int] = None
-    node_id: typing.Optional[str] = None
-    id: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

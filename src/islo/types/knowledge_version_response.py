@@ -10,14 +10,16 @@ from .knowledge_link_response import KnowledgeLinkResponse
 
 
 class KnowledgeVersionResponse(UniversalBaseModel):
-    id: str
-    version_number: int
-    level: KnowledgeLevel
-    format: str
     body: str
-    metadata: typing.Dict[str, typing.Any]
-    links: typing.List[KnowledgeLinkResponse]
+    byte_size: typing.Optional[int] = None
     content_hash: str
     created_at: dt.datetime
+    format: str
+    id: str
+    level: KnowledgeLevel
+    links: typing.List[KnowledgeLinkResponse]
+    metadata: typing.Dict[str, typing.Any]
+    type: KnowledgeLevel
+    version_number: int
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

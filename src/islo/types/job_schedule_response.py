@@ -8,8 +8,8 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 class JobScheduleResponse(UniversalBaseModel):
     cron: str
-    timezone: str
     enabled: bool
     schedule_generation: int
+    timezone: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

@@ -3,10 +3,13 @@
 import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+from ..core.pagination import AsyncPager, SyncPager
 from ..core.request_options import RequestOptions
+from ..types.facets_response import FacetsResponse
 from ..types.job_run_list_item import JobRunListItem
 from ..types.job_run_response import JobRunResponse
-from ..types.job_run_status import JobRunStatus
+from ..types.list_page_job_run_list_item import ListPageJobRunListItem
+from ..types.timestamp_range import TimestampRange
 from .raw_client import AsyncRawJobRunsClient, RawJobRunsClient
 
 
@@ -30,9 +33,15 @@ class JobRunsClient:
         *,
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
-        status: typing.Optional[JobRunStatus] = None,
+        cursor: typing.Optional[str] = None,
+        sort: typing.Optional[str] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        job_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[JobRunListItem]:
+    ) -> SyncPager[JobRunListItem, ListPageJobRunListItem]:
         """
         Parameters
         ----------
@@ -40,15 +49,28 @@ class JobRunsClient:
 
         offset : typing.Optional[int]
 
-        status : typing.Optional[JobRunStatus]
-            Filter by run status
+        cursor : typing.Optional[str]
+
+        sort : typing.Optional[str]
+            Sort order. Allowed: -created_at, created_at
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        job_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.List[JobRunListItem]
+        SyncPager[JobRunListItem, ListPageJobRunListItem]
             Successful Response
 
         Examples
@@ -57,13 +79,79 @@ class JobRunsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-        client.job_runs.list_all_job_runs()
+        response = client.job_runs.list_all_job_runs()
+        for item in response:
+            yield item
+        # alternatively, you can paginate page-by-page
+        for page in response.iter_pages():
+            yield page
         """
-        _response = self._raw_client.list_all_job_runs(
-            limit=limit, offset=offset, status=status, request_options=request_options
+        return self._raw_client.list_all_job_runs(
+            limit=limit,
+            offset=offset,
+            cursor=cursor,
+            sort=sort,
+            include=include,
+            status=status,
+            job_name=job_name,
+            created_at=created_at,
+            q=q,
+            request_options=request_options,
+        )
+
+    def list_job_run_facets(
+        self,
+        *,
+        fields: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        job_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> FacetsResponse:
+        """
+        Parameters
+        ----------
+        fields : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+            Facet fields to return (e.g. job_name, status)
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        job_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        FacetsResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.job_runs.list_job_run_facets(
+            fields=["fields"],
+        )
+        """
+        _response = self._raw_client.list_job_run_facets(
+            fields=fields, status=status, job_name=job_name, created_at=created_at, q=q, request_options=request_options
         )
         return _response.data
 
@@ -89,6 +177,7 @@ class JobRunsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -120,9 +209,15 @@ class AsyncJobRunsClient:
         *,
         limit: typing.Optional[int] = None,
         offset: typing.Optional[int] = None,
-        status: typing.Optional[JobRunStatus] = None,
+        cursor: typing.Optional[str] = None,
+        sort: typing.Optional[str] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        job_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[JobRunListItem]:
+    ) -> AsyncPager[JobRunListItem, ListPageJobRunListItem]:
         """
         Parameters
         ----------
@@ -130,15 +225,28 @@ class AsyncJobRunsClient:
 
         offset : typing.Optional[int]
 
-        status : typing.Optional[JobRunStatus]
-            Filter by run status
+        cursor : typing.Optional[str]
+
+        sort : typing.Optional[str]
+            Sort order. Allowed: -created_at, created_at
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        job_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.List[JobRunListItem]
+        AsyncPager[JobRunListItem, ListPageJobRunListItem]
             Successful Response
 
         Examples
@@ -149,19 +257,94 @@ class AsyncJobRunsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
 
 
         async def main() -> None:
-            await client.job_runs.list_all_job_runs()
+            response = await client.job_runs.list_all_job_runs()
+            async for item in response:
+                yield item
+
+            # alternatively, you can paginate page-by-page
+            async for page in response.iter_pages():
+                yield page
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.list_all_job_runs(
-            limit=limit, offset=offset, status=status, request_options=request_options
+        return await self._raw_client.list_all_job_runs(
+            limit=limit,
+            offset=offset,
+            cursor=cursor,
+            sort=sort,
+            include=include,
+            status=status,
+            job_name=job_name,
+            created_at=created_at,
+            q=q,
+            request_options=request_options,
+        )
+
+    async def list_job_run_facets(
+        self,
+        *,
+        fields: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        job_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> FacetsResponse:
+        """
+        Parameters
+        ----------
+        fields : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+            Facet fields to return (e.g. job_name, status)
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        job_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        FacetsResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.job_runs.list_job_run_facets(
+                fields=["fields"],
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_job_run_facets(
+            fields=fields, status=status, job_name=job_name, created_at=created_at, q=q, request_options=request_options
         )
         return _response.data
 
@@ -189,6 +372,7 @@ class AsyncJobRunsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )

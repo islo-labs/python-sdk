@@ -5,20 +5,29 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .line_run_stage_detail_kind import LineRunStageDetailKind
 
 
 class LineRunStageDetail(UniversalBaseModel):
+    artifact_count: typing.Optional[int] = None
+    artifacts: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None
+    completed_at: typing.Optional[dt.datetime] = None
+    compute_cost_cents: typing.Optional[int] = None
+    cost_rated_at: typing.Optional[dt.datetime] = None
+    harness: typing.Optional[str] = None
+    inference_cost_cents: typing.Optional[int] = None
+    input_payload: typing.Optional[typing.Dict[str, typing.Any]] = None
+    iteration: int
+    job: str
+    job_run_id: typing.Optional[str] = None
+    job_version_id: typing.Optional[str] = None
+    kind: LineRunStageDetailKind
+    outcome: typing.Optional[str] = None
+    result_payload: typing.Optional[typing.Dict[str, typing.Any]] = None
     stage_name: str
     stage_order: int
-    iteration: int
-    status: str
-    outcome: typing.Optional[str] = None
-    job_run_id: typing.Optional[str] = None
     started_at: typing.Optional[dt.datetime] = None
-    completed_at: typing.Optional[dt.datetime] = None
-    artifact_count: typing.Optional[int] = None
-    input_payload: typing.Optional[typing.Dict[str, typing.Any]] = None
-    result_payload: typing.Optional[typing.Dict[str, typing.Any]] = None
-    artifacts: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None
+    status: str
+    total_cost_cents: typing.Optional[int] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

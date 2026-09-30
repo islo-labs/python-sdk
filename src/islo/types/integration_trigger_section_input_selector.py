@@ -16,8 +16,8 @@ from .slack_channel_selector_kind import SlackChannelSelectorKind
 class IntegrationTriggerSectionInputSelector_Github(UniversalBaseModel):
     provider: typing.Literal["github"] = "github"
     kind: typing.Optional[GitHubRepositorySelectorKind] = None
-    scope: typing.Optional[SelectorScope] = None
     repositories: typing.Optional[typing.List[str]] = None
+    scope: typing.Optional[SelectorScope] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 
@@ -25,20 +25,20 @@ class IntegrationTriggerSectionInputSelector_Github(UniversalBaseModel):
 class IntegrationTriggerSectionInputSelector_Linear(UniversalBaseModel):
     provider: typing.Literal["linear"] = "linear"
     kind: typing.Optional[LinearIssueSelectorKind] = None
-    scope: typing.Optional[SelectorScope] = None
-    team_ids: typing.Optional[typing.List[str]] = None
-    project_ids: typing.Optional[typing.List[str]] = None
     labels: typing.Optional[typing.List[str]] = None
+    project_ids: typing.Optional[typing.List[str]] = None
+    scope: typing.Optional[SelectorScope] = None
     states: typing.Optional[typing.List[str]] = None
+    team_ids: typing.Optional[typing.List[str]] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 
 
 class IntegrationTriggerSectionInputSelector_Slack(UniversalBaseModel):
     provider: typing.Literal["slack"] = "slack"
+    channels: typing.Optional[typing.List[str]] = None
     kind: typing.Optional[SlackChannelSelectorKind] = None
     scope: typing.Optional[SelectorScope] = None
-    channels: typing.Optional[typing.List[str]] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 

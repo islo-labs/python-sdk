@@ -9,21 +9,21 @@ from ..core.serialization import FieldMetadata
 
 
 class PricingTier(UniversalBaseModel):
-    min_input_tokens: typing.Optional[int] = None
-    max_input_tokens: typing.Optional[int] = None
-    input_cents_per1m_tokens: typing_extensions.Annotated[
-        str, FieldMetadata(alias="input_cents_per_1m_tokens"), pydantic.Field(alias="input_cents_per_1m_tokens")
+    cache_write_input_cents_per1m_tokens: typing_extensions.Annotated[
+        typing.Optional[str],
+        FieldMetadata(alias="cache_write_input_cents_per_1m_tokens"),
+        pydantic.Field(alias="cache_write_input_cents_per_1m_tokens", default=None),
     ]
     cached_input_cents_per1m_tokens: typing_extensions.Annotated[
         str,
         FieldMetadata(alias="cached_input_cents_per_1m_tokens"),
         pydantic.Field(alias="cached_input_cents_per_1m_tokens"),
     ]
-    cache_write_input_cents_per1m_tokens: typing_extensions.Annotated[
-        typing.Optional[str],
-        FieldMetadata(alias="cache_write_input_cents_per_1m_tokens"),
-        pydantic.Field(alias="cache_write_input_cents_per_1m_tokens", default=None),
+    input_cents_per1m_tokens: typing_extensions.Annotated[
+        str, FieldMetadata(alias="input_cents_per_1m_tokens"), pydantic.Field(alias="input_cents_per_1m_tokens")
     ]
+    max_input_tokens: typing.Optional[int] = None
+    min_input_tokens: typing.Optional[int] = None
     output_cents_per1m_tokens: typing_extensions.Annotated[
         str, FieldMetadata(alias="output_cents_per_1m_tokens"), pydantic.Field(alias="output_cents_per_1m_tokens")
     ]

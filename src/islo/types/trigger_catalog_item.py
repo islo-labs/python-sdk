@@ -7,15 +7,15 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class TriggerCatalogItem(UniversalBaseModel):
-    provider: str
-    name: str
-    kind: str
-    title: str
-    description: str
-    selector_schema: typing.Dict[str, typing.Any]
-    filter_operators: typing.List[str]
-    raw_payload_example: typing.Dict[str, typing.Any]
-    docs_url: typing.Optional[str] = None
     connected: typing.Optional[bool] = None
+    description: str
+    docs_url: typing.Optional[str] = None
+    filter_operators: typing.List[str]
+    kind: str
+    name: str
+    provider: str
+    raw_payload_example: typing.Dict[str, typing.Any]
+    selector_schema: typing.Dict[str, typing.Any]
+    title: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

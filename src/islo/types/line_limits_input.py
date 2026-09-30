@@ -8,8 +8,8 @@ from .line_limits_input_budget_usd import LineLimitsInputBudgetUsd
 
 
 class LineLimitsInput(UniversalBaseModel):
-    max_iterations: typing.Optional[int] = None
     budget_usd: typing.Optional[LineLimitsInputBudgetUsd] = None
+    max_iterations: typing.Optional[int] = None
     timeout: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

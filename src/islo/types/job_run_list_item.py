@@ -8,15 +8,19 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class JobRunListItem(UniversalBaseModel):
-    id: str
-    job_name: str
-    job_version_id: str
-    status: str
-    region: typing.Optional[str] = None
-    step_count: int
-    started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
+    compute_cost_cents: typing.Optional[int] = None
+    cost_rated_at: typing.Optional[dt.datetime] = None
     created_at: dt.datetime
     error_message: typing.Optional[str] = None
+    id: str
+    inference_cost_cents: typing.Optional[int] = None
+    job_name: str
+    job_version_id: str
+    region: typing.Optional[str] = None
+    started_at: typing.Optional[dt.datetime] = None
+    status: str
+    step_count: int
+    total_cost_cents: typing.Optional[int] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

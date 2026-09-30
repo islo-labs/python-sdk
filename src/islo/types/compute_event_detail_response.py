@@ -9,16 +9,16 @@ from .compute_event_detail_response_result import ComputeEventDetailResponseResu
 
 
 class ComputeEventDetailResponse(UniversalBaseModel):
-    command_id: str
     action: str
-    success: bool
-    error_message: typing.Optional[str] = None
+    command_id: str
+    completed_at: typing.Optional[dt.datetime] = None
     error_code: typing.Optional[str] = None
     error_details: typing.Optional[typing.Dict[str, typing.Any]] = None
-    started_at: typing.Optional[dt.datetime] = None
-    completed_at: typing.Optional[dt.datetime] = None
-    session_name: typing.Optional[str] = None
-    sandbox_name: typing.Optional[str] = None
+    error_message: typing.Optional[str] = None
     result: ComputeEventDetailResponseResult
+    sandbox_name: typing.Optional[str] = None
+    session_name: typing.Optional[str] = None
+    started_at: typing.Optional[dt.datetime] = None
+    success: bool
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

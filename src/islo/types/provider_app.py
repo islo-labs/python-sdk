@@ -13,8 +13,8 @@ class ProviderApp(UniversalBaseModel):
     Connection option for one authentication method and scope.
     """
 
+    app_id: str
     auth_method: AuthMethod
     scope: IntegrationLevel
-    app_id: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

@@ -13,8 +13,8 @@ class RunAgentExecStepAction(UniversalBaseModel):
     Exec-mode agent step. Uses the $ISLO_OUTPUT side channel like exec.
     """
 
-    harness: RunAgentExecStepActionHarness
     command: RunAgentExecStepActionCommand
+    harness: RunAgentExecStepActionHarness
     model: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

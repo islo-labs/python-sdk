@@ -20,6 +20,7 @@ class IsloErrorCode(enum.StrEnum):
     RESOURCE_NOT_FOUND = "RESOURCE_NOT_FOUND"
     RATE_LIMITED = "RATE_LIMITED"
     INSUFFICIENT_CREDITS = "INSUFFICIENT_CREDITS"
+    INVALID_INPUT = "INVALID_INPUT"
     VALIDATION_ERROR = "VALIDATION_ERROR"
     INVALID_REQUEST = "INVALID_REQUEST"
     UPSTREAM_ERROR = "UPSTREAM_ERROR"
@@ -48,6 +49,7 @@ class IsloErrorCode(enum.StrEnum):
         resource_not_found: typing.Callable[[], T_Result],
         rate_limited: typing.Callable[[], T_Result],
         insufficient_credits: typing.Callable[[], T_Result],
+        invalid_input: typing.Callable[[], T_Result],
         validation_error: typing.Callable[[], T_Result],
         invalid_request: typing.Callable[[], T_Result],
         upstream_error: typing.Callable[[], T_Result],
@@ -73,6 +75,8 @@ class IsloErrorCode(enum.StrEnum):
             return rate_limited()
         if self is IsloErrorCode.INSUFFICIENT_CREDITS:
             return insufficient_credits()
+        if self is IsloErrorCode.INVALID_INPUT:
+            return invalid_input()
         if self is IsloErrorCode.VALIDATION_ERROR:
             return validation_error()
         if self is IsloErrorCode.INVALID_REQUEST:

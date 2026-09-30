@@ -3,18 +3,24 @@
 import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+from ..core.pagination import AsyncPager, SyncPager
 from ..core.request_options import RequestOptions
 from ..types.auth_method import AuthMethod
 from ..types.custom_integration import CustomIntegration
 from ..types.custom_service_create_response import CustomServiceCreateResponse
-from ..types.custom_services_response import CustomServicesResponse
 from ..types.integration_detail_response import IntegrationDetailResponse
 from ..types.integration_level import IntegrationLevel
-from ..types.integration_list_response import IntegrationListResponse
-from ..types.integration_providers_response import IntegrationProvidersResponse
+from ..types.list_page_custom_service import ListPageCustomService
+from ..types.list_page_integration_provider import ListPageIntegrationProvider
+from ..types.list_page_integration_status import ListPageIntegrationStatus
+from ..types.list_page_trigger_catalog_item import ListPageTriggerCatalogItem
+from ..types.timestamp_range import TimestampRange
 from ..types.trigger_catalog_item import TriggerCatalogItem
-from ..types.trigger_catalog_list_response import TriggerCatalogListResponse
+from ..types.trigger_event_detail import TriggerEventDetail
+from ..types.trigger_event_page import TriggerEventPage
+from ..types.trigger_event_summary import TriggerEventSummary
 from .raw_client import AsyncRawIntegrationsClient, RawIntegrationsClient
+from .types.list_integration_trigger_events_request_sort import ListIntegrationTriggerEventsRequestSort
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -35,100 +41,9 @@ class IntegrationsClient:
         """
         return self._raw_client
 
-    def list_integration_providers(
+    def list_integrations(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> IntegrationProvidersResponse:
-        """
-        Return the integration providers available to connect from Islo, including the supported authentication methods and connection scopes.
-
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        IntegrationProvidersResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.integrations.list_integration_providers()
-        """
-        _response = self._raw_client.list_integration_providers(request_options=request_options)
-        return _response.data
-
-    def list_integration_triggers(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> TriggerCatalogListResponse:
-        """
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        TriggerCatalogListResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.integrations.list_integration_triggers()
-        """
-        _response = self._raw_client.list_integration_triggers(request_options=request_options)
-        return _response.data
-
-    def get_integration_trigger(
-        self, provider: str, trigger_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> TriggerCatalogItem:
-        """
-        Parameters
-        ----------
-        provider : str
-
-        trigger_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        TriggerCatalogItem
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.integrations.get_integration_trigger(
-            provider="provider",
-            trigger_name="trigger_name",
-        )
-        """
-        _response = self._raw_client.get_integration_trigger(provider, trigger_name, request_options=request_options)
-        return _response.data
-
-    def list_integrations(self, *, request_options: typing.Optional[RequestOptions] = None) -> IntegrationListResponse:
+    ) -> ListPageIntegrationStatus:
         """
         List the integrations the user/tenant has connected.
 
@@ -147,7 +62,7 @@ class IntegrationsClient:
 
         Returns
         -------
-        IntegrationListResponse
+        ListPageIntegrationStatus
             Successful Response
 
         Examples
@@ -156,6 +71,7 @@ class IntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -164,9 +80,7 @@ class IntegrationsClient:
         _response = self._raw_client.list_integrations(request_options=request_options)
         return _response.data
 
-    def list_custom_services(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> CustomServicesResponse:
+    def list_custom_services(self, *, request_options: typing.Optional[RequestOptions] = None) -> ListPageCustomService:
         """
         List custom service definitions in the current tenant (catalog view).
 
@@ -183,7 +97,7 @@ class IntegrationsClient:
 
         Returns
         -------
-        CustomServicesResponse
+        ListPageCustomService
             Successful Response
 
         Examples
@@ -192,6 +106,7 @@ class IntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -229,6 +144,7 @@ class IntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -244,24 +160,24 @@ class IntegrationsClient:
 
     def disconnect_custom_integration(
         self,
-        descope_app_id: str,
+        provider: str,
         *,
         scope: typing.Optional[IntegrationLevel] = None,
         delete_app: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Dict[str, typing.Any]:
         """
-        Disconnect a custom integration by its Descope app ID.
+        Disconnect a custom integration by its stable provider slug.
 
-        Authorization is by deterministic-ID prefix: only apps whose ID matches
-        ``cust-{tenant-prefix}-`` are accepted, which scopes the operation to the
-        caller's workspace without a DB lookup. ``scope`` selects which side's
-        tokens to revoke (per-user vs tenant-wide); ``delete_app=true`` removes
-        the Descope app entirely (affects every user in the workspace).
+        The provider is resolved only within the authenticated tenant's custom
+        service catalog, so callers cannot target another workspace. ``scope`` selects
+        which side's tokens to revoke (per-user vs tenant-wide);
+        ``delete_app=true`` removes the Descope app entirely (affects every user in
+        the workspace).
 
         Parameters
         ----------
-        descope_app_id : str
+        provider : str
 
         scope : typing.Optional[IntegrationLevel]
             Which token to revoke: 'user' (this user's personal) or 'tenant' (workspace)
@@ -283,16 +199,245 @@ class IntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
         client.integrations.disconnect_custom_integration(
-            descope_app_id="descope_app_id",
+            provider="provider",
         )
         """
         _response = self._raw_client.disconnect_custom_integration(
-            descope_app_id, scope=scope, delete_app=delete_app, request_options=request_options
+            provider, scope=scope, delete_app=delete_app, request_options=request_options
         )
+        return _response.data
+
+    def list_integration_providers(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> ListPageIntegrationProvider:
+        """
+        Return the integration providers available to connect from Islo, including the supported authentication methods and connection scopes.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ListPageIntegrationProvider
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.integrations.list_integration_providers()
+        """
+        _response = self._raw_client.list_integration_providers(request_options=request_options)
+        return _response.data
+
+    def list_integration_trigger_events(
+        self,
+        *,
+        cursor: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        sort: typing.Optional[ListIntegrationTriggerEventsRequestSort] = None,
+        provider: typing.Optional[typing.Sequence[str]] = None,
+        event_name: typing.Optional[typing.Sequence[str]] = None,
+        invocation_status: typing.Optional[typing.Sequence[str]] = None,
+        outcome: typing.Optional[typing.Sequence[str]] = None,
+        received_at: typing.Optional[TimestampRange] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SyncPager[TriggerEventSummary, TriggerEventPage]:
+        """
+        Parameters
+        ----------
+        cursor : typing.Optional[str]
+
+        limit : typing.Optional[int]
+
+        sort : typing.Optional[ListIntegrationTriggerEventsRequestSort]
+
+        provider : typing.Optional[typing.Sequence[str]]
+
+        event_name : typing.Optional[typing.Sequence[str]]
+
+        invocation_status : typing.Optional[typing.Sequence[str]]
+
+        outcome : typing.Optional[typing.Sequence[str]]
+
+        received_at : typing.Optional[TimestampRange]
+            received_at range. Operators: gte, gt, lte, lt. Serialized as received_at[gte]=…&received_at[lt]=…
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SyncPager[TriggerEventSummary, TriggerEventPage]
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        response = client.integrations.list_integration_trigger_events()
+        for item in response:
+            yield item
+        # alternatively, you can paginate page-by-page
+        for page in response.iter_pages():
+            yield page
+        """
+        return self._raw_client.list_integration_trigger_events(
+            cursor=cursor,
+            limit=limit,
+            sort=sort,
+            provider=provider,
+            event_name=event_name,
+            invocation_status=invocation_status,
+            outcome=outcome,
+            received_at=received_at,
+            request_options=request_options,
+        )
+
+    def get_integration_trigger_event(
+        self, event_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> TriggerEventDetail:
+        """
+        Parameters
+        ----------
+        event_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        TriggerEventDetail
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.integrations.get_integration_trigger_event(
+            event_id="event_id",
+        )
+        """
+        _response = self._raw_client.get_integration_trigger_event(event_id, request_options=request_options)
+        return _response.data
+
+    def list_integration_triggers(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> ListPageTriggerCatalogItem:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ListPageTriggerCatalogItem
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.integrations.list_integration_triggers()
+        """
+        _response = self._raw_client.list_integration_triggers(request_options=request_options)
+        return _response.data
+
+    def list_connected_integration_triggers(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> ListPageTriggerCatalogItem:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ListPageTriggerCatalogItem
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.integrations.list_connected_integration_triggers()
+        """
+        _response = self._raw_client.list_connected_integration_triggers(request_options=request_options)
+        return _response.data
+
+    def get_integration_trigger(
+        self, provider: str, trigger_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> TriggerCatalogItem:
+        """
+        Parameters
+        ----------
+        provider : str
+
+        trigger_name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        TriggerCatalogItem
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.integrations.get_integration_trigger(
+            provider="provider",
+            trigger_name="trigger_name",
+        )
+        """
+        _response = self._raw_client.get_integration_trigger(provider, trigger_name, request_options=request_options)
         return _response.data
 
     def get_integration_status(
@@ -321,6 +466,7 @@ class IntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -370,6 +516,7 @@ class IntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -380,34 +527,6 @@ class IntegrationsClient:
         _response = self._raw_client.disconnect_integration(
             provider, level=level, auth_type=auth_type, request_options=request_options
         )
-        return _response.data
-
-    def list_connected_integration_triggers(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> TriggerCatalogListResponse:
-        """
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        TriggerCatalogListResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.integrations.list_connected_integration_triggers()
-        """
-        _response = self._raw_client.list_connected_integration_triggers(request_options=request_options)
         return _response.data
 
 
@@ -426,128 +545,9 @@ class AsyncIntegrationsClient:
         """
         return self._raw_client
 
-    async def list_integration_providers(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> IntegrationProvidersResponse:
-        """
-        Return the integration providers available to connect from Islo, including the supported authentication methods and connection scopes.
-
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        IntegrationProvidersResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-        from islo.environment import IsloEnvironment
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-
-
-        async def main() -> None:
-            await client.integrations.list_integration_providers()
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.list_integration_providers(request_options=request_options)
-        return _response.data
-
-    async def list_integration_triggers(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> TriggerCatalogListResponse:
-        """
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        TriggerCatalogListResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-        from islo.environment import IsloEnvironment
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-
-
-        async def main() -> None:
-            await client.integrations.list_integration_triggers()
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.list_integration_triggers(request_options=request_options)
-        return _response.data
-
-    async def get_integration_trigger(
-        self, provider: str, trigger_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> TriggerCatalogItem:
-        """
-        Parameters
-        ----------
-        provider : str
-
-        trigger_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        TriggerCatalogItem
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-        from islo.environment import IsloEnvironment
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-
-
-        async def main() -> None:
-            await client.integrations.get_integration_trigger(
-                provider="provider",
-                trigger_name="trigger_name",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.get_integration_trigger(
-            provider, trigger_name, request_options=request_options
-        )
-        return _response.data
-
     async def list_integrations(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> IntegrationListResponse:
+    ) -> ListPageIntegrationStatus:
         """
         List the integrations the user/tenant has connected.
 
@@ -566,7 +566,7 @@ class AsyncIntegrationsClient:
 
         Returns
         -------
-        IntegrationListResponse
+        ListPageIntegrationStatus
             Successful Response
 
         Examples
@@ -577,6 +577,7 @@ class AsyncIntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -593,7 +594,7 @@ class AsyncIntegrationsClient:
 
     async def list_custom_services(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> CustomServicesResponse:
+    ) -> ListPageCustomService:
         """
         List custom service definitions in the current tenant (catalog view).
 
@@ -610,7 +611,7 @@ class AsyncIntegrationsClient:
 
         Returns
         -------
-        CustomServicesResponse
+        ListPageCustomService
             Successful Response
 
         Examples
@@ -621,6 +622,7 @@ class AsyncIntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -666,6 +668,7 @@ class AsyncIntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -687,24 +690,24 @@ class AsyncIntegrationsClient:
 
     async def disconnect_custom_integration(
         self,
-        descope_app_id: str,
+        provider: str,
         *,
         scope: typing.Optional[IntegrationLevel] = None,
         delete_app: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Dict[str, typing.Any]:
         """
-        Disconnect a custom integration by its Descope app ID.
+        Disconnect a custom integration by its stable provider slug.
 
-        Authorization is by deterministic-ID prefix: only apps whose ID matches
-        ``cust-{tenant-prefix}-`` are accepted, which scopes the operation to the
-        caller's workspace without a DB lookup. ``scope`` selects which side's
-        tokens to revoke (per-user vs tenant-wide); ``delete_app=true`` removes
-        the Descope app entirely (affects every user in the workspace).
+        The provider is resolved only within the authenticated tenant's custom
+        service catalog, so callers cannot target another workspace. ``scope`` selects
+        which side's tokens to revoke (per-user vs tenant-wide);
+        ``delete_app=true`` removes the Descope app entirely (affects every user in
+        the workspace).
 
         Parameters
         ----------
-        descope_app_id : str
+        provider : str
 
         scope : typing.Optional[IntegrationLevel]
             Which token to revoke: 'user' (this user's personal) or 'tenant' (workspace)
@@ -728,6 +731,7 @@ class AsyncIntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -735,14 +739,293 @@ class AsyncIntegrationsClient:
 
         async def main() -> None:
             await client.integrations.disconnect_custom_integration(
-                descope_app_id="descope_app_id",
+                provider="provider",
             )
 
 
         asyncio.run(main())
         """
         _response = await self._raw_client.disconnect_custom_integration(
-            descope_app_id, scope=scope, delete_app=delete_app, request_options=request_options
+            provider, scope=scope, delete_app=delete_app, request_options=request_options
+        )
+        return _response.data
+
+    async def list_integration_providers(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> ListPageIntegrationProvider:
+        """
+        Return the integration providers available to connect from Islo, including the supported authentication methods and connection scopes.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ListPageIntegrationProvider
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.integrations.list_integration_providers()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_integration_providers(request_options=request_options)
+        return _response.data
+
+    async def list_integration_trigger_events(
+        self,
+        *,
+        cursor: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        sort: typing.Optional[ListIntegrationTriggerEventsRequestSort] = None,
+        provider: typing.Optional[typing.Sequence[str]] = None,
+        event_name: typing.Optional[typing.Sequence[str]] = None,
+        invocation_status: typing.Optional[typing.Sequence[str]] = None,
+        outcome: typing.Optional[typing.Sequence[str]] = None,
+        received_at: typing.Optional[TimestampRange] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncPager[TriggerEventSummary, TriggerEventPage]:
+        """
+        Parameters
+        ----------
+        cursor : typing.Optional[str]
+
+        limit : typing.Optional[int]
+
+        sort : typing.Optional[ListIntegrationTriggerEventsRequestSort]
+
+        provider : typing.Optional[typing.Sequence[str]]
+
+        event_name : typing.Optional[typing.Sequence[str]]
+
+        invocation_status : typing.Optional[typing.Sequence[str]]
+
+        outcome : typing.Optional[typing.Sequence[str]]
+
+        received_at : typing.Optional[TimestampRange]
+            received_at range. Operators: gte, gt, lte, lt. Serialized as received_at[gte]=…&received_at[lt]=…
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncPager[TriggerEventSummary, TriggerEventPage]
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            response = await client.integrations.list_integration_trigger_events()
+            async for item in response:
+                yield item
+
+            # alternatively, you can paginate page-by-page
+            async for page in response.iter_pages():
+                yield page
+
+
+        asyncio.run(main())
+        """
+        return await self._raw_client.list_integration_trigger_events(
+            cursor=cursor,
+            limit=limit,
+            sort=sort,
+            provider=provider,
+            event_name=event_name,
+            invocation_status=invocation_status,
+            outcome=outcome,
+            received_at=received_at,
+            request_options=request_options,
+        )
+
+    async def get_integration_trigger_event(
+        self, event_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> TriggerEventDetail:
+        """
+        Parameters
+        ----------
+        event_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        TriggerEventDetail
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.integrations.get_integration_trigger_event(
+                event_id="event_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_integration_trigger_event(event_id, request_options=request_options)
+        return _response.data
+
+    async def list_integration_triggers(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> ListPageTriggerCatalogItem:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ListPageTriggerCatalogItem
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.integrations.list_integration_triggers()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_integration_triggers(request_options=request_options)
+        return _response.data
+
+    async def list_connected_integration_triggers(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> ListPageTriggerCatalogItem:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ListPageTriggerCatalogItem
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.integrations.list_connected_integration_triggers()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_connected_integration_triggers(request_options=request_options)
+        return _response.data
+
+    async def get_integration_trigger(
+        self, provider: str, trigger_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> TriggerCatalogItem:
+        """
+        Parameters
+        ----------
+        provider : str
+
+        trigger_name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        TriggerCatalogItem
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.integrations.get_integration_trigger(
+                provider="provider",
+                trigger_name="trigger_name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_integration_trigger(
+            provider, trigger_name, request_options=request_options
         )
         return _response.data
 
@@ -774,6 +1057,7 @@ class AsyncIntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -831,6 +1115,7 @@ class AsyncIntegrationsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -847,40 +1132,4 @@ class AsyncIntegrationsClient:
         _response = await self._raw_client.disconnect_integration(
             provider, level=level, auth_type=auth_type, request_options=request_options
         )
-        return _response.data
-
-    async def list_connected_integration_triggers(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> TriggerCatalogListResponse:
-        """
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        TriggerCatalogListResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-        from islo.environment import IsloEnvironment
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-
-
-        async def main() -> None:
-            await client.integrations.list_connected_integration_triggers()
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.list_connected_integration_triggers(request_options=request_options)
         return _response.data

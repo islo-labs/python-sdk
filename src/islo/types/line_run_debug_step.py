@@ -8,21 +8,21 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class LineRunDebugStep(UniversalBaseModel):
-    name: typing.Optional[str] = None
     action: typing.Optional[str] = None
-    status: typing.Optional[str] = None
-    task_name: typing.Optional[str] = None
-    exit_code: typing.Optional[int] = None
-    error_code: typing.Optional[str] = None
-    failure_class: typing.Optional[str] = None
-    error_message: typing.Optional[str] = None
-    error_details: typing.Optional[typing.Dict[str, typing.Any]] = None
-    compute_command_id: typing.Optional[str] = None
-    sandbox_name: typing.Optional[str] = None
     agent_session_id: typing.Optional[str] = None
-    stdout_tail: typing.Optional[str] = None
-    stderr_tail: typing.Optional[str] = None
-    started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
+    compute_command_id: typing.Optional[str] = None
+    error_code: typing.Optional[str] = None
+    error_details: typing.Optional[typing.Dict[str, typing.Any]] = None
+    error_message: typing.Optional[str] = None
+    exit_code: typing.Optional[int] = None
+    failure_class: typing.Optional[str] = None
+    name: typing.Optional[str] = None
+    sandbox_name: typing.Optional[str] = None
+    started_at: typing.Optional[dt.datetime] = None
+    status: typing.Optional[str] = None
+    stderr_tail: typing.Optional[str] = None
+    stdout_tail: typing.Optional[str] = None
+    task_name: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

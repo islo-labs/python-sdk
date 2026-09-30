@@ -10,10 +10,10 @@ from .selector_scope import SelectorScope
 
 class LinearIssueSelector(UniversalBaseModel):
     kind: typing.Optional[LinearIssueSelectorKind] = None
-    scope: typing.Optional[SelectorScope] = None
-    team_ids: typing.Optional[typing.List[str]] = None
-    project_ids: typing.Optional[typing.List[str]] = None
     labels: typing.Optional[typing.List[str]] = None
+    project_ids: typing.Optional[typing.List[str]] = None
+    scope: typing.Optional[SelectorScope] = None
     states: typing.Optional[typing.List[str]] = None
+    team_ids: typing.Optional[typing.List[str]] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

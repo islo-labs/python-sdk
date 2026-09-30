@@ -10,6 +10,7 @@ T_Result = typing.TypeVar("T_Result")
 class JudgeContentFilterProviderKey(enum.StrEnum):
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
+    TYPESAFE = "typesafe"
     _UNKNOWN = "__JUDGECONTENTFILTERPROVIDERKEY_UNKNOWN__"
     """
     This member is used for forward compatibility. If the value is not recognized by the enum, it will be stored here, and the raw value is accessible through `.value`.
@@ -25,10 +26,13 @@ class JudgeContentFilterProviderKey(enum.StrEnum):
         self,
         anthropic: typing.Callable[[], T_Result],
         openai: typing.Callable[[], T_Result],
+        typesafe: typing.Callable[[], T_Result],
         _unknown_member: typing.Callable[[str], T_Result],
     ) -> T_Result:
         if self is JudgeContentFilterProviderKey.ANTHROPIC:
             return anthropic()
         if self is JudgeContentFilterProviderKey.OPENAI:
             return openai()
+        if self is JudgeContentFilterProviderKey.TYPESAFE:
+            return typesafe()
         return _unknown_member(self._value_)

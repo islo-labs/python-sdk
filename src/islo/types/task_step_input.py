@@ -21,49 +21,49 @@ class TaskStepInput(UniversalBaseModel):
     explicit outputs list, requires every writer to claim.
     """
 
-    name: typing.Optional[str] = pydantic.Field(default=None)
+    delete: typing.Optional[bool] = None
+    download: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Unique non-blank step name within the task.
-    """
-
-    workdir: typing.Optional[str] = pydantic.Field(default=None)
-    """
-    Override [run].workdir for this step. Supports {{name}} placeholders.
+    Not implemented yet; do not author.
     """
 
-    timeout: typing.Optional[int] = pydantic.Field(default=None)
-    """
-    Max wall-clock duration for this step in seconds.
-    """
-
-    user: typing.Optional[str] = None
     exec: typing.Optional[TaskStepInputExec] = pydantic.Field(default=None)
     """
     Shell command. Supports {{name}} placeholders in each argv element. Control plane sets $ISLO_OUTPUT to /dev/null when the step claims no output keys, or /tmp/islo_output.<job_run_id>.<random> when it claims keys. Write key=value lines (JSON after =, raw string fallback for type=string). Do not pre-create the file. Cap is 64 KiB.
     """
 
+    name: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Unique non-blank step name within the task.
+    """
+
+    outputs: typing.Optional[TaskStepInputOutputs] = pydantic.Field(default=None)
+    """
+    Claim job output keys. List shortcut: outputs = ["summary"]. Table: [run.tasks.steps.outputs.summary] from = "agent_key", required = true.
+    """
+
+    pause: typing.Optional[bool] = None
+    resume: typing.Optional[bool] = None
     run_agent: typing.Optional[TaskStepInputRunAgent] = pydantic.Field(default=None)
     """
     Run an agent step. Session mode publishes claimed producer keys as structured JSON. Exec mode uses $ISLO_OUTPUT like exec.
     """
 
     snapshot: typing.Optional[SnapshotStepAction] = None
-    pause: typing.Optional[bool] = None
-    resume: typing.Optional[bool] = None
-    delete: typing.Optional[bool] = None
+    timeout: typing.Optional[int] = pydantic.Field(default=None)
+    """
+    Max wall-clock duration for this step in seconds.
+    """
+
     upload: typing.Optional[str] = pydantic.Field(default=None)
     """
     Not implemented yet; do not author.
     """
 
-    download: typing.Optional[str] = pydantic.Field(default=None)
+    user: typing.Optional[str] = None
+    workdir: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Not implemented yet; do not author.
-    """
-
-    outputs: typing.Optional[TaskStepInputOutputs] = pydantic.Field(default=None)
-    """
-    Claim job output keys. List shortcut: outputs = ["summary"]. Table: [run.tasks.steps.outputs.summary] from = "agent_key", required = true.
+    Override [run].workdir for this step. Supports {{name}} placeholders.
     """
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

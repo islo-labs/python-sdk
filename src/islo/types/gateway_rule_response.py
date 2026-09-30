@@ -8,17 +8,17 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class GatewayRuleResponse(UniversalBaseModel):
-    id: str
-    priority: int
-    host_pattern: str
-    path_pattern: typing.Optional[str] = None
-    methods: typing.Optional[typing.List[str]] = None
     action: str
-    rate_limit_rpm: typing.Optional[int] = None
-    provider_key: typing.Optional[str] = None
     auth_strategy: typing.Optional[typing.Dict[str, typing.Any]] = None
     content_filter: typing.Optional[typing.Dict[str, typing.Any]] = None
     created_at: typing.Optional[dt.datetime] = None
+    host_pattern: str
+    id: str
+    methods: typing.Optional[typing.List[str]] = None
+    path_pattern: typing.Optional[str] = None
+    priority: int
+    provider_key: typing.Optional[str] = None
+    rate_limit_rpm: typing.Optional[int] = None
     updated_at: typing.Optional[dt.datetime] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

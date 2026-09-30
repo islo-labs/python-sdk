@@ -14,6 +14,10 @@ class StepOutputClaim(UniversalBaseModel):
         FieldMetadata(alias="from"),
         pydantic.Field(alias="from", default=None, description="Writer key. Defaults to the job output key."),
     ]
+    """
+    Writer key. Defaults to the job output key.
+    """
+
     required: typing.Optional[bool] = pydantic.Field(default=None)
     """
     May tighten the job-level required flag, not loosen it.

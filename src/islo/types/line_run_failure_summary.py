@@ -11,12 +11,12 @@ class LineRunFailureSummary(UniversalBaseModel):
     The first failed step within the run's last failed stage attempt.
     """
 
+    compute_command_id: typing.Optional[str] = None
+    error_code: typing.Optional[str] = None
+    error_details: typing.Optional[typing.Dict[str, typing.Any]] = None
+    error_message: typing.Optional[str] = None
+    failure_class: typing.Optional[str] = None
     stage_name: typing.Optional[str] = None
     step_name: typing.Optional[str] = None
-    failure_class: typing.Optional[str] = None
-    error_code: typing.Optional[str] = None
-    error_message: typing.Optional[str] = None
-    error_details: typing.Optional[typing.Dict[str, typing.Any]] = None
-    compute_command_id: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

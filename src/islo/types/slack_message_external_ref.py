@@ -12,8 +12,8 @@ class SlackMessageExternalRef(UniversalBaseModel):
     Slack message identity within a channel.
     """
 
-    kind: typing.Optional[SlackMessageExternalRefKind] = None
     channel: str
+    kind: typing.Optional[SlackMessageExternalRefKind] = None
     ts: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

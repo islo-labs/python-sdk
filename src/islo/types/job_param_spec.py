@@ -9,25 +9,25 @@ from .job_param_spec_type import JobParamSpecType
 
 
 class JobParamSpec(UniversalBaseModel):
-    type: JobParamSpecType
-    items: typing.Optional[JobParamSpecItems] = pydantic.Field(default=None)
-    """
-    Item type when type = array.
-    """
-
-    required: typing.Optional[bool] = pydantic.Field(default=None)
-    """
-    Cannot combine required=true with a default.
-    """
-
     default: typing.Optional[typing.Any] = pydantic.Field(default=None)
     """
     Required for every param used by a scheduled run before adding [schedule].
     """
 
     description: typing.Optional[str] = None
+    enum: typing.Optional[typing.List[typing.Any]] = None
+    items: typing.Optional[JobParamSpecItems] = pydantic.Field(default=None)
+    """
+    Item type when type = array.
+    """
+
     pattern: typing.Optional[str] = None
     prefix: typing.Optional[str] = None
-    enum: typing.Optional[typing.List[typing.Any]] = None
+    required: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Cannot combine required=true with a default.
+    """
+
+    type: JobParamSpecType
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

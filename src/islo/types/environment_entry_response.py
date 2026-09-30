@@ -11,14 +11,14 @@ from .environment_gateway_rule_response import EnvironmentGatewayRuleResponse
 
 
 class EnvironmentEntryResponse(UniversalBaseModel):
+    created_at: dt.datetime
+    has_value: typing.Optional[bool] = None
     id: str
     key: str
     kind: EnvironmentEntryKind
     placement: EnvironmentEntryPlacement
-    value: typing.Optional[str] = None
-    has_value: typing.Optional[bool] = None
     rule: typing.Optional[EnvironmentGatewayRuleResponse] = None
-    created_at: dt.datetime
     updated_at: dt.datetime
+    value: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

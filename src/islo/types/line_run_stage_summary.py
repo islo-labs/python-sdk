@@ -8,14 +8,18 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class LineRunStageSummary(UniversalBaseModel):
+    artifact_count: typing.Optional[int] = None
+    completed_at: typing.Optional[dt.datetime] = None
+    compute_cost_cents: typing.Optional[int] = None
+    cost_rated_at: typing.Optional[dt.datetime] = None
+    inference_cost_cents: typing.Optional[int] = None
+    iteration: int
+    job_run_id: typing.Optional[str] = None
+    outcome: typing.Optional[str] = None
     stage_name: str
     stage_order: int
-    iteration: int
-    status: str
-    outcome: typing.Optional[str] = None
-    job_run_id: typing.Optional[str] = None
     started_at: typing.Optional[dt.datetime] = None
-    completed_at: typing.Optional[dt.datetime] = None
-    artifact_count: typing.Optional[int] = None
+    status: str
+    total_cost_cents: typing.Optional[int] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

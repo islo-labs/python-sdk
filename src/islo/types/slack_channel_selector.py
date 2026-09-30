@@ -9,8 +9,8 @@ from .slack_channel_selector_kind import SlackChannelSelectorKind
 
 
 class SlackChannelSelector(UniversalBaseModel):
+    channels: typing.Optional[typing.List[str]] = None
     kind: typing.Optional[SlackChannelSelectorKind] = None
     scope: typing.Optional[SelectorScope] = None
-    channels: typing.Optional[typing.List[str]] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

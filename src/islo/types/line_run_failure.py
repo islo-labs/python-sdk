@@ -30,9 +30,9 @@ class LineRunFailure(UniversalBaseModel):
     code: typing.Optional[FactoryFailureCode] = None
     domain: typing.Optional[FactoryFailureDomain] = None
     error_code: typing.Optional[str] = None
-    failure_class: typing.Optional[str] = None
-    error_message: typing.Optional[str] = None
     error_details: typing.Optional[typing.Dict[str, typing.Any]] = None
+    error_message: typing.Optional[str] = None
+    failure_class: typing.Optional[str] = None
     stage_name: typing.Optional[str] = None
     stage_step: typing.Optional[str] = None
     task_name: typing.Optional[str] = None

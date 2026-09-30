@@ -7,7 +7,7 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class RuleReorderItem(UniversalBaseModel):
-    rule_id: str
     priority: int
+    rule_id: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

@@ -15,24 +15,24 @@ from .conditional_transition_input_params_value import ConditionalTransitionInpu
 
 class LineManifestInputTransitionsItem_Agentic(UniversalBaseModel):
     type: typing.Literal["agentic"] = "agentic"
-    id: str
     from_: typing_extensions.Annotated[str, FieldMetadata(alias="from"), pydantic.Field(alias="from")]
+    id: str
     instructions: AgenticTransitionInputInstructions
-    options: typing.Optional[typing.List[AgenticTransitionOption]] = None
     label: typing.Optional[str] = None
+    options: typing.Optional[typing.List[AgenticTransitionOption]] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 
 
 class LineManifestInputTransitionsItem_Conditional(UniversalBaseModel):
     type: typing.Literal["conditional"] = "conditional"
-    id: str
     from_: typing_extensions.Annotated[str, FieldMetadata(alias="from"), pydantic.Field(alias="from")]
-    to: str
-    when: "LineConditionInput"
+    id: str
     label: typing.Optional[str] = None
     max_iterations: typing.Optional[int] = None
     params: typing.Optional[typing.Dict[str, ConditionalTransitionInputParamsValue]] = None
+    to: str
+    when: "LineConditionInput"
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 

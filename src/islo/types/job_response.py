@@ -10,15 +10,14 @@ from .job_version_response import JobVersionResponse
 
 
 class JobResponse(UniversalBaseModel):
-    id: str
-    name: str
+    created_at: dt.datetime
     description: typing.Optional[str] = None
+    id: str
     latest_version: typing.Optional[JobVersionResponse] = None
+    name: str
     params: typing.Optional[typing.List[JobParamDefinition]] = pydantic.Field(default=None)
     """
     Typed run-parameter schema from the latest deployed manifest
     """
-
-    created_at: dt.datetime
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

@@ -6,7 +6,8 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
+from ..core.pagination import AsyncPager, SyncPager
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
@@ -23,6 +24,9 @@ from ..types.job_run_list_item import JobRunListItem
 from ..types.job_run_response import JobRunResponse
 from ..types.job_schedule_response import JobScheduleResponse
 from ..types.job_version_response import JobVersionResponse
+from ..types.list_page_job_list_item import ListPageJobListItem
+from ..types.list_page_job_run_list_item import ListPageJobRunListItem
+from ..types.list_page_job_version_response import ListPageJobVersionResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -33,16 +37,133 @@ class RawJobsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def validate_job_manifest(
-        self, name: str, *, manifest: JobManifestInput, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[None]:
+    def list_jobs(
+        self,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SyncPager[JobListItem, ListPageJobListItem]:
+        """
+        Parameters
+        ----------
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SyncPager[JobListItem, ListPageJobListItem]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "jobs",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "limit": limit,
+                "cursor": cursor,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    ListPageJobListItem,
+                    parse_obj_as(
+                        type_=ListPageJobListItem,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+                _get_next = lambda: self.list_jobs(
+                    limit=limit,
+                    cursor=_parsed_next,
+                    request_options=request_options,
+                )
+                return SyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_job(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[JobResponse]:
         """
         Parameters
         ----------
         name : str
 
-        manifest : JobManifestInput
-            Job manifest (authored as TOML or JSON, stored as JSON)
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[JobResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"jobs/{encode_path_param(name)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    JobResponse,
+                    parse_obj_as(
+                        type_=JobResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def delete_job(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> HttpResponse[None]:
+        """
+        Parameters
+        ----------
+        name : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -52,34 +173,14 @@ class RawJobsClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/validate",
+            f"jobs/{encode_path_param(name)}",
             base_url=self._client_wrapper.get_environment().control,
-            method="POST",
-            json={
-                "manifest": convert_and_respect_annotation_metadata(
-                    object_=manifest, annotation=JobManifestInput, direction="write"
-                ),
-            },
-            headers={
-                "content-type": "application/json",
-            },
+            method="DELETE",
             request_options=request_options,
-            omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
                 return HttpResponse(response=_response, data=None)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -120,7 +221,7 @@ class RawJobsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/deploy",
+            f"jobs/{encode_path_param(name)}/deploy",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -197,289 +298,14 @@ class RawJobsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get_job(
-        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[JobResponse]:
-        """
-        Parameters
-        ----------
-        name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[JobResponse]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    JobResponse,
-                    parse_obj_as(
-                        type_=JobResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def delete_job(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> HttpResponse[None]:
-        """
-        Parameters
-        ----------
-        name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[None]
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}",
-            base_url=self._client_wrapper.get_environment().control,
-            method="DELETE",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return HttpResponse(response=_response, data=None)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def list_jobs(
-        self,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[typing.List[JobListItem]]:
-        """
-        Parameters
-        ----------
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[typing.List[JobListItem]]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "jobs",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            params={
-                "limit": limit,
-                "offset": offset,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.List[JobListItem],
-                    parse_obj_as(
-                        type_=typing.List[JobListItem],  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def list_job_versions(
-        self,
-        name: str,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[typing.List[JobVersionResponse]]:
-        """
-        Parameters
-        ----------
-        name : str
-
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[typing.List[JobVersionResponse]]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/versions",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            params={
-                "limit": limit,
-                "offset": offset,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.List[JobVersionResponse],
-                    parse_obj_as(
-                        type_=typing.List[JobVersionResponse],  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def get_job_version(
-        self, name: str, version_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[JobVersionResponse]:
-        """
-        Parameters
-        ----------
-        name : str
-
-        version_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[JobVersionResponse]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/versions/{jsonable_encoder(version_id)}",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    JobVersionResponse,
-                    parse_obj_as(
-                        type_=JobVersionResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
     def list_job_runs(
         self,
         name: str,
         *,
         limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[typing.List[JobRunListItem]]:
+    ) -> SyncPager[JobRunListItem, ListPageJobRunListItem]:
         """
         Parameters
         ----------
@@ -487,36 +313,45 @@ class RawJobsClient:
 
         limit : typing.Optional[int]
 
-        offset : typing.Optional[int]
+        cursor : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[typing.List[JobRunListItem]]
+        SyncPager[JobRunListItem, ListPageJobRunListItem]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/runs",
+            f"jobs/{encode_path_param(name)}/runs",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             params={
                 "limit": limit,
-                "offset": offset,
+                "cursor": cursor,
             },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.List[JobRunListItem],
+                _parsed_response = typing.cast(
+                    ListPageJobRunListItem,
                     parse_obj_as(
-                        type_=typing.List[JobRunListItem],  # type: ignore
+                        type_=ListPageJobRunListItem,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
-                return HttpResponse(response=_response, data=_data)
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+                _get_next = lambda: self.list_job_runs(
+                    name,
+                    limit=limit,
+                    cursor=_parsed_next,
+                    request_options=request_options,
+                )
+                return SyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -541,9 +376,9 @@ class RawJobsClient:
         self,
         name: str,
         *,
-        version_id: typing.Optional[str] = OMIT,
-        region: typing.Optional[str] = OMIT,
         params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        region: typing.Optional[str] = OMIT,
+        version_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[JobRunResponse]:
         """
@@ -551,14 +386,14 @@ class RawJobsClient:
         ----------
         name : str
 
-        version_id : typing.Optional[str]
-            Deployed version to run; defaults to latest
+        params : typing.Optional[typing.Dict[str, typing.Any]]
+            Run-time parameter values (validated against [job.params])
 
         region : typing.Optional[str]
             Compute region override
 
-        params : typing.Optional[typing.Dict[str, typing.Any]]
-            Run-time parameter values (validated against [job.params])
+        version_id : typing.Optional[str]
+            Deployed version to run; defaults to latest
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -569,13 +404,13 @@ class RawJobsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/runs",
+            f"jobs/{encode_path_param(name)}/runs",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "version_id": version_id,
-                "region": region,
                 "params": params,
+                "region": region,
+                "version_id": version_id,
             },
             headers={
                 "content-type": "application/json",
@@ -632,7 +467,7 @@ class RawJobsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/runs/{jsonable_encoder(run_id)}",
+            f"jobs/{encode_path_param(name)}/runs/{encode_path_param(run_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -693,7 +528,7 @@ class RawJobsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/runs/{jsonable_encoder(run_id)}/stop",
+            f"jobs/{encode_path_param(name)}/runs/{encode_path_param(run_id)}/stop",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -752,7 +587,7 @@ class RawJobsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/schedule",
+            f"jobs/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -803,7 +638,7 @@ class RawJobsClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/schedule",
+            f"jobs/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -831,14 +666,9 @@ class RawJobsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-
-class AsyncRawJobsClient:
-    def __init__(self, *, client_wrapper: AsyncClientWrapper):
-        self._client_wrapper = client_wrapper
-
-    async def validate_job_manifest(
+    def validate_job_manifest(
         self, name: str, *, manifest: JobManifestInput, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[None]:
+    ) -> HttpResponse[None]:
         """
         Parameters
         ----------
@@ -852,10 +682,10 @@ class AsyncRawJobsClient:
 
         Returns
         -------
-        AsyncHttpResponse[None]
+        HttpResponse[None]
         """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/validate",
+        _response = self._client_wrapper.httpx_client.request(
+            f"jobs/{encode_path_param(name)}/validate",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -871,7 +701,7 @@ class AsyncRawJobsClient:
         )
         try:
             if 200 <= _response.status_code < 300:
-                return AsyncHttpResponse(response=_response, data=None)
+                return HttpResponse(response=_response, data=None)
             if _response.status_code == 401:
                 raise UnauthorizedError(
                     headers=dict(_response.headers),
@@ -883,6 +713,308 @@ class AsyncRawJobsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def list_job_versions(
+        self,
+        name: str,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SyncPager[JobVersionResponse, ListPageJobVersionResponse]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SyncPager[JobVersionResponse, ListPageJobVersionResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"jobs/{encode_path_param(name)}/versions",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "limit": limit,
+                "cursor": cursor,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    ListPageJobVersionResponse,
+                    parse_obj_as(
+                        type_=ListPageJobVersionResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+                _get_next = lambda: self.list_job_versions(
+                    name,
+                    limit=limit,
+                    cursor=_parsed_next,
+                    request_options=request_options,
+                )
+                return SyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_job_version(
+        self, name: str, version_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[JobVersionResponse]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        version_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[JobVersionResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"jobs/{encode_path_param(name)}/versions/{encode_path_param(version_id)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    JobVersionResponse,
+                    parse_obj_as(
+                        type_=JobVersionResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+
+class AsyncRawJobsClient:
+    def __init__(self, *, client_wrapper: AsyncClientWrapper):
+        self._client_wrapper = client_wrapper
+
+    async def list_jobs(
+        self,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncPager[JobListItem, ListPageJobListItem]:
+        """
+        Parameters
+        ----------
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncPager[JobListItem, ListPageJobListItem]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "jobs",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "limit": limit,
+                "cursor": cursor,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    ListPageJobListItem,
+                    parse_obj_as(
+                        type_=ListPageJobListItem,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+
+                async def _get_next():
+                    return await self.list_jobs(
+                        limit=limit,
+                        cursor=_parsed_next,
+                        request_options=request_options,
+                    )
+
+                return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_job(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[JobResponse]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[JobResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"jobs/{encode_path_param(name)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    JobResponse,
+                    parse_obj_as(
+                        type_=JobResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def delete_job(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[None]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[None]
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"jobs/{encode_path_param(name)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="DELETE",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return AsyncHttpResponse(response=_response, data=None)
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -923,7 +1055,7 @@ class AsyncRawJobsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/deploy",
+            f"jobs/{encode_path_param(name)}/deploy",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -1000,291 +1132,14 @@ class AsyncRawJobsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def get_job(
-        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[JobResponse]:
-        """
-        Parameters
-        ----------
-        name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[JobResponse]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    JobResponse,
-                    parse_obj_as(
-                        type_=JobResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def delete_job(
-        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[None]:
-        """
-        Parameters
-        ----------
-        name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[None]
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}",
-            base_url=self._client_wrapper.get_environment().control,
-            method="DELETE",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return AsyncHttpResponse(response=_response, data=None)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def list_jobs(
-        self,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[typing.List[JobListItem]]:
-        """
-        Parameters
-        ----------
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[typing.List[JobListItem]]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "jobs",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            params={
-                "limit": limit,
-                "offset": offset,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.List[JobListItem],
-                    parse_obj_as(
-                        type_=typing.List[JobListItem],  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def list_job_versions(
-        self,
-        name: str,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[typing.List[JobVersionResponse]]:
-        """
-        Parameters
-        ----------
-        name : str
-
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[typing.List[JobVersionResponse]]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/versions",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            params={
-                "limit": limit,
-                "offset": offset,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.List[JobVersionResponse],
-                    parse_obj_as(
-                        type_=typing.List[JobVersionResponse],  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def get_job_version(
-        self, name: str, version_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[JobVersionResponse]:
-        """
-        Parameters
-        ----------
-        name : str
-
-        version_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[JobVersionResponse]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/versions/{jsonable_encoder(version_id)}",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    JobVersionResponse,
-                    parse_obj_as(
-                        type_=JobVersionResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
     async def list_job_runs(
         self,
         name: str,
         *,
         limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[typing.List[JobRunListItem]]:
+    ) -> AsyncPager[JobRunListItem, ListPageJobRunListItem]:
         """
         Parameters
         ----------
@@ -1292,36 +1147,48 @@ class AsyncRawJobsClient:
 
         limit : typing.Optional[int]
 
-        offset : typing.Optional[int]
+        cursor : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[typing.List[JobRunListItem]]
+        AsyncPager[JobRunListItem, ListPageJobRunListItem]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/runs",
+            f"jobs/{encode_path_param(name)}/runs",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             params={
                 "limit": limit,
-                "offset": offset,
+                "cursor": cursor,
             },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.List[JobRunListItem],
+                _parsed_response = typing.cast(
+                    ListPageJobRunListItem,
                     parse_obj_as(
-                        type_=typing.List[JobRunListItem],  # type: ignore
+                        type_=ListPageJobRunListItem,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
-                return AsyncHttpResponse(response=_response, data=_data)
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+
+                async def _get_next():
+                    return await self.list_job_runs(
+                        name,
+                        limit=limit,
+                        cursor=_parsed_next,
+                        request_options=request_options,
+                    )
+
+                return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -1346,9 +1213,9 @@ class AsyncRawJobsClient:
         self,
         name: str,
         *,
-        version_id: typing.Optional[str] = OMIT,
-        region: typing.Optional[str] = OMIT,
         params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        region: typing.Optional[str] = OMIT,
+        version_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[JobRunResponse]:
         """
@@ -1356,14 +1223,14 @@ class AsyncRawJobsClient:
         ----------
         name : str
 
-        version_id : typing.Optional[str]
-            Deployed version to run; defaults to latest
+        params : typing.Optional[typing.Dict[str, typing.Any]]
+            Run-time parameter values (validated against [job.params])
 
         region : typing.Optional[str]
             Compute region override
 
-        params : typing.Optional[typing.Dict[str, typing.Any]]
-            Run-time parameter values (validated against [job.params])
+        version_id : typing.Optional[str]
+            Deployed version to run; defaults to latest
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1374,13 +1241,13 @@ class AsyncRawJobsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/runs",
+            f"jobs/{encode_path_param(name)}/runs",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "version_id": version_id,
-                "region": region,
                 "params": params,
+                "region": region,
+                "version_id": version_id,
             },
             headers={
                 "content-type": "application/json",
@@ -1437,7 +1304,7 @@ class AsyncRawJobsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/runs/{jsonable_encoder(run_id)}",
+            f"jobs/{encode_path_param(name)}/runs/{encode_path_param(run_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1498,7 +1365,7 @@ class AsyncRawJobsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/runs/{jsonable_encoder(run_id)}/stop",
+            f"jobs/{encode_path_param(name)}/runs/{encode_path_param(run_id)}/stop",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -1557,7 +1424,7 @@ class AsyncRawJobsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/schedule",
+            f"jobs/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1608,7 +1475,7 @@ class AsyncRawJobsClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"jobs/{jsonable_encoder(name)}/schedule",
+            f"jobs/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -1616,6 +1483,204 @@ class AsyncRawJobsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return AsyncHttpResponse(response=_response, data=None)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def validate_job_manifest(
+        self, name: str, *, manifest: JobManifestInput, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[None]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        manifest : JobManifestInput
+            Job manifest (authored as TOML or JSON, stored as JSON)
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[None]
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"jobs/{encode_path_param(name)}/validate",
+            base_url=self._client_wrapper.get_environment().control,
+            method="POST",
+            json={
+                "manifest": convert_and_respect_annotation_metadata(
+                    object_=manifest, annotation=JobManifestInput, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return AsyncHttpResponse(response=_response, data=None)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def list_job_versions(
+        self,
+        name: str,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncPager[JobVersionResponse, ListPageJobVersionResponse]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncPager[JobVersionResponse, ListPageJobVersionResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"jobs/{encode_path_param(name)}/versions",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "limit": limit,
+                "cursor": cursor,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    ListPageJobVersionResponse,
+                    parse_obj_as(
+                        type_=ListPageJobVersionResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+
+                async def _get_next():
+                    return await self.list_job_versions(
+                        name,
+                        limit=limit,
+                        cursor=_parsed_next,
+                        request_options=request_options,
+                    )
+
+                return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_job_version(
+        self, name: str, version_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[JobVersionResponse]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        version_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[JobVersionResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"jobs/{encode_path_param(name)}/versions/{encode_path_param(version_id)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    JobVersionResponse,
+                    parse_obj_as(
+                        type_=JobVersionResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),

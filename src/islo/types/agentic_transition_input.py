@@ -11,10 +11,10 @@ from .agentic_transition_option import AgenticTransitionOption
 
 
 class AgenticTransitionInput(UniversalBaseModel):
-    id: str
     from_: typing_extensions.Annotated[str, FieldMetadata(alias="from"), pydantic.Field(alias="from")]
+    id: str
     instructions: AgenticTransitionInputInstructions
-    options: typing.Optional[typing.List[AgenticTransitionOption]] = None
     label: typing.Optional[str] = None
+    options: typing.Optional[typing.List[AgenticTransitionOption]] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

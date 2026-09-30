@@ -3,16 +3,24 @@
 import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+from ..core.pagination import AsyncPager, SyncPager
 from ..core.request_options import RequestOptions
+from ..types.facets_response import FacetsResponse
+from ..types.line_event_response import LineEventResponse
 from ..types.line_manifest_input import LineManifestInput
 from ..types.line_response import LineResponse
 from ..types.line_run_debug_response import LineRunDebugResponse
 from ..types.line_run_detail import LineRunDetail
 from ..types.line_run_summary import LineRunSummary
 from ..types.line_schedule_response import LineScheduleResponse
+from ..types.line_update_status import LineUpdateStatus
 from ..types.line_version_response import LineVersionResponse
+from ..types.list_page_line_event_response import ListPageLineEventResponse
+from ..types.list_page_line_response import ListPageLineResponse
+from ..types.list_page_line_run_summary import ListPageLineRunSummary
+from ..types.list_page_line_version_response import ListPageLineVersionResponse
+from ..types.timestamp_range import TimestampRange
 from .raw_client import AsyncRawFactoryClient, RawFactoryClient
-from .types.line_update_status import LineUpdateStatus
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -33,16 +41,567 @@ class FactoryClient:
         """
         return self._raw_client
 
-    def validate_factory_line_manifest(
-        self, name: str, *, manifest: LineManifestInput, request_options: typing.Optional[RequestOptions] = None
-    ) -> None:
+    def list_factory_line_runs(
+        self,
+        *,
+        limit: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        sort: typing.Optional[str] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        line_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SyncPager[LineRunSummary, ListPageLineRunSummary]:
+        """
+        Parameters
+        ----------
+        limit : typing.Optional[int]
+
+        offset : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        sort : typing.Optional[str]
+            Sort order. Allowed: -created_at, created_at
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        line_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SyncPager[LineRunSummary, ListPageLineRunSummary]
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        response = client.factory.list_factory_line_runs()
+        for item in response:
+            yield item
+        # alternatively, you can paginate page-by-page
+        for page in response.iter_pages():
+            yield page
+        """
+        return self._raw_client.list_factory_line_runs(
+            limit=limit,
+            offset=offset,
+            cursor=cursor,
+            sort=sort,
+            include=include,
+            status=status,
+            line_name=line_name,
+            created_at=created_at,
+            q=q,
+            request_options=request_options,
+        )
+
+    def list_factory_line_run_facets(
+        self,
+        *,
+        fields: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        line_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> FacetsResponse:
+        """
+        Parameters
+        ----------
+        fields : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+            Facet fields to return (e.g. line_name, status)
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        line_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        FacetsResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.factory.list_factory_line_run_facets(
+            fields=["fields"],
+        )
+        """
+        _response = self._raw_client.list_factory_line_run_facets(
+            fields=fields,
+            status=status,
+            line_name=line_name,
+            created_at=created_at,
+            q=q,
+            request_options=request_options,
+        )
+        return _response.data
+
+    def get_factory_line_run(
+        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> LineRunDetail:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineRunDetail
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.factory.get_factory_line_run(
+            run_id="run_id",
+        )
+        """
+        _response = self._raw_client.get_factory_line_run(run_id, request_options=request_options)
+        return _response.data
+
+    def ask_factory_line_run(
+        self,
+        run_id: str,
+        *,
+        message: str,
+        origin: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> LineRunDetail:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        message : str
+            Instruction or context for the line run's manager
+
+        origin : typing.Optional[str]
+            Optional Slack thread permalink whose activity status should follow this manager turn
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineRunDetail
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.factory.ask_factory_line_run(
+            run_id="run_id",
+            message="message",
+        )
+        """
+        _response = self._raw_client.ask_factory_line_run(
+            run_id, message=message, origin=origin, request_options=request_options
+        )
+        return _response.data
+
+    def cancel_factory_line_run(
+        self,
+        run_id: str,
+        *,
+        reason: typing.Optional[str] = OMIT,
+        stage_name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> LineRunDetail:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        reason : typing.Optional[str]
+
+        stage_name : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineRunDetail
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.factory.cancel_factory_line_run(
+            run_id="run_id",
+        )
+        """
+        _response = self._raw_client.cancel_factory_line_run(
+            run_id, reason=reason, stage_name=stage_name, request_options=request_options
+        )
+        return _response.data
+
+    def get_factory_line_run_debug(
+        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> LineRunDebugResponse:
+        """
+        Per-stage and per-step diagnostics for one line run, including the last failed stage attempt's first failing step, each step's exit code and output tails, and the sandbox environment each stage ran in.
+
+        Parameters
+        ----------
+        run_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineRunDebugResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.factory.get_factory_line_run_debug(
+            run_id="run_id",
+        )
+        """
+        _response = self._raw_client.get_factory_line_run_debug(run_id, request_options=request_options)
+        return _response.data
+
+    def list_factory_line_run_events(
+        self,
+        run_id: str,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        event_types: typing.Optional[typing.Sequence[str]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SyncPager[LineEventResponse, ListPageLineEventResponse]:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        event_types : typing.Optional[typing.Sequence[str]]
+            Restrict the timeline to these event types
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SyncPager[LineEventResponse, ListPageLineEventResponse]
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        response = client.factory.list_factory_line_run_events(
+            run_id="run_id",
+        )
+        for item in response:
+            yield item
+        # alternatively, you can paginate page-by-page
+        for page in response.iter_pages():
+            yield page
+        """
+        return self._raw_client.list_factory_line_run_events(
+            run_id,
+            limit=limit,
+            cursor=cursor,
+            include=include,
+            event_types=event_types,
+            request_options=request_options,
+        )
+
+    def retry_factory_line_run(
+        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> LineRunDetail:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineRunDetail
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.factory.retry_factory_line_run(
+            run_id="run_id",
+        )
+        """
+        _response = self._raw_client.retry_factory_line_run(run_id, request_options=request_options)
+        return _response.data
+
+    def steer_factory_line_run(
+        self,
+        run_id: str,
+        *,
+        stage_name: str,
+        params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        reason: typing.Optional[str] = OMIT,
+        reset_iterations: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> LineRunDetail:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        stage_name : str
+
+        params : typing.Optional[typing.Dict[str, typing.Any]]
+
+        reason : typing.Optional[str]
+
+        reset_iterations : typing.Optional[bool]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineRunDetail
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.factory.steer_factory_line_run(
+            run_id="run_id",
+            stage_name="stage_name",
+        )
+        """
+        _response = self._raw_client.steer_factory_line_run(
+            run_id,
+            stage_name=stage_name,
+            params=params,
+            reason=reason,
+            reset_iterations=reset_iterations,
+            request_options=request_options,
+        )
+        return _response.data
+
+    def stop_factory_line_run(
+        self,
+        run_id: str,
+        *,
+        reason: typing.Optional[str] = OMIT,
+        stage_name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> LineRunDetail:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        reason : typing.Optional[str]
+
+        stage_name : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineRunDetail
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.factory.stop_factory_line_run(
+            run_id="run_id",
+        )
+        """
+        _response = self._raw_client.stop_factory_line_run(
+            run_id, reason=reason, stage_name=stage_name, request_options=request_options
+        )
+        return _response.data
+
+    def list_factory_lines(
+        self,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SyncPager[LineResponse, ListPageLineResponse]:
+        """
+        Parameters
+        ----------
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SyncPager[LineResponse, ListPageLineResponse]
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        response = client.factory.list_factory_lines()
+        for item in response:
+            yield item
+        # alternatively, you can paginate page-by-page
+        for page in response.iter_pages():
+            yield page
+        """
+        return self._raw_client.list_factory_lines(limit=limit, cursor=cursor, request_options=request_options)
+
+    def get_factory_line(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> LineResponse:
         """
         Parameters
         ----------
         name : str
 
-        manifest : LineManifestInput
-            Line manifest (authored as TOML or JSON, stored as JSON)
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.factory.get_factory_line(
+            name="name",
+        )
+        """
+        _response = self._raw_client.get_factory_line(name, request_options=request_options)
+        return _response.data
+
+    def delete_factory_line(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
+        """
+        Parameters
+        ----------
+        name : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -53,43 +612,58 @@ class FactoryClient:
 
         Examples
         --------
-        from islo import (
-            IntegrationTriggerSectionInputSelector_Github,
-            Islo,
-            LineManifestInput,
-            LineManifestInputTrigger_IntegrationTrigger,
-            LineSection,
-            LineStage,
-        )
+        from islo import Islo
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-        client.factory.validate_factory_line_manifest(
+        client.factory.delete_factory_line(
             name="name",
-            manifest=LineManifestInput(
-                line=LineSection(
-                    name="name",
-                ),
-                trigger=LineManifestInputTrigger_IntegrationTrigger(
-                    provider="provider",
-                    name="name",
-                    selector=IntegrationTriggerSectionInputSelector_Github(),
-                ),
-                stages=[
-                    LineStage(
-                        id="id",
-                        job="job",
-                    )
-                ],
-            ),
         )
         """
-        _response = self._raw_client.validate_factory_line_manifest(
-            name, manifest=manifest, request_options=request_options
+        _response = self._raw_client.delete_factory_line(name, request_options=request_options)
+        return _response.data
+
+    def update_factory_line(
+        self,
+        name: str,
+        *,
+        status: typing.Optional[LineUpdateStatus] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> LineResponse:
+        """
+        Parameters
+        ----------
+        name : str
+
+        status : typing.Optional[LineUpdateStatus]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
         )
+        client.factory.update_factory_line(
+            name="name",
+        )
+        """
+        _response = self._raw_client.update_factory_line(name, status=status, request_options=request_options)
         return _response.data
 
     def deploy_factory_line(
@@ -124,6 +698,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -133,168 +708,21 @@ class FactoryClient:
                 line=LineSection(
                     name="name",
                 ),
-                trigger=LineManifestInputTrigger_IntegrationTrigger(
-                    provider="provider",
-                    name="name",
-                    selector=IntegrationTriggerSectionInputSelector_Github(),
-                ),
                 stages=[
                     LineStage(
                         id="id",
                         job="job",
                     )
                 ],
+                trigger=LineManifestInputTrigger_IntegrationTrigger(
+                    name="name",
+                    provider="provider",
+                    selector=IntegrationTriggerSectionInputSelector_Github(),
+                ),
             ),
         )
         """
         _response = self._raw_client.deploy_factory_line(name, manifest=manifest, request_options=request_options)
-        return _response.data
-
-    def list_factory_lines(
-        self,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[LineResponse]:
-        """
-        Parameters
-        ----------
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[LineResponse]
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.factory.list_factory_lines()
-        """
-        _response = self._raw_client.list_factory_lines(limit=limit, offset=offset, request_options=request_options)
-        return _response.data
-
-    def get_factory_line(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> LineResponse:
-        """
-        Parameters
-        ----------
-        name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        LineResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.factory.get_factory_line(
-            name="name",
-        )
-        """
-        _response = self._raw_client.get_factory_line(name, request_options=request_options)
-        return _response.data
-
-    def update_factory_line(
-        self,
-        name: str,
-        *,
-        status: typing.Optional[LineUpdateStatus] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> LineResponse:
-        """
-        Parameters
-        ----------
-        name : str
-
-        status : typing.Optional[LineUpdateStatus]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        LineResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.factory.update_factory_line(
-            name="name",
-        )
-        """
-        _response = self._raw_client.update_factory_line(name, status=status, request_options=request_options)
-        return _response.data
-
-    def list_factory_line_versions(
-        self,
-        name: str,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[LineVersionResponse]:
-        """
-        Parameters
-        ----------
-        name : str
-
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[LineVersionResponse]
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.factory.list_factory_line_versions(
-            name="name",
-        )
-        """
-        _response = self._raw_client.list_factory_line_versions(
-            name, limit=limit, offset=offset, request_options=request_options
-        )
         return _response.data
 
     def list_factory_line_runs_for_line(
@@ -302,9 +730,9 @@ class FactoryClient:
         name: str,
         *,
         limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[LineRunSummary]:
+    ) -> SyncPager[LineRunSummary, ListPageLineRunSummary]:
         """
         Parameters
         ----------
@@ -312,14 +740,14 @@ class FactoryClient:
 
         limit : typing.Optional[int]
 
-        offset : typing.Optional[int]
+        cursor : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.List[LineRunSummary]
+        SyncPager[LineRunSummary, ListPageLineRunSummary]
             Successful Response
 
         Examples
@@ -328,26 +756,31 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-        client.factory.list_factory_line_runs_for_line(
+        response = client.factory.list_factory_line_runs_for_line(
             name="name",
         )
+        for item in response:
+            yield item
+        # alternatively, you can paginate page-by-page
+        for page in response.iter_pages():
+            yield page
         """
-        _response = self._raw_client.list_factory_line_runs_for_line(
-            name, limit=limit, offset=offset, request_options=request_options
+        return self._raw_client.list_factory_line_runs_for_line(
+            name, limit=limit, cursor=cursor, request_options=request_options
         )
-        return _response.data
 
     def trigger_factory_line_run(
         self,
         name: str,
         *,
-        version_id: typing.Optional[str] = OMIT,
-        region: typing.Optional[str] = OMIT,
         params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        region: typing.Optional[str] = OMIT,
         trigger_payload: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        version_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> LineRunDetail:
         """
@@ -355,15 +788,15 @@ class FactoryClient:
         ----------
         name : str
 
-        version_id : typing.Optional[str]
-            Deployed line version to run; defaults to latest
+        params : typing.Optional[typing.Dict[str, typing.Any]]
 
         region : typing.Optional[str]
             Compute region override
 
-        params : typing.Optional[typing.Dict[str, typing.Any]]
-
         trigger_payload : typing.Optional[typing.Dict[str, typing.Any]]
+
+        version_id : typing.Optional[str]
+            Deployed line version to run; defaults to latest
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -379,6 +812,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -388,124 +822,12 @@ class FactoryClient:
         """
         _response = self._raw_client.trigger_factory_line_run(
             name,
-            version_id=version_id,
-            region=region,
             params=params,
+            region=region,
             trigger_payload=trigger_payload,
+            version_id=version_id,
             request_options=request_options,
         )
-        return _response.data
-
-    def list_factory_line_runs(
-        self,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        status: typing.Optional[str] = None,
-        line_name: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[LineRunSummary]:
-        """
-        Parameters
-        ----------
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
-
-        status : typing.Optional[str]
-            Filter by run status
-
-        line_name : typing.Optional[str]
-            Filter by line name
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[LineRunSummary]
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.factory.list_factory_line_runs()
-        """
-        _response = self._raw_client.list_factory_line_runs(
-            limit=limit, offset=offset, status=status, line_name=line_name, request_options=request_options
-        )
-        return _response.data
-
-    def get_factory_line_run(
-        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> LineRunDetail:
-        """
-        Parameters
-        ----------
-        run_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        LineRunDetail
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.factory.get_factory_line_run(
-            run_id="run_id",
-        )
-        """
-        _response = self._raw_client.get_factory_line_run(run_id, request_options=request_options)
-        return _response.data
-
-    def get_factory_line_run_debug(
-        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> LineRunDebugResponse:
-        """
-        Per-stage and per-step diagnostics for one line run, including the last failed stage attempt's first failing step, each step's exit code and output tails, and the sandbox environment each stage ran in.
-
-        Parameters
-        ----------
-        run_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        LineRunDebugResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.factory.get_factory_line_run_debug(
-            run_id="run_id",
-        )
-        """
-        _response = self._raw_client.get_factory_line_run_debug(run_id, request_options=request_options)
         return _response.data
 
     def get_factory_line_schedule(
@@ -530,6 +852,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -545,8 +868,9 @@ class FactoryClient:
         name: str,
         *,
         cron: str,
-        timezone: typing.Optional[str] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
+        inputs: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        timezone: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> LineScheduleResponse:
         """
@@ -556,9 +880,11 @@ class FactoryClient:
 
         cron : str
 
-        timezone : typing.Optional[str]
-
         enabled : typing.Optional[bool]
+
+        inputs : typing.Optional[typing.Dict[str, typing.Any]]
+
+        timezone : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -574,6 +900,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -583,7 +910,7 @@ class FactoryClient:
         )
         """
         _response = self._raw_client.upsert_factory_line_schedule(
-            name, cron=cron, timezone=timezone, enabled=enabled, request_options=request_options
+            name, cron=cron, enabled=enabled, inputs=inputs, timezone=timezone, request_options=request_options
         )
         return _response.data
 
@@ -608,6 +935,7 @@ class FactoryClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -618,23 +946,7 @@ class FactoryClient:
         _response = self._raw_client.delete_factory_line_schedule(name, request_options=request_options)
         return _response.data
 
-
-class AsyncFactoryClient:
-    def __init__(self, *, client_wrapper: AsyncClientWrapper):
-        self._raw_client = AsyncRawFactoryClient(client_wrapper=client_wrapper)
-
-    @property
-    def with_raw_response(self) -> AsyncRawFactoryClient:
-        """
-        Retrieves a raw implementation of this client that returns raw responses.
-
-        Returns
-        -------
-        AsyncRawFactoryClient
-        """
-        return self._raw_client
-
-    async def validate_factory_line_manifest(
+    def validate_factory_line_manifest(
         self, name: str, *, manifest: LineManifestInput, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
@@ -654,11 +966,9 @@ class AsyncFactoryClient:
 
         Examples
         --------
-        import asyncio
-
         from islo import (
-            AsyncIslo,
             IntegrationTriggerSectionInputSelector_Github,
+            Islo,
             LineManifestInput,
             LineManifestInputTrigger_IntegrationTrigger,
             LineSection,
@@ -666,39 +976,840 @@ class AsyncFactoryClient:
         )
         from islo.environment import IsloEnvironment
 
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.factory.validate_factory_line_manifest(
+            name="name",
+            manifest=LineManifestInput(
+                line=LineSection(
+                    name="name",
+                ),
+                stages=[
+                    LineStage(
+                        id="id",
+                        job="job",
+                    )
+                ],
+                trigger=LineManifestInputTrigger_IntegrationTrigger(
+                    name="name",
+                    provider="provider",
+                    selector=IntegrationTriggerSectionInputSelector_Github(),
+                ),
+            ),
+        )
+        """
+        _response = self._raw_client.validate_factory_line_manifest(
+            name, manifest=manifest, request_options=request_options
+        )
+        return _response.data
+
+    def list_factory_line_versions(
+        self,
+        name: str,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SyncPager[LineVersionResponse, ListPageLineVersionResponse]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SyncPager[LineVersionResponse, ListPageLineVersionResponse]
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        response = client.factory.list_factory_line_versions(
+            name="name",
+        )
+        for item in response:
+            yield item
+        # alternatively, you can paginate page-by-page
+        for page in response.iter_pages():
+            yield page
+        """
+        return self._raw_client.list_factory_line_versions(
+            name, limit=limit, cursor=cursor, request_options=request_options
+        )
+
+
+class AsyncFactoryClient:
+    def __init__(self, *, client_wrapper: AsyncClientWrapper):
+        self._raw_client = AsyncRawFactoryClient(client_wrapper=client_wrapper)
+
+    @property
+    def with_raw_response(self) -> AsyncRawFactoryClient:
+        """
+        Retrieves a raw implementation of this client that returns raw responses.
+
+        Returns
+        -------
+        AsyncRawFactoryClient
+        """
+        return self._raw_client
+
+    async def list_factory_line_runs(
+        self,
+        *,
+        limit: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        sort: typing.Optional[str] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        line_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncPager[LineRunSummary, ListPageLineRunSummary]:
+        """
+        Parameters
+        ----------
+        limit : typing.Optional[int]
+
+        offset : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        sort : typing.Optional[str]
+            Sort order. Allowed: -created_at, created_at
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        line_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncPager[LineRunSummary, ListPageLineRunSummary]
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
 
 
         async def main() -> None:
-            await client.factory.validate_factory_line_manifest(
-                name="name",
-                manifest=LineManifestInput(
-                    line=LineSection(
-                        name="name",
-                    ),
-                    trigger=LineManifestInputTrigger_IntegrationTrigger(
-                        provider="provider",
-                        name="name",
-                        selector=IntegrationTriggerSectionInputSelector_Github(),
-                    ),
-                    stages=[
-                        LineStage(
-                            id="id",
-                            job="job",
-                        )
-                    ],
-                ),
+            response = await client.factory.list_factory_line_runs()
+            async for item in response:
+                yield item
+
+            # alternatively, you can paginate page-by-page
+            async for page in response.iter_pages():
+                yield page
+
+
+        asyncio.run(main())
+        """
+        return await self._raw_client.list_factory_line_runs(
+            limit=limit,
+            offset=offset,
+            cursor=cursor,
+            sort=sort,
+            include=include,
+            status=status,
+            line_name=line_name,
+            created_at=created_at,
+            q=q,
+            request_options=request_options,
+        )
+
+    async def list_factory_line_run_facets(
+        self,
+        *,
+        fields: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        line_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> FacetsResponse:
+        """
+        Parameters
+        ----------
+        fields : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+            Facet fields to return (e.g. line_name, status)
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        line_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        FacetsResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.factory.list_factory_line_run_facets(
+                fields=["fields"],
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.validate_factory_line_manifest(
-            name, manifest=manifest, request_options=request_options
+        _response = await self._raw_client.list_factory_line_run_facets(
+            fields=fields,
+            status=status,
+            line_name=line_name,
+            created_at=created_at,
+            q=q,
+            request_options=request_options,
         )
+        return _response.data
+
+    async def get_factory_line_run(
+        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> LineRunDetail:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineRunDetail
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.factory.get_factory_line_run(
+                run_id="run_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_factory_line_run(run_id, request_options=request_options)
+        return _response.data
+
+    async def ask_factory_line_run(
+        self,
+        run_id: str,
+        *,
+        message: str,
+        origin: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> LineRunDetail:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        message : str
+            Instruction or context for the line run's manager
+
+        origin : typing.Optional[str]
+            Optional Slack thread permalink whose activity status should follow this manager turn
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineRunDetail
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.factory.ask_factory_line_run(
+                run_id="run_id",
+                message="message",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.ask_factory_line_run(
+            run_id, message=message, origin=origin, request_options=request_options
+        )
+        return _response.data
+
+    async def cancel_factory_line_run(
+        self,
+        run_id: str,
+        *,
+        reason: typing.Optional[str] = OMIT,
+        stage_name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> LineRunDetail:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        reason : typing.Optional[str]
+
+        stage_name : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineRunDetail
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.factory.cancel_factory_line_run(
+                run_id="run_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.cancel_factory_line_run(
+            run_id, reason=reason, stage_name=stage_name, request_options=request_options
+        )
+        return _response.data
+
+    async def get_factory_line_run_debug(
+        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> LineRunDebugResponse:
+        """
+        Per-stage and per-step diagnostics for one line run, including the last failed stage attempt's first failing step, each step's exit code and output tails, and the sandbox environment each stage ran in.
+
+        Parameters
+        ----------
+        run_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineRunDebugResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.factory.get_factory_line_run_debug(
+                run_id="run_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_factory_line_run_debug(run_id, request_options=request_options)
+        return _response.data
+
+    async def list_factory_line_run_events(
+        self,
+        run_id: str,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        event_types: typing.Optional[typing.Sequence[str]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncPager[LineEventResponse, ListPageLineEventResponse]:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        event_types : typing.Optional[typing.Sequence[str]]
+            Restrict the timeline to these event types
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncPager[LineEventResponse, ListPageLineEventResponse]
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            response = await client.factory.list_factory_line_run_events(
+                run_id="run_id",
+            )
+            async for item in response:
+                yield item
+
+            # alternatively, you can paginate page-by-page
+            async for page in response.iter_pages():
+                yield page
+
+
+        asyncio.run(main())
+        """
+        return await self._raw_client.list_factory_line_run_events(
+            run_id,
+            limit=limit,
+            cursor=cursor,
+            include=include,
+            event_types=event_types,
+            request_options=request_options,
+        )
+
+    async def retry_factory_line_run(
+        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> LineRunDetail:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineRunDetail
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.factory.retry_factory_line_run(
+                run_id="run_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.retry_factory_line_run(run_id, request_options=request_options)
+        return _response.data
+
+    async def steer_factory_line_run(
+        self,
+        run_id: str,
+        *,
+        stage_name: str,
+        params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        reason: typing.Optional[str] = OMIT,
+        reset_iterations: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> LineRunDetail:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        stage_name : str
+
+        params : typing.Optional[typing.Dict[str, typing.Any]]
+
+        reason : typing.Optional[str]
+
+        reset_iterations : typing.Optional[bool]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineRunDetail
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.factory.steer_factory_line_run(
+                run_id="run_id",
+                stage_name="stage_name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.steer_factory_line_run(
+            run_id,
+            stage_name=stage_name,
+            params=params,
+            reason=reason,
+            reset_iterations=reset_iterations,
+            request_options=request_options,
+        )
+        return _response.data
+
+    async def stop_factory_line_run(
+        self,
+        run_id: str,
+        *,
+        reason: typing.Optional[str] = OMIT,
+        stage_name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> LineRunDetail:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        reason : typing.Optional[str]
+
+        stage_name : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineRunDetail
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.factory.stop_factory_line_run(
+                run_id="run_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.stop_factory_line_run(
+            run_id, reason=reason, stage_name=stage_name, request_options=request_options
+        )
+        return _response.data
+
+    async def list_factory_lines(
+        self,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncPager[LineResponse, ListPageLineResponse]:
+        """
+        Parameters
+        ----------
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncPager[LineResponse, ListPageLineResponse]
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            response = await client.factory.list_factory_lines()
+            async for item in response:
+                yield item
+
+            # alternatively, you can paginate page-by-page
+            async for page in response.iter_pages():
+                yield page
+
+
+        asyncio.run(main())
+        """
+        return await self._raw_client.list_factory_lines(limit=limit, cursor=cursor, request_options=request_options)
+
+    async def get_factory_line(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> LineResponse:
+        """
+        Parameters
+        ----------
+        name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.factory.get_factory_line(
+                name="name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_factory_line(name, request_options=request_options)
+        return _response.data
+
+    async def delete_factory_line(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.factory.delete_factory_line(
+                name="name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.delete_factory_line(name, request_options=request_options)
+        return _response.data
+
+    async def update_factory_line(
+        self,
+        name: str,
+        *,
+        status: typing.Optional[LineUpdateStatus] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> LineResponse:
+        """
+        Parameters
+        ----------
+        name : str
+
+        status : typing.Optional[LineUpdateStatus]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LineResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.factory.update_factory_line(
+                name="name",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.update_factory_line(name, status=status, request_options=request_options)
         return _response.data
 
     async def deploy_factory_line(
@@ -735,6 +1846,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -747,17 +1859,17 @@ class AsyncFactoryClient:
                     line=LineSection(
                         name="name",
                     ),
-                    trigger=LineManifestInputTrigger_IntegrationTrigger(
-                        provider="provider",
-                        name="name",
-                        selector=IntegrationTriggerSectionInputSelector_Github(),
-                    ),
                     stages=[
                         LineStage(
                             id="id",
                             job="job",
                         )
                     ],
+                    trigger=LineManifestInputTrigger_IntegrationTrigger(
+                        name="name",
+                        provider="provider",
+                        selector=IntegrationTriggerSectionInputSelector_Github(),
+                    ),
                 ),
             )
 
@@ -767,197 +1879,14 @@ class AsyncFactoryClient:
         _response = await self._raw_client.deploy_factory_line(name, manifest=manifest, request_options=request_options)
         return _response.data
 
-    async def list_factory_lines(
-        self,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[LineResponse]:
-        """
-        Parameters
-        ----------
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[LineResponse]
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-        from islo.environment import IsloEnvironment
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-
-
-        async def main() -> None:
-            await client.factory.list_factory_lines()
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.list_factory_lines(
-            limit=limit, offset=offset, request_options=request_options
-        )
-        return _response.data
-
-    async def get_factory_line(
-        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> LineResponse:
-        """
-        Parameters
-        ----------
-        name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        LineResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-        from islo.environment import IsloEnvironment
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-
-
-        async def main() -> None:
-            await client.factory.get_factory_line(
-                name="name",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.get_factory_line(name, request_options=request_options)
-        return _response.data
-
-    async def update_factory_line(
-        self,
-        name: str,
-        *,
-        status: typing.Optional[LineUpdateStatus] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> LineResponse:
-        """
-        Parameters
-        ----------
-        name : str
-
-        status : typing.Optional[LineUpdateStatus]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        LineResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-        from islo.environment import IsloEnvironment
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-
-
-        async def main() -> None:
-            await client.factory.update_factory_line(
-                name="name",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.update_factory_line(name, status=status, request_options=request_options)
-        return _response.data
-
-    async def list_factory_line_versions(
-        self,
-        name: str,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[LineVersionResponse]:
-        """
-        Parameters
-        ----------
-        name : str
-
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[LineVersionResponse]
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-        from islo.environment import IsloEnvironment
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-
-
-        async def main() -> None:
-            await client.factory.list_factory_line_versions(
-                name="name",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.list_factory_line_versions(
-            name, limit=limit, offset=offset, request_options=request_options
-        )
-        return _response.data
-
     async def list_factory_line_runs_for_line(
         self,
         name: str,
         *,
         limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[LineRunSummary]:
+    ) -> AsyncPager[LineRunSummary, ListPageLineRunSummary]:
         """
         Parameters
         ----------
@@ -965,14 +1894,14 @@ class AsyncFactoryClient:
 
         limit : typing.Optional[int]
 
-        offset : typing.Optional[int]
+        cursor : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.List[LineRunSummary]
+        AsyncPager[LineRunSummary, ListPageLineRunSummary]
             Successful Response
 
         Examples
@@ -983,32 +1912,38 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
 
 
         async def main() -> None:
-            await client.factory.list_factory_line_runs_for_line(
+            response = await client.factory.list_factory_line_runs_for_line(
                 name="name",
             )
+            async for item in response:
+                yield item
+
+            # alternatively, you can paginate page-by-page
+            async for page in response.iter_pages():
+                yield page
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.list_factory_line_runs_for_line(
-            name, limit=limit, offset=offset, request_options=request_options
+        return await self._raw_client.list_factory_line_runs_for_line(
+            name, limit=limit, cursor=cursor, request_options=request_options
         )
-        return _response.data
 
     async def trigger_factory_line_run(
         self,
         name: str,
         *,
-        version_id: typing.Optional[str] = OMIT,
-        region: typing.Optional[str] = OMIT,
         params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        region: typing.Optional[str] = OMIT,
         trigger_payload: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        version_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> LineRunDetail:
         """
@@ -1016,15 +1951,15 @@ class AsyncFactoryClient:
         ----------
         name : str
 
-        version_id : typing.Optional[str]
-            Deployed line version to run; defaults to latest
+        params : typing.Optional[typing.Dict[str, typing.Any]]
 
         region : typing.Optional[str]
             Compute region override
 
-        params : typing.Optional[typing.Dict[str, typing.Any]]
-
         trigger_payload : typing.Optional[typing.Dict[str, typing.Any]]
+
+        version_id : typing.Optional[str]
+            Deployed line version to run; defaults to latest
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1042,6 +1977,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -1057,148 +1993,12 @@ class AsyncFactoryClient:
         """
         _response = await self._raw_client.trigger_factory_line_run(
             name,
-            version_id=version_id,
-            region=region,
             params=params,
+            region=region,
             trigger_payload=trigger_payload,
+            version_id=version_id,
             request_options=request_options,
         )
-        return _response.data
-
-    async def list_factory_line_runs(
-        self,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        status: typing.Optional[str] = None,
-        line_name: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[LineRunSummary]:
-        """
-        Parameters
-        ----------
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
-
-        status : typing.Optional[str]
-            Filter by run status
-
-        line_name : typing.Optional[str]
-            Filter by line name
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[LineRunSummary]
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-        from islo.environment import IsloEnvironment
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-
-
-        async def main() -> None:
-            await client.factory.list_factory_line_runs()
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.list_factory_line_runs(
-            limit=limit, offset=offset, status=status, line_name=line_name, request_options=request_options
-        )
-        return _response.data
-
-    async def get_factory_line_run(
-        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> LineRunDetail:
-        """
-        Parameters
-        ----------
-        run_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        LineRunDetail
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-        from islo.environment import IsloEnvironment
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-
-
-        async def main() -> None:
-            await client.factory.get_factory_line_run(
-                run_id="run_id",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.get_factory_line_run(run_id, request_options=request_options)
-        return _response.data
-
-    async def get_factory_line_run_debug(
-        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> LineRunDebugResponse:
-        """
-        Per-stage and per-step diagnostics for one line run, including the last failed stage attempt's first failing step, each step's exit code and output tails, and the sandbox environment each stage ran in.
-
-        Parameters
-        ----------
-        run_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        LineRunDebugResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-        from islo.environment import IsloEnvironment
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-
-
-        async def main() -> None:
-            await client.factory.get_factory_line_run_debug(
-                run_id="run_id",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.get_factory_line_run_debug(run_id, request_options=request_options)
         return _response.data
 
     async def get_factory_line_schedule(
@@ -1225,6 +2025,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -1246,8 +2047,9 @@ class AsyncFactoryClient:
         name: str,
         *,
         cron: str,
-        timezone: typing.Optional[str] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
+        inputs: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        timezone: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> LineScheduleResponse:
         """
@@ -1257,9 +2059,11 @@ class AsyncFactoryClient:
 
         cron : str
 
-        timezone : typing.Optional[str]
-
         enabled : typing.Optional[bool]
+
+        inputs : typing.Optional[typing.Dict[str, typing.Any]]
+
+        timezone : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1277,6 +2081,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -1292,7 +2097,7 @@ class AsyncFactoryClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.upsert_factory_line_schedule(
-            name, cron=cron, timezone=timezone, enabled=enabled, request_options=request_options
+            name, cron=cron, enabled=enabled, inputs=inputs, timezone=timezone, request_options=request_options
         )
         return _response.data
 
@@ -1319,6 +2124,7 @@ class AsyncFactoryClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -1334,3 +2140,128 @@ class AsyncFactoryClient:
         """
         _response = await self._raw_client.delete_factory_line_schedule(name, request_options=request_options)
         return _response.data
+
+    async def validate_factory_line_manifest(
+        self, name: str, *, manifest: LineManifestInput, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+
+        manifest : LineManifestInput
+            Line manifest (authored as TOML or JSON, stored as JSON)
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import (
+            AsyncIslo,
+            IntegrationTriggerSectionInputSelector_Github,
+            LineManifestInput,
+            LineManifestInputTrigger_IntegrationTrigger,
+            LineSection,
+            LineStage,
+        )
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.factory.validate_factory_line_manifest(
+                name="name",
+                manifest=LineManifestInput(
+                    line=LineSection(
+                        name="name",
+                    ),
+                    stages=[
+                        LineStage(
+                            id="id",
+                            job="job",
+                        )
+                    ],
+                    trigger=LineManifestInputTrigger_IntegrationTrigger(
+                        name="name",
+                        provider="provider",
+                        selector=IntegrationTriggerSectionInputSelector_Github(),
+                    ),
+                ),
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.validate_factory_line_manifest(
+            name, manifest=manifest, request_options=request_options
+        )
+        return _response.data
+
+    async def list_factory_line_versions(
+        self,
+        name: str,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncPager[LineVersionResponse, ListPageLineVersionResponse]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncPager[LineVersionResponse, ListPageLineVersionResponse]
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            response = await client.factory.list_factory_line_versions(
+                name="name",
+            )
+            async for item in response:
+                yield item
+
+            # alternatively, you can paginate page-by-page
+            async for page in response.iter_pages():
+                yield page
+
+
+        asyncio.run(main())
+        """
+        return await self._raw_client.list_factory_line_versions(
+            name, limit=limit, cursor=cursor, request_options=request_options
+        )

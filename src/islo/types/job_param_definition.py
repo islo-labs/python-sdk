@@ -9,14 +9,14 @@ from .job_param_definition_type import JobParamDefinitionType
 
 
 class JobParamDefinition(UniversalBaseModel):
-    name: str
-    type: JobParamDefinitionType
-    items: typing.Optional[JobParamDefinitionItems] = None
-    required: typing.Optional[bool] = None
     default: typing.Optional[typing.Any] = None
     description: typing.Optional[str] = None
+    enum: typing.Optional[typing.List[typing.Any]] = None
+    items: typing.Optional[JobParamDefinitionItems] = None
+    name: str
     pattern: typing.Optional[str] = None
     prefix: typing.Optional[str] = None
-    enum: typing.Optional[typing.List[typing.Any]] = None
+    required: typing.Optional[bool] = None
+    type: JobParamDefinitionType
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

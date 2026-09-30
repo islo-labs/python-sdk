@@ -9,15 +9,15 @@ from .line_run_debug_step import LineRunDebugStep
 
 
 class LineRunDebugStage(UniversalBaseModel):
-    stage_name: typing.Optional[str] = None
-    stage_order: typing.Optional[int] = None
+    environment: typing.Optional[LineRunDebugEnvironment] = None
     iteration: typing.Optional[int] = None
-    status: typing.Optional[str] = None
-    outcome: typing.Optional[str] = None
-    reason: typing.Optional[str] = None
     job_run_id: typing.Optional[str] = None
     job_version_id: typing.Optional[str] = None
+    outcome: typing.Optional[str] = None
+    reason: typing.Optional[str] = None
+    stage_name: typing.Optional[str] = None
+    stage_order: typing.Optional[int] = None
+    status: typing.Optional[str] = None
     steps: typing.Optional[typing.List[LineRunDebugStep]] = None
-    environment: typing.Optional[LineRunDebugEnvironment] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

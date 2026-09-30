@@ -3,22 +3,29 @@
 import typing
 from json.decoder import JSONDecodeError
 
+from .. import core
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
+from ..core.pagination import AsyncPager, SyncPager
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
+from ..types.facets_response import FacetsResponse
+from ..types.knowledge_item_list_response import KnowledgeItemListResponse
 from ..types.knowledge_item_response import KnowledgeItemResponse
 from ..types.knowledge_level import KnowledgeLevel
 from ..types.knowledge_link_input import KnowledgeLinkInput
 from ..types.knowledge_status import KnowledgeStatus
+from ..types.knowledge_version_list_response import KnowledgeVersionListResponse
 from ..types.knowledge_version_response import KnowledgeVersionResponse
-from ..types.paginated_knowledge_response import PaginatedKnowledgeResponse
-from ..types.paginated_knowledge_version_response import PaginatedKnowledgeVersionResponse
+from ..types.list_page_knowledge_item_list_response import ListPageKnowledgeItemListResponse
+from ..types.list_page_knowledge_version_list_response import ListPageKnowledgeVersionListResponse
+from .types.list_knowledge_request_sort import ListKnowledgeRequestSort
+from .types.list_knowledge_versions_request_sort import ListKnowledgeVersionsRequestSort
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -33,17 +40,22 @@ class RawKnowledgeClient:
         self,
         *,
         level: typing.Optional[KnowledgeLevel] = None,
+        type: typing.Optional[KnowledgeLevel] = None,
         tag: typing.Optional[str] = None,
         repository: typing.Optional[str] = None,
         q: typing.Optional[str] = None,
         cursor: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
+        sort: typing.Optional[ListKnowledgeRequestSort] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PaginatedKnowledgeResponse]:
+    ) -> SyncPager[KnowledgeItemListResponse, ListPageKnowledgeItemListResponse]:
         """
         Parameters
         ----------
         level : typing.Optional[KnowledgeLevel]
+
+        type : typing.Optional[KnowledgeLevel]
 
         tag : typing.Optional[str]
 
@@ -56,12 +68,16 @@ class RawKnowledgeClient:
 
         limit : typing.Optional[int]
 
+        sort : typing.Optional[ListKnowledgeRequestSort]
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[PaginatedKnowledgeResponse]
+        SyncPager[KnowledgeItemListResponse, ListPageKnowledgeItemListResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -70,24 +86,42 @@ class RawKnowledgeClient:
             method="GET",
             params={
                 "level": level,
+                "type": type,
                 "tag": tag,
                 "repository": repository,
                 "q": q,
                 "cursor": cursor,
                 "limit": limit,
+                "sort": sort,
+                "include": include,
             },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    PaginatedKnowledgeResponse,
+                _parsed_response = typing.cast(
+                    ListPageKnowledgeItemListResponse,
                     parse_obj_as(
-                        type_=PaginatedKnowledgeResponse,  # type: ignore
+                        type_=ListPageKnowledgeItemListResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
-                return HttpResponse(response=_response, data=_data)
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+                _get_next = lambda: self.list_knowledge(
+                    level=level,
+                    type=type,
+                    tag=tag,
+                    repository=repository,
+                    q=q,
+                    cursor=_parsed_next,
+                    limit=limit,
+                    sort=sort,
+                    include=include,
+                    request_options=request_options,
+                )
+                return SyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -112,11 +146,12 @@ class RawKnowledgeClient:
         self,
         *,
         slug: str,
-        level: KnowledgeLevel,
-        body: str,
+        body: typing.Optional[str] = OMIT,
         format: typing.Optional[str] = OMIT,
-        metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        level: typing.Optional[KnowledgeLevel] = OMIT,
         links: typing.Optional[typing.Sequence[KnowledgeLinkInput]] = OMIT,
+        metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        type: typing.Optional[KnowledgeLevel] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[KnowledgeItemResponse]:
         """
@@ -125,15 +160,17 @@ class RawKnowledgeClient:
         slug : str
             Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
 
-        level : KnowledgeLevel
-
-        body : str
+        body : typing.Optional[str]
 
         format : typing.Optional[str]
 
-        metadata : typing.Optional[typing.Dict[str, typing.Any]]
+        level : typing.Optional[KnowledgeLevel]
 
         links : typing.Optional[typing.Sequence[KnowledgeLinkInput]]
+
+        metadata : typing.Optional[typing.Dict[str, typing.Any]]
+
+        type : typing.Optional[KnowledgeLevel]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -148,20 +185,193 @@ class RawKnowledgeClient:
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "slug": slug,
-                "level": level,
-                "format": format,
                 "body": body,
-                "metadata": metadata,
+                "format": format,
+                "level": level,
                 "links": convert_and_respect_annotation_metadata(
                     object_=links, annotation=typing.Sequence[KnowledgeLinkInput], direction="write"
                 ),
+                "metadata": metadata,
+                "slug": slug,
+                "type": type,
             },
             headers={
                 "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    KnowledgeItemResponse,
+                    parse_obj_as(
+                        type_=KnowledgeItemResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def list_knowledge_facets(
+        self,
+        *,
+        fields: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[FacetsResponse]:
+        """
+        Parameters
+        ----------
+        fields : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[FacetsResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "knowledge/facets",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "fields": fields,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    FacetsResponse,
+                    parse_obj_as(
+                        type_=FacetsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def list_knowledge_tags(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[FacetsResponse]:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[FacetsResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "knowledge/tags",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    FacetsResponse,
+                    parse_obj_as(
+                        type_=FacetsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def create_knowledge_media(
+        self, *, file: core.File, item: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[KnowledgeItemResponse]:
+        """
+        Parameters
+        ----------
+        file : core.File
+            See core.File for more documentation
+
+        item : str
+            JSON metadata for the knowledge item
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[KnowledgeItemResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "knowledge/upload",
+            base_url=self._client_wrapper.get_environment().control,
+            method="POST",
+            data={
+                "item": item,
+            },
+            files={
+                "file": file,
+            },
+            request_options=request_options,
+            omit=OMIT,
+            force_multipart=True,
         )
         try:
             if 200 <= _response.status_code < 300:
@@ -211,7 +421,7 @@ class RawKnowledgeClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"knowledge/{jsonable_encoder(identifier)}",
+            f"knowledge/{encode_path_param(identifier)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -263,7 +473,7 @@ class RawKnowledgeClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"knowledge/{jsonable_encoder(identifier)}",
+            f"knowledge/{encode_path_param(identifier)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -295,12 +505,13 @@ class RawKnowledgeClient:
         self,
         identifier: str,
         *,
-        level: typing.Optional[KnowledgeLevel] = OMIT,
-        format: typing.Optional[str] = OMIT,
         body: typing.Optional[str] = OMIT,
+        format: typing.Optional[str] = OMIT,
+        level: typing.Optional[KnowledgeLevel] = OMIT,
+        links: typing.Optional[typing.Sequence[KnowledgeLinkInput]] = OMIT,
         metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         status: typing.Optional[KnowledgeStatus] = OMIT,
-        links: typing.Optional[typing.Sequence[KnowledgeLinkInput]] = OMIT,
+        type: typing.Optional[KnowledgeLevel] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[KnowledgeItemResponse]:
         """
@@ -309,17 +520,19 @@ class RawKnowledgeClient:
         identifier : str
             Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
 
-        level : typing.Optional[KnowledgeLevel]
+        body : typing.Optional[str]
 
         format : typing.Optional[str]
 
-        body : typing.Optional[str]
+        level : typing.Optional[KnowledgeLevel]
+
+        links : typing.Optional[typing.Sequence[KnowledgeLinkInput]]
 
         metadata : typing.Optional[typing.Dict[str, typing.Any]]
 
         status : typing.Optional[KnowledgeStatus]
 
-        links : typing.Optional[typing.Sequence[KnowledgeLinkInput]]
+        type : typing.Optional[KnowledgeLevel]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -330,18 +543,19 @@ class RawKnowledgeClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"knowledge/{jsonable_encoder(identifier)}",
+            f"knowledge/{encode_path_param(identifier)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
-                "level": level,
-                "format": format,
                 "body": body,
-                "metadata": metadata,
-                "status": status,
+                "format": format,
+                "level": level,
                 "links": convert_and_respect_annotation_metadata(
                     object_=links, annotation=typing.Optional[typing.Sequence[KnowledgeLinkInput]], direction="write"
                 ),
+                "metadata": metadata,
+                "status": status,
+                "type": type,
             },
             headers={
                 "content-type": "application/json",
@@ -379,48 +593,37 @@ class RawKnowledgeClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def list_knowledge_versions(
-        self,
-        identifier: str,
-        *,
-        cursor: typing.Optional[str] = None,
-        limit: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[PaginatedKnowledgeVersionResponse]:
+    def get_knowledge_content(
+        self, identifier: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[typing.Any]:
         """
         Parameters
         ----------
         identifier : str
             Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
 
-        cursor : typing.Optional[str]
-
-        limit : typing.Optional[int]
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[PaginatedKnowledgeVersionResponse]
+        HttpResponse[typing.Any]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"knowledge/{jsonable_encoder(identifier)}/versions",
+            f"knowledge/{encode_path_param(identifier)}/content",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
-            params={
-                "cursor": cursor,
-                "limit": limit,
-            },
             request_options=request_options,
         )
         try:
+            if _response is None or not _response.text.strip():
+                return HttpResponse(response=_response, data=None)
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PaginatedKnowledgeVersionResponse,
+                    typing.Any,
                     parse_obj_as(
-                        type_=PaginatedKnowledgeVersionResponse,  # type: ignore
+                        type_=typing.Any,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -445,37 +648,44 @@ class RawKnowledgeClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get_knowledge_version(
-        self, identifier: str, version_number: int, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[KnowledgeVersionResponse]:
+    def put_knowledge_content(
+        self, identifier: str, *, file: core.File, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[KnowledgeItemResponse]:
         """
         Parameters
         ----------
         identifier : str
             Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
 
-        version_number : int
+        file : core.File
+            See core.File for more documentation
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[KnowledgeVersionResponse]
+        HttpResponse[KnowledgeItemResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"knowledge/{jsonable_encoder(identifier)}/versions/{jsonable_encoder(version_number)}",
+            f"knowledge/{encode_path_param(identifier)}/content",
             base_url=self._client_wrapper.get_environment().control,
-            method="GET",
+            method="PUT",
+            data={},
+            files={
+                "file": file,
+            },
             request_options=request_options,
+            omit=OMIT,
+            force_multipart=True,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    KnowledgeVersionResponse,
+                    KnowledgeItemResponse,
                     parse_obj_as(
-                        type_=KnowledgeVersionResponse,  # type: ignore
+                        type_=KnowledgeItemResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -520,7 +730,7 @@ class RawKnowledgeClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"knowledge/{jsonable_encoder(identifier)}/restore",
+            f"knowledge/{encode_path_param(identifier)}/restore",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -562,6 +772,203 @@ class RawKnowledgeClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    def list_knowledge_versions(
+        self,
+        identifier: str,
+        *,
+        cursor: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        sort: typing.Optional[ListKnowledgeVersionsRequestSort] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SyncPager[KnowledgeVersionListResponse, ListPageKnowledgeVersionListResponse]:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        cursor : typing.Optional[str]
+
+        limit : typing.Optional[int]
+
+        sort : typing.Optional[ListKnowledgeVersionsRequestSort]
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SyncPager[KnowledgeVersionListResponse, ListPageKnowledgeVersionListResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"knowledge/{encode_path_param(identifier)}/versions",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "cursor": cursor,
+                "limit": limit,
+                "sort": sort,
+                "include": include,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    ListPageKnowledgeVersionListResponse,
+                    parse_obj_as(
+                        type_=ListPageKnowledgeVersionListResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+                _get_next = lambda: self.list_knowledge_versions(
+                    identifier,
+                    cursor=_parsed_next,
+                    limit=limit,
+                    sort=sort,
+                    include=include,
+                    request_options=request_options,
+                )
+                return SyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_knowledge_version(
+        self, identifier: str, version_number: int, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[KnowledgeVersionResponse]:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        version_number : int
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[KnowledgeVersionResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"knowledge/{encode_path_param(identifier)}/versions/{encode_path_param(version_number)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    KnowledgeVersionResponse,
+                    parse_obj_as(
+                        type_=KnowledgeVersionResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_knowledge_version_content(
+        self, identifier: str, version_number: int, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[typing.Any]:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        version_number : int
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[typing.Any]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"knowledge/{encode_path_param(identifier)}/versions/{encode_path_param(version_number)}/content",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if _response is None or not _response.text.strip():
+                return HttpResponse(response=_response, data=None)
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    typing.Any,
+                    parse_obj_as(
+                        type_=typing.Any,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
 
 class AsyncRawKnowledgeClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -571,17 +978,22 @@ class AsyncRawKnowledgeClient:
         self,
         *,
         level: typing.Optional[KnowledgeLevel] = None,
+        type: typing.Optional[KnowledgeLevel] = None,
         tag: typing.Optional[str] = None,
         repository: typing.Optional[str] = None,
         q: typing.Optional[str] = None,
         cursor: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
+        sort: typing.Optional[ListKnowledgeRequestSort] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PaginatedKnowledgeResponse]:
+    ) -> AsyncPager[KnowledgeItemListResponse, ListPageKnowledgeItemListResponse]:
         """
         Parameters
         ----------
         level : typing.Optional[KnowledgeLevel]
+
+        type : typing.Optional[KnowledgeLevel]
 
         tag : typing.Optional[str]
 
@@ -594,12 +1006,16 @@ class AsyncRawKnowledgeClient:
 
         limit : typing.Optional[int]
 
+        sort : typing.Optional[ListKnowledgeRequestSort]
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[PaginatedKnowledgeResponse]
+        AsyncPager[KnowledgeItemListResponse, ListPageKnowledgeItemListResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -608,24 +1024,45 @@ class AsyncRawKnowledgeClient:
             method="GET",
             params={
                 "level": level,
+                "type": type,
                 "tag": tag,
                 "repository": repository,
                 "q": q,
                 "cursor": cursor,
                 "limit": limit,
+                "sort": sort,
+                "include": include,
             },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    PaginatedKnowledgeResponse,
+                _parsed_response = typing.cast(
+                    ListPageKnowledgeItemListResponse,
                     parse_obj_as(
-                        type_=PaginatedKnowledgeResponse,  # type: ignore
+                        type_=ListPageKnowledgeItemListResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
-                return AsyncHttpResponse(response=_response, data=_data)
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+
+                async def _get_next():
+                    return await self.list_knowledge(
+                        level=level,
+                        type=type,
+                        tag=tag,
+                        repository=repository,
+                        q=q,
+                        cursor=_parsed_next,
+                        limit=limit,
+                        sort=sort,
+                        include=include,
+                        request_options=request_options,
+                    )
+
+                return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -650,11 +1087,12 @@ class AsyncRawKnowledgeClient:
         self,
         *,
         slug: str,
-        level: KnowledgeLevel,
-        body: str,
+        body: typing.Optional[str] = OMIT,
         format: typing.Optional[str] = OMIT,
-        metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        level: typing.Optional[KnowledgeLevel] = OMIT,
         links: typing.Optional[typing.Sequence[KnowledgeLinkInput]] = OMIT,
+        metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        type: typing.Optional[KnowledgeLevel] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[KnowledgeItemResponse]:
         """
@@ -663,15 +1101,17 @@ class AsyncRawKnowledgeClient:
         slug : str
             Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
 
-        level : KnowledgeLevel
-
-        body : str
+        body : typing.Optional[str]
 
         format : typing.Optional[str]
 
-        metadata : typing.Optional[typing.Dict[str, typing.Any]]
+        level : typing.Optional[KnowledgeLevel]
 
         links : typing.Optional[typing.Sequence[KnowledgeLinkInput]]
+
+        metadata : typing.Optional[typing.Dict[str, typing.Any]]
+
+        type : typing.Optional[KnowledgeLevel]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -686,20 +1126,193 @@ class AsyncRawKnowledgeClient:
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "slug": slug,
-                "level": level,
-                "format": format,
                 "body": body,
-                "metadata": metadata,
+                "format": format,
+                "level": level,
                 "links": convert_and_respect_annotation_metadata(
                     object_=links, annotation=typing.Sequence[KnowledgeLinkInput], direction="write"
                 ),
+                "metadata": metadata,
+                "slug": slug,
+                "type": type,
             },
             headers={
                 "content-type": "application/json",
             },
             request_options=request_options,
             omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    KnowledgeItemResponse,
+                    parse_obj_as(
+                        type_=KnowledgeItemResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def list_knowledge_facets(
+        self,
+        *,
+        fields: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[FacetsResponse]:
+        """
+        Parameters
+        ----------
+        fields : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[FacetsResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "knowledge/facets",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "fields": fields,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    FacetsResponse,
+                    parse_obj_as(
+                        type_=FacetsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def list_knowledge_tags(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[FacetsResponse]:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[FacetsResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "knowledge/tags",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    FacetsResponse,
+                    parse_obj_as(
+                        type_=FacetsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def create_knowledge_media(
+        self, *, file: core.File, item: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[KnowledgeItemResponse]:
+        """
+        Parameters
+        ----------
+        file : core.File
+            See core.File for more documentation
+
+        item : str
+            JSON metadata for the knowledge item
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[KnowledgeItemResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "knowledge/upload",
+            base_url=self._client_wrapper.get_environment().control,
+            method="POST",
+            data={
+                "item": item,
+            },
+            files={
+                "file": file,
+            },
+            request_options=request_options,
+            omit=OMIT,
+            force_multipart=True,
         )
         try:
             if 200 <= _response.status_code < 300:
@@ -749,7 +1362,7 @@ class AsyncRawKnowledgeClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"knowledge/{jsonable_encoder(identifier)}",
+            f"knowledge/{encode_path_param(identifier)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -801,7 +1414,7 @@ class AsyncRawKnowledgeClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"knowledge/{jsonable_encoder(identifier)}",
+            f"knowledge/{encode_path_param(identifier)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -833,12 +1446,13 @@ class AsyncRawKnowledgeClient:
         self,
         identifier: str,
         *,
-        level: typing.Optional[KnowledgeLevel] = OMIT,
-        format: typing.Optional[str] = OMIT,
         body: typing.Optional[str] = OMIT,
+        format: typing.Optional[str] = OMIT,
+        level: typing.Optional[KnowledgeLevel] = OMIT,
+        links: typing.Optional[typing.Sequence[KnowledgeLinkInput]] = OMIT,
         metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         status: typing.Optional[KnowledgeStatus] = OMIT,
-        links: typing.Optional[typing.Sequence[KnowledgeLinkInput]] = OMIT,
+        type: typing.Optional[KnowledgeLevel] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[KnowledgeItemResponse]:
         """
@@ -847,17 +1461,19 @@ class AsyncRawKnowledgeClient:
         identifier : str
             Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
 
-        level : typing.Optional[KnowledgeLevel]
+        body : typing.Optional[str]
 
         format : typing.Optional[str]
 
-        body : typing.Optional[str]
+        level : typing.Optional[KnowledgeLevel]
+
+        links : typing.Optional[typing.Sequence[KnowledgeLinkInput]]
 
         metadata : typing.Optional[typing.Dict[str, typing.Any]]
 
         status : typing.Optional[KnowledgeStatus]
 
-        links : typing.Optional[typing.Sequence[KnowledgeLinkInput]]
+        type : typing.Optional[KnowledgeLevel]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -868,18 +1484,19 @@ class AsyncRawKnowledgeClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"knowledge/{jsonable_encoder(identifier)}",
+            f"knowledge/{encode_path_param(identifier)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
-                "level": level,
-                "format": format,
                 "body": body,
-                "metadata": metadata,
-                "status": status,
+                "format": format,
+                "level": level,
                 "links": convert_and_respect_annotation_metadata(
                     object_=links, annotation=typing.Optional[typing.Sequence[KnowledgeLinkInput]], direction="write"
                 ),
+                "metadata": metadata,
+                "status": status,
+                "type": type,
             },
             headers={
                 "content-type": "application/json",
@@ -917,48 +1534,37 @@ class AsyncRawKnowledgeClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def list_knowledge_versions(
-        self,
-        identifier: str,
-        *,
-        cursor: typing.Optional[str] = None,
-        limit: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[PaginatedKnowledgeVersionResponse]:
+    async def get_knowledge_content(
+        self, identifier: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[typing.Any]:
         """
         Parameters
         ----------
         identifier : str
             Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
 
-        cursor : typing.Optional[str]
-
-        limit : typing.Optional[int]
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[PaginatedKnowledgeVersionResponse]
+        AsyncHttpResponse[typing.Any]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"knowledge/{jsonable_encoder(identifier)}/versions",
+            f"knowledge/{encode_path_param(identifier)}/content",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
-            params={
-                "cursor": cursor,
-                "limit": limit,
-            },
             request_options=request_options,
         )
         try:
+            if _response is None or not _response.text.strip():
+                return AsyncHttpResponse(response=_response, data=None)
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    PaginatedKnowledgeVersionResponse,
+                    typing.Any,
                     parse_obj_as(
-                        type_=PaginatedKnowledgeVersionResponse,  # type: ignore
+                        type_=typing.Any,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -983,37 +1589,44 @@ class AsyncRawKnowledgeClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def get_knowledge_version(
-        self, identifier: str, version_number: int, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[KnowledgeVersionResponse]:
+    async def put_knowledge_content(
+        self, identifier: str, *, file: core.File, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[KnowledgeItemResponse]:
         """
         Parameters
         ----------
         identifier : str
             Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
 
-        version_number : int
+        file : core.File
+            See core.File for more documentation
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[KnowledgeVersionResponse]
+        AsyncHttpResponse[KnowledgeItemResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"knowledge/{jsonable_encoder(identifier)}/versions/{jsonable_encoder(version_number)}",
+            f"knowledge/{encode_path_param(identifier)}/content",
             base_url=self._client_wrapper.get_environment().control,
-            method="GET",
+            method="PUT",
+            data={},
+            files={
+                "file": file,
+            },
             request_options=request_options,
+            omit=OMIT,
+            force_multipart=True,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    KnowledgeVersionResponse,
+                    KnowledgeItemResponse,
                     parse_obj_as(
-                        type_=KnowledgeVersionResponse,  # type: ignore
+                        type_=KnowledgeItemResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1058,7 +1671,7 @@ class AsyncRawKnowledgeClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"knowledge/{jsonable_encoder(identifier)}/restore",
+            f"knowledge/{encode_path_param(identifier)}/restore",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -1076,6 +1689,206 @@ class AsyncRawKnowledgeClient:
                     KnowledgeItemResponse,
                     parse_obj_as(
                         type_=KnowledgeItemResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def list_knowledge_versions(
+        self,
+        identifier: str,
+        *,
+        cursor: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        sort: typing.Optional[ListKnowledgeVersionsRequestSort] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncPager[KnowledgeVersionListResponse, ListPageKnowledgeVersionListResponse]:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        cursor : typing.Optional[str]
+
+        limit : typing.Optional[int]
+
+        sort : typing.Optional[ListKnowledgeVersionsRequestSort]
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncPager[KnowledgeVersionListResponse, ListPageKnowledgeVersionListResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"knowledge/{encode_path_param(identifier)}/versions",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "cursor": cursor,
+                "limit": limit,
+                "sort": sort,
+                "include": include,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    ListPageKnowledgeVersionListResponse,
+                    parse_obj_as(
+                        type_=ListPageKnowledgeVersionListResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+
+                async def _get_next():
+                    return await self.list_knowledge_versions(
+                        identifier,
+                        cursor=_parsed_next,
+                        limit=limit,
+                        sort=sort,
+                        include=include,
+                        request_options=request_options,
+                    )
+
+                return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_knowledge_version(
+        self, identifier: str, version_number: int, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[KnowledgeVersionResponse]:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        version_number : int
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[KnowledgeVersionResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"knowledge/{encode_path_param(identifier)}/versions/{encode_path_param(version_number)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    KnowledgeVersionResponse,
+                    parse_obj_as(
+                        type_=KnowledgeVersionResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_knowledge_version_content(
+        self, identifier: str, version_number: int, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[typing.Any]:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        version_number : int
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[typing.Any]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"knowledge/{encode_path_param(identifier)}/versions/{encode_path_param(version_number)}/content",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if _response is None or not _response.text.strip():
+                return AsyncHttpResponse(response=_response, data=None)
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    typing.Any,
+                    parse_obj_as(
+                        type_=typing.Any,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

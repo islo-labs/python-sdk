@@ -8,7 +8,7 @@ from .trigger_path_binding_type import TriggerPathBindingType
 
 
 class TriggerPathBinding(UniversalBaseModel):
-    type: TriggerPathBindingType
     path: str
+    type: TriggerPathBindingType
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

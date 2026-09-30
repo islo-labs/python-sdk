@@ -8,10 +8,10 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 class ExecResult(UniversalBaseModel):
     exec_id: typing.Optional[str] = None
-    status: typing.Optional[str] = None
     exit_code: typing.Optional[int] = None
-    stdout: typing.Optional[str] = None
+    status: typing.Optional[str] = None
     stderr: typing.Optional[str] = None
+    stdout: typing.Optional[str] = None
     truncated: typing.Optional[bool] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

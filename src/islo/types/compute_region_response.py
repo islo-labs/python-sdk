@@ -7,6 +7,16 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class ComputeRegionResponse(UniversalBaseModel):
+    api_url: str = pydantic.Field()
+    """
+    Base HTTPS URL for the region's compute API.
+    """
+
+    is_default: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Whether this is the tenant's default compute region.
+    """
+
     key: str = pydantic.Field()
     """
     Stable region key used when creating sandboxes.
@@ -17,19 +27,9 @@ class ComputeRegionResponse(UniversalBaseModel):
     Human-readable region name for UI display.
     """
 
-    api_url: str = pydantic.Field()
-    """
-    Base HTTPS URL for the region's compute API.
-    """
-
     ws_url: str = pydantic.Field()
     """
     Base WebSocket URL for streaming compute operations.
-    """
-
-    is_default: typing.Optional[bool] = pydantic.Field(default=None)
-    """
-    Whether this is the tenant's default compute region.
     """
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

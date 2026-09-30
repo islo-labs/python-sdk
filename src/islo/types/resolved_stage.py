@@ -4,6 +4,7 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .job_param_definition import JobParamDefinition
 from .resolved_stage_harness import ResolvedStageHarness
 from .resolved_stage_kind import ResolvedStageKind
 
@@ -13,13 +14,14 @@ class ResolvedStage(UniversalBaseModel):
     Stage metadata with job-derived kind and agent info.
     """
 
-    id: str
-    job: str
-    description: typing.Optional[str] = None
-    kind: typing.Optional[ResolvedStageKind] = None
-    harness: typing.Optional[ResolvedStageHarness] = None
     agent_model: typing.Optional[str] = None
     agent_role: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    harness: typing.Optional[ResolvedStageHarness] = None
+    id: str
+    job: str
+    kind: typing.Optional[ResolvedStageKind] = None
+    params: typing.Optional[typing.List[JobParamDefinition]] = None
     runtime: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

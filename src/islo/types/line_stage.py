@@ -11,10 +11,10 @@ class LineStage(UniversalBaseModel):
     A node in the line graph that runs one job per visit.
     """
 
+    description: typing.Optional[str] = None
     id: str
     job: str
     job_version_id: typing.Optional[str] = None
-    description: typing.Optional[str] = None
     max_attempts: typing.Optional[int] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

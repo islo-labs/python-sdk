@@ -8,14 +8,14 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class CloudRoleResponse(UniversalBaseModel):
+    created_at: typing.Optional[dt.datetime] = None
     id: str
-    provider: str
-    type: str
-    role_arn: str
-    session_duration_seconds: int
     is_enabled: bool
     islo_trust_role_arn: str
-    created_at: typing.Optional[dt.datetime] = None
+    provider: str
+    role_arn: str
+    session_duration_seconds: int
+    type: str
     updated_at: typing.Optional[dt.datetime] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

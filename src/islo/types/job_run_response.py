@@ -10,21 +10,26 @@ from .job_run_step_timeline_entry import JobRunStepTimelineEntry
 
 
 class JobRunResponse(UniversalBaseModel):
-    id: str
-    job_name: str
-    job_version_id: str
-    status: str
-    region: typing.Optional[str] = None
-    run_params: typing.Dict[str, typing.Any]
-    result_payload: typing.Optional[typing.Dict[str, typing.Any]] = None
-    step_timeline: typing.List[JobRunStepTimelineEntry]
     artifact_refs: typing.List[ArtifactRef]
-    started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
-    error_message: typing.Optional[str] = None
+    compute_cost_cents: typing.Optional[int] = None
+    cost_rated_at: typing.Optional[dt.datetime] = None
+    created_at: dt.datetime
     error_code: typing.Optional[str] = None
     error_details: typing.Optional[typing.Dict[str, typing.Any]] = None
+    error_message: typing.Optional[str] = None
     failure_class: typing.Optional[str] = None
-    created_at: dt.datetime
+    id: str
+    inference_cost_cents: typing.Optional[int] = None
+    job_name: str
+    job_version_id: str
+    manifest: typing.Dict[str, typing.Any]
+    region: typing.Optional[str] = None
+    result_payload: typing.Optional[typing.Dict[str, typing.Any]] = None
+    run_params: typing.Dict[str, typing.Any]
+    started_at: typing.Optional[dt.datetime] = None
+    status: str
+    step_timeline: typing.List[JobRunStepTimelineEntry]
+    total_cost_cents: typing.Optional[int] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

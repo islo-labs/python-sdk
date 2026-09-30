@@ -26,13 +26,13 @@ class GatewayRuleUpdateContentFilter_ContentType(UniversalBaseModel):
 class GatewayRuleUpdateContentFilter_Judge(UniversalBaseModel):
     filter_type: typing.Literal["judge"] = "judge"
     direction: JudgeContentFilterDirection
-    name: str
-    provider_key: JudgeContentFilterProviderKey
-    model: str
-    prompt: str
     fallback: typing.Optional[JudgeContentFilterFallback] = None
-    timeout_seconds: typing.Optional[int] = None
     max_tokens: typing.Optional[int] = None
+    model: str
+    name: str
+    prompt: str
+    provider_key: JudgeContentFilterProviderKey
+    timeout_seconds: typing.Optional[int] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 

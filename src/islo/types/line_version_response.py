@@ -12,12 +12,12 @@ from .line_manifest_output import LineManifestOutput
 
 
 class LineVersionResponse(UniversalBaseModel):
-    id: str
-    version_number: int
     content_hash: str
     deployed_at: dt.datetime
-    manifest: LineManifestOutput
+    id: str
     input_params: typing.Optional[typing.List[JobParamDefinition]] = None
+    manifest: LineManifestOutput
+    version_number: int
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 

@@ -25,8 +25,8 @@ class AgenticTransitionOptionParamsValue_Literal(UniversalBaseModel):
 
 class AgenticTransitionOptionParamsValue_Output(UniversalBaseModel):
     type: typing.Literal["output"] = "output"
-    stage: str
     name: str
+    stage: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 

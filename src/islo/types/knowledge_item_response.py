@@ -11,19 +11,21 @@ from .knowledge_status import KnowledgeStatus
 
 
 class KnowledgeItemResponse(UniversalBaseModel):
+    body: str
+    byte_size: typing.Optional[int] = None
+    created_at: dt.datetime
+    format: str
     id: str
+    level: KnowledgeLevel
+    links: typing.List[KnowledgeLinkResponse]
+    metadata: typing.Dict[str, typing.Any]
     slug: str = pydantic.Field()
     """
     Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
     """
 
-    level: KnowledgeLevel
-    format: str
-    body: str
-    metadata: typing.Dict[str, typing.Any]
     status: KnowledgeStatus
-    links: typing.List[KnowledgeLinkResponse]
-    created_at: dt.datetime
+    type: KnowledgeLevel
     updated_at: dt.datetime
     version_id: typing.Optional[str] = None
     version_number: typing.Optional[int] = None

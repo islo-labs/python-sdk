@@ -9,11 +9,11 @@ from .environment_entry_response import EnvironmentEntryResponse
 
 
 class EnvironmentResponse(UniversalBaseModel):
-    id: str
-    name: str
-    is_default: bool
-    entries: typing.List[EnvironmentEntryResponse]
     created_at: dt.datetime
+    entries: typing.List[EnvironmentEntryResponse]
+    id: str
+    is_default: bool
+    name: str
     updated_at: dt.datetime
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

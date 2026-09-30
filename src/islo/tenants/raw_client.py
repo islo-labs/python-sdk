@@ -12,7 +12,7 @@ from ..core.request_options import RequestOptions
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.error_response import ErrorResponse
-from ..types.tenant_regions_response import TenantRegionsResponse
+from ..types.list_page_compute_region_response import ListPageComputeRegionResponse
 from pydantic import ValidationError
 
 
@@ -22,7 +22,7 @@ class RawTenantsClient:
 
     def list_tenant_compute_regions(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[TenantRegionsResponse]:
+    ) -> HttpResponse[ListPageComputeRegionResponse]:
         """
         Return the compute regions the authenticated tenant may use, including the API and WebSocket base URLs for each region.
 
@@ -33,7 +33,7 @@ class RawTenantsClient:
 
         Returns
         -------
-        HttpResponse[TenantRegionsResponse]
+        HttpResponse[ListPageComputeRegionResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -45,9 +45,9 @@ class RawTenantsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    TenantRegionsResponse,
+                    ListPageComputeRegionResponse,
                     parse_obj_as(
-                        type_=TenantRegionsResponse,  # type: ignore
+                        type_=ListPageComputeRegionResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -90,7 +90,7 @@ class AsyncRawTenantsClient:
 
     async def list_tenant_compute_regions(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[TenantRegionsResponse]:
+    ) -> AsyncHttpResponse[ListPageComputeRegionResponse]:
         """
         Return the compute regions the authenticated tenant may use, including the API and WebSocket base URLs for each region.
 
@@ -101,7 +101,7 @@ class AsyncRawTenantsClient:
 
         Returns
         -------
-        AsyncHttpResponse[TenantRegionsResponse]
+        AsyncHttpResponse[ListPageComputeRegionResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -113,9 +113,9 @@ class AsyncRawTenantsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    TenantRegionsResponse,
+                    ListPageComputeRegionResponse,
                     parse_obj_as(
-                        type_=TenantRegionsResponse,  # type: ignore
+                        type_=ListPageComputeRegionResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

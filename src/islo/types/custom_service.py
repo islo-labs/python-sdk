@@ -16,8 +16,8 @@ class CustomService(UniversalBaseModel):
     in gateway rules.
     """
 
+    auth_method: AuthMethod
     name: str
     slug: str
-    auth_method: AuthMethod
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

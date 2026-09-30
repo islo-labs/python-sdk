@@ -2,16 +2,23 @@
 
 import typing
 
+from .. import core
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+from ..core.pagination import AsyncPager, SyncPager
 from ..core.request_options import RequestOptions
+from ..types.facets_response import FacetsResponse
+from ..types.knowledge_item_list_response import KnowledgeItemListResponse
 from ..types.knowledge_item_response import KnowledgeItemResponse
 from ..types.knowledge_level import KnowledgeLevel
 from ..types.knowledge_link_input import KnowledgeLinkInput
 from ..types.knowledge_status import KnowledgeStatus
+from ..types.knowledge_version_list_response import KnowledgeVersionListResponse
 from ..types.knowledge_version_response import KnowledgeVersionResponse
-from ..types.paginated_knowledge_response import PaginatedKnowledgeResponse
-from ..types.paginated_knowledge_version_response import PaginatedKnowledgeVersionResponse
+from ..types.list_page_knowledge_item_list_response import ListPageKnowledgeItemListResponse
+from ..types.list_page_knowledge_version_list_response import ListPageKnowledgeVersionListResponse
 from .raw_client import AsyncRawKnowledgeClient, RawKnowledgeClient
+from .types.list_knowledge_request_sort import ListKnowledgeRequestSort
+from .types.list_knowledge_versions_request_sort import ListKnowledgeVersionsRequestSort
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -36,17 +43,22 @@ class KnowledgeClient:
         self,
         *,
         level: typing.Optional[KnowledgeLevel] = None,
+        type: typing.Optional[KnowledgeLevel] = None,
         tag: typing.Optional[str] = None,
         repository: typing.Optional[str] = None,
         q: typing.Optional[str] = None,
         cursor: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
+        sort: typing.Optional[ListKnowledgeRequestSort] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PaginatedKnowledgeResponse:
+    ) -> SyncPager[KnowledgeItemListResponse, ListPageKnowledgeItemListResponse]:
         """
         Parameters
         ----------
         level : typing.Optional[KnowledgeLevel]
+
+        type : typing.Optional[KnowledgeLevel]
 
         tag : typing.Optional[str]
 
@@ -59,12 +71,16 @@ class KnowledgeClient:
 
         limit : typing.Optional[int]
 
+        sort : typing.Optional[ListKnowledgeRequestSort]
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        PaginatedKnowledgeResponse
+        SyncPager[KnowledgeItemListResponse, ListPageKnowledgeItemListResponse]
             Successful Response
 
         Examples
@@ -73,31 +89,40 @@ class KnowledgeClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-        client.knowledge.list_knowledge()
+        response = client.knowledge.list_knowledge()
+        for item in response:
+            yield item
+        # alternatively, you can paginate page-by-page
+        for page in response.iter_pages():
+            yield page
         """
-        _response = self._raw_client.list_knowledge(
+        return self._raw_client.list_knowledge(
             level=level,
+            type=type,
             tag=tag,
             repository=repository,
             q=q,
             cursor=cursor,
             limit=limit,
+            sort=sort,
+            include=include,
             request_options=request_options,
         )
-        return _response.data
 
     def create_knowledge(
         self,
         *,
         slug: str,
-        level: KnowledgeLevel,
-        body: str,
+        body: typing.Optional[str] = OMIT,
         format: typing.Optional[str] = OMIT,
-        metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        level: typing.Optional[KnowledgeLevel] = OMIT,
         links: typing.Optional[typing.Sequence[KnowledgeLinkInput]] = OMIT,
+        metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        type: typing.Optional[KnowledgeLevel] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> KnowledgeItemResponse:
         """
@@ -106,15 +131,17 @@ class KnowledgeClient:
         slug : str
             Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
 
-        level : KnowledgeLevel
-
-        body : str
+        body : typing.Optional[str]
 
         format : typing.Optional[str]
 
-        metadata : typing.Optional[typing.Dict[str, typing.Any]]
+        level : typing.Optional[KnowledgeLevel]
 
         links : typing.Optional[typing.Sequence[KnowledgeLinkInput]]
+
+        metadata : typing.Optional[typing.Dict[str, typing.Any]]
+
+        type : typing.Optional[KnowledgeLevel]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -126,28 +153,128 @@ class KnowledgeClient:
 
         Examples
         --------
-        from islo import Islo, KnowledgeLevel
+        from islo import Islo
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
         client.knowledge.create_knowledge(
             slug="slug",
-            level=KnowledgeLevel.EPISODIC,
-            body="body",
         )
         """
         _response = self._raw_client.create_knowledge(
             slug=slug,
-            level=level,
             body=body,
             format=format,
-            metadata=metadata,
+            level=level,
             links=links,
+            metadata=metadata,
+            type=type,
             request_options=request_options,
         )
+        return _response.data
+
+    def list_knowledge_facets(
+        self,
+        *,
+        fields: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> FacetsResponse:
+        """
+        Parameters
+        ----------
+        fields : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        FacetsResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.knowledge.list_knowledge_facets(
+            fields=["fields"],
+        )
+        """
+        _response = self._raw_client.list_knowledge_facets(fields=fields, request_options=request_options)
+        return _response.data
+
+    def list_knowledge_tags(self, *, request_options: typing.Optional[RequestOptions] = None) -> FacetsResponse:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        FacetsResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.knowledge.list_knowledge_tags()
+        """
+        _response = self._raw_client.list_knowledge_tags(request_options=request_options)
+        return _response.data
+
+    def create_knowledge_media(
+        self, *, file: core.File, item: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> KnowledgeItemResponse:
+        """
+        Parameters
+        ----------
+        file : core.File
+            See core.File for more documentation
+
+        item : str
+            JSON metadata for the knowledge item
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        KnowledgeItemResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.knowledge.create_knowledge_media(
+            item="item",
+        )
+        """
+        _response = self._raw_client.create_knowledge_media(file=file, item=item, request_options=request_options)
         return _response.data
 
     def get_knowledge(
@@ -173,6 +300,7 @@ class KnowledgeClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -203,6 +331,7 @@ class KnowledgeClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -217,12 +346,13 @@ class KnowledgeClient:
         self,
         identifier: str,
         *,
-        level: typing.Optional[KnowledgeLevel] = OMIT,
-        format: typing.Optional[str] = OMIT,
         body: typing.Optional[str] = OMIT,
+        format: typing.Optional[str] = OMIT,
+        level: typing.Optional[KnowledgeLevel] = OMIT,
+        links: typing.Optional[typing.Sequence[KnowledgeLinkInput]] = OMIT,
         metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         status: typing.Optional[KnowledgeStatus] = OMIT,
-        links: typing.Optional[typing.Sequence[KnowledgeLinkInput]] = OMIT,
+        type: typing.Optional[KnowledgeLevel] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> KnowledgeItemResponse:
         """
@@ -231,17 +361,19 @@ class KnowledgeClient:
         identifier : str
             Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
 
-        level : typing.Optional[KnowledgeLevel]
+        body : typing.Optional[str]
 
         format : typing.Optional[str]
 
-        body : typing.Optional[str]
+        level : typing.Optional[KnowledgeLevel]
+
+        links : typing.Optional[typing.Sequence[KnowledgeLinkInput]]
 
         metadata : typing.Optional[typing.Dict[str, typing.Any]]
 
         status : typing.Optional[KnowledgeStatus]
 
-        links : typing.Optional[typing.Sequence[KnowledgeLinkInput]]
+        type : typing.Optional[KnowledgeLevel]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -257,6 +389,7 @@ class KnowledgeClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -266,40 +399,32 @@ class KnowledgeClient:
         """
         _response = self._raw_client.update_knowledge(
             identifier,
-            level=level,
-            format=format,
             body=body,
+            format=format,
+            level=level,
+            links=links,
             metadata=metadata,
             status=status,
-            links=links,
+            type=type,
             request_options=request_options,
         )
         return _response.data
 
-    def list_knowledge_versions(
-        self,
-        identifier: str,
-        *,
-        cursor: typing.Optional[str] = None,
-        limit: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> PaginatedKnowledgeVersionResponse:
+    def get_knowledge_content(
+        self, identifier: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.Any:
         """
         Parameters
         ----------
         identifier : str
             Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
 
-        cursor : typing.Optional[str]
-
-        limit : typing.Optional[int]
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        PaginatedKnowledgeVersionResponse
+        typing.Any
             Successful Response
 
         Examples
@@ -308,35 +433,35 @@ class KnowledgeClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-        client.knowledge.list_knowledge_versions(
+        client.knowledge.get_knowledge_content(
             identifier="identifier",
         )
         """
-        _response = self._raw_client.list_knowledge_versions(
-            identifier, cursor=cursor, limit=limit, request_options=request_options
-        )
+        _response = self._raw_client.get_knowledge_content(identifier, request_options=request_options)
         return _response.data
 
-    def get_knowledge_version(
-        self, identifier: str, version_number: int, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> KnowledgeVersionResponse:
+    def put_knowledge_content(
+        self, identifier: str, *, file: core.File, request_options: typing.Optional[RequestOptions] = None
+    ) -> KnowledgeItemResponse:
         """
         Parameters
         ----------
         identifier : str
             Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
 
-        version_number : int
+        file : core.File
+            See core.File for more documentation
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        KnowledgeVersionResponse
+        KnowledgeItemResponse
             Successful Response
 
         Examples
@@ -345,15 +470,15 @@ class KnowledgeClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-        client.knowledge.get_knowledge_version(
+        client.knowledge.put_knowledge_content(
             identifier="identifier",
-            version_number=1,
         )
         """
-        _response = self._raw_client.get_knowledge_version(identifier, version_number, request_options=request_options)
+        _response = self._raw_client.put_knowledge_content(identifier, file=file, request_options=request_options)
         return _response.data
 
     def restore_knowledge_version(
@@ -381,6 +506,7 @@ class KnowledgeClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -391,6 +517,137 @@ class KnowledgeClient:
         """
         _response = self._raw_client.restore_knowledge_version(
             identifier, version_number=version_number, request_options=request_options
+        )
+        return _response.data
+
+    def list_knowledge_versions(
+        self,
+        identifier: str,
+        *,
+        cursor: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        sort: typing.Optional[ListKnowledgeVersionsRequestSort] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SyncPager[KnowledgeVersionListResponse, ListPageKnowledgeVersionListResponse]:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        cursor : typing.Optional[str]
+
+        limit : typing.Optional[int]
+
+        sort : typing.Optional[ListKnowledgeVersionsRequestSort]
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SyncPager[KnowledgeVersionListResponse, ListPageKnowledgeVersionListResponse]
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        response = client.knowledge.list_knowledge_versions(
+            identifier="identifier",
+        )
+        for item in response:
+            yield item
+        # alternatively, you can paginate page-by-page
+        for page in response.iter_pages():
+            yield page
+        """
+        return self._raw_client.list_knowledge_versions(
+            identifier, cursor=cursor, limit=limit, sort=sort, include=include, request_options=request_options
+        )
+
+    def get_knowledge_version(
+        self, identifier: str, version_number: int, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> KnowledgeVersionResponse:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        version_number : int
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        KnowledgeVersionResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.knowledge.get_knowledge_version(
+            identifier="identifier",
+            version_number=1,
+        )
+        """
+        _response = self._raw_client.get_knowledge_version(identifier, version_number, request_options=request_options)
+        return _response.data
+
+    def get_knowledge_version_content(
+        self, identifier: str, version_number: int, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.Any:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        version_number : int
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.Any
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.knowledge.get_knowledge_version_content(
+            identifier="identifier",
+            version_number=1,
+        )
+        """
+        _response = self._raw_client.get_knowledge_version_content(
+            identifier, version_number, request_options=request_options
         )
         return _response.data
 
@@ -414,17 +671,22 @@ class AsyncKnowledgeClient:
         self,
         *,
         level: typing.Optional[KnowledgeLevel] = None,
+        type: typing.Optional[KnowledgeLevel] = None,
         tag: typing.Optional[str] = None,
         repository: typing.Optional[str] = None,
         q: typing.Optional[str] = None,
         cursor: typing.Optional[str] = None,
         limit: typing.Optional[int] = None,
+        sort: typing.Optional[ListKnowledgeRequestSort] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PaginatedKnowledgeResponse:
+    ) -> AsyncPager[KnowledgeItemListResponse, ListPageKnowledgeItemListResponse]:
         """
         Parameters
         ----------
         level : typing.Optional[KnowledgeLevel]
+
+        type : typing.Optional[KnowledgeLevel]
 
         tag : typing.Optional[str]
 
@@ -437,12 +699,16 @@ class AsyncKnowledgeClient:
 
         limit : typing.Optional[int]
 
+        sort : typing.Optional[ListKnowledgeRequestSort]
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        PaginatedKnowledgeResponse
+        AsyncPager[KnowledgeItemListResponse, ListPageKnowledgeItemListResponse]
             Successful Response
 
         Examples
@@ -453,37 +719,47 @@ class AsyncKnowledgeClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
 
 
         async def main() -> None:
-            await client.knowledge.list_knowledge()
+            response = await client.knowledge.list_knowledge()
+            async for item in response:
+                yield item
+
+            # alternatively, you can paginate page-by-page
+            async for page in response.iter_pages():
+                yield page
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.list_knowledge(
+        return await self._raw_client.list_knowledge(
             level=level,
+            type=type,
             tag=tag,
             repository=repository,
             q=q,
             cursor=cursor,
             limit=limit,
+            sort=sort,
+            include=include,
             request_options=request_options,
         )
-        return _response.data
 
     async def create_knowledge(
         self,
         *,
         slug: str,
-        level: KnowledgeLevel,
-        body: str,
+        body: typing.Optional[str] = OMIT,
         format: typing.Optional[str] = OMIT,
-        metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        level: typing.Optional[KnowledgeLevel] = OMIT,
         links: typing.Optional[typing.Sequence[KnowledgeLinkInput]] = OMIT,
+        metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        type: typing.Optional[KnowledgeLevel] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> KnowledgeItemResponse:
         """
@@ -492,15 +768,17 @@ class AsyncKnowledgeClient:
         slug : str
             Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
 
-        level : KnowledgeLevel
-
-        body : str
+        body : typing.Optional[str]
 
         format : typing.Optional[str]
 
-        metadata : typing.Optional[typing.Dict[str, typing.Any]]
+        level : typing.Optional[KnowledgeLevel]
 
         links : typing.Optional[typing.Sequence[KnowledgeLinkInput]]
+
+        metadata : typing.Optional[typing.Dict[str, typing.Any]]
+
+        type : typing.Optional[KnowledgeLevel]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -514,10 +792,11 @@ class AsyncKnowledgeClient:
         --------
         import asyncio
 
-        from islo import AsyncIslo, KnowledgeLevel
+        from islo import AsyncIslo
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -526,8 +805,6 @@ class AsyncKnowledgeClient:
         async def main() -> None:
             await client.knowledge.create_knowledge(
                 slug="slug",
-                level=KnowledgeLevel.EPISODIC,
-                body="body",
             )
 
 
@@ -535,13 +812,138 @@ class AsyncKnowledgeClient:
         """
         _response = await self._raw_client.create_knowledge(
             slug=slug,
-            level=level,
             body=body,
             format=format,
-            metadata=metadata,
+            level=level,
             links=links,
+            metadata=metadata,
+            type=type,
             request_options=request_options,
         )
+        return _response.data
+
+    async def list_knowledge_facets(
+        self,
+        *,
+        fields: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> FacetsResponse:
+        """
+        Parameters
+        ----------
+        fields : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        FacetsResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.knowledge.list_knowledge_facets(
+                fields=["fields"],
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_knowledge_facets(fields=fields, request_options=request_options)
+        return _response.data
+
+    async def list_knowledge_tags(self, *, request_options: typing.Optional[RequestOptions] = None) -> FacetsResponse:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        FacetsResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.knowledge.list_knowledge_tags()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_knowledge_tags(request_options=request_options)
+        return _response.data
+
+    async def create_knowledge_media(
+        self, *, file: core.File, item: str, request_options: typing.Optional[RequestOptions] = None
+    ) -> KnowledgeItemResponse:
+        """
+        Parameters
+        ----------
+        file : core.File
+            See core.File for more documentation
+
+        item : str
+            JSON metadata for the knowledge item
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        KnowledgeItemResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.knowledge.create_knowledge_media(
+                item="item",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.create_knowledge_media(file=file, item=item, request_options=request_options)
         return _response.data
 
     async def get_knowledge(
@@ -569,6 +971,7 @@ class AsyncKnowledgeClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -609,6 +1012,7 @@ class AsyncKnowledgeClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -629,12 +1033,13 @@ class AsyncKnowledgeClient:
         self,
         identifier: str,
         *,
-        level: typing.Optional[KnowledgeLevel] = OMIT,
-        format: typing.Optional[str] = OMIT,
         body: typing.Optional[str] = OMIT,
+        format: typing.Optional[str] = OMIT,
+        level: typing.Optional[KnowledgeLevel] = OMIT,
+        links: typing.Optional[typing.Sequence[KnowledgeLinkInput]] = OMIT,
         metadata: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         status: typing.Optional[KnowledgeStatus] = OMIT,
-        links: typing.Optional[typing.Sequence[KnowledgeLinkInput]] = OMIT,
+        type: typing.Optional[KnowledgeLevel] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> KnowledgeItemResponse:
         """
@@ -643,17 +1048,19 @@ class AsyncKnowledgeClient:
         identifier : str
             Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
 
-        level : typing.Optional[KnowledgeLevel]
+        body : typing.Optional[str]
 
         format : typing.Optional[str]
 
-        body : typing.Optional[str]
+        level : typing.Optional[KnowledgeLevel]
+
+        links : typing.Optional[typing.Sequence[KnowledgeLinkInput]]
 
         metadata : typing.Optional[typing.Dict[str, typing.Any]]
 
         status : typing.Optional[KnowledgeStatus]
 
-        links : typing.Optional[typing.Sequence[KnowledgeLinkInput]]
+        type : typing.Optional[KnowledgeLevel]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -671,6 +1078,7 @@ class AsyncKnowledgeClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -686,40 +1094,32 @@ class AsyncKnowledgeClient:
         """
         _response = await self._raw_client.update_knowledge(
             identifier,
-            level=level,
-            format=format,
             body=body,
+            format=format,
+            level=level,
+            links=links,
             metadata=metadata,
             status=status,
-            links=links,
+            type=type,
             request_options=request_options,
         )
         return _response.data
 
-    async def list_knowledge_versions(
-        self,
-        identifier: str,
-        *,
-        cursor: typing.Optional[str] = None,
-        limit: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> PaginatedKnowledgeVersionResponse:
+    async def get_knowledge_content(
+        self, identifier: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.Any:
         """
         Parameters
         ----------
         identifier : str
             Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
 
-        cursor : typing.Optional[str]
-
-        limit : typing.Optional[int]
-
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        PaginatedKnowledgeVersionResponse
+        typing.Any
             Successful Response
 
         Examples
@@ -730,41 +1130,41 @@ class AsyncKnowledgeClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
 
 
         async def main() -> None:
-            await client.knowledge.list_knowledge_versions(
+            await client.knowledge.get_knowledge_content(
                 identifier="identifier",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.list_knowledge_versions(
-            identifier, cursor=cursor, limit=limit, request_options=request_options
-        )
+        _response = await self._raw_client.get_knowledge_content(identifier, request_options=request_options)
         return _response.data
 
-    async def get_knowledge_version(
-        self, identifier: str, version_number: int, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> KnowledgeVersionResponse:
+    async def put_knowledge_content(
+        self, identifier: str, *, file: core.File, request_options: typing.Optional[RequestOptions] = None
+    ) -> KnowledgeItemResponse:
         """
         Parameters
         ----------
         identifier : str
             Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
 
-        version_number : int
+        file : core.File
+            See core.File for more documentation
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        KnowledgeVersionResponse
+        KnowledgeItemResponse
             Successful Response
 
         Examples
@@ -775,23 +1175,21 @@ class AsyncKnowledgeClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
 
 
         async def main() -> None:
-            await client.knowledge.get_knowledge_version(
+            await client.knowledge.put_knowledge_content(
                 identifier="identifier",
-                version_number=1,
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_knowledge_version(
-            identifier, version_number, request_options=request_options
-        )
+        _response = await self._raw_client.put_knowledge_content(identifier, file=file, request_options=request_options)
         return _response.data
 
     async def restore_knowledge_version(
@@ -821,6 +1219,7 @@ class AsyncKnowledgeClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -837,5 +1236,163 @@ class AsyncKnowledgeClient:
         """
         _response = await self._raw_client.restore_knowledge_version(
             identifier, version_number=version_number, request_options=request_options
+        )
+        return _response.data
+
+    async def list_knowledge_versions(
+        self,
+        identifier: str,
+        *,
+        cursor: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        sort: typing.Optional[ListKnowledgeVersionsRequestSort] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncPager[KnowledgeVersionListResponse, ListPageKnowledgeVersionListResponse]:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        cursor : typing.Optional[str]
+
+        limit : typing.Optional[int]
+
+        sort : typing.Optional[ListKnowledgeVersionsRequestSort]
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncPager[KnowledgeVersionListResponse, ListPageKnowledgeVersionListResponse]
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            response = await client.knowledge.list_knowledge_versions(
+                identifier="identifier",
+            )
+            async for item in response:
+                yield item
+
+            # alternatively, you can paginate page-by-page
+            async for page in response.iter_pages():
+                yield page
+
+
+        asyncio.run(main())
+        """
+        return await self._raw_client.list_knowledge_versions(
+            identifier, cursor=cursor, limit=limit, sort=sort, include=include, request_options=request_options
+        )
+
+    async def get_knowledge_version(
+        self, identifier: str, version_number: int, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> KnowledgeVersionResponse:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        version_number : int
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        KnowledgeVersionResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.knowledge.get_knowledge_version(
+                identifier="identifier",
+                version_number=1,
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_knowledge_version(
+            identifier, version_number, request_options=request_options
+        )
+        return _response.data
+
+    async def get_knowledge_version_content(
+        self, identifier: str, version_number: int, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> typing.Any:
+        """
+        Parameters
+        ----------
+        identifier : str
+            Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+
+        version_number : int
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        typing.Any
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.knowledge.get_knowledge_version_content(
+                identifier="identifier",
+                version_number=1,
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_knowledge_version_content(
+            identifier, version_number, request_options=request_options
         )
         return _response.data

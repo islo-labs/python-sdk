@@ -12,27 +12,25 @@ from .pricing_tier import PricingTier
 
 
 class InferenceModelCatalogEntry(UniversalBaseModel):
-    id: str
-    upstream_provider: typing.Optional[InferenceProvider] = None
-    upstream_model_id: str
-    display_name: typing.Optional[str] = None
     aliases: typing.Optional[typing.List[str]] = None
-    client_apis: typing.Optional[typing.List[ClientInferenceApi]] = None
-    enabled: typing.Optional[bool] = None
-    input_cents_per1m_tokens: typing_extensions.Annotated[
+    cache_write_input_cents_per1m_tokens: typing_extensions.Annotated[
         typing.Optional[str],
-        FieldMetadata(alias="input_cents_per_1m_tokens"),
-        pydantic.Field(alias="input_cents_per_1m_tokens", default=None),
+        FieldMetadata(alias="cache_write_input_cents_per_1m_tokens"),
+        pydantic.Field(alias="cache_write_input_cents_per_1m_tokens", default=None),
     ]
     cached_input_cents_per1m_tokens: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="cached_input_cents_per_1m_tokens"),
         pydantic.Field(alias="cached_input_cents_per_1m_tokens", default=None),
     ]
-    cache_write_input_cents_per1m_tokens: typing_extensions.Annotated[
+    client_apis: typing.Optional[typing.List[ClientInferenceApi]] = None
+    display_name: typing.Optional[str] = None
+    enabled: typing.Optional[bool] = None
+    id: str
+    input_cents_per1m_tokens: typing_extensions.Annotated[
         typing.Optional[str],
-        FieldMetadata(alias="cache_write_input_cents_per_1m_tokens"),
-        pydantic.Field(alias="cache_write_input_cents_per_1m_tokens", default=None),
+        FieldMetadata(alias="input_cents_per_1m_tokens"),
+        pydantic.Field(alias="input_cents_per_1m_tokens", default=None),
     ]
     output_cents_per1m_tokens: typing_extensions.Annotated[
         typing.Optional[str],
@@ -40,5 +38,7 @@ class InferenceModelCatalogEntry(UniversalBaseModel):
         pydantic.Field(alias="output_cents_per_1m_tokens", default=None),
     ]
     pricing_tiers: typing.Optional[typing.List[PricingTier]] = None
+    upstream_model_id: str
+    upstream_provider: typing.Optional[InferenceProvider] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

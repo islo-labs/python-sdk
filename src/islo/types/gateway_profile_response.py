@@ -10,16 +10,16 @@ from .gateway_profile_response_integration_policy import GatewayProfileResponseI
 
 
 class GatewayProfileResponse(UniversalBaseModel):
-    id: str
-    name: str
-    description: typing.Optional[str] = None
+    cloud_role: typing.Optional[CloudRoleRef] = None
+    created_at: typing.Optional[dt.datetime] = None
     default_action: str
+    description: typing.Optional[str] = None
+    id: str
+    integration_policy: typing.Optional[GatewayProfileResponseIntegrationPolicy] = None
     internet_enabled: bool
     is_default: bool
-    cloud_role: typing.Optional[CloudRoleRef] = None
-    integration_policy: typing.Optional[GatewayProfileResponseIntegrationPolicy] = None
+    name: str
     rule_count: typing.Optional[int] = None
-    created_at: typing.Optional[dt.datetime] = None
     updated_at: typing.Optional[dt.datetime] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

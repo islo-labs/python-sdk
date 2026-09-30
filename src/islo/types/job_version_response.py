@@ -9,10 +9,10 @@ from .job_manifest_output import JobManifestOutput
 
 
 class JobVersionResponse(UniversalBaseModel):
-    id: str
-    version_number: int
     content_hash: str
     deployed_at: dt.datetime
+    id: str
     manifest: JobManifestOutput
+    version_number: int
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

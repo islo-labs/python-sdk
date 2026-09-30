@@ -6,7 +6,8 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
+from ..core.pagination import AsyncPager, SyncPager
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
@@ -19,14 +20,19 @@ from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.auth_method import AuthMethod
 from ..types.custom_integration import CustomIntegration
 from ..types.custom_service_create_response import CustomServiceCreateResponse
-from ..types.custom_services_response import CustomServicesResponse
 from ..types.error_response import ErrorResponse
 from ..types.integration_detail_response import IntegrationDetailResponse
 from ..types.integration_level import IntegrationLevel
-from ..types.integration_list_response import IntegrationListResponse
-from ..types.integration_providers_response import IntegrationProvidersResponse
+from ..types.list_page_custom_service import ListPageCustomService
+from ..types.list_page_integration_provider import ListPageIntegrationProvider
+from ..types.list_page_integration_status import ListPageIntegrationStatus
+from ..types.list_page_trigger_catalog_item import ListPageTriggerCatalogItem
+from ..types.timestamp_range import TimestampRange
 from ..types.trigger_catalog_item import TriggerCatalogItem
-from ..types.trigger_catalog_list_response import TriggerCatalogListResponse
+from ..types.trigger_event_detail import TriggerEventDetail
+from ..types.trigger_event_page import TriggerEventPage
+from ..types.trigger_event_summary import TriggerEventSummary
+from .types.list_integration_trigger_events_request_sort import ListIntegrationTriggerEventsRequestSort
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -37,143 +43,9 @@ class RawIntegrationsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list_integration_providers(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[IntegrationProvidersResponse]:
-        """
-        Return the integration providers available to connect from Islo, including the supported authentication methods and connection scopes.
-
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[IntegrationProvidersResponse]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "integrations/providers",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    IntegrationProvidersResponse,
-                    parse_obj_as(
-                        type_=IntegrationProvidersResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def list_integration_triggers(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[TriggerCatalogListResponse]:
-        """
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[TriggerCatalogListResponse]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "integrations/triggers",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    TriggerCatalogListResponse,
-                    parse_obj_as(
-                        type_=TriggerCatalogListResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def get_integration_trigger(
-        self, provider: str, trigger_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[TriggerCatalogItem]:
-        """
-        Parameters
-        ----------
-        provider : str
-
-        trigger_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[TriggerCatalogItem]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"integrations/triggers/{jsonable_encoder(provider)}/{jsonable_encoder(trigger_name)}",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    TriggerCatalogItem,
-                    parse_obj_as(
-                        type_=TriggerCatalogItem,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
     def list_integrations(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[IntegrationListResponse]:
+    ) -> HttpResponse[ListPageIntegrationStatus]:
         """
         List the integrations the user/tenant has connected.
 
@@ -192,7 +64,7 @@ class RawIntegrationsClient:
 
         Returns
         -------
-        HttpResponse[IntegrationListResponse]
+        HttpResponse[ListPageIntegrationStatus]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -204,9 +76,9 @@ class RawIntegrationsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    IntegrationListResponse,
+                    ListPageIntegrationStatus,
                     parse_obj_as(
-                        type_=IntegrationListResponse,  # type: ignore
+                        type_=ListPageIntegrationStatus,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -255,7 +127,7 @@ class RawIntegrationsClient:
 
     def list_custom_services(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[CustomServicesResponse]:
+    ) -> HttpResponse[ListPageCustomService]:
         """
         List custom service definitions in the current tenant (catalog view).
 
@@ -272,7 +144,7 @@ class RawIntegrationsClient:
 
         Returns
         -------
-        HttpResponse[CustomServicesResponse]
+        HttpResponse[ListPageCustomService]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -284,9 +156,9 @@ class RawIntegrationsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CustomServicesResponse,
+                    ListPageCustomService,
                     parse_obj_as(
-                        type_=CustomServicesResponse,  # type: ignore
+                        type_=ListPageCustomService,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -436,24 +308,24 @@ class RawIntegrationsClient:
 
     def disconnect_custom_integration(
         self,
-        descope_app_id: str,
+        provider: str,
         *,
         scope: typing.Optional[IntegrationLevel] = None,
         delete_app: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[typing.Dict[str, typing.Any]]:
         """
-        Disconnect a custom integration by its Descope app ID.
+        Disconnect a custom integration by its stable provider slug.
 
-        Authorization is by deterministic-ID prefix: only apps whose ID matches
-        ``cust-{tenant-prefix}-`` are accepted, which scopes the operation to the
-        caller's workspace without a DB lookup. ``scope`` selects which side's
-        tokens to revoke (per-user vs tenant-wide); ``delete_app=true`` removes
-        the Descope app entirely (affects every user in the workspace).
+        The provider is resolved only within the authenticated tenant's custom
+        service catalog, so callers cannot target another workspace. ``scope`` selects
+        which side's tokens to revoke (per-user vs tenant-wide);
+        ``delete_app=true`` removes the Descope app entirely (affects every user in
+        the workspace).
 
         Parameters
         ----------
-        descope_app_id : str
+        provider : str
 
         scope : typing.Optional[IntegrationLevel]
             Which token to revoke: 'user' (this user's personal) or 'tenant' (workspace)
@@ -470,7 +342,7 @@ class RawIntegrationsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"integrations/custom/{jsonable_encoder(descope_app_id)}",
+            f"integrations/custom/{encode_path_param(provider)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             params={
@@ -553,6 +425,345 @@ class RawIntegrationsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    def list_integration_providers(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[ListPageIntegrationProvider]:
+        """
+        Return the integration providers available to connect from Islo, including the supported authentication methods and connection scopes.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[ListPageIntegrationProvider]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "integrations/providers",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ListPageIntegrationProvider,
+                    parse_obj_as(
+                        type_=ListPageIntegrationProvider,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def list_integration_trigger_events(
+        self,
+        *,
+        cursor: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        sort: typing.Optional[ListIntegrationTriggerEventsRequestSort] = None,
+        provider: typing.Optional[typing.Sequence[str]] = None,
+        event_name: typing.Optional[typing.Sequence[str]] = None,
+        invocation_status: typing.Optional[typing.Sequence[str]] = None,
+        outcome: typing.Optional[typing.Sequence[str]] = None,
+        received_at: typing.Optional[TimestampRange] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SyncPager[TriggerEventSummary, TriggerEventPage]:
+        """
+        Parameters
+        ----------
+        cursor : typing.Optional[str]
+
+        limit : typing.Optional[int]
+
+        sort : typing.Optional[ListIntegrationTriggerEventsRequestSort]
+
+        provider : typing.Optional[typing.Sequence[str]]
+
+        event_name : typing.Optional[typing.Sequence[str]]
+
+        invocation_status : typing.Optional[typing.Sequence[str]]
+
+        outcome : typing.Optional[typing.Sequence[str]]
+
+        received_at : typing.Optional[TimestampRange]
+            received_at range. Operators: gte, gt, lte, lt. Serialized as received_at[gte]=…&received_at[lt]=…
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SyncPager[TriggerEventSummary, TriggerEventPage]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "integrations/trigger-events",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "cursor": cursor,
+                "limit": limit,
+                "sort": sort,
+                "provider": provider,
+                "event_name": event_name,
+                "invocation_status": invocation_status,
+                "outcome": outcome,
+                "received_at": convert_and_respect_annotation_metadata(
+                    object_=received_at, annotation=TimestampRange, direction="write"
+                ),
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    TriggerEventPage,
+                    parse_obj_as(
+                        type_=TriggerEventPage,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+                _get_next = lambda: self.list_integration_trigger_events(
+                    cursor=_parsed_next,
+                    limit=limit,
+                    sort=sort,
+                    provider=provider,
+                    event_name=event_name,
+                    invocation_status=invocation_status,
+                    outcome=outcome,
+                    received_at=received_at,
+                    request_options=request_options,
+                )
+                return SyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_integration_trigger_event(
+        self, event_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[TriggerEventDetail]:
+        """
+        Parameters
+        ----------
+        event_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[TriggerEventDetail]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"integrations/trigger-events/{encode_path_param(event_id)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    TriggerEventDetail,
+                    parse_obj_as(
+                        type_=TriggerEventDetail,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def list_integration_triggers(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[ListPageTriggerCatalogItem]:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[ListPageTriggerCatalogItem]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "integrations/triggers",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ListPageTriggerCatalogItem,
+                    parse_obj_as(
+                        type_=ListPageTriggerCatalogItem,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def list_connected_integration_triggers(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[ListPageTriggerCatalogItem]:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[ListPageTriggerCatalogItem]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "integrations/triggers/connected",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ListPageTriggerCatalogItem,
+                    parse_obj_as(
+                        type_=ListPageTriggerCatalogItem,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_integration_trigger(
+        self, provider: str, trigger_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[TriggerCatalogItem]:
+        """
+        Parameters
+        ----------
+        provider : str
+
+        trigger_name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[TriggerCatalogItem]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"integrations/triggers/{encode_path_param(provider)}/{encode_path_param(trigger_name)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    TriggerCatalogItem,
+                    parse_obj_as(
+                        type_=TriggerCatalogItem,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
     def get_integration_status(
         self, provider: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[IntegrationDetailResponse]:
@@ -574,7 +785,7 @@ class RawIntegrationsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"integrations/{jsonable_encoder(provider)}",
+            f"integrations/{encode_path_param(provider)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -676,7 +887,7 @@ class RawIntegrationsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"integrations/{jsonable_encoder(provider)}",
+            f"integrations/{encode_path_param(provider)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             params={
@@ -759,198 +970,14 @@ class RawIntegrationsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def list_connected_integration_triggers(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[TriggerCatalogListResponse]:
-        """
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[TriggerCatalogListResponse]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "integrations/triggers/connected",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    TriggerCatalogListResponse,
-                    parse_obj_as(
-                        type_=TriggerCatalogListResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
 
 class AsyncRawIntegrationsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list_integration_providers(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[IntegrationProvidersResponse]:
-        """
-        Return the integration providers available to connect from Islo, including the supported authentication methods and connection scopes.
-
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[IntegrationProvidersResponse]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "integrations/providers",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    IntegrationProvidersResponse,
-                    parse_obj_as(
-                        type_=IntegrationProvidersResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def list_integration_triggers(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[TriggerCatalogListResponse]:
-        """
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[TriggerCatalogListResponse]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "integrations/triggers",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    TriggerCatalogListResponse,
-                    parse_obj_as(
-                        type_=TriggerCatalogListResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def get_integration_trigger(
-        self, provider: str, trigger_name: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[TriggerCatalogItem]:
-        """
-        Parameters
-        ----------
-        provider : str
-
-        trigger_name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[TriggerCatalogItem]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"integrations/triggers/{jsonable_encoder(provider)}/{jsonable_encoder(trigger_name)}",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    TriggerCatalogItem,
-                    parse_obj_as(
-                        type_=TriggerCatalogItem,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
     async def list_integrations(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[IntegrationListResponse]:
+    ) -> AsyncHttpResponse[ListPageIntegrationStatus]:
         """
         List the integrations the user/tenant has connected.
 
@@ -969,7 +996,7 @@ class AsyncRawIntegrationsClient:
 
         Returns
         -------
-        AsyncHttpResponse[IntegrationListResponse]
+        AsyncHttpResponse[ListPageIntegrationStatus]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -981,9 +1008,9 @@ class AsyncRawIntegrationsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    IntegrationListResponse,
+                    ListPageIntegrationStatus,
                     parse_obj_as(
-                        type_=IntegrationListResponse,  # type: ignore
+                        type_=ListPageIntegrationStatus,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1032,7 +1059,7 @@ class AsyncRawIntegrationsClient:
 
     async def list_custom_services(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[CustomServicesResponse]:
+    ) -> AsyncHttpResponse[ListPageCustomService]:
         """
         List custom service definitions in the current tenant (catalog view).
 
@@ -1049,7 +1076,7 @@ class AsyncRawIntegrationsClient:
 
         Returns
         -------
-        AsyncHttpResponse[CustomServicesResponse]
+        AsyncHttpResponse[ListPageCustomService]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1061,9 +1088,9 @@ class AsyncRawIntegrationsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    CustomServicesResponse,
+                    ListPageCustomService,
                     parse_obj_as(
-                        type_=CustomServicesResponse,  # type: ignore
+                        type_=ListPageCustomService,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1213,24 +1240,24 @@ class AsyncRawIntegrationsClient:
 
     async def disconnect_custom_integration(
         self,
-        descope_app_id: str,
+        provider: str,
         *,
         scope: typing.Optional[IntegrationLevel] = None,
         delete_app: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[typing.Dict[str, typing.Any]]:
         """
-        Disconnect a custom integration by its Descope app ID.
+        Disconnect a custom integration by its stable provider slug.
 
-        Authorization is by deterministic-ID prefix: only apps whose ID matches
-        ``cust-{tenant-prefix}-`` are accepted, which scopes the operation to the
-        caller's workspace without a DB lookup. ``scope`` selects which side's
-        tokens to revoke (per-user vs tenant-wide); ``delete_app=true`` removes
-        the Descope app entirely (affects every user in the workspace).
+        The provider is resolved only within the authenticated tenant's custom
+        service catalog, so callers cannot target another workspace. ``scope`` selects
+        which side's tokens to revoke (per-user vs tenant-wide);
+        ``delete_app=true`` removes the Descope app entirely (affects every user in
+        the workspace).
 
         Parameters
         ----------
-        descope_app_id : str
+        provider : str
 
         scope : typing.Optional[IntegrationLevel]
             Which token to revoke: 'user' (this user's personal) or 'tenant' (workspace)
@@ -1247,7 +1274,7 @@ class AsyncRawIntegrationsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"integrations/custom/{jsonable_encoder(descope_app_id)}",
+            f"integrations/custom/{encode_path_param(provider)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             params={
@@ -1330,6 +1357,348 @@ class AsyncRawIntegrationsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    async def list_integration_providers(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[ListPageIntegrationProvider]:
+        """
+        Return the integration providers available to connect from Islo, including the supported authentication methods and connection scopes.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[ListPageIntegrationProvider]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "integrations/providers",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ListPageIntegrationProvider,
+                    parse_obj_as(
+                        type_=ListPageIntegrationProvider,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def list_integration_trigger_events(
+        self,
+        *,
+        cursor: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        sort: typing.Optional[ListIntegrationTriggerEventsRequestSort] = None,
+        provider: typing.Optional[typing.Sequence[str]] = None,
+        event_name: typing.Optional[typing.Sequence[str]] = None,
+        invocation_status: typing.Optional[typing.Sequence[str]] = None,
+        outcome: typing.Optional[typing.Sequence[str]] = None,
+        received_at: typing.Optional[TimestampRange] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncPager[TriggerEventSummary, TriggerEventPage]:
+        """
+        Parameters
+        ----------
+        cursor : typing.Optional[str]
+
+        limit : typing.Optional[int]
+
+        sort : typing.Optional[ListIntegrationTriggerEventsRequestSort]
+
+        provider : typing.Optional[typing.Sequence[str]]
+
+        event_name : typing.Optional[typing.Sequence[str]]
+
+        invocation_status : typing.Optional[typing.Sequence[str]]
+
+        outcome : typing.Optional[typing.Sequence[str]]
+
+        received_at : typing.Optional[TimestampRange]
+            received_at range. Operators: gte, gt, lte, lt. Serialized as received_at[gte]=…&received_at[lt]=…
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncPager[TriggerEventSummary, TriggerEventPage]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "integrations/trigger-events",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "cursor": cursor,
+                "limit": limit,
+                "sort": sort,
+                "provider": provider,
+                "event_name": event_name,
+                "invocation_status": invocation_status,
+                "outcome": outcome,
+                "received_at": convert_and_respect_annotation_metadata(
+                    object_=received_at, annotation=TimestampRange, direction="write"
+                ),
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    TriggerEventPage,
+                    parse_obj_as(
+                        type_=TriggerEventPage,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+
+                async def _get_next():
+                    return await self.list_integration_trigger_events(
+                        cursor=_parsed_next,
+                        limit=limit,
+                        sort=sort,
+                        provider=provider,
+                        event_name=event_name,
+                        invocation_status=invocation_status,
+                        outcome=outcome,
+                        received_at=received_at,
+                        request_options=request_options,
+                    )
+
+                return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_integration_trigger_event(
+        self, event_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[TriggerEventDetail]:
+        """
+        Parameters
+        ----------
+        event_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[TriggerEventDetail]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"integrations/trigger-events/{encode_path_param(event_id)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    TriggerEventDetail,
+                    parse_obj_as(
+                        type_=TriggerEventDetail,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def list_integration_triggers(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[ListPageTriggerCatalogItem]:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[ListPageTriggerCatalogItem]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "integrations/triggers",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ListPageTriggerCatalogItem,
+                    parse_obj_as(
+                        type_=ListPageTriggerCatalogItem,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def list_connected_integration_triggers(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[ListPageTriggerCatalogItem]:
+        """
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[ListPageTriggerCatalogItem]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "integrations/triggers/connected",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ListPageTriggerCatalogItem,
+                    parse_obj_as(
+                        type_=ListPageTriggerCatalogItem,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_integration_trigger(
+        self, provider: str, trigger_name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[TriggerCatalogItem]:
+        """
+        Parameters
+        ----------
+        provider : str
+
+        trigger_name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[TriggerCatalogItem]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"integrations/triggers/{encode_path_param(provider)}/{encode_path_param(trigger_name)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    TriggerCatalogItem,
+                    parse_obj_as(
+                        type_=TriggerCatalogItem,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
     async def get_integration_status(
         self, provider: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[IntegrationDetailResponse]:
@@ -1351,7 +1720,7 @@ class AsyncRawIntegrationsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"integrations/{jsonable_encoder(provider)}",
+            f"integrations/{encode_path_param(provider)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1453,7 +1822,7 @@ class AsyncRawIntegrationsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"integrations/{jsonable_encoder(provider)}",
+            f"integrations/{encode_path_param(provider)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             params={
@@ -1516,56 +1885,6 @@ class AsyncRawIntegrationsClient:
                         ),
                     ),
                 )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def list_connected_integration_triggers(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[TriggerCatalogListResponse]:
-        """
-        Parameters
-        ----------
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[TriggerCatalogListResponse]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "integrations/triggers/connected",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    TriggerCatalogListResponse,
-                    parse_obj_as(
-                        type_=TriggerCatalogListResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),

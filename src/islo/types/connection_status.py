@@ -13,8 +13,8 @@ class ConnectionStatus(UniversalBaseModel):
 
     connected: bool
     connected_at: typing.Optional[str] = None
-    username: typing.Optional[str] = None
     email: typing.Optional[str] = None
     scopes: typing.Optional[typing.List[str]] = None
+    username: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

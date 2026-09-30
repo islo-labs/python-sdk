@@ -7,9 +7,9 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class LineRunDebugEnvironment(UniversalBaseModel):
-    sandbox_name: typing.Optional[str] = None
-    region: typing.Optional[str] = None
-    snapshot_name: typing.Optional[str] = None
     gateway_profile: typing.Optional[str] = None
+    region: typing.Optional[str] = None
+    sandbox_name: typing.Optional[str] = None
+    snapshot_name: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

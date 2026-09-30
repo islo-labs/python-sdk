@@ -5,6 +5,7 @@ import typing
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
 from ..types.container_registry_response import ContainerRegistryResponse
+from ..types.list_page_container_registry_response import ListPageContainerRegistryResponse
 from ..types.registry_provider import RegistryProvider
 from .raw_client import AsyncRawContainerRegistriesClient, RawContainerRegistriesClient
 
@@ -29,7 +30,7 @@ class ContainerRegistriesClient:
 
     def list_container_registries(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.List[ContainerRegistryResponse]:
+    ) -> ListPageContainerRegistryResponse:
         """
         Parameters
         ----------
@@ -38,7 +39,7 @@ class ContainerRegistriesClient:
 
         Returns
         -------
-        typing.List[ContainerRegistryResponse]
+        ListPageContainerRegistryResponse
             Successful Response
 
         Examples
@@ -47,6 +48,7 @@ class ContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -58,23 +60,23 @@ class ContainerRegistriesClient:
     def create_container_registry(
         self,
         *,
-        provider: RegistryProvider,
-        registry_host: str,
         cloud_role_id: str,
+        provider: RegistryProvider,
         region: str,
+        registry_host: str,
         repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ContainerRegistryResponse:
         """
         Parameters
         ----------
-        provider : RegistryProvider
-
-        registry_host : str
-
         cloud_role_id : str
 
+        provider : RegistryProvider
+
         region : str
+
+        registry_host : str
 
         repository_prefixes : typing.Optional[typing.Sequence[str]]
 
@@ -92,21 +94,22 @@ class ContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
         client.container_registries.create_container_registry(
-            provider=RegistryProvider.ECR,
-            registry_host="registry_host",
             cloud_role_id="cloud_role_id",
+            provider=RegistryProvider.ECR,
             region="region",
+            registry_host="registry_host",
         )
         """
         _response = self._raw_client.create_container_registry(
-            provider=provider,
-            registry_host=registry_host,
             cloud_role_id=cloud_role_id,
+            provider=provider,
             region=region,
+            registry_host=registry_host,
             repository_prefixes=repository_prefixes,
             request_options=request_options,
         )
@@ -134,6 +137,7 @@ class ContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -163,6 +167,7 @@ class ContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -177,9 +182,9 @@ class ContainerRegistriesClient:
         self,
         id: str,
         *,
-        repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
         cloud_role_id: typing.Optional[str] = OMIT,
         is_enabled: typing.Optional[bool] = OMIT,
+        repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ContainerRegistryResponse:
         """
@@ -187,11 +192,11 @@ class ContainerRegistriesClient:
         ----------
         id : str
 
-        repository_prefixes : typing.Optional[typing.Sequence[str]]
-
         cloud_role_id : typing.Optional[str]
 
         is_enabled : typing.Optional[bool]
+
+        repository_prefixes : typing.Optional[typing.Sequence[str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -207,6 +212,7 @@ class ContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -216,9 +222,9 @@ class ContainerRegistriesClient:
         """
         _response = self._raw_client.update_container_registry(
             id,
-            repository_prefixes=repository_prefixes,
             cloud_role_id=cloud_role_id,
             is_enabled=is_enabled,
+            repository_prefixes=repository_prefixes,
             request_options=request_options,
         )
         return _response.data
@@ -241,7 +247,7 @@ class AsyncContainerRegistriesClient:
 
     async def list_container_registries(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.List[ContainerRegistryResponse]:
+    ) -> ListPageContainerRegistryResponse:
         """
         Parameters
         ----------
@@ -250,7 +256,7 @@ class AsyncContainerRegistriesClient:
 
         Returns
         -------
-        typing.List[ContainerRegistryResponse]
+        ListPageContainerRegistryResponse
             Successful Response
 
         Examples
@@ -261,6 +267,7 @@ class AsyncContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -278,23 +285,23 @@ class AsyncContainerRegistriesClient:
     async def create_container_registry(
         self,
         *,
-        provider: RegistryProvider,
-        registry_host: str,
         cloud_role_id: str,
+        provider: RegistryProvider,
         region: str,
+        registry_host: str,
         repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ContainerRegistryResponse:
         """
         Parameters
         ----------
-        provider : RegistryProvider
-
-        registry_host : str
-
         cloud_role_id : str
 
+        provider : RegistryProvider
+
         region : str
+
+        registry_host : str
 
         repository_prefixes : typing.Optional[typing.Sequence[str]]
 
@@ -314,6 +321,7 @@ class AsyncContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -321,20 +329,20 @@ class AsyncContainerRegistriesClient:
 
         async def main() -> None:
             await client.container_registries.create_container_registry(
-                provider=RegistryProvider.ECR,
-                registry_host="registry_host",
                 cloud_role_id="cloud_role_id",
+                provider=RegistryProvider.ECR,
                 region="region",
+                registry_host="registry_host",
             )
 
 
         asyncio.run(main())
         """
         _response = await self._raw_client.create_container_registry(
-            provider=provider,
-            registry_host=registry_host,
             cloud_role_id=cloud_role_id,
+            provider=provider,
             region=region,
+            registry_host=registry_host,
             repository_prefixes=repository_prefixes,
             request_options=request_options,
         )
@@ -364,6 +372,7 @@ class AsyncContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -403,6 +412,7 @@ class AsyncContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -423,9 +433,9 @@ class AsyncContainerRegistriesClient:
         self,
         id: str,
         *,
-        repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
         cloud_role_id: typing.Optional[str] = OMIT,
         is_enabled: typing.Optional[bool] = OMIT,
+        repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ContainerRegistryResponse:
         """
@@ -433,11 +443,11 @@ class AsyncContainerRegistriesClient:
         ----------
         id : str
 
-        repository_prefixes : typing.Optional[typing.Sequence[str]]
-
         cloud_role_id : typing.Optional[str]
 
         is_enabled : typing.Optional[bool]
+
+        repository_prefixes : typing.Optional[typing.Sequence[str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -455,6 +465,7 @@ class AsyncContainerRegistriesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -470,9 +481,9 @@ class AsyncContainerRegistriesClient:
         """
         _response = await self._raw_client.update_container_registry(
             id,
-            repository_prefixes=repository_prefixes,
             cloud_role_id=cloud_role_id,
             is_enabled=is_enabled,
+            repository_prefixes=repository_prefixes,
             request_options=request_options,
         )
         return _response.data

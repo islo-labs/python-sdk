@@ -12,17 +12,17 @@ from .resolved_stage import ResolvedStage
 
 
 class LineResponse(UniversalBaseModel):
-    id: str
-    name: str
-    description: typing.Optional[str] = None
-    status: str
     category: typing.Optional[str] = None
-    stage_count: typing.Optional[int] = None
-    trigger_type: typing.Optional[str] = None
-    latest_version_number: typing.Optional[int] = None
-    resolved_stages: typing.Optional[typing.List[ResolvedStage]] = None
     created_at: dt.datetime
+    description: typing.Optional[str] = None
+    id: str
     latest_version: typing.Optional[LineVersionResponse] = None
+    latest_version_number: typing.Optional[int] = None
+    name: str
+    resolved_stages: typing.Optional[typing.List[ResolvedStage]] = None
+    stage_count: typing.Optional[int] = None
+    status: str
+    trigger_type: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 

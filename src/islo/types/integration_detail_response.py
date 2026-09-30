@@ -13,7 +13,7 @@ class IntegrationDetailResponse(UniversalBaseModel):
     """
 
     provider: str
-    user: ConnectionStatus
     tenant: ConnectionStatus
+    user: ConnectionStatus
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

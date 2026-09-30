@@ -11,10 +11,10 @@ class ArtifactSummary(UniversalBaseModel):
     Identity-only view of an artifact, without provider-specific metadata.
     """
 
-    type: typing.Optional[str] = None
-    provider: typing.Optional[str] = None
-    url: typing.Optional[str] = None
-    title: typing.Optional[str] = None
     external_ref: typing.Optional[typing.Dict[str, typing.Any]] = None
+    provider: typing.Optional[str] = None
+    title: typing.Optional[str] = None
+    type: typing.Optional[str] = None
+    url: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

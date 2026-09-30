@@ -17,12 +17,13 @@ class AgentResult(UniversalBaseModel):
     job whose row could only ever say whether it passed.
     """
 
-    mode: typing.Optional[str] = None
-    harness: typing.Optional[str] = None
-    status: typing.Optional[str] = None
-    outcome: typing.Optional[str] = None
     agent_session_id: typing.Optional[str] = None
+    harness: typing.Optional[str] = None
+    mode: typing.Optional[str] = None
+    model: typing.Optional[str] = None
+    outcome: typing.Optional[str] = None
     output_text: typing.Optional[str] = None
     outputs: typing.Optional[typing.Dict[str, typing.Optional[JsonValue]]] = None
+    status: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

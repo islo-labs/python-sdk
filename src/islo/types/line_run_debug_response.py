@@ -10,16 +10,16 @@ from .line_run_failure_summary import LineRunFailureSummary
 
 
 class LineRunDebugResponse(UniversalBaseModel):
-    id: str
-    line_name: str
-    line_version_id: typing.Optional[str] = None
-    status: str
-    triggered_by: str
-    region: typing.Optional[str] = None
-    started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
     error_message: typing.Optional[str] = None
     failure_summary: typing.Optional[LineRunFailureSummary] = None
+    id: str
+    line_name: str
+    line_version_id: typing.Optional[str] = None
+    region: typing.Optional[str] = None
     stages: typing.Optional[typing.List[LineRunDebugStage]] = None
+    started_at: typing.Optional[dt.datetime] = None
+    status: str
+    triggered_by: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

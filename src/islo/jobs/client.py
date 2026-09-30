@@ -3,6 +3,7 @@
 import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
+from ..core.pagination import AsyncPager, SyncPager
 from ..core.request_options import RequestOptions
 from ..types.job_list_item import JobListItem
 from ..types.job_manifest_input import JobManifestInput
@@ -11,6 +12,9 @@ from ..types.job_run_list_item import JobRunListItem
 from ..types.job_run_response import JobRunResponse
 from ..types.job_schedule_response import JobScheduleResponse
 from ..types.job_version_response import JobVersionResponse
+from ..types.list_page_job_list_item import ListPageJobListItem
+from ..types.list_page_job_run_list_item import ListPageJobRunListItem
+from ..types.list_page_job_version_response import ListPageJobVersionResponse
 from .raw_client import AsyncRawJobsClient, RawJobsClient
 
 # this is used as the default value for optional parameters
@@ -32,16 +36,83 @@ class JobsClient:
         """
         return self._raw_client
 
-    def validate_job_manifest(
-        self, name: str, *, manifest: JobManifestInput, request_options: typing.Optional[RequestOptions] = None
-    ) -> None:
+    def list_jobs(
+        self,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SyncPager[JobListItem, ListPageJobListItem]:
+        """
+        Parameters
+        ----------
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SyncPager[JobListItem, ListPageJobListItem]
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        response = client.jobs.list_jobs()
+        for item in response:
+            yield item
+        # alternatively, you can paginate page-by-page
+        for page in response.iter_pages():
+            yield page
+        """
+        return self._raw_client.list_jobs(limit=limit, cursor=cursor, request_options=request_options)
+
+    def get_job(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> JobResponse:
         """
         Parameters
         ----------
         name : str
 
-        manifest : JobManifestInput
-            Job manifest (authored as TOML or JSON, stored as JSON)
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        JobResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.jobs.get_job(
+            name="name",
+        )
+        """
+        _response = self._raw_client.get_job(name, request_options=request_options)
+        return _response.data
+
+    def delete_job(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
+        """
+        Parameters
+        ----------
+        name : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -52,38 +123,19 @@ class JobsClient:
 
         Examples
         --------
-        from islo import (
-            Islo,
-            JobManifestInput,
-            JobSection,
-            RunSectionInput,
-            TaskInput,
-            TaskStepInput,
-        )
+        from islo import Islo
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-        client.jobs.validate_job_manifest(
+        client.jobs.delete_job(
             name="name",
-            manifest=JobManifestInput(
-                job=JobSection(
-                    name="name",
-                ),
-                run=RunSectionInput(
-                    tasks=[
-                        TaskInput(
-                            name="name",
-                            steps=[TaskStepInput()],
-                        )
-                    ],
-                ),
-            ),
         )
         """
-        _response = self._raw_client.validate_job_manifest(name, manifest=manifest, request_options=request_options)
+        _response = self._raw_client.delete_job(name, request_options=request_options)
         return _response.data
 
     def deploy_job(
@@ -118,6 +170,7 @@ class JobsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -141,187 +194,14 @@ class JobsClient:
         _response = self._raw_client.deploy_job(name, manifest=manifest, request_options=request_options)
         return _response.data
 
-    def get_job(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> JobResponse:
-        """
-        Parameters
-        ----------
-        name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        JobResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.jobs.get_job(
-            name="name",
-        )
-        """
-        _response = self._raw_client.get_job(name, request_options=request_options)
-        return _response.data
-
-    def delete_job(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
-        """
-        Parameters
-        ----------
-        name : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        None
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.jobs.delete_job(
-            name="name",
-        )
-        """
-        _response = self._raw_client.delete_job(name, request_options=request_options)
-        return _response.data
-
-    def list_jobs(
-        self,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[JobListItem]:
-        """
-        Parameters
-        ----------
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[JobListItem]
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.jobs.list_jobs()
-        """
-        _response = self._raw_client.list_jobs(limit=limit, offset=offset, request_options=request_options)
-        return _response.data
-
-    def list_job_versions(
-        self,
-        name: str,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[JobVersionResponse]:
-        """
-        Parameters
-        ----------
-        name : str
-
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[JobVersionResponse]
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.jobs.list_job_versions(
-            name="name",
-        )
-        """
-        _response = self._raw_client.list_job_versions(
-            name, limit=limit, offset=offset, request_options=request_options
-        )
-        return _response.data
-
-    def get_job_version(
-        self, name: str, version_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> JobVersionResponse:
-        """
-        Parameters
-        ----------
-        name : str
-
-        version_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        JobVersionResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.jobs.get_job_version(
-            name="name",
-            version_id="version_id",
-        )
-        """
-        _response = self._raw_client.get_job_version(name, version_id, request_options=request_options)
-        return _response.data
-
     def list_job_runs(
         self,
         name: str,
         *,
         limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[JobRunListItem]:
+    ) -> SyncPager[JobRunListItem, ListPageJobRunListItem]:
         """
         Parameters
         ----------
@@ -329,14 +209,14 @@ class JobsClient:
 
         limit : typing.Optional[int]
 
-        offset : typing.Optional[int]
+        cursor : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.List[JobRunListItem]
+        SyncPager[JobRunListItem, ListPageJobRunListItem]
             Successful Response
 
         Examples
@@ -345,23 +225,28 @@ class JobsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-        client.jobs.list_job_runs(
+        response = client.jobs.list_job_runs(
             name="name",
         )
+        for item in response:
+            yield item
+        # alternatively, you can paginate page-by-page
+        for page in response.iter_pages():
+            yield page
         """
-        _response = self._raw_client.list_job_runs(name, limit=limit, offset=offset, request_options=request_options)
-        return _response.data
+        return self._raw_client.list_job_runs(name, limit=limit, cursor=cursor, request_options=request_options)
 
     def trigger_job_run(
         self,
         name: str,
         *,
-        version_id: typing.Optional[str] = OMIT,
-        region: typing.Optional[str] = OMIT,
         params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        region: typing.Optional[str] = OMIT,
+        version_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> JobRunResponse:
         """
@@ -369,14 +254,14 @@ class JobsClient:
         ----------
         name : str
 
-        version_id : typing.Optional[str]
-            Deployed version to run; defaults to latest
+        params : typing.Optional[typing.Dict[str, typing.Any]]
+            Run-time parameter values (validated against [job.params])
 
         region : typing.Optional[str]
             Compute region override
 
-        params : typing.Optional[typing.Dict[str, typing.Any]]
-            Run-time parameter values (validated against [job.params])
+        version_id : typing.Optional[str]
+            Deployed version to run; defaults to latest
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -392,6 +277,7 @@ class JobsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -400,7 +286,7 @@ class JobsClient:
         )
         """
         _response = self._raw_client.trigger_job_run(
-            name, version_id=version_id, region=region, params=params, request_options=request_options
+            name, params=params, region=region, version_id=version_id, request_options=request_options
         )
         return _response.data
 
@@ -428,6 +314,7 @@ class JobsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -470,6 +357,7 @@ class JobsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -503,6 +391,7 @@ class JobsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -532,6 +421,7 @@ class JobsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -542,23 +432,7 @@ class JobsClient:
         _response = self._raw_client.delete_job_schedule(name, request_options=request_options)
         return _response.data
 
-
-class AsyncJobsClient:
-    def __init__(self, *, client_wrapper: AsyncClientWrapper):
-        self._raw_client = AsyncRawJobsClient(client_wrapper=client_wrapper)
-
-    @property
-    def with_raw_response(self) -> AsyncRawJobsClient:
-        """
-        Retrieves a raw implementation of this client that returns raw responses.
-
-        Returns
-        -------
-        AsyncRawJobsClient
-        """
-        return self._raw_client
-
-    async def validate_job_manifest(
+    def validate_job_manifest(
         self, name: str, *, manifest: JobManifestInput, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
@@ -578,10 +452,8 @@ class AsyncJobsClient:
 
         Examples
         --------
-        import asyncio
-
         from islo import (
-            AsyncIslo,
+            Islo,
             JobManifestInput,
             JobSection,
             RunSectionInput,
@@ -590,48 +462,86 @@ class AsyncJobsClient:
         )
         from islo.environment import IsloEnvironment
 
-        client = AsyncIslo(
+        client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
-
-
-        async def main() -> None:
-            await client.jobs.validate_job_manifest(
-                name="name",
-                manifest=JobManifestInput(
-                    job=JobSection(
-                        name="name",
-                    ),
-                    run=RunSectionInput(
-                        tasks=[
-                            TaskInput(
-                                name="name",
-                                steps=[TaskStepInput()],
-                            )
-                        ],
-                    ),
+        client.jobs.validate_job_manifest(
+            name="name",
+            manifest=JobManifestInput(
+                job=JobSection(
+                    name="name",
                 ),
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.validate_job_manifest(
-            name, manifest=manifest, request_options=request_options
+                run=RunSectionInput(
+                    tasks=[
+                        TaskInput(
+                            name="name",
+                            steps=[TaskStepInput()],
+                        )
+                    ],
+                ),
+            ),
         )
+        """
+        _response = self._raw_client.validate_job_manifest(name, manifest=manifest, request_options=request_options)
         return _response.data
 
-    async def deploy_job(
-        self, name: str, *, manifest: JobManifestInput, request_options: typing.Optional[RequestOptions] = None
+    def list_job_versions(
+        self,
+        name: str,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SyncPager[JobVersionResponse, ListPageJobVersionResponse]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SyncPager[JobVersionResponse, ListPageJobVersionResponse]
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        response = client.jobs.list_job_versions(
+            name="name",
+        )
+        for item in response:
+            yield item
+        # alternatively, you can paginate page-by-page
+        for page in response.iter_pages():
+            yield page
+        """
+        return self._raw_client.list_job_versions(name, limit=limit, cursor=cursor, request_options=request_options)
+
+    def get_job_version(
+        self, name: str, version_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> JobVersionResponse:
         """
         Parameters
         ----------
         name : str
 
-        manifest : JobManifestInput
-            Job manifest (authored as TOML or JSON, stored as JSON)
+        version_id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -643,47 +553,87 @@ class AsyncJobsClient:
 
         Examples
         --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.jobs.get_job_version(
+            name="name",
+            version_id="version_id",
+        )
+        """
+        _response = self._raw_client.get_job_version(name, version_id, request_options=request_options)
+        return _response.data
+
+
+class AsyncJobsClient:
+    def __init__(self, *, client_wrapper: AsyncClientWrapper):
+        self._raw_client = AsyncRawJobsClient(client_wrapper=client_wrapper)
+
+    @property
+    def with_raw_response(self) -> AsyncRawJobsClient:
+        """
+        Retrieves a raw implementation of this client that returns raw responses.
+
+        Returns
+        -------
+        AsyncRawJobsClient
+        """
+        return self._raw_client
+
+    async def list_jobs(
+        self,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncPager[JobListItem, ListPageJobListItem]:
+        """
+        Parameters
+        ----------
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncPager[JobListItem, ListPageJobListItem]
+            Successful Response
+
+        Examples
+        --------
         import asyncio
 
-        from islo import (
-            AsyncIslo,
-            JobManifestInput,
-            JobSection,
-            RunSectionInput,
-            TaskInput,
-            TaskStepInput,
-        )
+        from islo import AsyncIslo
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
 
 
         async def main() -> None:
-            await client.jobs.deploy_job(
-                name="name",
-                manifest=JobManifestInput(
-                    job=JobSection(
-                        name="name",
-                    ),
-                    run=RunSectionInput(
-                        tasks=[
-                            TaskInput(
-                                name="name",
-                                steps=[TaskStepInput()],
-                            )
-                        ],
-                    ),
-                ),
-            )
+            response = await client.jobs.list_jobs()
+            async for item in response:
+                yield item
+
+            # alternatively, you can paginate page-by-page
+            async for page in response.iter_pages():
+                yield page
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.deploy_job(name, manifest=manifest, request_options=request_options)
-        return _response.data
+        return await self._raw_client.list_jobs(limit=limit, cursor=cursor, request_options=request_options)
 
     async def get_job(self, name: str, *, request_options: typing.Optional[RequestOptions] = None) -> JobResponse:
         """
@@ -707,6 +657,7 @@ class AsyncJobsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -744,6 +695,7 @@ class AsyncJobsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -760,110 +712,16 @@ class AsyncJobsClient:
         _response = await self._raw_client.delete_job(name, request_options=request_options)
         return _response.data
 
-    async def list_jobs(
-        self,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[JobListItem]:
-        """
-        Parameters
-        ----------
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[JobListItem]
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-        from islo.environment import IsloEnvironment
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-
-
-        async def main() -> None:
-            await client.jobs.list_jobs()
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.list_jobs(limit=limit, offset=offset, request_options=request_options)
-        return _response.data
-
-    async def list_job_versions(
-        self,
-        name: str,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[JobVersionResponse]:
-        """
-        Parameters
-        ----------
-        name : str
-
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        typing.List[JobVersionResponse]
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-        from islo.environment import IsloEnvironment
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-
-
-        async def main() -> None:
-            await client.jobs.list_job_versions(
-                name="name",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.list_job_versions(
-            name, limit=limit, offset=offset, request_options=request_options
-        )
-        return _response.data
-
-    async def get_job_version(
-        self, name: str, version_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    async def deploy_job(
+        self, name: str, *, manifest: JobManifestInput, request_options: typing.Optional[RequestOptions] = None
     ) -> JobVersionResponse:
         """
         Parameters
         ----------
         name : str
 
-        version_id : str
+        manifest : JobManifestInput
+            Job manifest (authored as TOML or JSON, stored as JSON)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -877,25 +735,45 @@ class AsyncJobsClient:
         --------
         import asyncio
 
-        from islo import AsyncIslo
+        from islo import (
+            AsyncIslo,
+            JobManifestInput,
+            JobSection,
+            RunSectionInput,
+            TaskInput,
+            TaskStepInput,
+        )
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
 
 
         async def main() -> None:
-            await client.jobs.get_job_version(
+            await client.jobs.deploy_job(
                 name="name",
-                version_id="version_id",
+                manifest=JobManifestInput(
+                    job=JobSection(
+                        name="name",
+                    ),
+                    run=RunSectionInput(
+                        tasks=[
+                            TaskInput(
+                                name="name",
+                                steps=[TaskStepInput()],
+                            )
+                        ],
+                    ),
+                ),
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_job_version(name, version_id, request_options=request_options)
+        _response = await self._raw_client.deploy_job(name, manifest=manifest, request_options=request_options)
         return _response.data
 
     async def list_job_runs(
@@ -903,9 +781,9 @@ class AsyncJobsClient:
         name: str,
         *,
         limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> typing.List[JobRunListItem]:
+    ) -> AsyncPager[JobRunListItem, ListPageJobRunListItem]:
         """
         Parameters
         ----------
@@ -913,14 +791,14 @@ class AsyncJobsClient:
 
         limit : typing.Optional[int]
 
-        offset : typing.Optional[int]
+        cursor : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        typing.List[JobRunListItem]
+        AsyncPager[JobRunListItem, ListPageJobRunListItem]
             Successful Response
 
         Examples
@@ -931,31 +809,35 @@ class AsyncJobsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
 
 
         async def main() -> None:
-            await client.jobs.list_job_runs(
+            response = await client.jobs.list_job_runs(
                 name="name",
             )
+            async for item in response:
+                yield item
+
+            # alternatively, you can paginate page-by-page
+            async for page in response.iter_pages():
+                yield page
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.list_job_runs(
-            name, limit=limit, offset=offset, request_options=request_options
-        )
-        return _response.data
+        return await self._raw_client.list_job_runs(name, limit=limit, cursor=cursor, request_options=request_options)
 
     async def trigger_job_run(
         self,
         name: str,
         *,
-        version_id: typing.Optional[str] = OMIT,
-        region: typing.Optional[str] = OMIT,
         params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        region: typing.Optional[str] = OMIT,
+        version_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> JobRunResponse:
         """
@@ -963,14 +845,14 @@ class AsyncJobsClient:
         ----------
         name : str
 
-        version_id : typing.Optional[str]
-            Deployed version to run; defaults to latest
+        params : typing.Optional[typing.Dict[str, typing.Any]]
+            Run-time parameter values (validated against [job.params])
 
         region : typing.Optional[str]
             Compute region override
 
-        params : typing.Optional[typing.Dict[str, typing.Any]]
-            Run-time parameter values (validated against [job.params])
+        version_id : typing.Optional[str]
+            Deployed version to run; defaults to latest
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -988,6 +870,7 @@ class AsyncJobsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -1002,7 +885,7 @@ class AsyncJobsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.trigger_job_run(
-            name, version_id=version_id, region=region, params=params, request_options=request_options
+            name, params=params, region=region, version_id=version_id, request_options=request_options
         )
         return _response.data
 
@@ -1032,6 +915,7 @@ class AsyncJobsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -1082,6 +966,7 @@ class AsyncJobsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -1123,6 +1008,7 @@ class AsyncJobsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -1160,6 +1046,7 @@ class AsyncJobsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -1174,4 +1061,170 @@ class AsyncJobsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.delete_job_schedule(name, request_options=request_options)
+        return _response.data
+
+    async def validate_job_manifest(
+        self, name: str, *, manifest: JobManifestInput, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Parameters
+        ----------
+        name : str
+
+        manifest : JobManifestInput
+            Job manifest (authored as TOML or JSON, stored as JSON)
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import (
+            AsyncIslo,
+            JobManifestInput,
+            JobSection,
+            RunSectionInput,
+            TaskInput,
+            TaskStepInput,
+        )
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.jobs.validate_job_manifest(
+                name="name",
+                manifest=JobManifestInput(
+                    job=JobSection(
+                        name="name",
+                    ),
+                    run=RunSectionInput(
+                        tasks=[
+                            TaskInput(
+                                name="name",
+                                steps=[TaskStepInput()],
+                            )
+                        ],
+                    ),
+                ),
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.validate_job_manifest(
+            name, manifest=manifest, request_options=request_options
+        )
+        return _response.data
+
+    async def list_job_versions(
+        self,
+        name: str,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncPager[JobVersionResponse, ListPageJobVersionResponse]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncPager[JobVersionResponse, ListPageJobVersionResponse]
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            response = await client.jobs.list_job_versions(
+                name="name",
+            )
+            async for item in response:
+                yield item
+
+            # alternatively, you can paginate page-by-page
+            async for page in response.iter_pages():
+                yield page
+
+
+        asyncio.run(main())
+        """
+        return await self._raw_client.list_job_versions(
+            name, limit=limit, cursor=cursor, request_options=request_options
+        )
+
+    async def get_job_version(
+        self, name: str, version_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> JobVersionResponse:
+        """
+        Parameters
+        ----------
+        name : str
+
+        version_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        JobVersionResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.jobs.get_job_version(
+                name="name",
+                version_id="version_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_job_version(name, version_id, request_options=request_options)
         return _response.data

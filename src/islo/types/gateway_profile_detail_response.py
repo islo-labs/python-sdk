@@ -11,17 +11,17 @@ from .gateway_rule_response import GatewayRuleResponse
 
 
 class GatewayProfileDetailResponse(UniversalBaseModel):
-    id: str
-    name: str
-    description: typing.Optional[str] = None
+    cloud_role: typing.Optional[CloudRoleRef] = None
+    created_at: typing.Optional[dt.datetime] = None
     default_action: str
+    description: typing.Optional[str] = None
+    id: str
+    integration_policy: typing.Optional[GatewayProfileDetailResponseIntegrationPolicy] = None
     internet_enabled: bool
     is_default: bool
-    cloud_role: typing.Optional[CloudRoleRef] = None
-    integration_policy: typing.Optional[GatewayProfileDetailResponseIntegrationPolicy] = None
+    name: str
     rule_count: typing.Optional[int] = None
-    created_at: typing.Optional[dt.datetime] = None
-    updated_at: typing.Optional[dt.datetime] = None
     rules: typing.Optional[typing.List[GatewayRuleResponse]] = None
+    updated_at: typing.Optional[dt.datetime] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

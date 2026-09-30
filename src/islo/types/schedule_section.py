@@ -12,7 +12,7 @@ class ScheduleSection(UniversalBaseModel):
     Cron expression; validated at deploy time. Every param the schedule uses must have a default before you add [schedule].
     """
 
-    timezone: typing.Optional[str] = None
     enabled: typing.Optional[bool] = None
+    timezone: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

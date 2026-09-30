@@ -12,14 +12,14 @@ class ArtifactRef(UniversalBaseModel):
     Durable external resource created or materially changed by a job step.
     """
 
-    type: str = pydantic.Field()
+    external_ref: ArtifactRefExternalRef = pydantic.Field()
     """
-    Resource type, normally external_ref.kind
+    Stable provider-specific identity
     """
 
-    provider: str = pydantic.Field()
+    metadata: typing.Optional[typing.Dict[str, typing.Any]] = pydantic.Field(default=None)
     """
-    Must match external_ref.provider
+    Provider-specific details that are not identity
     """
 
     operation: typing.Optional[str] = pydantic.Field(default=None)
@@ -27,21 +27,21 @@ class ArtifactRef(UniversalBaseModel):
     What the step did, such as created, updated, or published
     """
 
-    external_ref: ArtifactRefExternalRef = pydantic.Field()
+    provider: str = pydantic.Field()
     """
-    Stable provider-specific identity
+    Must match external_ref.provider
+    """
+
+    status: typing.Optional[str] = None
+    title: typing.Optional[str] = None
+    type: str = pydantic.Field()
+    """
+    Resource type, normally external_ref.kind
     """
 
     url: typing.Optional[str] = pydantic.Field(default=None)
     """
     Canonical resource URL
-    """
-
-    title: typing.Optional[str] = None
-    status: typing.Optional[str] = None
-    metadata: typing.Optional[typing.Dict[str, typing.Any]] = pydantic.Field(default=None)
-    """
-    Provider-specific details that are not identity
     """
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

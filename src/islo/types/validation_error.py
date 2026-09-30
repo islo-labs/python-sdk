@@ -8,10 +8,10 @@ from .validation_error_loc_item import ValidationErrorLocItem
 
 
 class ValidationError(UniversalBaseModel):
+    ctx: typing.Optional[typing.Dict[str, typing.Any]] = None
+    input: typing.Optional[typing.Any] = None
     loc: typing.List[ValidationErrorLocItem]
     msg: str
     type: str
-    input: typing.Optional[typing.Any] = None
-    ctx: typing.Optional[typing.Dict[str, typing.Any]] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

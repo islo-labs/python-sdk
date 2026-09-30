@@ -4,12 +4,18 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
+from .display_hint import DisplayHint
 from .url_external_ref_kind import UrlExternalRefKind
 
 
 class UrlExternalRef(UniversalBaseModel):
     """
     Fallback identity for an artifact represented by a public URL.
+    """
+
+    display_hint: typing.Optional[DisplayHint] = pydantic.Field(default=None)
+    """
+    Optional safe display metadata for richer rendering of unknown URL artifacts
     """
 
     kind: typing.Optional[UrlExternalRefKind] = None

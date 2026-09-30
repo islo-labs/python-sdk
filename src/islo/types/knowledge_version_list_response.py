@@ -8,8 +8,8 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class KnowledgeVersionListResponse(UniversalBaseModel):
+    created_at: dt.datetime
     id: str
     version_number: int
-    created_at: dt.datetime
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

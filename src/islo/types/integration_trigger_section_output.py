@@ -11,11 +11,11 @@ from .trigger_path_binding import TriggerPathBinding
 
 
 class IntegrationTriggerSectionOutput(UniversalBaseModel):
-    provider: str
-    name: str
-    selector: IntegrationTriggerSectionOutputSelector
     filters: typing.Optional[typing.List["LineConditionOutput"]] = None
+    name: str
     outputs: typing.Optional[typing.Dict[str, TriggerPathBinding]] = None
+    provider: str
+    selector: IntegrationTriggerSectionOutputSelector
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 

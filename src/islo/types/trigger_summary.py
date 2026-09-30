@@ -17,10 +17,10 @@ class TriggerSummary(UniversalBaseModel):
     raw webhook body on list responses.
     """
 
-    source: str
-    provider: typing.Optional[str] = None
-    event_name: typing.Optional[str] = None
     delivery_id: typing.Optional[str] = None
+    event_name: typing.Optional[str] = None
     payload: typing.Optional[typing.Dict[str, typing.Any]] = None
+    provider: typing.Optional[str] = None
+    source: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

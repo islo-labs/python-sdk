@@ -17,12 +17,13 @@ class JobManifestOutput(UniversalBaseModel):
     """
 
     job: JobSection
-    run: RunSectionOutput
-    schedule: typing.Optional[ScheduleSection] = None
-    verification: typing.Optional[VerificationSection] = None
     outputs: typing.Optional[typing.Dict[str, typing.Optional[JobOutputSpec]]] = pydantic.Field(default=None)
     """
     Public job output contract for the job and downstream lines.
     """
+
+    run: RunSectionOutput
+    schedule: typing.Optional[ScheduleSection] = None
+    verification: typing.Optional[VerificationSection] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

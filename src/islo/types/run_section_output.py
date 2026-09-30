@@ -10,19 +10,18 @@ from .task_output import TaskOutput
 
 
 class RunSectionOutput(UniversalBaseModel):
+    concurrency: typing.Optional[int] = None
     fail_fast: typing.Optional[bool] = None
     fanout: typing.Optional[bool] = None
-    concurrency: typing.Optional[int] = None
+    region: typing.Optional[str] = None
+    resume_on_start: typing.Optional[bool] = None
+    sandbox: typing.Optional[SandboxConfig] = None
+    tasks: typing.List[TaskOutput]
+    teardown_on_complete: typing.Optional[bool] = None
+    timeout: typing.Optional[RunSectionOutputTimeout] = None
     workdir: typing.Optional[str] = pydantic.Field(default=None)
     """
     Working directory for every exec and run_agent step. Defaults to ".". Falls back to run.sandbox.workdir when omitted.
     """
-
-    timeout: typing.Optional[RunSectionOutputTimeout] = None
-    region: typing.Optional[str] = None
-    teardown_on_complete: typing.Optional[bool] = None
-    resume_on_start: typing.Optional[bool] = None
-    sandbox: typing.Optional[SandboxConfig] = None
-    tasks: typing.List[TaskOutput]
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

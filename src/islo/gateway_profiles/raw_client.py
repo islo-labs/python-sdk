@@ -6,7 +6,7 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
@@ -22,6 +22,7 @@ from ..types.gateway_action import GatewayAction
 from ..types.gateway_profile_detail_response import GatewayProfileDetailResponse
 from ..types.gateway_profile_response import GatewayProfileResponse
 from ..types.gateway_rule_response import GatewayRuleResponse
+from ..types.list_page_gateway_profile_response import ListPageGatewayProfileResponse
 from ..types.rule_reorder_item import RuleReorderItem
 from .types.gateway_profile_create_integration_policy import GatewayProfileCreateIntegrationPolicy
 from .types.gateway_profile_update_integration_policy import GatewayProfileUpdateIntegrationPolicy
@@ -39,7 +40,7 @@ class RawGatewayProfilesClient:
 
     def list_gateway_profiles(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[typing.List[GatewayProfileResponse]]:
+    ) -> HttpResponse[ListPageGatewayProfileResponse]:
         """
         Parameters
         ----------
@@ -48,7 +49,7 @@ class RawGatewayProfilesClient:
 
         Returns
         -------
-        HttpResponse[typing.List[GatewayProfileResponse]]
+        HttpResponse[ListPageGatewayProfileResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -60,9 +61,9 @@ class RawGatewayProfilesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[GatewayProfileResponse],
+                    ListPageGatewayProfileResponse,
                     parse_obj_as(
-                        type_=typing.List[GatewayProfileResponse],  # type: ignore
+                        type_=ListPageGatewayProfileResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -102,12 +103,12 @@ class RawGatewayProfilesClient:
         self,
         *,
         name: str,
-        description: typing.Optional[str] = OMIT,
+        cloud_role: typing.Optional[str] = OMIT,
         default_action: typing.Optional[GatewayAction] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        integration_policy: typing.Optional[GatewayProfileCreateIntegrationPolicy] = OMIT,
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
-        cloud_role: typing.Optional[str] = OMIT,
-        integration_policy: typing.Optional[GatewayProfileCreateIntegrationPolicy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[GatewayProfileResponse]:
         """
@@ -115,18 +116,18 @@ class RawGatewayProfilesClient:
         ----------
         name : str
 
-        description : typing.Optional[str]
+        cloud_role : typing.Optional[str]
+            Cloud role public ID (UUID)
 
         default_action : typing.Optional[GatewayAction]
+
+        description : typing.Optional[str]
+
+        integration_policy : typing.Optional[GatewayProfileCreateIntegrationPolicy]
 
         internet_enabled : typing.Optional[bool]
 
         is_default : typing.Optional[bool]
-
-        cloud_role : typing.Optional[str]
-            Cloud role public ID (UUID)
-
-        integration_policy : typing.Optional[GatewayProfileCreateIntegrationPolicy]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -141,15 +142,15 @@ class RawGatewayProfilesClient:
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "name": name,
-                "description": description,
-                "default_action": default_action,
-                "internet_enabled": internet_enabled,
-                "is_default": is_default,
                 "cloud_role": cloud_role,
+                "default_action": default_action,
+                "description": description,
                 "integration_policy": convert_and_respect_annotation_metadata(
                     object_=integration_policy, annotation=GatewayProfileCreateIntegrationPolicy, direction="write"
                 ),
+                "internet_enabled": internet_enabled,
+                "is_default": is_default,
+                "name": name,
             },
             headers={
                 "content-type": "application/json",
@@ -237,7 +238,7 @@ class RawGatewayProfilesClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            f"gateway/profiles/{encode_path_param(profile_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -310,7 +311,7 @@ class RawGatewayProfilesClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            f"gateway/profiles/{encode_path_param(profile_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -386,13 +387,13 @@ class RawGatewayProfilesClient:
         self,
         profile_id: str,
         *,
-        name: typing.Optional[str] = OMIT,
-        description: typing.Optional[str] = OMIT,
+        cloud_role: typing.Optional[str] = OMIT,
         default_action: typing.Optional[GatewayAction] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        integration_policy: typing.Optional[GatewayProfileUpdateIntegrationPolicy] = OMIT,
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
-        cloud_role: typing.Optional[str] = OMIT,
-        integration_policy: typing.Optional[GatewayProfileUpdateIntegrationPolicy] = OMIT,
+        name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[GatewayProfileResponse]:
         """
@@ -400,21 +401,21 @@ class RawGatewayProfilesClient:
         ----------
         profile_id : str
 
-        name : typing.Optional[str]
+        cloud_role : typing.Optional[str]
+            Cloud role public ID (UUID), empty string to unset
+
+        default_action : typing.Optional[GatewayAction]
 
         description : typing.Optional[str]
 
-        default_action : typing.Optional[GatewayAction]
+        integration_policy : typing.Optional[GatewayProfileUpdateIntegrationPolicy]
+            Omit to leave unchanged; send {"mode": "all"} to allow all integrations
 
         internet_enabled : typing.Optional[bool]
 
         is_default : typing.Optional[bool]
 
-        cloud_role : typing.Optional[str]
-            Cloud role public ID (UUID), empty string to unset
-
-        integration_policy : typing.Optional[GatewayProfileUpdateIntegrationPolicy]
-            Omit to leave unchanged; send {"mode": "all"} to allow all integrations
+        name : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -425,21 +426,21 @@ class RawGatewayProfilesClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            f"gateway/profiles/{encode_path_param(profile_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
-                "name": name,
-                "description": description,
-                "default_action": default_action,
-                "internet_enabled": internet_enabled,
-                "is_default": is_default,
                 "cloud_role": cloud_role,
+                "default_action": default_action,
+                "description": description,
                 "integration_policy": convert_and_respect_annotation_metadata(
                     object_=integration_policy,
                     annotation=typing.Optional[GatewayProfileUpdateIntegrationPolicy],
                     direction="write",
                 ),
+                "internet_enabled": internet_enabled,
+                "is_default": is_default,
+                "name": name,
             },
             headers={
                 "content-type": "application/json",
@@ -526,14 +527,14 @@ class RawGatewayProfilesClient:
         profile_id: str,
         *,
         host_pattern: str,
-        path_pattern: typing.Optional[str] = OMIT,
-        methods: typing.Optional[typing.Sequence[str]] = OMIT,
-        rate_limit_rpm: typing.Optional[int] = OMIT,
+        action: typing.Optional[GatewayAction] = OMIT,
         auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
         content_filter: typing.Optional[GatewayRuleCreateContentFilter] = OMIT,
+        methods: typing.Optional[typing.Sequence[str]] = OMIT,
+        path_pattern: typing.Optional[str] = OMIT,
         priority: typing.Optional[int] = OMIT,
-        action: typing.Optional[GatewayAction] = OMIT,
         provider_key: typing.Optional[str] = OMIT,
+        rate_limit_rpm: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[GatewayRuleResponse]:
         """
@@ -543,21 +544,21 @@ class RawGatewayProfilesClient:
 
         host_pattern : str
 
-        path_pattern : typing.Optional[str]
-
-        methods : typing.Optional[typing.Sequence[str]]
-
-        rate_limit_rpm : typing.Optional[int]
+        action : typing.Optional[GatewayAction]
 
         auth_strategy : typing.Optional[AuthStrategySchema]
 
         content_filter : typing.Optional[GatewayRuleCreateContentFilter]
 
+        methods : typing.Optional[typing.Sequence[str]]
+
+        path_pattern : typing.Optional[str]
+
         priority : typing.Optional[int]
 
-        action : typing.Optional[GatewayAction]
-
         provider_key : typing.Optional[str]
+
+        rate_limit_rpm : typing.Optional[int]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -568,14 +569,11 @@ class RawGatewayProfilesClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}/rules",
+            f"gateway/profiles/{encode_path_param(profile_id)}/rules",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "host_pattern": host_pattern,
-                "path_pattern": path_pattern,
-                "methods": methods,
-                "rate_limit_rpm": rate_limit_rpm,
+                "action": action,
                 "auth_strategy": convert_and_respect_annotation_metadata(
                     object_=auth_strategy, annotation=typing.Optional[AuthStrategySchema], direction="write"
                 ),
@@ -584,227 +582,12 @@ class RawGatewayProfilesClient:
                     annotation=typing.Optional[GatewayRuleCreateContentFilter],
                     direction="write",
                 ),
-                "priority": priority,
-                "action": action,
-                "provider_key": provider_key,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    GatewayRuleResponse,
-                    parse_obj_as(
-                        type_=GatewayRuleResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def delete_gateway_rule(
-        self, profile_id: str, rule_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[None]:
-        """
-        Parameters
-        ----------
-        profile_id : str
-
-        rule_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[None]
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/{jsonable_encoder(rule_id)}",
-            base_url=self._client_wrapper.get_environment().control,
-            method="DELETE",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return HttpResponse(response=_response, data=None)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def update_gateway_rule(
-        self,
-        profile_id: str,
-        rule_id: str,
-        *,
-        priority: typing.Optional[int] = OMIT,
-        host_pattern: typing.Optional[str] = OMIT,
-        path_pattern: typing.Optional[str] = OMIT,
-        methods: typing.Optional[typing.Sequence[str]] = OMIT,
-        action: typing.Optional[GatewayAction] = OMIT,
-        rate_limit_rpm: typing.Optional[int] = OMIT,
-        provider_key: typing.Optional[str] = OMIT,
-        auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
-        content_filter: typing.Optional[GatewayRuleUpdateContentFilter] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[GatewayRuleResponse]:
-        """
-        Parameters
-        ----------
-        profile_id : str
-
-        rule_id : str
-
-        priority : typing.Optional[int]
-
-        host_pattern : typing.Optional[str]
-
-        path_pattern : typing.Optional[str]
-
-        methods : typing.Optional[typing.Sequence[str]]
-
-        action : typing.Optional[GatewayAction]
-
-        rate_limit_rpm : typing.Optional[int]
-
-        provider_key : typing.Optional[str]
-
-        auth_strategy : typing.Optional[AuthStrategySchema]
-
-        content_filter : typing.Optional[GatewayRuleUpdateContentFilter]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[GatewayRuleResponse]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/{jsonable_encoder(rule_id)}",
-            base_url=self._client_wrapper.get_environment().control,
-            method="PATCH",
-            json={
-                "priority": priority,
                 "host_pattern": host_pattern,
-                "path_pattern": path_pattern,
                 "methods": methods,
-                "action": action,
-                "rate_limit_rpm": rate_limit_rpm,
+                "path_pattern": path_pattern,
+                "priority": priority,
                 "provider_key": provider_key,
-                "auth_strategy": convert_and_respect_annotation_metadata(
-                    object_=auth_strategy, annotation=typing.Optional[AuthStrategySchema], direction="write"
-                ),
-                "content_filter": convert_and_respect_annotation_metadata(
-                    object_=content_filter,
-                    annotation=typing.Optional[GatewayRuleUpdateContentFilter],
-                    direction="write",
-                ),
+                "rate_limit_rpm": rate_limit_rpm,
             },
             headers={
                 "content-type": "application/json",
@@ -898,7 +681,7 @@ class RawGatewayProfilesClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/reorder",
+            f"gateway/profiles/{encode_path_param(profile_id)}/rules/reorder",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -975,6 +758,224 @@ class RawGatewayProfilesClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    def delete_gateway_rule(
+        self, profile_id: str, rule_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[None]:
+        """
+        Parameters
+        ----------
+        profile_id : str
+
+        rule_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[None]
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"gateway/profiles/{encode_path_param(profile_id)}/rules/{encode_path_param(rule_id)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="DELETE",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return HttpResponse(response=_response, data=None)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def update_gateway_rule(
+        self,
+        profile_id: str,
+        rule_id: str,
+        *,
+        action: typing.Optional[GatewayAction] = OMIT,
+        auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
+        content_filter: typing.Optional[GatewayRuleUpdateContentFilter] = OMIT,
+        host_pattern: typing.Optional[str] = OMIT,
+        methods: typing.Optional[typing.Sequence[str]] = OMIT,
+        path_pattern: typing.Optional[str] = OMIT,
+        priority: typing.Optional[int] = OMIT,
+        provider_key: typing.Optional[str] = OMIT,
+        rate_limit_rpm: typing.Optional[int] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[GatewayRuleResponse]:
+        """
+        Parameters
+        ----------
+        profile_id : str
+
+        rule_id : str
+
+        action : typing.Optional[GatewayAction]
+
+        auth_strategy : typing.Optional[AuthStrategySchema]
+
+        content_filter : typing.Optional[GatewayRuleUpdateContentFilter]
+
+        host_pattern : typing.Optional[str]
+
+        methods : typing.Optional[typing.Sequence[str]]
+
+        path_pattern : typing.Optional[str]
+
+        priority : typing.Optional[int]
+
+        provider_key : typing.Optional[str]
+
+        rate_limit_rpm : typing.Optional[int]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[GatewayRuleResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"gateway/profiles/{encode_path_param(profile_id)}/rules/{encode_path_param(rule_id)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="PATCH",
+            json={
+                "action": action,
+                "auth_strategy": convert_and_respect_annotation_metadata(
+                    object_=auth_strategy, annotation=typing.Optional[AuthStrategySchema], direction="write"
+                ),
+                "content_filter": convert_and_respect_annotation_metadata(
+                    object_=content_filter,
+                    annotation=typing.Optional[GatewayRuleUpdateContentFilter],
+                    direction="write",
+                ),
+                "host_pattern": host_pattern,
+                "methods": methods,
+                "path_pattern": path_pattern,
+                "priority": priority,
+                "provider_key": provider_key,
+                "rate_limit_rpm": rate_limit_rpm,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    GatewayRuleResponse,
+                    parse_obj_as(
+                        type_=GatewayRuleResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
 
 class AsyncRawGatewayProfilesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -982,7 +983,7 @@ class AsyncRawGatewayProfilesClient:
 
     async def list_gateway_profiles(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[typing.List[GatewayProfileResponse]]:
+    ) -> AsyncHttpResponse[ListPageGatewayProfileResponse]:
         """
         Parameters
         ----------
@@ -991,7 +992,7 @@ class AsyncRawGatewayProfilesClient:
 
         Returns
         -------
-        AsyncHttpResponse[typing.List[GatewayProfileResponse]]
+        AsyncHttpResponse[ListPageGatewayProfileResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1003,9 +1004,9 @@ class AsyncRawGatewayProfilesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[GatewayProfileResponse],
+                    ListPageGatewayProfileResponse,
                     parse_obj_as(
-                        type_=typing.List[GatewayProfileResponse],  # type: ignore
+                        type_=ListPageGatewayProfileResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1045,12 +1046,12 @@ class AsyncRawGatewayProfilesClient:
         self,
         *,
         name: str,
-        description: typing.Optional[str] = OMIT,
+        cloud_role: typing.Optional[str] = OMIT,
         default_action: typing.Optional[GatewayAction] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        integration_policy: typing.Optional[GatewayProfileCreateIntegrationPolicy] = OMIT,
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
-        cloud_role: typing.Optional[str] = OMIT,
-        integration_policy: typing.Optional[GatewayProfileCreateIntegrationPolicy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[GatewayProfileResponse]:
         """
@@ -1058,18 +1059,18 @@ class AsyncRawGatewayProfilesClient:
         ----------
         name : str
 
-        description : typing.Optional[str]
+        cloud_role : typing.Optional[str]
+            Cloud role public ID (UUID)
 
         default_action : typing.Optional[GatewayAction]
+
+        description : typing.Optional[str]
+
+        integration_policy : typing.Optional[GatewayProfileCreateIntegrationPolicy]
 
         internet_enabled : typing.Optional[bool]
 
         is_default : typing.Optional[bool]
-
-        cloud_role : typing.Optional[str]
-            Cloud role public ID (UUID)
-
-        integration_policy : typing.Optional[GatewayProfileCreateIntegrationPolicy]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1084,15 +1085,15 @@ class AsyncRawGatewayProfilesClient:
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "name": name,
-                "description": description,
-                "default_action": default_action,
-                "internet_enabled": internet_enabled,
-                "is_default": is_default,
                 "cloud_role": cloud_role,
+                "default_action": default_action,
+                "description": description,
                 "integration_policy": convert_and_respect_annotation_metadata(
                     object_=integration_policy, annotation=GatewayProfileCreateIntegrationPolicy, direction="write"
                 ),
+                "internet_enabled": internet_enabled,
+                "is_default": is_default,
+                "name": name,
             },
             headers={
                 "content-type": "application/json",
@@ -1180,7 +1181,7 @@ class AsyncRawGatewayProfilesClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            f"gateway/profiles/{encode_path_param(profile_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1253,7 +1254,7 @@ class AsyncRawGatewayProfilesClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            f"gateway/profiles/{encode_path_param(profile_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -1329,13 +1330,13 @@ class AsyncRawGatewayProfilesClient:
         self,
         profile_id: str,
         *,
-        name: typing.Optional[str] = OMIT,
-        description: typing.Optional[str] = OMIT,
+        cloud_role: typing.Optional[str] = OMIT,
         default_action: typing.Optional[GatewayAction] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        integration_policy: typing.Optional[GatewayProfileUpdateIntegrationPolicy] = OMIT,
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
-        cloud_role: typing.Optional[str] = OMIT,
-        integration_policy: typing.Optional[GatewayProfileUpdateIntegrationPolicy] = OMIT,
+        name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[GatewayProfileResponse]:
         """
@@ -1343,21 +1344,21 @@ class AsyncRawGatewayProfilesClient:
         ----------
         profile_id : str
 
-        name : typing.Optional[str]
+        cloud_role : typing.Optional[str]
+            Cloud role public ID (UUID), empty string to unset
+
+        default_action : typing.Optional[GatewayAction]
 
         description : typing.Optional[str]
 
-        default_action : typing.Optional[GatewayAction]
+        integration_policy : typing.Optional[GatewayProfileUpdateIntegrationPolicy]
+            Omit to leave unchanged; send {"mode": "all"} to allow all integrations
 
         internet_enabled : typing.Optional[bool]
 
         is_default : typing.Optional[bool]
 
-        cloud_role : typing.Optional[str]
-            Cloud role public ID (UUID), empty string to unset
-
-        integration_policy : typing.Optional[GatewayProfileUpdateIntegrationPolicy]
-            Omit to leave unchanged; send {"mode": "all"} to allow all integrations
+        name : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1368,21 +1369,21 @@ class AsyncRawGatewayProfilesClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}",
+            f"gateway/profiles/{encode_path_param(profile_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
-                "name": name,
-                "description": description,
-                "default_action": default_action,
-                "internet_enabled": internet_enabled,
-                "is_default": is_default,
                 "cloud_role": cloud_role,
+                "default_action": default_action,
+                "description": description,
                 "integration_policy": convert_and_respect_annotation_metadata(
                     object_=integration_policy,
                     annotation=typing.Optional[GatewayProfileUpdateIntegrationPolicy],
                     direction="write",
                 ),
+                "internet_enabled": internet_enabled,
+                "is_default": is_default,
+                "name": name,
             },
             headers={
                 "content-type": "application/json",
@@ -1469,14 +1470,14 @@ class AsyncRawGatewayProfilesClient:
         profile_id: str,
         *,
         host_pattern: str,
-        path_pattern: typing.Optional[str] = OMIT,
-        methods: typing.Optional[typing.Sequence[str]] = OMIT,
-        rate_limit_rpm: typing.Optional[int] = OMIT,
+        action: typing.Optional[GatewayAction] = OMIT,
         auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
         content_filter: typing.Optional[GatewayRuleCreateContentFilter] = OMIT,
+        methods: typing.Optional[typing.Sequence[str]] = OMIT,
+        path_pattern: typing.Optional[str] = OMIT,
         priority: typing.Optional[int] = OMIT,
-        action: typing.Optional[GatewayAction] = OMIT,
         provider_key: typing.Optional[str] = OMIT,
+        rate_limit_rpm: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[GatewayRuleResponse]:
         """
@@ -1486,21 +1487,21 @@ class AsyncRawGatewayProfilesClient:
 
         host_pattern : str
 
-        path_pattern : typing.Optional[str]
-
-        methods : typing.Optional[typing.Sequence[str]]
-
-        rate_limit_rpm : typing.Optional[int]
+        action : typing.Optional[GatewayAction]
 
         auth_strategy : typing.Optional[AuthStrategySchema]
 
         content_filter : typing.Optional[GatewayRuleCreateContentFilter]
 
+        methods : typing.Optional[typing.Sequence[str]]
+
+        path_pattern : typing.Optional[str]
+
         priority : typing.Optional[int]
 
-        action : typing.Optional[GatewayAction]
-
         provider_key : typing.Optional[str]
+
+        rate_limit_rpm : typing.Optional[int]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1511,14 +1512,11 @@ class AsyncRawGatewayProfilesClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}/rules",
+            f"gateway/profiles/{encode_path_param(profile_id)}/rules",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "host_pattern": host_pattern,
-                "path_pattern": path_pattern,
-                "methods": methods,
-                "rate_limit_rpm": rate_limit_rpm,
+                "action": action,
                 "auth_strategy": convert_and_respect_annotation_metadata(
                     object_=auth_strategy, annotation=typing.Optional[AuthStrategySchema], direction="write"
                 ),
@@ -1527,227 +1525,12 @@ class AsyncRawGatewayProfilesClient:
                     annotation=typing.Optional[GatewayRuleCreateContentFilter],
                     direction="write",
                 ),
-                "priority": priority,
-                "action": action,
-                "provider_key": provider_key,
-            },
-            headers={
-                "content-type": "application/json",
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    GatewayRuleResponse,
-                    parse_obj_as(
-                        type_=GatewayRuleResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def delete_gateway_rule(
-        self, profile_id: str, rule_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[None]:
-        """
-        Parameters
-        ----------
-        profile_id : str
-
-        rule_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[None]
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/{jsonable_encoder(rule_id)}",
-            base_url=self._client_wrapper.get_environment().control,
-            method="DELETE",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return AsyncHttpResponse(response=_response, data=None)
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        ErrorResponse,
-                        parse_obj_as(
-                            type_=ErrorResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def update_gateway_rule(
-        self,
-        profile_id: str,
-        rule_id: str,
-        *,
-        priority: typing.Optional[int] = OMIT,
-        host_pattern: typing.Optional[str] = OMIT,
-        path_pattern: typing.Optional[str] = OMIT,
-        methods: typing.Optional[typing.Sequence[str]] = OMIT,
-        action: typing.Optional[GatewayAction] = OMIT,
-        rate_limit_rpm: typing.Optional[int] = OMIT,
-        provider_key: typing.Optional[str] = OMIT,
-        auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
-        content_filter: typing.Optional[GatewayRuleUpdateContentFilter] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[GatewayRuleResponse]:
-        """
-        Parameters
-        ----------
-        profile_id : str
-
-        rule_id : str
-
-        priority : typing.Optional[int]
-
-        host_pattern : typing.Optional[str]
-
-        path_pattern : typing.Optional[str]
-
-        methods : typing.Optional[typing.Sequence[str]]
-
-        action : typing.Optional[GatewayAction]
-
-        rate_limit_rpm : typing.Optional[int]
-
-        provider_key : typing.Optional[str]
-
-        auth_strategy : typing.Optional[AuthStrategySchema]
-
-        content_filter : typing.Optional[GatewayRuleUpdateContentFilter]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[GatewayRuleResponse]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/{jsonable_encoder(rule_id)}",
-            base_url=self._client_wrapper.get_environment().control,
-            method="PATCH",
-            json={
-                "priority": priority,
                 "host_pattern": host_pattern,
-                "path_pattern": path_pattern,
                 "methods": methods,
-                "action": action,
-                "rate_limit_rpm": rate_limit_rpm,
+                "path_pattern": path_pattern,
+                "priority": priority,
                 "provider_key": provider_key,
-                "auth_strategy": convert_and_respect_annotation_metadata(
-                    object_=auth_strategy, annotation=typing.Optional[AuthStrategySchema], direction="write"
-                ),
-                "content_filter": convert_and_respect_annotation_metadata(
-                    object_=content_filter,
-                    annotation=typing.Optional[GatewayRuleUpdateContentFilter],
-                    direction="write",
-                ),
+                "rate_limit_rpm": rate_limit_rpm,
             },
             headers={
                 "content-type": "application/json",
@@ -1841,7 +1624,7 @@ class AsyncRawGatewayProfilesClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"gateway/profiles/{jsonable_encoder(profile_id)}/rules/reorder",
+            f"gateway/profiles/{encode_path_param(profile_id)}/rules/reorder",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -1861,6 +1644,224 @@ class AsyncRawGatewayProfilesClient:
                     typing.List[GatewayRuleResponse],
                     parse_obj_as(
                         type_=typing.List[GatewayRuleResponse],  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def delete_gateway_rule(
+        self, profile_id: str, rule_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[None]:
+        """
+        Parameters
+        ----------
+        profile_id : str
+
+        rule_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[None]
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"gateway/profiles/{encode_path_param(profile_id)}/rules/{encode_path_param(rule_id)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="DELETE",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return AsyncHttpResponse(response=_response, data=None)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def update_gateway_rule(
+        self,
+        profile_id: str,
+        rule_id: str,
+        *,
+        action: typing.Optional[GatewayAction] = OMIT,
+        auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
+        content_filter: typing.Optional[GatewayRuleUpdateContentFilter] = OMIT,
+        host_pattern: typing.Optional[str] = OMIT,
+        methods: typing.Optional[typing.Sequence[str]] = OMIT,
+        path_pattern: typing.Optional[str] = OMIT,
+        priority: typing.Optional[int] = OMIT,
+        provider_key: typing.Optional[str] = OMIT,
+        rate_limit_rpm: typing.Optional[int] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[GatewayRuleResponse]:
+        """
+        Parameters
+        ----------
+        profile_id : str
+
+        rule_id : str
+
+        action : typing.Optional[GatewayAction]
+
+        auth_strategy : typing.Optional[AuthStrategySchema]
+
+        content_filter : typing.Optional[GatewayRuleUpdateContentFilter]
+
+        host_pattern : typing.Optional[str]
+
+        methods : typing.Optional[typing.Sequence[str]]
+
+        path_pattern : typing.Optional[str]
+
+        priority : typing.Optional[int]
+
+        provider_key : typing.Optional[str]
+
+        rate_limit_rpm : typing.Optional[int]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[GatewayRuleResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"gateway/profiles/{encode_path_param(profile_id)}/rules/{encode_path_param(rule_id)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="PATCH",
+            json={
+                "action": action,
+                "auth_strategy": convert_and_respect_annotation_metadata(
+                    object_=auth_strategy, annotation=typing.Optional[AuthStrategySchema], direction="write"
+                ),
+                "content_filter": convert_and_respect_annotation_metadata(
+                    object_=content_filter,
+                    annotation=typing.Optional[GatewayRuleUpdateContentFilter],
+                    direction="write",
+                ),
+                "host_pattern": host_pattern,
+                "methods": methods,
+                "path_pattern": path_pattern,
+                "priority": priority,
+                "provider_key": provider_key,
+                "rate_limit_rpm": rate_limit_rpm,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    GatewayRuleResponse,
+                    parse_obj_as(
+                        type_=GatewayRuleResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

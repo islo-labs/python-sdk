@@ -18,11 +18,11 @@ class IntegrationStatus(UniversalBaseModel):
     via the frontend's preset catalog so this stays None for them.
     """
 
-    provider: str
-    connected: bool
-    level: typing.Optional[IntegrationLevel] = None
     auth_method: typing.Optional[AuthMethod] = None
-    preset_id: typing.Optional[str] = None
+    connected: bool
     display_name: typing.Optional[str] = None
+    level: typing.Optional[IntegrationLevel] = None
+    preset_id: typing.Optional[str] = None
+    provider: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

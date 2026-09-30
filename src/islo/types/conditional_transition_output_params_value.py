@@ -25,8 +25,8 @@ class ConditionalTransitionOutputParamsValue_Literal(UniversalBaseModel):
 
 class ConditionalTransitionOutputParamsValue_Output(UniversalBaseModel):
     type: typing.Literal["output"] = "output"
-    stage: str
     name: str
+    stage: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 

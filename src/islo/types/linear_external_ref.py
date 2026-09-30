@@ -11,10 +11,10 @@ class LinearExternalRef(UniversalBaseModel):
     Linear identity: issues use id or identifier; comments use id.
     """
 
-    kind: typing.Optional[str] = None
     id: typing.Optional[str] = None
     identifier: typing.Optional[str] = None
-    team: typing.Optional[str] = None
     issue_id: typing.Optional[str] = None
+    kind: typing.Optional[str] = None
+    team: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

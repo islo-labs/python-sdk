@@ -8,9 +8,9 @@ from .auth_strategy_schema_mode import AuthStrategySchemaMode
 
 
 class AuthStrategySchema(UniversalBaseModel):
-    mode: AuthStrategySchemaMode
-    username: typing.Optional[str] = None
-    name: typing.Optional[str] = None
     format: typing.Optional[str] = None
+    mode: AuthStrategySchemaMode
+    name: typing.Optional[str] = None
+    username: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

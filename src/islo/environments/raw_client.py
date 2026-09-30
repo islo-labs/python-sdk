@@ -6,7 +6,8 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
+from ..core.pagination import AsyncPager, SyncPager
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
@@ -18,6 +19,7 @@ from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.environment_list_item import EnvironmentListItem
 from ..types.environment_response import EnvironmentResponse
 from ..types.error_response import ErrorResponse
+from ..types.list_page_environment_list_item import ListPageEnvironmentListItem
 from .types.environment_create_entries_item import EnvironmentCreateEntriesItem
 from .types.environment_update_entries_item import EnvironmentUpdateEntriesItem
 from pydantic import ValidationError
@@ -34,22 +36,22 @@ class RawEnvironmentsClient:
         self,
         *,
         limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[typing.List[EnvironmentListItem]]:
+    ) -> SyncPager[EnvironmentListItem, ListPageEnvironmentListItem]:
         """
         Parameters
         ----------
         limit : typing.Optional[int]
 
-        offset : typing.Optional[int]
+        cursor : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[typing.List[EnvironmentListItem]]
+        SyncPager[EnvironmentListItem, ListPageEnvironmentListItem]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -58,20 +60,28 @@ class RawEnvironmentsClient:
             method="GET",
             params={
                 "limit": limit,
-                "offset": offset,
+                "cursor": cursor,
             },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.List[EnvironmentListItem],
+                _parsed_response = typing.cast(
+                    ListPageEnvironmentListItem,
                     parse_obj_as(
-                        type_=typing.List[EnvironmentListItem],  # type: ignore
+                        type_=ListPageEnvironmentListItem,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
-                return HttpResponse(response=_response, data=_data)
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+                _get_next = lambda: self.list_environments(
+                    limit=limit,
+                    cursor=_parsed_next,
+                    request_options=request_options,
+                )
+                return SyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
             if _response.status_code == 401:
                 raise UnauthorizedError(
                     headers=dict(_response.headers),
@@ -107,8 +117,8 @@ class RawEnvironmentsClient:
         self,
         *,
         name: str,
-        is_default: typing.Optional[bool] = OMIT,
         entries: typing.Optional[typing.Sequence[EnvironmentCreateEntriesItem]] = OMIT,
+        is_default: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[EnvironmentResponse]:
         """
@@ -116,9 +126,9 @@ class RawEnvironmentsClient:
         ----------
         name : str
 
-        is_default : typing.Optional[bool]
-
         entries : typing.Optional[typing.Sequence[EnvironmentCreateEntriesItem]]
+
+        is_default : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -133,11 +143,11 @@ class RawEnvironmentsClient:
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "name": name,
-                "is_default": is_default,
                 "entries": convert_and_respect_annotation_metadata(
                     object_=entries, annotation=typing.Sequence[EnvironmentCreateEntriesItem], direction="write"
                 ),
+                "is_default": is_default,
+                "name": name,
             },
             headers={
                 "content-type": "application/json",
@@ -225,7 +235,7 @@ class RawEnvironmentsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"environments/{jsonable_encoder(environment_ref)}",
+            f"environments/{encode_path_param(environment_ref)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -298,7 +308,7 @@ class RawEnvironmentsClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"environments/{jsonable_encoder(environment_ref)}",
+            f"environments/{encode_path_param(environment_ref)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -352,9 +362,9 @@ class RawEnvironmentsClient:
         self,
         environment_ref: str,
         *,
-        name: typing.Optional[str] = OMIT,
-        is_default: typing.Optional[bool] = OMIT,
         entries: typing.Optional[typing.Sequence[EnvironmentUpdateEntriesItem]] = OMIT,
+        is_default: typing.Optional[bool] = OMIT,
+        name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[EnvironmentResponse]:
         """
@@ -362,11 +372,11 @@ class RawEnvironmentsClient:
         ----------
         environment_ref : str
 
-        name : typing.Optional[str]
+        entries : typing.Optional[typing.Sequence[EnvironmentUpdateEntriesItem]]
 
         is_default : typing.Optional[bool]
 
-        entries : typing.Optional[typing.Sequence[EnvironmentUpdateEntriesItem]]
+        name : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -377,17 +387,17 @@ class RawEnvironmentsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"environments/{jsonable_encoder(environment_ref)}",
+            f"environments/{encode_path_param(environment_ref)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
-                "name": name,
-                "is_default": is_default,
                 "entries": convert_and_respect_annotation_metadata(
                     object_=entries,
                     annotation=typing.Optional[typing.Sequence[EnvironmentUpdateEntriesItem]],
                     direction="write",
                 ),
+                "is_default": is_default,
+                "name": name,
             },
             headers={
                 "content-type": "application/json",
@@ -475,7 +485,7 @@ class RawEnvironmentsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"environments/{jsonable_encoder(environment_ref)}/default",
+            f"environments/{encode_path_param(environment_ref)}/default",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             request_options=request_options,
@@ -532,6 +542,91 @@ class RawEnvironmentsClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    def unset_default_environment(
+        self, environment_ref: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[EnvironmentResponse]:
+        """
+        Parameters
+        ----------
+        environment_ref : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[EnvironmentResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"environments/{encode_path_param(environment_ref)}/default",
+            base_url=self._client_wrapper.get_environment().control,
+            method="DELETE",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    EnvironmentResponse,
+                    parse_obj_as(
+                        type_=EnvironmentResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
 
 class AsyncRawEnvironmentsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -541,22 +636,22 @@ class AsyncRawEnvironmentsClient:
         self,
         *,
         limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[typing.List[EnvironmentListItem]]:
+    ) -> AsyncPager[EnvironmentListItem, ListPageEnvironmentListItem]:
         """
         Parameters
         ----------
         limit : typing.Optional[int]
 
-        offset : typing.Optional[int]
+        cursor : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[typing.List[EnvironmentListItem]]
+        AsyncPager[EnvironmentListItem, ListPageEnvironmentListItem]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -565,20 +660,31 @@ class AsyncRawEnvironmentsClient:
             method="GET",
             params={
                 "limit": limit,
-                "offset": offset,
+                "cursor": cursor,
             },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.List[EnvironmentListItem],
+                _parsed_response = typing.cast(
+                    ListPageEnvironmentListItem,
                     parse_obj_as(
-                        type_=typing.List[EnvironmentListItem],  # type: ignore
+                        type_=ListPageEnvironmentListItem,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
-                return AsyncHttpResponse(response=_response, data=_data)
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+
+                async def _get_next():
+                    return await self.list_environments(
+                        limit=limit,
+                        cursor=_parsed_next,
+                        request_options=request_options,
+                    )
+
+                return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
             if _response.status_code == 401:
                 raise UnauthorizedError(
                     headers=dict(_response.headers),
@@ -614,8 +720,8 @@ class AsyncRawEnvironmentsClient:
         self,
         *,
         name: str,
-        is_default: typing.Optional[bool] = OMIT,
         entries: typing.Optional[typing.Sequence[EnvironmentCreateEntriesItem]] = OMIT,
+        is_default: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[EnvironmentResponse]:
         """
@@ -623,9 +729,9 @@ class AsyncRawEnvironmentsClient:
         ----------
         name : str
 
-        is_default : typing.Optional[bool]
-
         entries : typing.Optional[typing.Sequence[EnvironmentCreateEntriesItem]]
+
+        is_default : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -640,11 +746,11 @@ class AsyncRawEnvironmentsClient:
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "name": name,
-                "is_default": is_default,
                 "entries": convert_and_respect_annotation_metadata(
                     object_=entries, annotation=typing.Sequence[EnvironmentCreateEntriesItem], direction="write"
                 ),
+                "is_default": is_default,
+                "name": name,
             },
             headers={
                 "content-type": "application/json",
@@ -732,7 +838,7 @@ class AsyncRawEnvironmentsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"environments/{jsonable_encoder(environment_ref)}",
+            f"environments/{encode_path_param(environment_ref)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -805,7 +911,7 @@ class AsyncRawEnvironmentsClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"environments/{jsonable_encoder(environment_ref)}",
+            f"environments/{encode_path_param(environment_ref)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -859,9 +965,9 @@ class AsyncRawEnvironmentsClient:
         self,
         environment_ref: str,
         *,
-        name: typing.Optional[str] = OMIT,
-        is_default: typing.Optional[bool] = OMIT,
         entries: typing.Optional[typing.Sequence[EnvironmentUpdateEntriesItem]] = OMIT,
+        is_default: typing.Optional[bool] = OMIT,
+        name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[EnvironmentResponse]:
         """
@@ -869,11 +975,11 @@ class AsyncRawEnvironmentsClient:
         ----------
         environment_ref : str
 
-        name : typing.Optional[str]
+        entries : typing.Optional[typing.Sequence[EnvironmentUpdateEntriesItem]]
 
         is_default : typing.Optional[bool]
 
-        entries : typing.Optional[typing.Sequence[EnvironmentUpdateEntriesItem]]
+        name : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -884,17 +990,17 @@ class AsyncRawEnvironmentsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"environments/{jsonable_encoder(environment_ref)}",
+            f"environments/{encode_path_param(environment_ref)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
-                "name": name,
-                "is_default": is_default,
                 "entries": convert_and_respect_annotation_metadata(
                     object_=entries,
                     annotation=typing.Optional[typing.Sequence[EnvironmentUpdateEntriesItem]],
                     direction="write",
                 ),
+                "is_default": is_default,
+                "name": name,
             },
             headers={
                 "content-type": "application/json",
@@ -982,7 +1088,7 @@ class AsyncRawEnvironmentsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"environments/{jsonable_encoder(environment_ref)}/default",
+            f"environments/{encode_path_param(environment_ref)}/default",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             request_options=request_options,
@@ -1015,6 +1121,91 @@ class AsyncRawEnvironmentsClient:
                         typing.Any,
                         parse_obj_as(
                             type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def unset_default_environment(
+        self, environment_ref: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[EnvironmentResponse]:
+        """
+        Parameters
+        ----------
+        environment_ref : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[EnvironmentResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"environments/{encode_path_param(environment_ref)}/default",
+            base_url=self._client_wrapper.get_environment().control,
+            method="DELETE",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    EnvironmentResponse,
+                    parse_obj_as(
+                        type_=EnvironmentResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

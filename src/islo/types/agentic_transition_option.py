@@ -8,9 +8,9 @@ from .agentic_transition_option_params_value import AgenticTransitionOptionParam
 
 
 class AgenticTransitionOption(UniversalBaseModel):
-    name: str
-    to: str
     label: typing.Optional[str] = None
+    name: str
     params: typing.Optional[typing.Dict[str, AgenticTransitionOptionParamsValue]] = None
+    to: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

@@ -7,8 +7,8 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class LineLimitsOutput(UniversalBaseModel):
-    max_iterations: typing.Optional[int] = None
     budget_usd: typing.Optional[str] = None
+    max_iterations: typing.Optional[int] = None
     timeout: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

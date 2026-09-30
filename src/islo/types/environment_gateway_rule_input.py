@@ -8,11 +8,11 @@ from .auth_strategy_schema import AuthStrategySchema
 
 
 class EnvironmentGatewayRuleInput(UniversalBaseModel):
-    host_pattern: str
-    path_pattern: typing.Optional[str] = None
-    methods: typing.Optional[typing.List[str]] = None
-    rate_limit_rpm: typing.Optional[int] = None
     auth_strategy: typing.Optional[AuthStrategySchema] = None
     content_filter: typing.Optional[typing.Any] = None
+    host_pattern: str
+    methods: typing.Optional[typing.List[str]] = None
+    path_pattern: typing.Optional[str] = None
+    rate_limit_rpm: typing.Optional[int] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

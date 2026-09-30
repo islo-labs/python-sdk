@@ -17,14 +17,14 @@ class CustomIntegration(UniversalBaseModel):
     is allowed to contain anything reasonable.
     """
 
-    name: str
-    slug: str
-    mcp_url: typing.Optional[str] = None
     auth_method: typing.Optional[AuthMethod] = None
+    authorization_url: typing.Optional[str] = None
     client_id: typing.Optional[str] = None
     client_secret: typing.Optional[str] = None
-    authorization_url: typing.Optional[str] = None
-    token_url: typing.Optional[str] = None
+    mcp_url: typing.Optional[str] = None
+    name: str
     scopes: typing.Optional[typing.List[str]] = None
+    slug: str
+    token_url: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

@@ -11,11 +11,13 @@ from .core.logging import LogConfig, Logger
 from .environment import IsloEnvironment
 
 if typing.TYPE_CHECKING:
+    from .byo.client import AsyncByoClient, ByoClient
     from .cloud_roles.client import AsyncCloudRolesClient, CloudRolesClient
     from .compute_events.client import AsyncComputeEventsClient, ComputeEventsClient
     from .container_registries.client import AsyncContainerRegistriesClient, ContainerRegistriesClient
     from .credits.client import AsyncCreditsClient, CreditsClient
     from .environments.client import AsyncEnvironmentsClient, EnvironmentsClient
+    from .factories.client import AsyncFactoriesClient, FactoriesClient
     from .factory.client import AsyncFactoryClient, FactoryClient
     from .gateway_profiles.client import AsyncGatewayProfilesClient, GatewayProfilesClient
     from .inference.client import AsyncInferenceClient, InferenceClient
@@ -23,6 +25,8 @@ if typing.TYPE_CHECKING:
     from .job_runs.client import AsyncJobRunsClient, JobRunsClient
     from .jobs.client import AsyncJobsClient, JobsClient
     from .knowledge.client import AsyncKnowledgeClient, KnowledgeClient
+    from .machines.client import AsyncMachinesClient, MachinesClient
+    from .sandbox_templates.client import AsyncSandboxTemplatesClient, SandboxTemplatesClient
     from .sandboxes.client import AsyncSandboxesClient, SandboxesClient
     from .shares.client import AsyncSharesClient, SharesClient
     from .snapshots.client import AsyncSnapshotsClient, SnapshotsClient
@@ -39,12 +43,22 @@ class BaseIslo:
     environment : IsloEnvironment
         The environment to use for requests from the client.
 
+    api_version : str
     api_key : typing.Optional[typing.Union[str, typing.Callable[[], str]]]
     headers : typing.Optional[typing.Dict[str, str]]
         Additional headers to send with every request.
 
     timeout : typing.Optional[float]
         The timeout to be used, in seconds, for requests. By default the timeout is 60 seconds, unless a custom httpx client is used, in which case this default is not enforced.
+
+    max_retries : typing.Optional[int]
+        The default maximum number of retries for failed requests. Defaults to 2. Per-request `max_retries` in `request_options` takes precedence over this value.
+
+    stream_reconnection_enabled : typing.Optional[bool]
+        Whether to automatically reconnect on stream disconnection for resumable streaming endpoints. Defaults to True. Per-request `stream_reconnection_enabled` in `request_options` takes precedence over this value.
+
+    max_stream_reconnection_attempts : typing.Optional[int]
+        The maximum number of reconnection attempts for resumable streaming endpoints. Defaults to no limit. Per-request `max_stream_reconnection_attempts` in `request_options` takes precedence over this value.
 
     follow_redirects : typing.Optional[bool]
         Whether the default httpx client follows redirects or not, this is irrelevant if a custom httpx client is passed in.
@@ -61,6 +75,7 @@ class BaseIslo:
     from islo.environment import IsloEnvironment
 
     client = Islo(
+        "2026-09-15",
         api_key="YOUR_API_KEY",
         environment=IsloEnvironment.PRODUCTION,
     )
@@ -70,18 +85,22 @@ class BaseIslo:
         self,
         *,
         environment: IsloEnvironment,
+        api_version: str = "2026-09-15",
         api_key: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = os.getenv("ISLO_API_KEY"),
         headers: typing.Optional[typing.Dict[str, str]] = None,
         timeout: typing.Optional[float] = None,
+        max_retries: typing.Optional[int] = None,
+        stream_reconnection_enabled: typing.Optional[bool] = None,
+        max_stream_reconnection_attempts: typing.Optional[int] = None,
         follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.Client] = None,
         logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
     ):
-        _defaulted_timeout = (
-            timeout if timeout is not None else 60 if httpx_client is None else httpx_client.timeout.read
-        )
+        _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
+        _defaulted_max_retries = max_retries if max_retries is not None else 2
         self._client_wrapper = SyncClientWrapper(
             environment=environment,
+            api_version=api_version,
             api_key=api_key,
             headers=headers,
             httpx_client=httpx_client
@@ -90,73 +109,40 @@ class BaseIslo:
             if follow_redirects is not None
             else httpx.Client(timeout=_defaulted_timeout),
             timeout=_defaulted_timeout,
+            max_retries=_defaulted_max_retries,
+            stream_reconnection_enabled=stream_reconnection_enabled,
+            max_stream_reconnection_attempts=max_stream_reconnection_attempts,
             logging=logging,
         )
-        self._tenants: typing.Optional[TenantsClient] = None
-        self._knowledge: typing.Optional[KnowledgeClient] = None
-        self._credits: typing.Optional[CreditsClient] = None
-        self._integrations: typing.Optional[IntegrationsClient] = None
-        self._gateway_profiles: typing.Optional[GatewayProfilesClient] = None
-        self._environments: typing.Optional[EnvironmentsClient] = None
+        self._byo: typing.Optional[ByoClient] = None
         self._cloud_roles: typing.Optional[CloudRolesClient] = None
-        self._inference: typing.Optional[InferenceClient] = None
-        self._container_registries: typing.Optional[ContainerRegistriesClient] = None
-        self._jobs: typing.Optional[JobsClient] = None
-        self._job_runs: typing.Optional[JobRunsClient] = None
-        self._factory: typing.Optional[FactoryClient] = None
         self._compute_events: typing.Optional[ComputeEventsClient] = None
+        self._container_registries: typing.Optional[ContainerRegistriesClient] = None
+        self._credits: typing.Optional[CreditsClient] = None
+        self._environments: typing.Optional[EnvironmentsClient] = None
+        self._factories: typing.Optional[FactoriesClient] = None
+        self._machines: typing.Optional[MachinesClient] = None
+        self._factory: typing.Optional[FactoryClient] = None
+        self._gateway_profiles: typing.Optional[GatewayProfilesClient] = None
+        self._inference: typing.Optional[InferenceClient] = None
+        self._integrations: typing.Optional[IntegrationsClient] = None
+        self._job_runs: typing.Optional[JobRunsClient] = None
+        self._jobs: typing.Optional[JobsClient] = None
+        self._knowledge: typing.Optional[KnowledgeClient] = None
+        self._sandbox_templates: typing.Optional[SandboxTemplatesClient] = None
+        self._tenants: typing.Optional[TenantsClient] = None
         self._sandboxes: typing.Optional[SandboxesClient] = None
         self._shares: typing.Optional[SharesClient] = None
         self._snapshots: typing.Optional[SnapshotsClient] = None
         self._webhooks: typing.Optional[WebhooksClient] = None
 
     @property
-    def tenants(self):
-        if self._tenants is None:
-            from .tenants.client import TenantsClient  # noqa: E402
+    def byo(self):
+        if self._byo is None:
+            from .byo.client import ByoClient  # noqa: E402
 
-            self._tenants = TenantsClient(client_wrapper=self._client_wrapper)
-        return self._tenants
-
-    @property
-    def knowledge(self):
-        if self._knowledge is None:
-            from .knowledge.client import KnowledgeClient  # noqa: E402
-
-            self._knowledge = KnowledgeClient(client_wrapper=self._client_wrapper)
-        return self._knowledge
-
-    @property
-    def credits(self):
-        if self._credits is None:
-            from .credits.client import CreditsClient  # noqa: E402
-
-            self._credits = CreditsClient(client_wrapper=self._client_wrapper)
-        return self._credits
-
-    @property
-    def integrations(self):
-        if self._integrations is None:
-            from .integrations.client import IntegrationsClient  # noqa: E402
-
-            self._integrations = IntegrationsClient(client_wrapper=self._client_wrapper)
-        return self._integrations
-
-    @property
-    def gateway_profiles(self):
-        if self._gateway_profiles is None:
-            from .gateway_profiles.client import GatewayProfilesClient  # noqa: E402
-
-            self._gateway_profiles = GatewayProfilesClient(client_wrapper=self._client_wrapper)
-        return self._gateway_profiles
-
-    @property
-    def environments(self):
-        if self._environments is None:
-            from .environments.client import EnvironmentsClient  # noqa: E402
-
-            self._environments = EnvironmentsClient(client_wrapper=self._client_wrapper)
-        return self._environments
+            self._byo = ByoClient(client_wrapper=self._client_wrapper)
+        return self._byo
 
     @property
     def cloud_roles(self):
@@ -167,12 +153,12 @@ class BaseIslo:
         return self._cloud_roles
 
     @property
-    def inference(self):
-        if self._inference is None:
-            from .inference.client import InferenceClient  # noqa: E402
+    def compute_events(self):
+        if self._compute_events is None:
+            from .compute_events.client import ComputeEventsClient  # noqa: E402
 
-            self._inference = InferenceClient(client_wrapper=self._client_wrapper)
-        return self._inference
+            self._compute_events = ComputeEventsClient(client_wrapper=self._client_wrapper)
+        return self._compute_events
 
     @property
     def container_registries(self):
@@ -183,20 +169,36 @@ class BaseIslo:
         return self._container_registries
 
     @property
-    def jobs(self):
-        if self._jobs is None:
-            from .jobs.client import JobsClient  # noqa: E402
+    def credits(self):
+        if self._credits is None:
+            from .credits.client import CreditsClient  # noqa: E402
 
-            self._jobs = JobsClient(client_wrapper=self._client_wrapper)
-        return self._jobs
+            self._credits = CreditsClient(client_wrapper=self._client_wrapper)
+        return self._credits
 
     @property
-    def job_runs(self):
-        if self._job_runs is None:
-            from .job_runs.client import JobRunsClient  # noqa: E402
+    def environments(self):
+        if self._environments is None:
+            from .environments.client import EnvironmentsClient  # noqa: E402
 
-            self._job_runs = JobRunsClient(client_wrapper=self._client_wrapper)
-        return self._job_runs
+            self._environments = EnvironmentsClient(client_wrapper=self._client_wrapper)
+        return self._environments
+
+    @property
+    def factories(self):
+        if self._factories is None:
+            from .factories.client import FactoriesClient  # noqa: E402
+
+            self._factories = FactoriesClient(client_wrapper=self._client_wrapper)
+        return self._factories
+
+    @property
+    def machines(self):
+        if self._machines is None:
+            from .machines.client import MachinesClient  # noqa: E402
+
+            self._machines = MachinesClient(client_wrapper=self._client_wrapper)
+        return self._machines
 
     @property
     def factory(self):
@@ -207,12 +209,68 @@ class BaseIslo:
         return self._factory
 
     @property
-    def compute_events(self):
-        if self._compute_events is None:
-            from .compute_events.client import ComputeEventsClient  # noqa: E402
+    def gateway_profiles(self):
+        if self._gateway_profiles is None:
+            from .gateway_profiles.client import GatewayProfilesClient  # noqa: E402
 
-            self._compute_events = ComputeEventsClient(client_wrapper=self._client_wrapper)
-        return self._compute_events
+            self._gateway_profiles = GatewayProfilesClient(client_wrapper=self._client_wrapper)
+        return self._gateway_profiles
+
+    @property
+    def inference(self):
+        if self._inference is None:
+            from .inference.client import InferenceClient  # noqa: E402
+
+            self._inference = InferenceClient(client_wrapper=self._client_wrapper)
+        return self._inference
+
+    @property
+    def integrations(self):
+        if self._integrations is None:
+            from .integrations.client import IntegrationsClient  # noqa: E402
+
+            self._integrations = IntegrationsClient(client_wrapper=self._client_wrapper)
+        return self._integrations
+
+    @property
+    def job_runs(self):
+        if self._job_runs is None:
+            from .job_runs.client import JobRunsClient  # noqa: E402
+
+            self._job_runs = JobRunsClient(client_wrapper=self._client_wrapper)
+        return self._job_runs
+
+    @property
+    def jobs(self):
+        if self._jobs is None:
+            from .jobs.client import JobsClient  # noqa: E402
+
+            self._jobs = JobsClient(client_wrapper=self._client_wrapper)
+        return self._jobs
+
+    @property
+    def knowledge(self):
+        if self._knowledge is None:
+            from .knowledge.client import KnowledgeClient  # noqa: E402
+
+            self._knowledge = KnowledgeClient(client_wrapper=self._client_wrapper)
+        return self._knowledge
+
+    @property
+    def sandbox_templates(self):
+        if self._sandbox_templates is None:
+            from .sandbox_templates.client import SandboxTemplatesClient  # noqa: E402
+
+            self._sandbox_templates = SandboxTemplatesClient(client_wrapper=self._client_wrapper)
+        return self._sandbox_templates
+
+    @property
+    def tenants(self):
+        if self._tenants is None:
+            from .tenants.client import TenantsClient  # noqa: E402
+
+            self._tenants = TenantsClient(client_wrapper=self._client_wrapper)
+        return self._tenants
 
     @property
     def sandboxes(self):
@@ -247,6 +305,24 @@ class BaseIslo:
         return self._webhooks
 
 
+def _make_default_async_client(
+    timeout: typing.Optional[float],
+    follow_redirects: typing.Optional[bool],
+) -> httpx.AsyncClient:
+    try:
+        import httpx_aiohttp  # type: ignore[import-not-found]
+    except ImportError:
+        pass
+    else:
+        if follow_redirects is not None:
+            return httpx_aiohttp.HttpxAiohttpClient(timeout=timeout, follow_redirects=follow_redirects)
+        return httpx_aiohttp.HttpxAiohttpClient(timeout=timeout)
+
+    if follow_redirects is not None:
+        return httpx.AsyncClient(timeout=timeout, follow_redirects=follow_redirects)
+    return httpx.AsyncClient(timeout=timeout)
+
+
 class AsyncBaseIslo:
     """
     Use this class to access the different functions within the SDK. You can instantiate any number of clients with different configuration that will propagate to these functions.
@@ -256,6 +332,7 @@ class AsyncBaseIslo:
     environment : IsloEnvironment
         The environment to use for requests from the client.
 
+    api_version : str
     api_key : typing.Optional[typing.Union[str, typing.Callable[[], str]]]
     headers : typing.Optional[typing.Dict[str, str]]
         Additional headers to send with every request.
@@ -265,6 +342,15 @@ class AsyncBaseIslo:
 
     timeout : typing.Optional[float]
         The timeout to be used, in seconds, for requests. By default the timeout is 60 seconds, unless a custom httpx client is used, in which case this default is not enforced.
+
+    max_retries : typing.Optional[int]
+        The default maximum number of retries for failed requests. Defaults to 2. Per-request `max_retries` in `request_options` takes precedence over this value.
+
+    stream_reconnection_enabled : typing.Optional[bool]
+        Whether to automatically reconnect on stream disconnection for resumable streaming endpoints. Defaults to True. Per-request `stream_reconnection_enabled` in `request_options` takes precedence over this value.
+
+    max_stream_reconnection_attempts : typing.Optional[int]
+        The maximum number of reconnection attempts for resumable streaming endpoints. Defaults to no limit. Per-request `max_stream_reconnection_attempts` in `request_options` takes precedence over this value.
 
     follow_redirects : typing.Optional[bool]
         Whether the default httpx client follows redirects or not, this is irrelevant if a custom httpx client is passed in.
@@ -281,6 +367,7 @@ class AsyncBaseIslo:
     from islo.environment import IsloEnvironment
 
     client = AsyncIslo(
+        "2026-09-15",
         api_key="YOUR_API_KEY",
         environment=IsloEnvironment.PRODUCTION,
     )
@@ -290,95 +377,64 @@ class AsyncBaseIslo:
         self,
         *,
         environment: IsloEnvironment,
+        api_version: str = "2026-09-15",
         api_key: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = os.getenv("ISLO_API_KEY"),
         headers: typing.Optional[typing.Dict[str, str]] = None,
         async_token: typing.Optional[typing.Callable[[], typing.Awaitable[str]]] = None,
         timeout: typing.Optional[float] = None,
+        max_retries: typing.Optional[int] = None,
+        stream_reconnection_enabled: typing.Optional[bool] = None,
+        max_stream_reconnection_attempts: typing.Optional[int] = None,
         follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.AsyncClient] = None,
         logging: typing.Optional[typing.Union[LogConfig, Logger]] = None,
     ):
-        _defaulted_timeout = (
-            timeout if timeout is not None else 60 if httpx_client is None else httpx_client.timeout.read
-        )
+        _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
+        _defaulted_max_retries = max_retries if max_retries is not None else 2
         self._client_wrapper = AsyncClientWrapper(
             environment=environment,
+            api_version=api_version,
             api_key=api_key,
             headers=headers,
             async_token=async_token,
             httpx_client=httpx_client
             if httpx_client is not None
-            else httpx.AsyncClient(timeout=_defaulted_timeout, follow_redirects=follow_redirects)
-            if follow_redirects is not None
-            else httpx.AsyncClient(timeout=_defaulted_timeout),
+            else _make_default_async_client(timeout=_defaulted_timeout, follow_redirects=follow_redirects),
             timeout=_defaulted_timeout,
+            max_retries=_defaulted_max_retries,
+            stream_reconnection_enabled=stream_reconnection_enabled,
+            max_stream_reconnection_attempts=max_stream_reconnection_attempts,
             logging=logging,
         )
-        self._tenants: typing.Optional[AsyncTenantsClient] = None
-        self._knowledge: typing.Optional[AsyncKnowledgeClient] = None
-        self._credits: typing.Optional[AsyncCreditsClient] = None
-        self._integrations: typing.Optional[AsyncIntegrationsClient] = None
-        self._gateway_profiles: typing.Optional[AsyncGatewayProfilesClient] = None
-        self._environments: typing.Optional[AsyncEnvironmentsClient] = None
+        self._byo: typing.Optional[AsyncByoClient] = None
         self._cloud_roles: typing.Optional[AsyncCloudRolesClient] = None
-        self._inference: typing.Optional[AsyncInferenceClient] = None
-        self._container_registries: typing.Optional[AsyncContainerRegistriesClient] = None
-        self._jobs: typing.Optional[AsyncJobsClient] = None
-        self._job_runs: typing.Optional[AsyncJobRunsClient] = None
-        self._factory: typing.Optional[AsyncFactoryClient] = None
         self._compute_events: typing.Optional[AsyncComputeEventsClient] = None
+        self._container_registries: typing.Optional[AsyncContainerRegistriesClient] = None
+        self._credits: typing.Optional[AsyncCreditsClient] = None
+        self._environments: typing.Optional[AsyncEnvironmentsClient] = None
+        self._factories: typing.Optional[AsyncFactoriesClient] = None
+        self._machines: typing.Optional[AsyncMachinesClient] = None
+        self._factory: typing.Optional[AsyncFactoryClient] = None
+        self._gateway_profiles: typing.Optional[AsyncGatewayProfilesClient] = None
+        self._inference: typing.Optional[AsyncInferenceClient] = None
+        self._integrations: typing.Optional[AsyncIntegrationsClient] = None
+        self._job_runs: typing.Optional[AsyncJobRunsClient] = None
+        self._jobs: typing.Optional[AsyncJobsClient] = None
+        self._knowledge: typing.Optional[AsyncKnowledgeClient] = None
+        self._sandbox_templates: typing.Optional[AsyncSandboxTemplatesClient] = None
+        self._tenants: typing.Optional[AsyncTenantsClient] = None
         self._sandboxes: typing.Optional[AsyncSandboxesClient] = None
         self._shares: typing.Optional[AsyncSharesClient] = None
         self._snapshots: typing.Optional[AsyncSnapshotsClient] = None
         self._webhooks: typing.Optional[AsyncWebhooksClient] = None
 
     @property
-    def tenants(self):
-        if self._tenants is None:
-            from .tenants.client import AsyncTenantsClient  # noqa: E402
+    def byo(self):
+        if self._byo is None:
+            from .byo.client import AsyncByoClient  # noqa: E402
 
-            self._tenants = AsyncTenantsClient(client_wrapper=self._client_wrapper)
-        return self._tenants
-
-    @property
-    def knowledge(self):
-        if self._knowledge is None:
-            from .knowledge.client import AsyncKnowledgeClient  # noqa: E402
-
-            self._knowledge = AsyncKnowledgeClient(client_wrapper=self._client_wrapper)
-        return self._knowledge
-
-    @property
-    def credits(self):
-        if self._credits is None:
-            from .credits.client import AsyncCreditsClient  # noqa: E402
-
-            self._credits = AsyncCreditsClient(client_wrapper=self._client_wrapper)
-        return self._credits
-
-    @property
-    def integrations(self):
-        if self._integrations is None:
-            from .integrations.client import AsyncIntegrationsClient  # noqa: E402
-
-            self._integrations = AsyncIntegrationsClient(client_wrapper=self._client_wrapper)
-        return self._integrations
-
-    @property
-    def gateway_profiles(self):
-        if self._gateway_profiles is None:
-            from .gateway_profiles.client import AsyncGatewayProfilesClient  # noqa: E402
-
-            self._gateway_profiles = AsyncGatewayProfilesClient(client_wrapper=self._client_wrapper)
-        return self._gateway_profiles
-
-    @property
-    def environments(self):
-        if self._environments is None:
-            from .environments.client import AsyncEnvironmentsClient  # noqa: E402
-
-            self._environments = AsyncEnvironmentsClient(client_wrapper=self._client_wrapper)
-        return self._environments
+            self._byo = AsyncByoClient(client_wrapper=self._client_wrapper)
+        return self._byo
 
     @property
     def cloud_roles(self):
@@ -389,12 +445,12 @@ class AsyncBaseIslo:
         return self._cloud_roles
 
     @property
-    def inference(self):
-        if self._inference is None:
-            from .inference.client import AsyncInferenceClient  # noqa: E402
+    def compute_events(self):
+        if self._compute_events is None:
+            from .compute_events.client import AsyncComputeEventsClient  # noqa: E402
 
-            self._inference = AsyncInferenceClient(client_wrapper=self._client_wrapper)
-        return self._inference
+            self._compute_events = AsyncComputeEventsClient(client_wrapper=self._client_wrapper)
+        return self._compute_events
 
     @property
     def container_registries(self):
@@ -405,20 +461,36 @@ class AsyncBaseIslo:
         return self._container_registries
 
     @property
-    def jobs(self):
-        if self._jobs is None:
-            from .jobs.client import AsyncJobsClient  # noqa: E402
+    def credits(self):
+        if self._credits is None:
+            from .credits.client import AsyncCreditsClient  # noqa: E402
 
-            self._jobs = AsyncJobsClient(client_wrapper=self._client_wrapper)
-        return self._jobs
+            self._credits = AsyncCreditsClient(client_wrapper=self._client_wrapper)
+        return self._credits
 
     @property
-    def job_runs(self):
-        if self._job_runs is None:
-            from .job_runs.client import AsyncJobRunsClient  # noqa: E402
+    def environments(self):
+        if self._environments is None:
+            from .environments.client import AsyncEnvironmentsClient  # noqa: E402
 
-            self._job_runs = AsyncJobRunsClient(client_wrapper=self._client_wrapper)
-        return self._job_runs
+            self._environments = AsyncEnvironmentsClient(client_wrapper=self._client_wrapper)
+        return self._environments
+
+    @property
+    def factories(self):
+        if self._factories is None:
+            from .factories.client import AsyncFactoriesClient  # noqa: E402
+
+            self._factories = AsyncFactoriesClient(client_wrapper=self._client_wrapper)
+        return self._factories
+
+    @property
+    def machines(self):
+        if self._machines is None:
+            from .machines.client import AsyncMachinesClient  # noqa: E402
+
+            self._machines = AsyncMachinesClient(client_wrapper=self._client_wrapper)
+        return self._machines
 
     @property
     def factory(self):
@@ -429,12 +501,68 @@ class AsyncBaseIslo:
         return self._factory
 
     @property
-    def compute_events(self):
-        if self._compute_events is None:
-            from .compute_events.client import AsyncComputeEventsClient  # noqa: E402
+    def gateway_profiles(self):
+        if self._gateway_profiles is None:
+            from .gateway_profiles.client import AsyncGatewayProfilesClient  # noqa: E402
 
-            self._compute_events = AsyncComputeEventsClient(client_wrapper=self._client_wrapper)
-        return self._compute_events
+            self._gateway_profiles = AsyncGatewayProfilesClient(client_wrapper=self._client_wrapper)
+        return self._gateway_profiles
+
+    @property
+    def inference(self):
+        if self._inference is None:
+            from .inference.client import AsyncInferenceClient  # noqa: E402
+
+            self._inference = AsyncInferenceClient(client_wrapper=self._client_wrapper)
+        return self._inference
+
+    @property
+    def integrations(self):
+        if self._integrations is None:
+            from .integrations.client import AsyncIntegrationsClient  # noqa: E402
+
+            self._integrations = AsyncIntegrationsClient(client_wrapper=self._client_wrapper)
+        return self._integrations
+
+    @property
+    def job_runs(self):
+        if self._job_runs is None:
+            from .job_runs.client import AsyncJobRunsClient  # noqa: E402
+
+            self._job_runs = AsyncJobRunsClient(client_wrapper=self._client_wrapper)
+        return self._job_runs
+
+    @property
+    def jobs(self):
+        if self._jobs is None:
+            from .jobs.client import AsyncJobsClient  # noqa: E402
+
+            self._jobs = AsyncJobsClient(client_wrapper=self._client_wrapper)
+        return self._jobs
+
+    @property
+    def knowledge(self):
+        if self._knowledge is None:
+            from .knowledge.client import AsyncKnowledgeClient  # noqa: E402
+
+            self._knowledge = AsyncKnowledgeClient(client_wrapper=self._client_wrapper)
+        return self._knowledge
+
+    @property
+    def sandbox_templates(self):
+        if self._sandbox_templates is None:
+            from .sandbox_templates.client import AsyncSandboxTemplatesClient  # noqa: E402
+
+            self._sandbox_templates = AsyncSandboxTemplatesClient(client_wrapper=self._client_wrapper)
+        return self._sandbox_templates
+
+    @property
+    def tenants(self):
+        if self._tenants is None:
+            from .tenants.client import AsyncTenantsClient  # noqa: E402
+
+            self._tenants = AsyncTenantsClient(client_wrapper=self._client_wrapper)
+        return self._tenants
 
     @property
     def sandboxes(self):

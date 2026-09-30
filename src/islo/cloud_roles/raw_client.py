@@ -6,7 +6,7 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
@@ -18,6 +18,7 @@ from ..types.cloud_provider import CloudProvider
 from ..types.cloud_role_response import CloudRoleResponse
 from ..types.cloud_role_type import CloudRoleType
 from ..types.error_response import ErrorResponse
+from ..types.list_page_cloud_role_response import ListPageCloudRoleResponse
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -30,7 +31,7 @@ class RawCloudRolesClient:
 
     def list_cloud_roles(
         self, *, type: typing.Optional[CloudRoleType] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[typing.List[CloudRoleResponse]]:
+    ) -> HttpResponse[ListPageCloudRoleResponse]:
         """
         Parameters
         ----------
@@ -42,7 +43,7 @@ class RawCloudRolesClient:
 
         Returns
         -------
-        HttpResponse[typing.List[CloudRoleResponse]]
+        HttpResponse[ListPageCloudRoleResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -57,9 +58,9 @@ class RawCloudRolesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[CloudRoleResponse],
+                    ListPageCloudRoleResponse,
                     parse_obj_as(
-                        type_=typing.List[CloudRoleResponse],  # type: ignore
+                        type_=ListPageCloudRoleResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -111,8 +112,8 @@ class RawCloudRolesClient:
         *,
         provider: CloudProvider,
         role_arn: str,
-        type: typing.Optional[CloudRoleType] = OMIT,
         session_duration_seconds: typing.Optional[int] = OMIT,
+        type: typing.Optional[CloudRoleType] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CloudRoleResponse]:
         """
@@ -122,9 +123,9 @@ class RawCloudRolesClient:
 
         role_arn : str
 
-        type : typing.Optional[CloudRoleType]
-
         session_duration_seconds : typing.Optional[int]
+
+        type : typing.Optional[CloudRoleType]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -140,9 +141,9 @@ class RawCloudRolesClient:
             method="POST",
             json={
                 "provider": provider,
-                "type": type,
                 "role_arn": role_arn,
                 "session_duration_seconds": session_duration_seconds,
+                "type": type,
             },
             headers={
                 "content-type": "application/json",
@@ -219,7 +220,7 @@ class RawCloudRolesClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"cloud-roles/{encode_path_param(role_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -303,7 +304,7 @@ class RawCloudRolesClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"cloud-roles/{encode_path_param(role_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -368,9 +369,9 @@ class RawCloudRolesClient:
         self,
         role_id: str,
         *,
+        is_enabled: typing.Optional[bool] = OMIT,
         role_arn: typing.Optional[str] = OMIT,
         session_duration_seconds: typing.Optional[int] = OMIT,
-        is_enabled: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CloudRoleResponse]:
         """
@@ -378,11 +379,11 @@ class RawCloudRolesClient:
         ----------
         role_id : str
 
+        is_enabled : typing.Optional[bool]
+
         role_arn : typing.Optional[str]
 
         session_duration_seconds : typing.Optional[int]
-
-        is_enabled : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -393,13 +394,13 @@ class RawCloudRolesClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"cloud-roles/{encode_path_param(role_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
+                "is_enabled": is_enabled,
                 "role_arn": role_arn,
                 "session_duration_seconds": session_duration_seconds,
-                "is_enabled": is_enabled,
             },
             headers={
                 "content-type": "application/json",
@@ -477,7 +478,7 @@ class AsyncRawCloudRolesClient:
 
     async def list_cloud_roles(
         self, *, type: typing.Optional[CloudRoleType] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[typing.List[CloudRoleResponse]]:
+    ) -> AsyncHttpResponse[ListPageCloudRoleResponse]:
         """
         Parameters
         ----------
@@ -489,7 +490,7 @@ class AsyncRawCloudRolesClient:
 
         Returns
         -------
-        AsyncHttpResponse[typing.List[CloudRoleResponse]]
+        AsyncHttpResponse[ListPageCloudRoleResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -504,9 +505,9 @@ class AsyncRawCloudRolesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[CloudRoleResponse],
+                    ListPageCloudRoleResponse,
                     parse_obj_as(
-                        type_=typing.List[CloudRoleResponse],  # type: ignore
+                        type_=ListPageCloudRoleResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -558,8 +559,8 @@ class AsyncRawCloudRolesClient:
         *,
         provider: CloudProvider,
         role_arn: str,
-        type: typing.Optional[CloudRoleType] = OMIT,
         session_duration_seconds: typing.Optional[int] = OMIT,
+        type: typing.Optional[CloudRoleType] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CloudRoleResponse]:
         """
@@ -569,9 +570,9 @@ class AsyncRawCloudRolesClient:
 
         role_arn : str
 
-        type : typing.Optional[CloudRoleType]
-
         session_duration_seconds : typing.Optional[int]
+
+        type : typing.Optional[CloudRoleType]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -587,9 +588,9 @@ class AsyncRawCloudRolesClient:
             method="POST",
             json={
                 "provider": provider,
-                "type": type,
                 "role_arn": role_arn,
                 "session_duration_seconds": session_duration_seconds,
+                "type": type,
             },
             headers={
                 "content-type": "application/json",
@@ -666,7 +667,7 @@ class AsyncRawCloudRolesClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"cloud-roles/{encode_path_param(role_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -750,7 +751,7 @@ class AsyncRawCloudRolesClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"cloud-roles/{encode_path_param(role_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -815,9 +816,9 @@ class AsyncRawCloudRolesClient:
         self,
         role_id: str,
         *,
+        is_enabled: typing.Optional[bool] = OMIT,
         role_arn: typing.Optional[str] = OMIT,
         session_duration_seconds: typing.Optional[int] = OMIT,
-        is_enabled: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CloudRoleResponse]:
         """
@@ -825,11 +826,11 @@ class AsyncRawCloudRolesClient:
         ----------
         role_id : str
 
+        is_enabled : typing.Optional[bool]
+
         role_arn : typing.Optional[str]
 
         session_duration_seconds : typing.Optional[int]
-
-        is_enabled : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -840,13 +841,13 @@ class AsyncRawCloudRolesClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"cloud-roles/{jsonable_encoder(role_id)}",
+            f"cloud-roles/{encode_path_param(role_id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
+                "is_enabled": is_enabled,
                 "role_arn": role_arn,
                 "session_duration_seconds": session_duration_seconds,
-                "is_enabled": is_enabled,
             },
             headers={
                 "content-type": "application/json",

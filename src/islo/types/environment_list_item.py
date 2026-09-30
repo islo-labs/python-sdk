@@ -8,12 +8,12 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class EnvironmentListItem(UniversalBaseModel):
-    id: str
-    name: str
-    is_default: bool
-    variable_count: typing.Optional[int] = None
-    secret_count: typing.Optional[int] = None
     created_at: dt.datetime
+    id: str
+    is_default: bool
+    name: str
+    secret_count: typing.Optional[int] = None
     updated_at: dt.datetime
+    variable_count: typing.Optional[int] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

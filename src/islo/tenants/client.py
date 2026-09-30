@@ -4,7 +4,7 @@ import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.tenant_regions_response import TenantRegionsResponse
+from ..types.list_page_compute_region_response import ListPageComputeRegionResponse
 from .raw_client import AsyncRawTenantsClient, RawTenantsClient
 
 
@@ -25,7 +25,7 @@ class TenantsClient:
 
     def list_tenant_compute_regions(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> TenantRegionsResponse:
+    ) -> ListPageComputeRegionResponse:
         """
         Return the compute regions the authenticated tenant may use, including the API and WebSocket base URLs for each region.
 
@@ -36,7 +36,7 @@ class TenantsClient:
 
         Returns
         -------
-        TenantRegionsResponse
+        ListPageComputeRegionResponse
             Successful Response
 
         Examples
@@ -45,6 +45,7 @@ class TenantsClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -71,7 +72,7 @@ class AsyncTenantsClient:
 
     async def list_tenant_compute_regions(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> TenantRegionsResponse:
+    ) -> ListPageComputeRegionResponse:
         """
         Return the compute regions the authenticated tenant may use, including the API and WebSocket base URLs for each region.
 
@@ -82,7 +83,7 @@ class AsyncTenantsClient:
 
         Returns
         -------
-        TenantRegionsResponse
+        ListPageComputeRegionResponse
             Successful Response
 
         Examples
@@ -93,6 +94,7 @@ class AsyncTenantsClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )

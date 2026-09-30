@@ -8,19 +8,19 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class JobRunStepTimelineEntry(UniversalBaseModel):
-    name: str
     action: str
-    status: str
-    task_name: str
-    sandbox_name: typing.Optional[str] = None
     agent_session_id: typing.Optional[str] = None
-    started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
-    error_message: typing.Optional[str] = None
+    compute_command_id: typing.Optional[str] = None
     error_code: typing.Optional[str] = None
     error_details: typing.Optional[typing.Dict[str, typing.Any]] = None
-    failure_class: typing.Optional[str] = None
+    error_message: typing.Optional[str] = None
     exit_code: typing.Optional[int] = None
-    compute_command_id: typing.Optional[str] = None
+    failure_class: typing.Optional[str] = None
+    name: str
+    sandbox_name: typing.Optional[str] = None
+    started_at: typing.Optional[dt.datetime] = None
+    status: str
+    task_name: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

@@ -7,6 +7,7 @@ from ..core.request_options import RequestOptions
 from ..types.cloud_provider import CloudProvider
 from ..types.cloud_role_response import CloudRoleResponse
 from ..types.cloud_role_type import CloudRoleType
+from ..types.list_page_cloud_role_response import ListPageCloudRoleResponse
 from .raw_client import AsyncRawCloudRolesClient, RawCloudRolesClient
 
 # this is used as the default value for optional parameters
@@ -30,7 +31,7 @@ class CloudRolesClient:
 
     def list_cloud_roles(
         self, *, type: typing.Optional[CloudRoleType] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.List[CloudRoleResponse]:
+    ) -> ListPageCloudRoleResponse:
         """
         Parameters
         ----------
@@ -42,7 +43,7 @@ class CloudRolesClient:
 
         Returns
         -------
-        typing.List[CloudRoleResponse]
+        ListPageCloudRoleResponse
             Successful Response
 
         Examples
@@ -51,6 +52,7 @@ class CloudRolesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -64,8 +66,8 @@ class CloudRolesClient:
         *,
         provider: CloudProvider,
         role_arn: str,
-        type: typing.Optional[CloudRoleType] = OMIT,
         session_duration_seconds: typing.Optional[int] = OMIT,
+        type: typing.Optional[CloudRoleType] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CloudRoleResponse:
         """
@@ -75,9 +77,9 @@ class CloudRolesClient:
 
         role_arn : str
 
-        type : typing.Optional[CloudRoleType]
-
         session_duration_seconds : typing.Optional[int]
+
+        type : typing.Optional[CloudRoleType]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -93,6 +95,7 @@ class CloudRolesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -104,8 +107,8 @@ class CloudRolesClient:
         _response = self._raw_client.create_cloud_role(
             provider=provider,
             role_arn=role_arn,
-            type=type,
             session_duration_seconds=session_duration_seconds,
+            type=type,
             request_options=request_options,
         )
         return _response.data
@@ -132,6 +135,7 @@ class CloudRolesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -161,6 +165,7 @@ class CloudRolesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -175,9 +180,9 @@ class CloudRolesClient:
         self,
         role_id: str,
         *,
+        is_enabled: typing.Optional[bool] = OMIT,
         role_arn: typing.Optional[str] = OMIT,
         session_duration_seconds: typing.Optional[int] = OMIT,
-        is_enabled: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CloudRoleResponse:
         """
@@ -185,11 +190,11 @@ class CloudRolesClient:
         ----------
         role_id : str
 
+        is_enabled : typing.Optional[bool]
+
         role_arn : typing.Optional[str]
 
         session_duration_seconds : typing.Optional[int]
-
-        is_enabled : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -205,6 +210,7 @@ class CloudRolesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -214,9 +220,9 @@ class CloudRolesClient:
         """
         _response = self._raw_client.update_cloud_role(
             role_id,
+            is_enabled=is_enabled,
             role_arn=role_arn,
             session_duration_seconds=session_duration_seconds,
-            is_enabled=is_enabled,
             request_options=request_options,
         )
         return _response.data
@@ -239,7 +245,7 @@ class AsyncCloudRolesClient:
 
     async def list_cloud_roles(
         self, *, type: typing.Optional[CloudRoleType] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.List[CloudRoleResponse]:
+    ) -> ListPageCloudRoleResponse:
         """
         Parameters
         ----------
@@ -251,7 +257,7 @@ class AsyncCloudRolesClient:
 
         Returns
         -------
-        typing.List[CloudRoleResponse]
+        ListPageCloudRoleResponse
             Successful Response
 
         Examples
@@ -262,6 +268,7 @@ class AsyncCloudRolesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -281,8 +288,8 @@ class AsyncCloudRolesClient:
         *,
         provider: CloudProvider,
         role_arn: str,
-        type: typing.Optional[CloudRoleType] = OMIT,
         session_duration_seconds: typing.Optional[int] = OMIT,
+        type: typing.Optional[CloudRoleType] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CloudRoleResponse:
         """
@@ -292,9 +299,9 @@ class AsyncCloudRolesClient:
 
         role_arn : str
 
-        type : typing.Optional[CloudRoleType]
-
         session_duration_seconds : typing.Optional[int]
+
+        type : typing.Optional[CloudRoleType]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -312,6 +319,7 @@ class AsyncCloudRolesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -329,8 +337,8 @@ class AsyncCloudRolesClient:
         _response = await self._raw_client.create_cloud_role(
             provider=provider,
             role_arn=role_arn,
-            type=type,
             session_duration_seconds=session_duration_seconds,
+            type=type,
             request_options=request_options,
         )
         return _response.data
@@ -359,6 +367,7 @@ class AsyncCloudRolesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -396,6 +405,7 @@ class AsyncCloudRolesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -416,9 +426,9 @@ class AsyncCloudRolesClient:
         self,
         role_id: str,
         *,
+        is_enabled: typing.Optional[bool] = OMIT,
         role_arn: typing.Optional[str] = OMIT,
         session_duration_seconds: typing.Optional[int] = OMIT,
-        is_enabled: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CloudRoleResponse:
         """
@@ -426,11 +436,11 @@ class AsyncCloudRolesClient:
         ----------
         role_id : str
 
+        is_enabled : typing.Optional[bool]
+
         role_arn : typing.Optional[str]
 
         session_duration_seconds : typing.Optional[int]
-
-        is_enabled : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -448,6 +458,7 @@ class AsyncCloudRolesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -463,9 +474,9 @@ class AsyncCloudRolesClient:
         """
         _response = await self._raw_client.update_cloud_role(
             role_id,
+            is_enabled=is_enabled,
             role_arn=role_arn,
             session_duration_seconds=session_duration_seconds,
-            is_enabled=is_enabled,
             request_options=request_options,
         )
         return _response.data

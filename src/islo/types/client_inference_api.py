@@ -11,6 +11,7 @@ class ClientInferenceApi(enum.StrEnum):
     OPENAI_CHAT_COMPLETIONS = "openai_chat_completions"
     OPENAI_RESPONSES = "openai_responses"
     ANTHROPIC_MESSAGES = "anthropic_messages"
+    TYPESAFE_SYSTEM_ONE = "typesafe_system_one"
     _UNKNOWN = "__CLIENTINFERENCEAPI_UNKNOWN__"
     """
     This member is used for forward compatibility. If the value is not recognized by the enum, it will be stored here, and the raw value is accessible through `.value`.
@@ -27,6 +28,7 @@ class ClientInferenceApi(enum.StrEnum):
         openai_chat_completions: typing.Callable[[], T_Result],
         openai_responses: typing.Callable[[], T_Result],
         anthropic_messages: typing.Callable[[], T_Result],
+        typesafe_system_one: typing.Callable[[], T_Result],
         _unknown_member: typing.Callable[[str], T_Result],
     ) -> T_Result:
         if self is ClientInferenceApi.OPENAI_CHAT_COMPLETIONS:
@@ -35,4 +37,6 @@ class ClientInferenceApi(enum.StrEnum):
             return openai_responses()
         if self is ClientInferenceApi.ANTHROPIC_MESSAGES:
             return anthropic_messages()
+        if self is ClientInferenceApi.TYPESAFE_SYSTEM_ONE:
+            return typesafe_system_one()
         return _unknown_member(self._value_)

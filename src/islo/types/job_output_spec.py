@@ -18,18 +18,19 @@ class JobOutputSpec(UniversalBaseModel):
     the producer type, not the published array).
     """
 
-    type: JobOutputSpecType
+    description: typing.Optional[str] = None
+    enum: typing.Optional[typing.List[typing.Any]] = None
     items: typing.Optional[JobOutputSpecItems] = pydantic.Field(default=None)
     """
     Item type for array outputs. Required at deploy when type = array. Do not use reduce = collect with type = array; use gather to concatenate arrays.
     """
 
-    required: typing.Optional[bool] = None
-    description: typing.Optional[str] = None
-    enum: typing.Optional[typing.List[typing.Any]] = None
     reduce: typing.Optional[JobOutputSpecReduce] = pydantic.Field(default=None)
     """
     one: exactly one claiming step. last: last successful write in manifest task order. collect: published array of producer values (dense nulls for missing tasks); required collect must be claimed by every task. gather: concatenate arrays or collect scalars, skipping omissions.
     """
+
+    required: typing.Optional[bool] = None
+    type: JobOutputSpecType
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

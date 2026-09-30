@@ -9,6 +9,7 @@ from ..types.gateway_action import GatewayAction
 from ..types.gateway_profile_detail_response import GatewayProfileDetailResponse
 from ..types.gateway_profile_response import GatewayProfileResponse
 from ..types.gateway_rule_response import GatewayRuleResponse
+from ..types.list_page_gateway_profile_response import ListPageGatewayProfileResponse
 from ..types.rule_reorder_item import RuleReorderItem
 from .raw_client import AsyncRawGatewayProfilesClient, RawGatewayProfilesClient
 from .types.gateway_profile_create_integration_policy import GatewayProfileCreateIntegrationPolicy
@@ -37,7 +38,7 @@ class GatewayProfilesClient:
 
     def list_gateway_profiles(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.List[GatewayProfileResponse]:
+    ) -> ListPageGatewayProfileResponse:
         """
         Parameters
         ----------
@@ -46,7 +47,7 @@ class GatewayProfilesClient:
 
         Returns
         -------
-        typing.List[GatewayProfileResponse]
+        ListPageGatewayProfileResponse
             Successful Response
 
         Examples
@@ -55,6 +56,7 @@ class GatewayProfilesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -67,12 +69,12 @@ class GatewayProfilesClient:
         self,
         *,
         name: str,
-        description: typing.Optional[str] = OMIT,
+        cloud_role: typing.Optional[str] = OMIT,
         default_action: typing.Optional[GatewayAction] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        integration_policy: typing.Optional[GatewayProfileCreateIntegrationPolicy] = OMIT,
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
-        cloud_role: typing.Optional[str] = OMIT,
-        integration_policy: typing.Optional[GatewayProfileCreateIntegrationPolicy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayProfileResponse:
         """
@@ -80,18 +82,18 @@ class GatewayProfilesClient:
         ----------
         name : str
 
-        description : typing.Optional[str]
+        cloud_role : typing.Optional[str]
+            Cloud role public ID (UUID)
 
         default_action : typing.Optional[GatewayAction]
+
+        description : typing.Optional[str]
+
+        integration_policy : typing.Optional[GatewayProfileCreateIntegrationPolicy]
 
         internet_enabled : typing.Optional[bool]
 
         is_default : typing.Optional[bool]
-
-        cloud_role : typing.Optional[str]
-            Cloud role public ID (UUID)
-
-        integration_policy : typing.Optional[GatewayProfileCreateIntegrationPolicy]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -107,6 +109,7 @@ class GatewayProfilesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -116,12 +119,12 @@ class GatewayProfilesClient:
         """
         _response = self._raw_client.create_gateway_profile(
             name=name,
-            description=description,
+            cloud_role=cloud_role,
             default_action=default_action,
+            description=description,
+            integration_policy=integration_policy,
             internet_enabled=internet_enabled,
             is_default=is_default,
-            cloud_role=cloud_role,
-            integration_policy=integration_policy,
             request_options=request_options,
         )
         return _response.data
@@ -148,6 +151,7 @@ class GatewayProfilesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -179,6 +183,7 @@ class GatewayProfilesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -193,13 +198,13 @@ class GatewayProfilesClient:
         self,
         profile_id: str,
         *,
-        name: typing.Optional[str] = OMIT,
-        description: typing.Optional[str] = OMIT,
+        cloud_role: typing.Optional[str] = OMIT,
         default_action: typing.Optional[GatewayAction] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        integration_policy: typing.Optional[GatewayProfileUpdateIntegrationPolicy] = OMIT,
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
-        cloud_role: typing.Optional[str] = OMIT,
-        integration_policy: typing.Optional[GatewayProfileUpdateIntegrationPolicy] = OMIT,
+        name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayProfileResponse:
         """
@@ -207,21 +212,21 @@ class GatewayProfilesClient:
         ----------
         profile_id : str
 
-        name : typing.Optional[str]
+        cloud_role : typing.Optional[str]
+            Cloud role public ID (UUID), empty string to unset
+
+        default_action : typing.Optional[GatewayAction]
 
         description : typing.Optional[str]
 
-        default_action : typing.Optional[GatewayAction]
+        integration_policy : typing.Optional[GatewayProfileUpdateIntegrationPolicy]
+            Omit to leave unchanged; send {"mode": "all"} to allow all integrations
 
         internet_enabled : typing.Optional[bool]
 
         is_default : typing.Optional[bool]
 
-        cloud_role : typing.Optional[str]
-            Cloud role public ID (UUID), empty string to unset
-
-        integration_policy : typing.Optional[GatewayProfileUpdateIntegrationPolicy]
-            Omit to leave unchanged; send {"mode": "all"} to allow all integrations
+        name : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -237,6 +242,7 @@ class GatewayProfilesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -246,13 +252,13 @@ class GatewayProfilesClient:
         """
         _response = self._raw_client.update_gateway_profile(
             profile_id,
-            name=name,
-            description=description,
+            cloud_role=cloud_role,
             default_action=default_action,
+            description=description,
+            integration_policy=integration_policy,
             internet_enabled=internet_enabled,
             is_default=is_default,
-            cloud_role=cloud_role,
-            integration_policy=integration_policy,
+            name=name,
             request_options=request_options,
         )
         return _response.data
@@ -262,14 +268,14 @@ class GatewayProfilesClient:
         profile_id: str,
         *,
         host_pattern: str,
-        path_pattern: typing.Optional[str] = OMIT,
-        methods: typing.Optional[typing.Sequence[str]] = OMIT,
-        rate_limit_rpm: typing.Optional[int] = OMIT,
+        action: typing.Optional[GatewayAction] = OMIT,
         auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
         content_filter: typing.Optional[GatewayRuleCreateContentFilter] = OMIT,
+        methods: typing.Optional[typing.Sequence[str]] = OMIT,
+        path_pattern: typing.Optional[str] = OMIT,
         priority: typing.Optional[int] = OMIT,
-        action: typing.Optional[GatewayAction] = OMIT,
         provider_key: typing.Optional[str] = OMIT,
+        rate_limit_rpm: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayRuleResponse:
         """
@@ -279,21 +285,21 @@ class GatewayProfilesClient:
 
         host_pattern : str
 
-        path_pattern : typing.Optional[str]
-
-        methods : typing.Optional[typing.Sequence[str]]
-
-        rate_limit_rpm : typing.Optional[int]
+        action : typing.Optional[GatewayAction]
 
         auth_strategy : typing.Optional[AuthStrategySchema]
 
         content_filter : typing.Optional[GatewayRuleCreateContentFilter]
 
+        methods : typing.Optional[typing.Sequence[str]]
+
+        path_pattern : typing.Optional[str]
+
         priority : typing.Optional[int]
 
-        action : typing.Optional[GatewayAction]
-
         provider_key : typing.Optional[str]
+
+        rate_limit_rpm : typing.Optional[int]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -309,6 +315,7 @@ class GatewayProfilesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -320,127 +327,14 @@ class GatewayProfilesClient:
         _response = self._raw_client.create_gateway_rule(
             profile_id,
             host_pattern=host_pattern,
-            path_pattern=path_pattern,
-            methods=methods,
-            rate_limit_rpm=rate_limit_rpm,
+            action=action,
             auth_strategy=auth_strategy,
             content_filter=content_filter,
-            priority=priority,
-            action=action,
-            provider_key=provider_key,
-            request_options=request_options,
-        )
-        return _response.data
-
-    def delete_gateway_rule(
-        self, profile_id: str, rule_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> None:
-        """
-        Parameters
-        ----------
-        profile_id : str
-
-        rule_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        None
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.gateway_profiles.delete_gateway_rule(
-            profile_id="profile_id",
-            rule_id="rule_id",
-        )
-        """
-        _response = self._raw_client.delete_gateway_rule(profile_id, rule_id, request_options=request_options)
-        return _response.data
-
-    def update_gateway_rule(
-        self,
-        profile_id: str,
-        rule_id: str,
-        *,
-        priority: typing.Optional[int] = OMIT,
-        host_pattern: typing.Optional[str] = OMIT,
-        path_pattern: typing.Optional[str] = OMIT,
-        methods: typing.Optional[typing.Sequence[str]] = OMIT,
-        action: typing.Optional[GatewayAction] = OMIT,
-        rate_limit_rpm: typing.Optional[int] = OMIT,
-        provider_key: typing.Optional[str] = OMIT,
-        auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
-        content_filter: typing.Optional[GatewayRuleUpdateContentFilter] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> GatewayRuleResponse:
-        """
-        Parameters
-        ----------
-        profile_id : str
-
-        rule_id : str
-
-        priority : typing.Optional[int]
-
-        host_pattern : typing.Optional[str]
-
-        path_pattern : typing.Optional[str]
-
-        methods : typing.Optional[typing.Sequence[str]]
-
-        action : typing.Optional[GatewayAction]
-
-        rate_limit_rpm : typing.Optional[int]
-
-        provider_key : typing.Optional[str]
-
-        auth_strategy : typing.Optional[AuthStrategySchema]
-
-        content_filter : typing.Optional[GatewayRuleUpdateContentFilter]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        GatewayRuleResponse
-            Successful Response
-
-        Examples
-        --------
-        from islo import Islo
-        from islo.environment import IsloEnvironment
-
-        client = Islo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-        client.gateway_profiles.update_gateway_rule(
-            profile_id="profile_id",
-            rule_id="rule_id",
-        )
-        """
-        _response = self._raw_client.update_gateway_rule(
-            profile_id,
-            rule_id,
-            priority=priority,
-            host_pattern=host_pattern,
-            path_pattern=path_pattern,
             methods=methods,
-            action=action,
-            rate_limit_rpm=rate_limit_rpm,
+            path_pattern=path_pattern,
+            priority=priority,
             provider_key=provider_key,
-            auth_strategy=auth_strategy,
-            content_filter=content_filter,
+            rate_limit_rpm=rate_limit_rpm,
             request_options=request_options,
         )
         return _response.data
@@ -473,6 +367,7 @@ class GatewayProfilesClient:
         from islo.environment import IsloEnvironment
 
         client = Islo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -480,13 +375,128 @@ class GatewayProfilesClient:
             profile_id="profile_id",
             rules=[
                 RuleReorderItem(
-                    rule_id="rule_id",
                     priority=1,
+                    rule_id="rule_id",
                 )
             ],
         )
         """
         _response = self._raw_client.reorder_gateway_rules(profile_id, rules=rules, request_options=request_options)
+        return _response.data
+
+    def delete_gateway_rule(
+        self, profile_id: str, rule_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Parameters
+        ----------
+        profile_id : str
+
+        rule_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.gateway_profiles.delete_gateway_rule(
+            profile_id="profile_id",
+            rule_id="rule_id",
+        )
+        """
+        _response = self._raw_client.delete_gateway_rule(profile_id, rule_id, request_options=request_options)
+        return _response.data
+
+    def update_gateway_rule(
+        self,
+        profile_id: str,
+        rule_id: str,
+        *,
+        action: typing.Optional[GatewayAction] = OMIT,
+        auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
+        content_filter: typing.Optional[GatewayRuleUpdateContentFilter] = OMIT,
+        host_pattern: typing.Optional[str] = OMIT,
+        methods: typing.Optional[typing.Sequence[str]] = OMIT,
+        path_pattern: typing.Optional[str] = OMIT,
+        priority: typing.Optional[int] = OMIT,
+        provider_key: typing.Optional[str] = OMIT,
+        rate_limit_rpm: typing.Optional[int] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> GatewayRuleResponse:
+        """
+        Parameters
+        ----------
+        profile_id : str
+
+        rule_id : str
+
+        action : typing.Optional[GatewayAction]
+
+        auth_strategy : typing.Optional[AuthStrategySchema]
+
+        content_filter : typing.Optional[GatewayRuleUpdateContentFilter]
+
+        host_pattern : typing.Optional[str]
+
+        methods : typing.Optional[typing.Sequence[str]]
+
+        path_pattern : typing.Optional[str]
+
+        priority : typing.Optional[int]
+
+        provider_key : typing.Optional[str]
+
+        rate_limit_rpm : typing.Optional[int]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GatewayRuleResponse
+            Successful Response
+
+        Examples
+        --------
+        from islo import Islo
+        from islo.environment import IsloEnvironment
+
+        client = Islo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+        client.gateway_profiles.update_gateway_rule(
+            profile_id="profile_id",
+            rule_id="rule_id",
+        )
+        """
+        _response = self._raw_client.update_gateway_rule(
+            profile_id,
+            rule_id,
+            action=action,
+            auth_strategy=auth_strategy,
+            content_filter=content_filter,
+            host_pattern=host_pattern,
+            methods=methods,
+            path_pattern=path_pattern,
+            priority=priority,
+            provider_key=provider_key,
+            rate_limit_rpm=rate_limit_rpm,
+            request_options=request_options,
+        )
         return _response.data
 
 
@@ -507,7 +517,7 @@ class AsyncGatewayProfilesClient:
 
     async def list_gateway_profiles(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> typing.List[GatewayProfileResponse]:
+    ) -> ListPageGatewayProfileResponse:
         """
         Parameters
         ----------
@@ -516,7 +526,7 @@ class AsyncGatewayProfilesClient:
 
         Returns
         -------
-        typing.List[GatewayProfileResponse]
+        ListPageGatewayProfileResponse
             Successful Response
 
         Examples
@@ -527,6 +537,7 @@ class AsyncGatewayProfilesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -545,12 +556,12 @@ class AsyncGatewayProfilesClient:
         self,
         *,
         name: str,
-        description: typing.Optional[str] = OMIT,
+        cloud_role: typing.Optional[str] = OMIT,
         default_action: typing.Optional[GatewayAction] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        integration_policy: typing.Optional[GatewayProfileCreateIntegrationPolicy] = OMIT,
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
-        cloud_role: typing.Optional[str] = OMIT,
-        integration_policy: typing.Optional[GatewayProfileCreateIntegrationPolicy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayProfileResponse:
         """
@@ -558,18 +569,18 @@ class AsyncGatewayProfilesClient:
         ----------
         name : str
 
-        description : typing.Optional[str]
+        cloud_role : typing.Optional[str]
+            Cloud role public ID (UUID)
 
         default_action : typing.Optional[GatewayAction]
+
+        description : typing.Optional[str]
+
+        integration_policy : typing.Optional[GatewayProfileCreateIntegrationPolicy]
 
         internet_enabled : typing.Optional[bool]
 
         is_default : typing.Optional[bool]
-
-        cloud_role : typing.Optional[str]
-            Cloud role public ID (UUID)
-
-        integration_policy : typing.Optional[GatewayProfileCreateIntegrationPolicy]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -587,6 +598,7 @@ class AsyncGatewayProfilesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -602,12 +614,12 @@ class AsyncGatewayProfilesClient:
         """
         _response = await self._raw_client.create_gateway_profile(
             name=name,
-            description=description,
+            cloud_role=cloud_role,
             default_action=default_action,
+            description=description,
+            integration_policy=integration_policy,
             internet_enabled=internet_enabled,
             is_default=is_default,
-            cloud_role=cloud_role,
-            integration_policy=integration_policy,
             request_options=request_options,
         )
         return _response.data
@@ -636,6 +648,7 @@ class AsyncGatewayProfilesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -675,6 +688,7 @@ class AsyncGatewayProfilesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -695,13 +709,13 @@ class AsyncGatewayProfilesClient:
         self,
         profile_id: str,
         *,
-        name: typing.Optional[str] = OMIT,
-        description: typing.Optional[str] = OMIT,
+        cloud_role: typing.Optional[str] = OMIT,
         default_action: typing.Optional[GatewayAction] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        integration_policy: typing.Optional[GatewayProfileUpdateIntegrationPolicy] = OMIT,
         internet_enabled: typing.Optional[bool] = OMIT,
         is_default: typing.Optional[bool] = OMIT,
-        cloud_role: typing.Optional[str] = OMIT,
-        integration_policy: typing.Optional[GatewayProfileUpdateIntegrationPolicy] = OMIT,
+        name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayProfileResponse:
         """
@@ -709,21 +723,21 @@ class AsyncGatewayProfilesClient:
         ----------
         profile_id : str
 
-        name : typing.Optional[str]
+        cloud_role : typing.Optional[str]
+            Cloud role public ID (UUID), empty string to unset
+
+        default_action : typing.Optional[GatewayAction]
 
         description : typing.Optional[str]
 
-        default_action : typing.Optional[GatewayAction]
+        integration_policy : typing.Optional[GatewayProfileUpdateIntegrationPolicy]
+            Omit to leave unchanged; send {"mode": "all"} to allow all integrations
 
         internet_enabled : typing.Optional[bool]
 
         is_default : typing.Optional[bool]
 
-        cloud_role : typing.Optional[str]
-            Cloud role public ID (UUID), empty string to unset
-
-        integration_policy : typing.Optional[GatewayProfileUpdateIntegrationPolicy]
-            Omit to leave unchanged; send {"mode": "all"} to allow all integrations
+        name : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -741,6 +755,7 @@ class AsyncGatewayProfilesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -756,13 +771,13 @@ class AsyncGatewayProfilesClient:
         """
         _response = await self._raw_client.update_gateway_profile(
             profile_id,
-            name=name,
-            description=description,
+            cloud_role=cloud_role,
             default_action=default_action,
+            description=description,
+            integration_policy=integration_policy,
             internet_enabled=internet_enabled,
             is_default=is_default,
-            cloud_role=cloud_role,
-            integration_policy=integration_policy,
+            name=name,
             request_options=request_options,
         )
         return _response.data
@@ -772,14 +787,14 @@ class AsyncGatewayProfilesClient:
         profile_id: str,
         *,
         host_pattern: str,
-        path_pattern: typing.Optional[str] = OMIT,
-        methods: typing.Optional[typing.Sequence[str]] = OMIT,
-        rate_limit_rpm: typing.Optional[int] = OMIT,
+        action: typing.Optional[GatewayAction] = OMIT,
         auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
         content_filter: typing.Optional[GatewayRuleCreateContentFilter] = OMIT,
+        methods: typing.Optional[typing.Sequence[str]] = OMIT,
+        path_pattern: typing.Optional[str] = OMIT,
         priority: typing.Optional[int] = OMIT,
-        action: typing.Optional[GatewayAction] = OMIT,
         provider_key: typing.Optional[str] = OMIT,
+        rate_limit_rpm: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GatewayRuleResponse:
         """
@@ -789,21 +804,21 @@ class AsyncGatewayProfilesClient:
 
         host_pattern : str
 
-        path_pattern : typing.Optional[str]
-
-        methods : typing.Optional[typing.Sequence[str]]
-
-        rate_limit_rpm : typing.Optional[int]
+        action : typing.Optional[GatewayAction]
 
         auth_strategy : typing.Optional[AuthStrategySchema]
 
         content_filter : typing.Optional[GatewayRuleCreateContentFilter]
 
+        methods : typing.Optional[typing.Sequence[str]]
+
+        path_pattern : typing.Optional[str]
+
         priority : typing.Optional[int]
 
-        action : typing.Optional[GatewayAction]
-
         provider_key : typing.Optional[str]
+
+        rate_limit_rpm : typing.Optional[int]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -821,6 +836,7 @@ class AsyncGatewayProfilesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -838,143 +854,14 @@ class AsyncGatewayProfilesClient:
         _response = await self._raw_client.create_gateway_rule(
             profile_id,
             host_pattern=host_pattern,
-            path_pattern=path_pattern,
-            methods=methods,
-            rate_limit_rpm=rate_limit_rpm,
+            action=action,
             auth_strategy=auth_strategy,
             content_filter=content_filter,
-            priority=priority,
-            action=action,
-            provider_key=provider_key,
-            request_options=request_options,
-        )
-        return _response.data
-
-    async def delete_gateway_rule(
-        self, profile_id: str, rule_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> None:
-        """
-        Parameters
-        ----------
-        profile_id : str
-
-        rule_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        None
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-        from islo.environment import IsloEnvironment
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-
-
-        async def main() -> None:
-            await client.gateway_profiles.delete_gateway_rule(
-                profile_id="profile_id",
-                rule_id="rule_id",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.delete_gateway_rule(profile_id, rule_id, request_options=request_options)
-        return _response.data
-
-    async def update_gateway_rule(
-        self,
-        profile_id: str,
-        rule_id: str,
-        *,
-        priority: typing.Optional[int] = OMIT,
-        host_pattern: typing.Optional[str] = OMIT,
-        path_pattern: typing.Optional[str] = OMIT,
-        methods: typing.Optional[typing.Sequence[str]] = OMIT,
-        action: typing.Optional[GatewayAction] = OMIT,
-        rate_limit_rpm: typing.Optional[int] = OMIT,
-        provider_key: typing.Optional[str] = OMIT,
-        auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
-        content_filter: typing.Optional[GatewayRuleUpdateContentFilter] = OMIT,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> GatewayRuleResponse:
-        """
-        Parameters
-        ----------
-        profile_id : str
-
-        rule_id : str
-
-        priority : typing.Optional[int]
-
-        host_pattern : typing.Optional[str]
-
-        path_pattern : typing.Optional[str]
-
-        methods : typing.Optional[typing.Sequence[str]]
-
-        action : typing.Optional[GatewayAction]
-
-        rate_limit_rpm : typing.Optional[int]
-
-        provider_key : typing.Optional[str]
-
-        auth_strategy : typing.Optional[AuthStrategySchema]
-
-        content_filter : typing.Optional[GatewayRuleUpdateContentFilter]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        GatewayRuleResponse
-            Successful Response
-
-        Examples
-        --------
-        import asyncio
-
-        from islo import AsyncIslo
-        from islo.environment import IsloEnvironment
-
-        client = AsyncIslo(
-            api_key="YOUR_API_KEY",
-            environment=IsloEnvironment.PRODUCTION,
-        )
-
-
-        async def main() -> None:
-            await client.gateway_profiles.update_gateway_rule(
-                profile_id="profile_id",
-                rule_id="rule_id",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.update_gateway_rule(
-            profile_id,
-            rule_id,
-            priority=priority,
-            host_pattern=host_pattern,
-            path_pattern=path_pattern,
             methods=methods,
-            action=action,
-            rate_limit_rpm=rate_limit_rpm,
+            path_pattern=path_pattern,
+            priority=priority,
             provider_key=provider_key,
-            auth_strategy=auth_strategy,
-            content_filter=content_filter,
+            rate_limit_rpm=rate_limit_rpm,
             request_options=request_options,
         )
         return _response.data
@@ -1009,6 +896,7 @@ class AsyncGatewayProfilesClient:
         from islo.environment import IsloEnvironment
 
         client = AsyncIslo(
+            "2026-09-15",
             api_key="YOUR_API_KEY",
             environment=IsloEnvironment.PRODUCTION,
         )
@@ -1019,8 +907,8 @@ class AsyncGatewayProfilesClient:
                 profile_id="profile_id",
                 rules=[
                     RuleReorderItem(
-                        rule_id="rule_id",
                         priority=1,
+                        rule_id="rule_id",
                     )
                 ],
             )
@@ -1030,5 +918,136 @@ class AsyncGatewayProfilesClient:
         """
         _response = await self._raw_client.reorder_gateway_rules(
             profile_id, rules=rules, request_options=request_options
+        )
+        return _response.data
+
+    async def delete_gateway_rule(
+        self, profile_id: str, rule_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> None:
+        """
+        Parameters
+        ----------
+        profile_id : str
+
+        rule_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.gateway_profiles.delete_gateway_rule(
+                profile_id="profile_id",
+                rule_id="rule_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.delete_gateway_rule(profile_id, rule_id, request_options=request_options)
+        return _response.data
+
+    async def update_gateway_rule(
+        self,
+        profile_id: str,
+        rule_id: str,
+        *,
+        action: typing.Optional[GatewayAction] = OMIT,
+        auth_strategy: typing.Optional[AuthStrategySchema] = OMIT,
+        content_filter: typing.Optional[GatewayRuleUpdateContentFilter] = OMIT,
+        host_pattern: typing.Optional[str] = OMIT,
+        methods: typing.Optional[typing.Sequence[str]] = OMIT,
+        path_pattern: typing.Optional[str] = OMIT,
+        priority: typing.Optional[int] = OMIT,
+        provider_key: typing.Optional[str] = OMIT,
+        rate_limit_rpm: typing.Optional[int] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> GatewayRuleResponse:
+        """
+        Parameters
+        ----------
+        profile_id : str
+
+        rule_id : str
+
+        action : typing.Optional[GatewayAction]
+
+        auth_strategy : typing.Optional[AuthStrategySchema]
+
+        content_filter : typing.Optional[GatewayRuleUpdateContentFilter]
+
+        host_pattern : typing.Optional[str]
+
+        methods : typing.Optional[typing.Sequence[str]]
+
+        path_pattern : typing.Optional[str]
+
+        priority : typing.Optional[int]
+
+        provider_key : typing.Optional[str]
+
+        rate_limit_rpm : typing.Optional[int]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GatewayRuleResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from islo import AsyncIslo
+        from islo.environment import IsloEnvironment
+
+        client = AsyncIslo(
+            "2026-09-15",
+            api_key="YOUR_API_KEY",
+            environment=IsloEnvironment.PRODUCTION,
+        )
+
+
+        async def main() -> None:
+            await client.gateway_profiles.update_gateway_rule(
+                profile_id="profile_id",
+                rule_id="rule_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.update_gateway_rule(
+            profile_id,
+            rule_id,
+            action=action,
+            auth_strategy=auth_strategy,
+            content_filter=content_filter,
+            host_pattern=host_pattern,
+            methods=methods,
+            path_pattern=path_pattern,
+            priority=priority,
+            provider_key=provider_key,
+            rate_limit_rpm=rate_limit_rpm,
+            request_options=request_options,
         )
         return _response.data

@@ -19,12 +19,12 @@ class LineManifestInput(UniversalBaseModel):
     Full line.toml manifest (TOML or JSON authoring; stored as JSON).
     """
 
-    line: LineSection
-    trigger: LineManifestInputTrigger
-    stages: typing.List[LineStage]
-    transitions: typing.Optional[typing.List[LineManifestInputTransitionsItem]] = None
     agent: typing.Optional[LineAgentConfig] = None
     limits: typing.Optional[LineLimitsInput] = None
+    line: LineSection
+    stages: typing.List[LineStage]
+    transitions: typing.Optional[typing.List[LineManifestInputTransitionsItem]] = None
+    trigger: LineManifestInputTrigger
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 

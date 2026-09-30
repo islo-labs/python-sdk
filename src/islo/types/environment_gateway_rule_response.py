@@ -7,11 +7,11 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class EnvironmentGatewayRuleResponse(UniversalBaseModel):
-    id: str
-    host_pattern: str
-    path_pattern: typing.Optional[str] = None
-    methods: typing.Optional[typing.List[str]] = None
-    rate_limit_rpm: typing.Optional[int] = None
     auth_strategy: typing.Optional[typing.Dict[str, typing.Any]] = None
+    host_pattern: str
+    id: str
+    methods: typing.Optional[typing.List[str]] = None
+    path_pattern: typing.Optional[str] = None
+    rate_limit_rpm: typing.Optional[int] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

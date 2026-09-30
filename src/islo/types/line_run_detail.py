@@ -8,27 +8,34 @@ from ..core.pydantic_utilities import UniversalBaseModel
 from .line_run_failure import LineRunFailure
 from .line_run_retry_action import LineRunRetryAction
 from .line_run_stage_detail import LineRunStageDetail
+from .line_run_version_response import LineRunVersionResponse
 from .trigger_summary import TriggerSummary
 
 
 class LineRunDetail(UniversalBaseModel):
-    id: str
-    line_name: str
-    line_version_id: str
-    workflow_run_id: str
-    status: str
-    trigger: TriggerSummary
-    region: typing.Optional[str] = None
-    run_params: typing.Optional[typing.Dict[str, typing.Any]] = None
-    result_payload: typing.Optional[typing.Dict[str, typing.Any]] = None
-    error_message: typing.Optional[str] = None
-    iteration_count: typing.Optional[int] = None
     budget_used_usd: typing.Optional[str] = None
-    retry: typing.Optional[LineRunRetryAction] = None
-    stages: typing.Optional[typing.List[LineRunStageDetail]] = None
-    failure: typing.Optional[LineRunFailure] = None
-    started_at: typing.Optional[dt.datetime] = None
     completed_at: typing.Optional[dt.datetime] = None
+    compute_cost_cents: typing.Optional[int] = None
+    cost_rated_at: typing.Optional[dt.datetime] = None
     created_at: dt.datetime
+    error_message: typing.Optional[str] = None
+    failure: typing.Optional[LineRunFailure] = None
+    id: str
+    inference_cost_cents: typing.Optional[int] = None
+    iteration_count: typing.Optional[int] = None
+    line_name: str
+    line_version: LineRunVersionResponse
+    line_version_id: str
+    region: typing.Optional[str] = None
+    result_payload: typing.Optional[typing.Dict[str, typing.Any]] = None
+    retry: typing.Optional[LineRunRetryAction] = None
+    run_params: typing.Optional[typing.Dict[str, typing.Any]] = None
+    stages: typing.Optional[typing.List[LineRunStageDetail]] = None
+    started_at: typing.Optional[dt.datetime] = None
+    status: str
+    total_cost_cents: typing.Optional[int] = None
+    trigger: TriggerSummary
+    triggered_by_actor: typing.Optional[typing.Dict[str, typing.Any]] = None
+    workflow_run_id: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

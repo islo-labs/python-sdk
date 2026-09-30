@@ -8,7 +8,11 @@ from .knowledge_binding_type import KnowledgeBindingType
 
 
 class KnowledgeBinding(UniversalBaseModel):
-    type: KnowledgeBindingType
     slug: str
+    type: KnowledgeBindingType
+    version: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Immutable knowledge version UUID. Omit to resolve the latest active version when the binding is consumed.
+    """
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

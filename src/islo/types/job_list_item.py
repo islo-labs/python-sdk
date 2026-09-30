@@ -8,9 +8,9 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class JobListItem(UniversalBaseModel):
-    id: str
-    name: str
-    latest_version_number: typing.Optional[int] = None
     created_at: dt.datetime
+    id: str
+    latest_version_number: typing.Optional[int] = None
+    name: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

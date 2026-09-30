@@ -6,7 +6,7 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
@@ -17,6 +17,7 @@ from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.container_registry_response import ContainerRegistryResponse
 from ..types.error_response import ErrorResponse
+from ..types.list_page_container_registry_response import ListPageContainerRegistryResponse
 from ..types.registry_provider import RegistryProvider
 from pydantic import ValidationError
 
@@ -30,7 +31,7 @@ class RawContainerRegistriesClient:
 
     def list_container_registries(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[typing.List[ContainerRegistryResponse]]:
+    ) -> HttpResponse[ListPageContainerRegistryResponse]:
         """
         Parameters
         ----------
@@ -39,7 +40,7 @@ class RawContainerRegistriesClient:
 
         Returns
         -------
-        HttpResponse[typing.List[ContainerRegistryResponse]]
+        HttpResponse[ListPageContainerRegistryResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -51,9 +52,9 @@ class RawContainerRegistriesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[ContainerRegistryResponse],
+                    ListPageContainerRegistryResponse,
                     parse_obj_as(
-                        type_=typing.List[ContainerRegistryResponse],  # type: ignore
+                        type_=ListPageContainerRegistryResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -92,23 +93,23 @@ class RawContainerRegistriesClient:
     def create_container_registry(
         self,
         *,
-        provider: RegistryProvider,
-        registry_host: str,
         cloud_role_id: str,
+        provider: RegistryProvider,
         region: str,
+        registry_host: str,
         repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ContainerRegistryResponse]:
         """
         Parameters
         ----------
-        provider : RegistryProvider
-
-        registry_host : str
-
         cloud_role_id : str
 
+        provider : RegistryProvider
+
         region : str
+
+        registry_host : str
 
         repository_prefixes : typing.Optional[typing.Sequence[str]]
 
@@ -125,11 +126,11 @@ class RawContainerRegistriesClient:
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
+                "cloud_role_id": cloud_role_id,
                 "provider": provider,
+                "region": region,
                 "registry_host": registry_host,
                 "repository_prefixes": repository_prefixes,
-                "cloud_role_id": cloud_role_id,
-                "region": region,
             },
             headers={
                 "content-type": "application/json",
@@ -217,7 +218,7 @@ class RawContainerRegistriesClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"container-registries/{jsonable_encoder(id)}",
+            f"container-registries/{encode_path_param(id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -290,7 +291,7 @@ class RawContainerRegistriesClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"container-registries/{jsonable_encoder(id)}",
+            f"container-registries/{encode_path_param(id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -344,9 +345,9 @@ class RawContainerRegistriesClient:
         self,
         id: str,
         *,
-        repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
         cloud_role_id: typing.Optional[str] = OMIT,
         is_enabled: typing.Optional[bool] = OMIT,
+        repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ContainerRegistryResponse]:
         """
@@ -354,11 +355,11 @@ class RawContainerRegistriesClient:
         ----------
         id : str
 
-        repository_prefixes : typing.Optional[typing.Sequence[str]]
-
         cloud_role_id : typing.Optional[str]
 
         is_enabled : typing.Optional[bool]
+
+        repository_prefixes : typing.Optional[typing.Sequence[str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -369,13 +370,13 @@ class RawContainerRegistriesClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"container-registries/{jsonable_encoder(id)}",
+            f"container-registries/{encode_path_param(id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
-                "repository_prefixes": repository_prefixes,
                 "cloud_role_id": cloud_role_id,
                 "is_enabled": is_enabled,
+                "repository_prefixes": repository_prefixes,
             },
             headers={
                 "content-type": "application/json",
@@ -453,7 +454,7 @@ class AsyncRawContainerRegistriesClient:
 
     async def list_container_registries(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[typing.List[ContainerRegistryResponse]]:
+    ) -> AsyncHttpResponse[ListPageContainerRegistryResponse]:
         """
         Parameters
         ----------
@@ -462,7 +463,7 @@ class AsyncRawContainerRegistriesClient:
 
         Returns
         -------
-        AsyncHttpResponse[typing.List[ContainerRegistryResponse]]
+        AsyncHttpResponse[ListPageContainerRegistryResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -474,9 +475,9 @@ class AsyncRawContainerRegistriesClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[ContainerRegistryResponse],
+                    ListPageContainerRegistryResponse,
                     parse_obj_as(
-                        type_=typing.List[ContainerRegistryResponse],  # type: ignore
+                        type_=ListPageContainerRegistryResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -515,23 +516,23 @@ class AsyncRawContainerRegistriesClient:
     async def create_container_registry(
         self,
         *,
-        provider: RegistryProvider,
-        registry_host: str,
         cloud_role_id: str,
+        provider: RegistryProvider,
         region: str,
+        registry_host: str,
         repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ContainerRegistryResponse]:
         """
         Parameters
         ----------
-        provider : RegistryProvider
-
-        registry_host : str
-
         cloud_role_id : str
 
+        provider : RegistryProvider
+
         region : str
+
+        registry_host : str
 
         repository_prefixes : typing.Optional[typing.Sequence[str]]
 
@@ -548,11 +549,11 @@ class AsyncRawContainerRegistriesClient:
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
+                "cloud_role_id": cloud_role_id,
                 "provider": provider,
+                "region": region,
                 "registry_host": registry_host,
                 "repository_prefixes": repository_prefixes,
-                "cloud_role_id": cloud_role_id,
-                "region": region,
             },
             headers={
                 "content-type": "application/json",
@@ -640,7 +641,7 @@ class AsyncRawContainerRegistriesClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"container-registries/{jsonable_encoder(id)}",
+            f"container-registries/{encode_path_param(id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -713,7 +714,7 @@ class AsyncRawContainerRegistriesClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"container-registries/{jsonable_encoder(id)}",
+            f"container-registries/{encode_path_param(id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -767,9 +768,9 @@ class AsyncRawContainerRegistriesClient:
         self,
         id: str,
         *,
-        repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
         cloud_role_id: typing.Optional[str] = OMIT,
         is_enabled: typing.Optional[bool] = OMIT,
+        repository_prefixes: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ContainerRegistryResponse]:
         """
@@ -777,11 +778,11 @@ class AsyncRawContainerRegistriesClient:
         ----------
         id : str
 
-        repository_prefixes : typing.Optional[typing.Sequence[str]]
-
         cloud_role_id : typing.Optional[str]
 
         is_enabled : typing.Optional[bool]
+
+        repository_prefixes : typing.Optional[typing.Sequence[str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -792,13 +793,13 @@ class AsyncRawContainerRegistriesClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"container-registries/{jsonable_encoder(id)}",
+            f"container-registries/{encode_path_param(id)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
-                "repository_prefixes": repository_prefixes,
                 "cloud_role_id": cloud_role_id,
                 "is_enabled": is_enabled,
+                "repository_prefixes": repository_prefixes,
             },
             headers={
                 "content-type": "application/json",

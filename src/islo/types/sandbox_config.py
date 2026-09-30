@@ -4,10 +4,11 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import UniversalBaseModel
-from .git_source import GitSource
+from .control_plane_git_source import ControlPlaneGitSource
 from .lifecycle_policy import LifecyclePolicy
 from .sandbox_config_init import SandboxConfigInit
 from .sandbox_config_mode import SandboxConfigMode
+from .sandbox_template_ref import SandboxTemplateRef
 from .setup_script import SetupScript
 
 
@@ -16,34 +17,34 @@ class SandboxConfig(UniversalBaseModel):
     Sandbox requirements for job runs (matches compute IncomingWebhookSandboxTemplate shape).
     """
 
+    cache_key: typing.Optional[str] = None
+    disk_gb: typing.Optional[int] = None
+    env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = None
+    environment: typing.Optional[str] = None
+    gateway_profile: typing.Optional[str] = None
+    image: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Required for provision/ensure.
+    """
+
+    init: typing.Optional[SandboxConfigInit] = None
+    internet_enabled: typing.Optional[bool] = None
+    lifecycle: typing.Optional[LifecyclePolicy] = None
+    memory_mb: typing.Optional[int] = None
     mode: typing.Optional[SandboxConfigMode] = None
     name: typing.Optional[str] = pydantic.Field(default=None)
     """
     Required for ensure/reuse. Supports {{param}} substitution.
     """
 
-    image: typing.Optional[str] = pydantic.Field(default=None)
-    """
-    Required for provision/ensure.
-    """
-
-    vcpus: typing.Optional[int] = None
-    memory_mb: typing.Optional[int] = None
-    disk_gb: typing.Optional[int] = None
+    setup_scripts: typing.Optional[typing.List[SetupScript]] = None
     snapshot_name: typing.Optional[str] = None
-    gateway_profile: typing.Optional[str] = None
-    environment: typing.Optional[str] = None
-    init: typing.Optional[SandboxConfigInit] = None
-    internet_enabled: typing.Optional[bool] = None
+    sources: typing.Optional[typing.List[ControlPlaneGitSource]] = None
+    template: typing.Optional[SandboxTemplateRef] = None
+    vcpus: typing.Optional[int] = None
     workdir: typing.Optional[str] = pydantic.Field(default=None)
     """
     Sandbox default working directory. Used when [run].workdir is omitted.
     """
-
-    cache_key: typing.Optional[str] = None
-    env: typing.Optional[typing.Dict[str, typing.Optional[str]]] = None
-    sources: typing.Optional[typing.List[GitSource]] = None
-    setup_scripts: typing.Optional[typing.List[SetupScript]] = None
-    lifecycle: typing.Optional[LifecyclePolicy] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

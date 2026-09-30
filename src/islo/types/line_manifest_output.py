@@ -19,12 +19,12 @@ class LineManifestOutput(UniversalBaseModel):
     Full line.toml manifest (TOML or JSON authoring; stored as JSON).
     """
 
-    line: LineSection
-    trigger: LineManifestOutputTrigger
-    stages: typing.List[LineStage]
-    transitions: typing.Optional[typing.List[LineManifestOutputTransitionsItem]] = None
     agent: typing.Optional[LineAgentConfig] = None
     limits: typing.Optional[LineLimitsOutput] = None
+    line: LineSection
+    stages: typing.List[LineStage]
+    transitions: typing.Optional[typing.List[LineManifestOutputTransitionsItem]] = None
+    trigger: LineManifestOutputTrigger
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 

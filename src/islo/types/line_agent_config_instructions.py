@@ -12,6 +12,7 @@ from ..core.pydantic_utilities import UniversalBaseModel
 class LineAgentConfigInstructions_Knowledge(UniversalBaseModel):
     type: typing.Literal["knowledge"] = "knowledge"
     slug: str
+    version: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 

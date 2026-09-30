@@ -7,8 +7,8 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class LineSection(UniversalBaseModel):
-    name: str
-    description: typing.Optional[str] = None
     category: typing.Optional[str] = None
+    description: typing.Optional[str] = None
+    name: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

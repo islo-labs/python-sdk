@@ -6,23 +6,33 @@ from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
-from ..core.jsonable_encoder import jsonable_encoder
+from ..core.jsonable_encoder import encode_path_param
+from ..core.pagination import AsyncPager, SyncPager
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
 from ..core.serialization import convert_and_respect_annotation_metadata
+from ..errors.bad_gateway_error import BadGatewayError
+from ..errors.conflict_error import ConflictError
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.error_response import ErrorResponse
+from ..types.facets_response import FacetsResponse
+from ..types.line_event_response import LineEventResponse
 from ..types.line_manifest_input import LineManifestInput
 from ..types.line_response import LineResponse
 from ..types.line_run_debug_response import LineRunDebugResponse
 from ..types.line_run_detail import LineRunDetail
 from ..types.line_run_summary import LineRunSummary
 from ..types.line_schedule_response import LineScheduleResponse
+from ..types.line_update_status import LineUpdateStatus
 from ..types.line_version_response import LineVersionResponse
-from .types.line_update_status import LineUpdateStatus
+from ..types.list_page_line_event_response import ListPageLineEventResponse
+from ..types.list_page_line_response import ListPageLineResponse
+from ..types.list_page_line_run_summary import ListPageLineRunSummary
+from ..types.list_page_line_version_response import ListPageLineVersionResponse
+from ..types.timestamp_range import TimestampRange
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -33,32 +43,279 @@ class RawFactoryClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def validate_factory_line_manifest(
-        self, name: str, *, manifest: LineManifestInput, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[None]:
+    def list_factory_line_runs(
+        self,
+        *,
+        limit: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        sort: typing.Optional[str] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        line_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SyncPager[LineRunSummary, ListPageLineRunSummary]:
         """
         Parameters
         ----------
-        name : str
+        limit : typing.Optional[int]
 
-        manifest : LineManifestInput
-            Line manifest (authored as TOML or JSON, stored as JSON)
+        offset : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        sort : typing.Optional[str]
+            Sort order. Allowed: -created_at, created_at
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        line_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[None]
+        SyncPager[LineRunSummary, ListPageLineRunSummary]
+            Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/validate",
+            "factory/line-runs",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "limit": limit,
+                "offset": offset,
+                "cursor": cursor,
+                "sort": sort,
+                "include": include,
+                "status": status,
+                "line_name": line_name,
+                "created_at": convert_and_respect_annotation_metadata(
+                    object_=created_at, annotation=TimestampRange, direction="write"
+                ),
+                "q": q,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    ListPageLineRunSummary,
+                    parse_obj_as(
+                        type_=ListPageLineRunSummary,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+                _get_next = lambda: self.list_factory_line_runs(
+                    limit=limit,
+                    offset=offset,
+                    cursor=_parsed_next,
+                    sort=sort,
+                    include=include,
+                    status=status,
+                    line_name=line_name,
+                    created_at=created_at,
+                    q=q,
+                    request_options=request_options,
+                )
+                return SyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def list_factory_line_run_facets(
+        self,
+        *,
+        fields: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        line_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[FacetsResponse]:
+        """
+        Parameters
+        ----------
+        fields : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+            Facet fields to return (e.g. line_name, status)
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        line_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[FacetsResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "factory/line-runs/facets",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "fields": fields,
+                "status": status,
+                "line_name": line_name,
+                "created_at": convert_and_respect_annotation_metadata(
+                    object_=created_at, annotation=TimestampRange, direction="write"
+                ),
+                "q": q,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    FacetsResponse,
+                    parse_obj_as(
+                        type_=FacetsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_factory_line_run(
+        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[LineRunDetail]:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[LineRunDetail]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{encode_path_param(run_id)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    LineRunDetail,
+                    parse_obj_as(
+                        type_=LineRunDetail,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def ask_factory_line_run(
+        self,
+        run_id: str,
+        *,
+        message: str,
+        origin: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[LineRunDetail]:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        message : str
+            Instruction or context for the line run's manager
+
+        origin : typing.Optional[str]
+            Optional Slack thread permalink whose activity status should follow this manager turn
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[LineRunDetail]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{encode_path_param(run_id)}/ask",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "manifest": convert_and_respect_annotation_metadata(
-                    object_=manifest, annotation=LineManifestInput, direction="write"
-                ),
+                "message": message,
+                "origin": origin,
             },
             headers={
                 "content-type": "application/json",
@@ -68,9 +325,38 @@ class RawFactoryClient:
         )
         try:
             if 200 <= _response.status_code < 300:
-                return HttpResponse(response=_response, data=None)
+                _data = typing.cast(
+                    LineRunDetail,
+                    parse_obj_as(
+                        type_=LineRunDetail,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -100,33 +386,38 @@ class RawFactoryClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def deploy_factory_line(
-        self, name: str, *, manifest: LineManifestInput, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[LineVersionResponse]:
+    def cancel_factory_line_run(
+        self,
+        run_id: str,
+        *,
+        reason: typing.Optional[str] = OMIT,
+        stage_name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[LineRunDetail]:
         """
         Parameters
         ----------
-        name : str
+        run_id : str
 
-        manifest : LineManifestInput
-            Line manifest (authored as TOML or JSON, stored as JSON)
+        reason : typing.Optional[str]
+
+        stage_name : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[LineVersionResponse]
+        HttpResponse[LineRunDetail]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/deploy",
+            f"factory/line-runs/{encode_path_param(run_id)}/cancel",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "manifest": convert_and_respect_annotation_metadata(
-                    object_=manifest, annotation=LineManifestInput, direction="write"
-                ),
+                "reason": reason,
+                "stage_name": stage_name,
             },
             headers={
                 "content-type": "application/json",
@@ -137,15 +428,506 @@ class RawFactoryClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    LineVersionResponse,
+                    LineRunDetail,
                     parse_obj_as(
-                        type_=LineVersionResponse,  # type: ignore
+                        type_=LineRunDetail,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_factory_line_run_debug(
+        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[LineRunDebugResponse]:
+        """
+        Per-stage and per-step diagnostics for one line run, including the last failed stage attempt's first failing step, each step's exit code and output tails, and the sandbox environment each stage ran in.
+
+        Parameters
+        ----------
+        run_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[LineRunDebugResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{encode_path_param(run_id)}/debug",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    LineRunDebugResponse,
+                    parse_obj_as(
+                        type_=LineRunDebugResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def list_factory_line_run_events(
+        self,
+        run_id: str,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        event_types: typing.Optional[typing.Sequence[str]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SyncPager[LineEventResponse, ListPageLineEventResponse]:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        event_types : typing.Optional[typing.Sequence[str]]
+            Restrict the timeline to these event types
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SyncPager[LineEventResponse, ListPageLineEventResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{encode_path_param(run_id)}/events",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "limit": limit,
+                "cursor": cursor,
+                "include": include,
+                "event_types": event_types,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    ListPageLineEventResponse,
+                    parse_obj_as(
+                        type_=ListPageLineEventResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+                _get_next = lambda: self.list_factory_line_run_events(
+                    run_id,
+                    limit=limit,
+                    cursor=_parsed_next,
+                    include=include,
+                    event_types=event_types,
+                    request_options=request_options,
+                )
+                return SyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def retry_factory_line_run(
+        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[LineRunDetail]:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[LineRunDetail]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{encode_path_param(run_id)}/retry",
+            base_url=self._client_wrapper.get_environment().control,
+            method="POST",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    LineRunDetail,
+                    parse_obj_as(
+                        type_=LineRunDetail,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def steer_factory_line_run(
+        self,
+        run_id: str,
+        *,
+        stage_name: str,
+        params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        reason: typing.Optional[str] = OMIT,
+        reset_iterations: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[LineRunDetail]:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        stage_name : str
+
+        params : typing.Optional[typing.Dict[str, typing.Any]]
+
+        reason : typing.Optional[str]
+
+        reset_iterations : typing.Optional[bool]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[LineRunDetail]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{encode_path_param(run_id)}/steer",
+            base_url=self._client_wrapper.get_environment().control,
+            method="POST",
+            json={
+                "params": params,
+                "reason": reason,
+                "reset_iterations": reset_iterations,
+                "stage_name": stage_name,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    LineRunDetail,
+                    parse_obj_as(
+                        type_=LineRunDetail,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def stop_factory_line_run(
+        self,
+        run_id: str,
+        *,
+        reason: typing.Optional[str] = OMIT,
+        stage_name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[LineRunDetail]:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        reason : typing.Optional[str]
+
+        stage_name : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[LineRunDetail]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{encode_path_param(run_id)}/stop",
+            base_url=self._client_wrapper.get_environment().control,
+            method="POST",
+            json={
+                "reason": reason,
+                "stage_name": stage_name,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    LineRunDetail,
+                    parse_obj_as(
+                        type_=LineRunDetail,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -179,22 +961,22 @@ class RawFactoryClient:
         self,
         *,
         limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[typing.List[LineResponse]]:
+    ) -> SyncPager[LineResponse, ListPageLineResponse]:
         """
         Parameters
         ----------
         limit : typing.Optional[int]
 
-        offset : typing.Optional[int]
+        cursor : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[typing.List[LineResponse]]
+        SyncPager[LineResponse, ListPageLineResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -203,20 +985,28 @@ class RawFactoryClient:
             method="GET",
             params={
                 "limit": limit,
-                "offset": offset,
+                "cursor": cursor,
             },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.List[LineResponse],
+                _parsed_response = typing.cast(
+                    ListPageLineResponse,
                     parse_obj_as(
-                        type_=typing.List[LineResponse],  # type: ignore
+                        type_=ListPageLineResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
-                return HttpResponse(response=_response, data=_data)
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+                _get_next = lambda: self.list_factory_lines(
+                    limit=limit,
+                    cursor=_parsed_next,
+                    request_options=request_options,
+                )
+                return SyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -254,7 +1044,7 @@ class RawFactoryClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}",
+            f"factory/lines/{encode_path_param(name)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -276,6 +1066,83 @@ class RawFactoryClient:
                         typing.Any,
                         parse_obj_as(
                             type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def delete_factory_line(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[None]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[None]
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"factory/lines/{encode_path_param(name)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="DELETE",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return HttpResponse(response=_response, data=None)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 502:
+                raise BadGatewayError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -312,7 +1179,7 @@ class RawFactoryClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}",
+            f"factory/lines/{encode_path_param(name)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
@@ -376,51 +1243,61 @@ class RawFactoryClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def list_factory_line_versions(
-        self,
-        name: str,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[typing.List[LineVersionResponse]]:
+    def deploy_factory_line(
+        self, name: str, *, manifest: LineManifestInput, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[LineVersionResponse]:
         """
         Parameters
         ----------
         name : str
 
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
+        manifest : LineManifestInput
+            Line manifest (authored as TOML or JSON, stored as JSON)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[typing.List[LineVersionResponse]]
+        HttpResponse[LineVersionResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/versions",
+            f"factory/lines/{encode_path_param(name)}/deploy",
             base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            params={
-                "limit": limit,
-                "offset": offset,
+            method="POST",
+            json={
+                "manifest": convert_and_respect_annotation_metadata(
+                    object_=manifest, annotation=LineManifestInput, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
             },
             request_options=request_options,
+            omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[LineVersionResponse],
+                    LineVersionResponse,
                     parse_obj_as(
-                        type_=typing.List[LineVersionResponse],  # type: ignore
+                        type_=LineVersionResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -446,9 +1323,9 @@ class RawFactoryClient:
         name: str,
         *,
         limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[typing.List[LineRunSummary]]:
+    ) -> SyncPager[LineRunSummary, ListPageLineRunSummary]:
         """
         Parameters
         ----------
@@ -456,36 +1333,45 @@ class RawFactoryClient:
 
         limit : typing.Optional[int]
 
-        offset : typing.Optional[int]
+        cursor : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[typing.List[LineRunSummary]]
+        SyncPager[LineRunSummary, ListPageLineRunSummary]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/runs",
+            f"factory/lines/{encode_path_param(name)}/runs",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             params={
                 "limit": limit,
-                "offset": offset,
+                "cursor": cursor,
             },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.List[LineRunSummary],
+                _parsed_response = typing.cast(
+                    ListPageLineRunSummary,
                     parse_obj_as(
-                        type_=typing.List[LineRunSummary],  # type: ignore
+                        type_=ListPageLineRunSummary,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
-                return HttpResponse(response=_response, data=_data)
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+                _get_next = lambda: self.list_factory_line_runs_for_line(
+                    name,
+                    limit=limit,
+                    cursor=_parsed_next,
+                    request_options=request_options,
+                )
+                return SyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -510,10 +1396,10 @@ class RawFactoryClient:
         self,
         name: str,
         *,
-        version_id: typing.Optional[str] = OMIT,
-        region: typing.Optional[str] = OMIT,
         params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        region: typing.Optional[str] = OMIT,
         trigger_payload: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        version_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[LineRunDetail]:
         """
@@ -521,15 +1407,15 @@ class RawFactoryClient:
         ----------
         name : str
 
-        version_id : typing.Optional[str]
-            Deployed line version to run; defaults to latest
+        params : typing.Optional[typing.Dict[str, typing.Any]]
 
         region : typing.Optional[str]
             Compute region override
 
-        params : typing.Optional[typing.Dict[str, typing.Any]]
-
         trigger_payload : typing.Optional[typing.Dict[str, typing.Any]]
+
+        version_id : typing.Optional[str]
+            Deployed line version to run; defaults to latest
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -540,14 +1426,14 @@ class RawFactoryClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/runs",
+            f"factory/lines/{encode_path_param(name)}/runs",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "version_id": version_id,
-                "region": region,
                 "params": params,
+                "region": region,
                 "trigger_payload": trigger_payload,
+                "version_id": version_id,
             },
             headers={
                 "content-type": "application/json",
@@ -585,195 +1471,6 @@ class RawFactoryClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def list_factory_line_runs(
-        self,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        status: typing.Optional[str] = None,
-        line_name: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[typing.List[LineRunSummary]]:
-        """
-        Parameters
-        ----------
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
-
-        status : typing.Optional[str]
-            Filter by run status
-
-        line_name : typing.Optional[str]
-            Filter by line name
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[typing.List[LineRunSummary]]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "factory/line-runs",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            params={
-                "limit": limit,
-                "offset": offset,
-                "status": status,
-                "line_name": line_name,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.List[LineRunSummary],
-                    parse_obj_as(
-                        type_=typing.List[LineRunSummary],  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def get_factory_line_run(
-        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[LineRunDetail]:
-        """
-        Parameters
-        ----------
-        run_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[LineRunDetail]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"factory/line-runs/{jsonable_encoder(run_id)}",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    LineRunDetail,
-                    parse_obj_as(
-                        type_=LineRunDetail,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def get_factory_line_run_debug(
-        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[LineRunDebugResponse]:
-        """
-        Per-stage and per-step diagnostics for one line run, including the last failed stage attempt's first failing step, each step's exit code and output tails, and the sandbox environment each stage ran in.
-
-        Parameters
-        ----------
-        run_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[LineRunDebugResponse]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"factory/line-runs/{jsonable_encoder(run_id)}/debug",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    LineRunDebugResponse,
-                    parse_obj_as(
-                        type_=LineRunDebugResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
     def get_factory_line_schedule(
         self, name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[LineScheduleResponse]:
@@ -791,7 +1488,7 @@ class RawFactoryClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/schedule",
+            f"factory/lines/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -831,8 +1528,9 @@ class RawFactoryClient:
         name: str,
         *,
         cron: str,
-        timezone: typing.Optional[str] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
+        inputs: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        timezone: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[LineScheduleResponse]:
         """
@@ -842,9 +1540,11 @@ class RawFactoryClient:
 
         cron : str
 
-        timezone : typing.Optional[str]
-
         enabled : typing.Optional[bool]
+
+        inputs : typing.Optional[typing.Dict[str, typing.Any]]
+
+        timezone : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -855,13 +1555,14 @@ class RawFactoryClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/schedule",
+            f"factory/lines/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="PUT",
             json={
                 "cron": cron,
-                "timezone": timezone,
                 "enabled": enabled,
+                "inputs": inputs,
+                "timezone": timezone,
             },
             headers={
                 "content-type": "application/json",
@@ -915,7 +1616,7 @@ class RawFactoryClient:
         HttpResponse[None]
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/schedule",
+            f"factory/lines/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -943,14 +1644,9 @@ class RawFactoryClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-
-class AsyncRawFactoryClient:
-    def __init__(self, *, client_wrapper: AsyncClientWrapper):
-        self._client_wrapper = client_wrapper
-
-    async def validate_factory_line_manifest(
+    def validate_factory_line_manifest(
         self, name: str, *, manifest: LineManifestInput, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[None]:
+    ) -> HttpResponse[None]:
         """
         Parameters
         ----------
@@ -964,10 +1660,10 @@ class AsyncRawFactoryClient:
 
         Returns
         -------
-        AsyncHttpResponse[None]
+        HttpResponse[None]
         """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/validate",
+        _response = self._client_wrapper.httpx_client.request(
+            f"factory/lines/{encode_path_param(name)}/validate",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
@@ -983,7 +1679,7 @@ class AsyncRawFactoryClient:
         )
         try:
             if 200 <= _response.status_code < 300:
-                return AsyncHttpResponse(response=_response, data=None)
+                return HttpResponse(response=_response, data=None)
             if _response.status_code == 401:
                 raise UnauthorizedError(
                     headers=dict(_response.headers),
@@ -1015,33 +1711,361 @@ class AsyncRawFactoryClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def deploy_factory_line(
-        self, name: str, *, manifest: LineManifestInput, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[LineVersionResponse]:
+    def list_factory_line_versions(
+        self,
+        name: str,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SyncPager[LineVersionResponse, ListPageLineVersionResponse]:
         """
         Parameters
         ----------
         name : str
 
-        manifest : LineManifestInput
-            Line manifest (authored as TOML or JSON, stored as JSON)
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[LineVersionResponse]
+        SyncPager[LineVersionResponse, ListPageLineVersionResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"factory/lines/{encode_path_param(name)}/versions",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "limit": limit,
+                "cursor": cursor,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    ListPageLineVersionResponse,
+                    parse_obj_as(
+                        type_=ListPageLineVersionResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+                _get_next = lambda: self.list_factory_line_versions(
+                    name,
+                    limit=limit,
+                    cursor=_parsed_next,
+                    request_options=request_options,
+                )
+                return SyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+
+class AsyncRawFactoryClient:
+    def __init__(self, *, client_wrapper: AsyncClientWrapper):
+        self._client_wrapper = client_wrapper
+
+    async def list_factory_line_runs(
+        self,
+        *,
+        limit: typing.Optional[int] = None,
+        offset: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        sort: typing.Optional[str] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        line_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncPager[LineRunSummary, ListPageLineRunSummary]:
+        """
+        Parameters
+        ----------
+        limit : typing.Optional[int]
+
+        offset : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        sort : typing.Optional[str]
+            Sort order. Allowed: -created_at, created_at
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        line_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncPager[LineRunSummary, ListPageLineRunSummary]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/deploy",
+            "factory/line-runs",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "limit": limit,
+                "offset": offset,
+                "cursor": cursor,
+                "sort": sort,
+                "include": include,
+                "status": status,
+                "line_name": line_name,
+                "created_at": convert_and_respect_annotation_metadata(
+                    object_=created_at, annotation=TimestampRange, direction="write"
+                ),
+                "q": q,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    ListPageLineRunSummary,
+                    parse_obj_as(
+                        type_=ListPageLineRunSummary,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+
+                async def _get_next():
+                    return await self.list_factory_line_runs(
+                        limit=limit,
+                        offset=offset,
+                        cursor=_parsed_next,
+                        sort=sort,
+                        include=include,
+                        status=status,
+                        line_name=line_name,
+                        created_at=created_at,
+                        q=q,
+                        request_options=request_options,
+                    )
+
+                return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def list_factory_line_run_facets(
+        self,
+        *,
+        fields: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        status: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        line_name: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        created_at: typing.Optional[TimestampRange] = None,
+        q: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[FacetsResponse]:
+        """
+        Parameters
+        ----------
+        fields : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+            Facet fields to return (e.g. line_name, status)
+
+        status : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        line_name : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        created_at : typing.Optional[TimestampRange]
+            created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+
+        q : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[FacetsResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "factory/line-runs/facets",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "fields": fields,
+                "status": status,
+                "line_name": line_name,
+                "created_at": convert_and_respect_annotation_metadata(
+                    object_=created_at, annotation=TimestampRange, direction="write"
+                ),
+                "q": q,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    FacetsResponse,
+                    parse_obj_as(
+                        type_=FacetsResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_factory_line_run(
+        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[LineRunDetail]:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[LineRunDetail]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{encode_path_param(run_id)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    LineRunDetail,
+                    parse_obj_as(
+                        type_=LineRunDetail,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def ask_factory_line_run(
+        self,
+        run_id: str,
+        *,
+        message: str,
+        origin: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[LineRunDetail]:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        message : str
+            Instruction or context for the line run's manager
+
+        origin : typing.Optional[str]
+            Optional Slack thread permalink whose activity status should follow this manager turn
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[LineRunDetail]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{encode_path_param(run_id)}/ask",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "manifest": convert_and_respect_annotation_metadata(
-                    object_=manifest, annotation=LineManifestInput, direction="write"
-                ),
+                "message": message,
+                "origin": origin,
             },
             headers={
                 "content-type": "application/json",
@@ -1052,15 +2076,611 @@ class AsyncRawFactoryClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    LineVersionResponse,
+                    LineRunDetail,
                     parse_obj_as(
-                        type_=LineVersionResponse,  # type: ignore
+                        type_=LineRunDetail,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 401:
                 raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def cancel_factory_line_run(
+        self,
+        run_id: str,
+        *,
+        reason: typing.Optional[str] = OMIT,
+        stage_name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[LineRunDetail]:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        reason : typing.Optional[str]
+
+        stage_name : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[LineRunDetail]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{encode_path_param(run_id)}/cancel",
+            base_url=self._client_wrapper.get_environment().control,
+            method="POST",
+            json={
+                "reason": reason,
+                "stage_name": stage_name,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    LineRunDetail,
+                    parse_obj_as(
+                        type_=LineRunDetail,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_factory_line_run_debug(
+        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[LineRunDebugResponse]:
+        """
+        Per-stage and per-step diagnostics for one line run, including the last failed stage attempt's first failing step, each step's exit code and output tails, and the sandbox environment each stage ran in.
+
+        Parameters
+        ----------
+        run_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[LineRunDebugResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{encode_path_param(run_id)}/debug",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    LineRunDebugResponse,
+                    parse_obj_as(
+                        type_=LineRunDebugResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def list_factory_line_run_events(
+        self,
+        run_id: str,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        include: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
+        event_types: typing.Optional[typing.Sequence[str]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncPager[LineEventResponse, ListPageLineEventResponse]:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        include : typing.Optional[typing.Union[str, typing.Sequence[str]]]
+
+        event_types : typing.Optional[typing.Sequence[str]]
+            Restrict the timeline to these event types
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncPager[LineEventResponse, ListPageLineEventResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{encode_path_param(run_id)}/events",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "limit": limit,
+                "cursor": cursor,
+                "include": include,
+                "event_types": event_types,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    ListPageLineEventResponse,
+                    parse_obj_as(
+                        type_=ListPageLineEventResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+
+                async def _get_next():
+                    return await self.list_factory_line_run_events(
+                        run_id,
+                        limit=limit,
+                        cursor=_parsed_next,
+                        include=include,
+                        event_types=event_types,
+                        request_options=request_options,
+                    )
+
+                return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def retry_factory_line_run(
+        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[LineRunDetail]:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[LineRunDetail]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{encode_path_param(run_id)}/retry",
+            base_url=self._client_wrapper.get_environment().control,
+            method="POST",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    LineRunDetail,
+                    parse_obj_as(
+                        type_=LineRunDetail,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def steer_factory_line_run(
+        self,
+        run_id: str,
+        *,
+        stage_name: str,
+        params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        reason: typing.Optional[str] = OMIT,
+        reset_iterations: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[LineRunDetail]:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        stage_name : str
+
+        params : typing.Optional[typing.Dict[str, typing.Any]]
+
+        reason : typing.Optional[str]
+
+        reset_iterations : typing.Optional[bool]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[LineRunDetail]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{encode_path_param(run_id)}/steer",
+            base_url=self._client_wrapper.get_environment().control,
+            method="POST",
+            json={
+                "params": params,
+                "reason": reason,
+                "reset_iterations": reset_iterations,
+                "stage_name": stage_name,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    LineRunDetail,
+                    parse_obj_as(
+                        type_=LineRunDetail,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def stop_factory_line_run(
+        self,
+        run_id: str,
+        *,
+        reason: typing.Optional[str] = OMIT,
+        stage_name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[LineRunDetail]:
+        """
+        Parameters
+        ----------
+        run_id : str
+
+        reason : typing.Optional[str]
+
+        stage_name : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[LineRunDetail]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"factory/line-runs/{encode_path_param(run_id)}/stop",
+            base_url=self._client_wrapper.get_environment().control,
+            method="POST",
+            json={
+                "reason": reason,
+                "stage_name": stage_name,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    LineRunDetail,
+                    parse_obj_as(
+                        type_=LineRunDetail,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         ErrorResponse,
@@ -1094,22 +2714,22 @@ class AsyncRawFactoryClient:
         self,
         *,
         limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[typing.List[LineResponse]]:
+    ) -> AsyncPager[LineResponse, ListPageLineResponse]:
         """
         Parameters
         ----------
         limit : typing.Optional[int]
 
-        offset : typing.Optional[int]
+        cursor : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[typing.List[LineResponse]]
+        AsyncPager[LineResponse, ListPageLineResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1118,20 +2738,31 @@ class AsyncRawFactoryClient:
             method="GET",
             params={
                 "limit": limit,
-                "offset": offset,
+                "cursor": cursor,
             },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.List[LineResponse],
+                _parsed_response = typing.cast(
+                    ListPageLineResponse,
                     parse_obj_as(
-                        type_=typing.List[LineResponse],  # type: ignore
+                        type_=ListPageLineResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
-                return AsyncHttpResponse(response=_response, data=_data)
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+
+                async def _get_next():
+                    return await self.list_factory_lines(
+                        limit=limit,
+                        cursor=_parsed_next,
+                        request_options=request_options,
+                    )
+
+                return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -1169,7 +2800,7 @@ class AsyncRawFactoryClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}",
+            f"factory/lines/{encode_path_param(name)}",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1191,6 +2822,83 @@ class AsyncRawFactoryClient:
                         typing.Any,
                         parse_obj_as(
                             type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def delete_factory_line(
+        self, name: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[None]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[None]
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"factory/lines/{encode_path_param(name)}",
+            base_url=self._client_wrapper.get_environment().control,
+            method="DELETE",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return AsyncHttpResponse(response=_response, data=None)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 502:
+                raise BadGatewayError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1227,7 +2935,7 @@ class AsyncRawFactoryClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}",
+            f"factory/lines/{encode_path_param(name)}",
             base_url=self._client_wrapper.get_environment().control,
             method="PATCH",
             json={
@@ -1291,51 +2999,61 @@ class AsyncRawFactoryClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def list_factory_line_versions(
-        self,
-        name: str,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[typing.List[LineVersionResponse]]:
+    async def deploy_factory_line(
+        self, name: str, *, manifest: LineManifestInput, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[LineVersionResponse]:
         """
         Parameters
         ----------
         name : str
 
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
+        manifest : LineManifestInput
+            Line manifest (authored as TOML or JSON, stored as JSON)
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[typing.List[LineVersionResponse]]
+        AsyncHttpResponse[LineVersionResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/versions",
+            f"factory/lines/{encode_path_param(name)}/deploy",
             base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            params={
-                "limit": limit,
-                "offset": offset,
+            method="POST",
+            json={
+                "manifest": convert_and_respect_annotation_metadata(
+                    object_=manifest, annotation=LineManifestInput, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
             },
             request_options=request_options,
+            omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    typing.List[LineVersionResponse],
+                    LineVersionResponse,
                     parse_obj_as(
-                        type_=typing.List[LineVersionResponse],  # type: ignore
+                        type_=LineVersionResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -1361,9 +3079,9 @@ class AsyncRawFactoryClient:
         name: str,
         *,
         limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[typing.List[LineRunSummary]]:
+    ) -> AsyncPager[LineRunSummary, ListPageLineRunSummary]:
         """
         Parameters
         ----------
@@ -1371,36 +3089,48 @@ class AsyncRawFactoryClient:
 
         limit : typing.Optional[int]
 
-        offset : typing.Optional[int]
+        cursor : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[typing.List[LineRunSummary]]
+        AsyncPager[LineRunSummary, ListPageLineRunSummary]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/runs",
+            f"factory/lines/{encode_path_param(name)}/runs",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             params={
                 "limit": limit,
-                "offset": offset,
+                "cursor": cursor,
             },
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.List[LineRunSummary],
+                _parsed_response = typing.cast(
+                    ListPageLineRunSummary,
                     parse_obj_as(
-                        type_=typing.List[LineRunSummary],  # type: ignore
+                        type_=ListPageLineRunSummary,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
-                return AsyncHttpResponse(response=_response, data=_data)
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+
+                async def _get_next():
+                    return await self.list_factory_line_runs_for_line(
+                        name,
+                        limit=limit,
+                        cursor=_parsed_next,
+                        request_options=request_options,
+                    )
+
+                return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -1425,10 +3155,10 @@ class AsyncRawFactoryClient:
         self,
         name: str,
         *,
-        version_id: typing.Optional[str] = OMIT,
-        region: typing.Optional[str] = OMIT,
         params: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        region: typing.Optional[str] = OMIT,
         trigger_payload: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        version_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[LineRunDetail]:
         """
@@ -1436,15 +3166,15 @@ class AsyncRawFactoryClient:
         ----------
         name : str
 
-        version_id : typing.Optional[str]
-            Deployed line version to run; defaults to latest
+        params : typing.Optional[typing.Dict[str, typing.Any]]
 
         region : typing.Optional[str]
             Compute region override
 
-        params : typing.Optional[typing.Dict[str, typing.Any]]
-
         trigger_payload : typing.Optional[typing.Dict[str, typing.Any]]
+
+        version_id : typing.Optional[str]
+            Deployed line version to run; defaults to latest
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1455,14 +3185,14 @@ class AsyncRawFactoryClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/runs",
+            f"factory/lines/{encode_path_param(name)}/runs",
             base_url=self._client_wrapper.get_environment().control,
             method="POST",
             json={
-                "version_id": version_id,
-                "region": region,
                 "params": params,
+                "region": region,
                 "trigger_payload": trigger_payload,
+                "version_id": version_id,
             },
             headers={
                 "content-type": "application/json",
@@ -1500,195 +3230,6 @@ class AsyncRawFactoryClient:
             )
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def list_factory_line_runs(
-        self,
-        *,
-        limit: typing.Optional[int] = None,
-        offset: typing.Optional[int] = None,
-        status: typing.Optional[str] = None,
-        line_name: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[typing.List[LineRunSummary]]:
-        """
-        Parameters
-        ----------
-        limit : typing.Optional[int]
-
-        offset : typing.Optional[int]
-
-        status : typing.Optional[str]
-            Filter by run status
-
-        line_name : typing.Optional[str]
-            Filter by line name
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[typing.List[LineRunSummary]]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "factory/line-runs",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            params={
-                "limit": limit,
-                "offset": offset,
-                "status": status,
-                "line_name": line_name,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    typing.List[LineRunSummary],
-                    parse_obj_as(
-                        type_=typing.List[LineRunSummary],  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def get_factory_line_run(
-        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[LineRunDetail]:
-        """
-        Parameters
-        ----------
-        run_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[LineRunDetail]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"factory/line-runs/{jsonable_encoder(run_id)}",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    LineRunDetail,
-                    parse_obj_as(
-                        type_=LineRunDetail,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def get_factory_line_run_debug(
-        self, run_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[LineRunDebugResponse]:
-        """
-        Per-stage and per-step diagnostics for one line run, including the last failed stage attempt's first failing step, each step's exit code and output tails, and the sandbox environment each stage ran in.
-
-        Parameters
-        ----------
-        run_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[LineRunDebugResponse]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"factory/line-runs/{jsonable_encoder(run_id)}/debug",
-            base_url=self._client_wrapper.get_environment().control,
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    LineRunDebugResponse,
-                    parse_obj_as(
-                        type_=LineRunDebugResponse,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Any,
-                        parse_obj_as(
-                            type_=typing.Any,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
     async def get_factory_line_schedule(
         self, name: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[LineScheduleResponse]:
@@ -1706,7 +3247,7 @@ class AsyncRawFactoryClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/schedule",
+            f"factory/lines/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="GET",
             request_options=request_options,
@@ -1746,8 +3287,9 @@ class AsyncRawFactoryClient:
         name: str,
         *,
         cron: str,
-        timezone: typing.Optional[str] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
+        inputs: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        timezone: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[LineScheduleResponse]:
         """
@@ -1757,9 +3299,11 @@ class AsyncRawFactoryClient:
 
         cron : str
 
-        timezone : typing.Optional[str]
-
         enabled : typing.Optional[bool]
+
+        inputs : typing.Optional[typing.Dict[str, typing.Any]]
+
+        timezone : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1770,13 +3314,14 @@ class AsyncRawFactoryClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/schedule",
+            f"factory/lines/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="PUT",
             json={
                 "cron": cron,
-                "timezone": timezone,
                 "enabled": enabled,
+                "inputs": inputs,
+                "timezone": timezone,
             },
             headers={
                 "content-type": "application/json",
@@ -1830,7 +3375,7 @@ class AsyncRawFactoryClient:
         AsyncHttpResponse[None]
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"factory/lines/{jsonable_encoder(name)}/schedule",
+            f"factory/lines/{encode_path_param(name)}/schedule",
             base_url=self._client_wrapper.get_environment().control,
             method="DELETE",
             request_options=request_options,
@@ -1838,6 +3383,150 @@ class AsyncRawFactoryClient:
         try:
             if 200 <= _response.status_code < 300:
                 return AsyncHttpResponse(response=_response, data=None)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def validate_factory_line_manifest(
+        self, name: str, *, manifest: LineManifestInput, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[None]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        manifest : LineManifestInput
+            Line manifest (authored as TOML or JSON, stored as JSON)
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[None]
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"factory/lines/{encode_path_param(name)}/validate",
+            base_url=self._client_wrapper.get_environment().control,
+            method="POST",
+            json={
+                "manifest": convert_and_respect_annotation_metadata(
+                    object_=manifest, annotation=LineManifestInput, direction="write"
+                ),
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return AsyncHttpResponse(response=_response, data=None)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Any,
+                        parse_obj_as(
+                            type_=typing.Any,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def list_factory_line_versions(
+        self,
+        name: str,
+        *,
+        limit: typing.Optional[int] = None,
+        cursor: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncPager[LineVersionResponse, ListPageLineVersionResponse]:
+        """
+        Parameters
+        ----------
+        name : str
+
+        limit : typing.Optional[int]
+
+        cursor : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncPager[LineVersionResponse, ListPageLineVersionResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"factory/lines/{encode_path_param(name)}/versions",
+            base_url=self._client_wrapper.get_environment().control,
+            method="GET",
+            params={
+                "limit": limit,
+                "cursor": cursor,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _parsed_response = typing.cast(
+                    ListPageLineVersionResponse,
+                    parse_obj_as(
+                        type_=ListPageLineVersionResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                _items = _parsed_response.items
+                _parsed_next = _parsed_response.next_cursor
+                _has_next = _parsed_next is not None and _parsed_next != ""
+
+                async def _get_next():
+                    return await self.list_factory_line_versions(
+                        name,
+                        limit=limit,
+                        cursor=_parsed_next,
+                        request_options=request_options,
+                    )
+
+                return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next, response=_parsed_response)
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),

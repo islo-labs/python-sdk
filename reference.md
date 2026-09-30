@@ -1,10 +1,10 @@
 # Reference
-## tenants
-<details><summary><code>client.tenants.<a href="src/islo/tenants/client.py">list_tenant_compute_regions</a>() -> TenantRegionsResponse</code></summary>
+## byo
+<details><summary><code>client.byo.<a href="src/islo/byo/client.py">start_byo_inference_setup</a>(...) -> ByoSetupResponse</code></summary>
 <dl>
 <dd>
 
-#### 📝 Description
+#### 🔌 Usage
 
 <dl>
 <dd>
@@ -12,11 +12,57 @@
 <dl>
 <dd>
 
-Return the compute regions the authenticated tenant may use, including the API and WebSocket base URLs for each region.
+```python
+from islo import Islo, ByoSourceKind
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.byo.start_byo_inference_setup(
+    source_kind=ByoSourceKind.DATABRICKS,
+)
+
+```
 </dd>
 </dl>
 </dd>
 </dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**source_kind:** `ByoSourceKind` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.byo.<a href="src/islo/byo/client.py">get_byo_inference_status</a>() -> ByoStatusResponse</code></summary>
+<dl>
+<dd>
 
 #### 🔌 Usage
 
@@ -32,10 +78,11 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.tenants.list_tenant_compute_regions()
+client.byo.get_byo_inference_status()
 
 ```
 </dd>
@@ -63,8 +110,8 @@ client.tenants.list_tenant_compute_regions()
 </dl>
 </details>
 
-## knowledge
-<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">list_knowledge</a>(...) -> PaginatedKnowledgeResponse</code></summary>
+## CloudRoles
+<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">list_cloud_roles</a>(...) -> ListPageCloudRoleResponse</code></summary>
 <dl>
 <dd>
 
@@ -82,10 +129,11 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.knowledge.list_knowledge()
+client.cloud_roles.list_cloud_roles()
 
 ```
 </dd>
@@ -101,47 +149,7 @@ client.knowledge.list_knowledge()
 <dl>
 <dd>
 
-**level:** `typing.Optional[KnowledgeLevel]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**tag:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**repository:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**q:** `typing.Optional[str]` — Search identifier or body text
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cursor:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**limit:** `typing.Optional[int]` 
+**type:** `typing.Optional[CloudRoleType]` — Filter by role type
     
 </dd>
 </dl>
@@ -161,7 +169,7 @@ client.knowledge.list_knowledge()
 </dl>
 </details>
 
-<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">create_knowledge</a>(...) -> KnowledgeItemResponse</code></summary>
+<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">create_cloud_role</a>(...) -> CloudRoleResponse</code></summary>
 <dl>
 <dd>
 
@@ -174,18 +182,18 @@ client.knowledge.list_knowledge()
 <dd>
 
 ```python
-from islo import Islo
+from islo import Islo, CloudProvider
 from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.knowledge.create_knowledge(
-    slug="slug",
-    level="episodic",
-    body="body",
+client.cloud_roles.create_cloud_role(
+    provider=CloudProvider.AWS,
+    role_arn="role_arn",
 )
 
 ```
@@ -202,7 +210,7 @@ client.knowledge.create_knowledge(
 <dl>
 <dd>
 
-**slug:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+**provider:** `CloudProvider` 
     
 </dd>
 </dl>
@@ -210,7 +218,7 @@ client.knowledge.create_knowledge(
 <dl>
 <dd>
 
-**level:** `KnowledgeLevel` 
+**role_arn:** `str` 
     
 </dd>
 </dl>
@@ -218,7 +226,7 @@ client.knowledge.create_knowledge(
 <dl>
 <dd>
 
-**body:** `str` 
+**session_duration_seconds:** `typing.Optional[int]` 
     
 </dd>
 </dl>
@@ -226,23 +234,7 @@ client.knowledge.create_knowledge(
 <dl>
 <dd>
 
-**format:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**metadata:** `typing.Optional[typing.Dict[str, typing.Any]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**links:** `typing.Optional[typing.List[KnowledgeLinkInput]]` 
+**type:** `typing.Optional[CloudRoleType]` 
     
 </dd>
 </dl>
@@ -262,7 +254,7 @@ client.knowledge.create_knowledge(
 </dl>
 </details>
 
-<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">get_knowledge</a>(...) -> KnowledgeItemResponse</code></summary>
+<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">get_cloud_role</a>(...) -> CloudRoleResponse</code></summary>
 <dl>
 <dd>
 
@@ -280,11 +272,12 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.knowledge.get_knowledge(
-    identifier="identifier",
+client.cloud_roles.get_cloud_role(
+    role_id="role_id",
 )
 
 ```
@@ -301,7 +294,7 @@ client.knowledge.get_knowledge(
 <dl>
 <dd>
 
-**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+**role_id:** `str` 
     
 </dd>
 </dl>
@@ -321,7 +314,7 @@ client.knowledge.get_knowledge(
 </dl>
 </details>
 
-<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">delete_knowledge</a>(...)</code></summary>
+<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">delete_cloud_role</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -339,11 +332,12 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.knowledge.delete_knowledge(
-    identifier="identifier",
+client.cloud_roles.delete_cloud_role(
+    role_id="role_id",
 )
 
 ```
@@ -360,7 +354,7 @@ client.knowledge.delete_knowledge(
 <dl>
 <dd>
 
-**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+**role_id:** `str` 
     
 </dd>
 </dl>
@@ -380,7 +374,7 @@ client.knowledge.delete_knowledge(
 </dl>
 </details>
 
-<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">update_knowledge</a>(...) -> KnowledgeItemResponse</code></summary>
+<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">update_cloud_role</a>(...) -> CloudRoleResponse</code></summary>
 <dl>
 <dd>
 
@@ -398,11 +392,12 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.knowledge.update_knowledge(
-    identifier="identifier",
+client.cloud_roles.update_cloud_role(
+    role_id="role_id",
 )
 
 ```
@@ -419,7 +414,7 @@ client.knowledge.update_knowledge(
 <dl>
 <dd>
 
-**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+**role_id:** `str` 
     
 </dd>
 </dl>
@@ -427,7 +422,7 @@ client.knowledge.update_knowledge(
 <dl>
 <dd>
 
-**level:** `typing.Optional[KnowledgeLevel]` 
+**is_enabled:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -435,7 +430,7 @@ client.knowledge.update_knowledge(
 <dl>
 <dd>
 
-**format:** `typing.Optional[str]` 
+**role_arn:** `typing.Optional[str]` 
     
 </dd>
 </dl>
@@ -443,31 +438,7 @@ client.knowledge.update_knowledge(
 <dl>
 <dd>
 
-**body:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**metadata:** `typing.Optional[typing.Dict[str, typing.Any]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**status:** `typing.Optional[KnowledgeStatus]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**links:** `typing.Optional[typing.List[KnowledgeLinkInput]]` 
+**session_duration_seconds:** `typing.Optional[int]` 
     
 </dd>
 </dl>
@@ -487,7 +458,8 @@ client.knowledge.update_knowledge(
 </dl>
 </details>
 
-<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">list_knowledge_versions</a>(...) -> PaginatedKnowledgeVersionResponse</code></summary>
+## ComputeEvents
+<details><summary><code>client.compute_events.<a href="src/islo/compute_events/client.py">get_compute_event</a>(...) -> ComputeEventDetailResponse</code></summary>
 <dl>
 <dd>
 
@@ -505,11 +477,12 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.knowledge.list_knowledge_versions(
-    identifier="identifier",
+client.compute_events.get_compute_event(
+    command_id="command_id",
 )
 
 ```
@@ -526,23 +499,7 @@ client.knowledge.list_knowledge_versions(
 <dl>
 <dd>
 
-**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cursor:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**limit:** `typing.Optional[int]` 
+**command_id:** `str` 
     
 </dd>
 </dl>
@@ -562,7 +519,8 @@ client.knowledge.list_knowledge_versions(
 </dl>
 </details>
 
-<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">get_knowledge_version</a>(...) -> KnowledgeVersionResponse</code></summary>
+## ContainerRegistries
+<details><summary><code>client.container_registries.<a href="src/islo/container_registries/client.py">list_container_registries</a>() -> ListPageContainerRegistryResponse</code></summary>
 <dl>
 <dd>
 
@@ -580,12 +538,65 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.knowledge.get_knowledge_version(
-    identifier="identifier",
-    version_number=1,
+client.container_registries.list_container_registries()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.container_registries.<a href="src/islo/container_registries/client.py">create_container_registry</a>(...) -> ContainerRegistryResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo, RegistryProvider
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.container_registries.create_container_registry(
+    cloud_role_id="cloud_role_id",
+    provider=RegistryProvider.ECR,
+    region="region",
+    registry_host="registry_host",
 )
 
 ```
@@ -602,7 +613,7 @@ client.knowledge.get_knowledge_version(
 <dl>
 <dd>
 
-**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+**cloud_role_id:** `str` 
     
 </dd>
 </dl>
@@ -610,7 +621,31 @@ client.knowledge.get_knowledge_version(
 <dl>
 <dd>
 
-**version_number:** `int` 
+**provider:** `RegistryProvider` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**region:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**registry_host:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**repository_prefixes:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -630,7 +665,7 @@ client.knowledge.get_knowledge_version(
 </dl>
 </details>
 
-<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">restore_knowledge_version</a>(...) -> KnowledgeItemResponse</code></summary>
+<details><summary><code>client.container_registries.<a href="src/islo/container_registries/client.py">get_container_registry</a>(...) -> ContainerRegistryResponse</code></summary>
 <dl>
 <dd>
 
@@ -648,12 +683,12 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.knowledge.restore_knowledge_version(
-    identifier="identifier",
-    version_number=1,
+client.container_registries.get_container_registry(
+    id="id",
 )
 
 ```
@@ -670,7 +705,7 @@ client.knowledge.restore_knowledge_version(
 <dl>
 <dd>
 
-**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+**id:** `str` 
     
 </dd>
 </dl>
@@ -678,7 +713,143 @@ client.knowledge.restore_knowledge_version(
 <dl>
 <dd>
 
-**version_number:** `int` 
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.container_registries.<a href="src/islo/container_registries/client.py">delete_container_registry</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.container_registries.delete_container_registry(
+    id="id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.container_registries.<a href="src/islo/container_registries/client.py">update_container_registry</a>(...) -> ContainerRegistryResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.container_registries.update_container_registry(
+    id="id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cloud_role_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_enabled:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**repository_prefixes:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -731,6 +902,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -762,8 +934,6415 @@ client.credits.get_credit_balance()
 </dl>
 </details>
 
-## integrations
-<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">list_integration_providers</a>() -> IntegrationProvidersResponse</code></summary>
+## Environments
+<details><summary><code>client.environments.<a href="src/islo/environments/client.py">list_environments</a>(...) -> ListPageEnvironmentListItem</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.environments.list_environments()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.environments.<a href="src/islo/environments/client.py">create_environment</a>(...) -> EnvironmentResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.environments.create_environment(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**entries:** `typing.Optional[typing.List[EnvironmentCreateEntriesItem]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_default:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.environments.<a href="src/islo/environments/client.py">get_environment</a>(...) -> EnvironmentResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.environments.get_environment(
+    environment_ref="environment_ref",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**environment_ref:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.environments.<a href="src/islo/environments/client.py">delete_environment</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.environments.delete_environment(
+    environment_ref="environment_ref",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**environment_ref:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.environments.<a href="src/islo/environments/client.py">update_environment</a>(...) -> EnvironmentResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.environments.update_environment(
+    environment_ref="environment_ref",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**environment_ref:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**entries:** `typing.Optional[typing.List[EnvironmentUpdateEntriesItem]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_default:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.environments.<a href="src/islo/environments/client.py">set_default_environment</a>(...) -> EnvironmentResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.environments.set_default_environment(
+    environment_ref="environment_ref",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**environment_ref:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.environments.<a href="src/islo/environments/client.py">unset_default_environment</a>(...) -> EnvironmentResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.environments.unset_default_environment(
+    environment_ref="environment_ref",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**environment_ref:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Factories
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_factories</a>() -> ListPageFactoryResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_factories()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">create_factory</a>(...) -> FactoryResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.create_factory(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**key:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_factories_overview</a>() -> FactoryOverview</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_factories_overview()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_factory</a>(...) -> FactoryResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_factory(
+    factory_id="factory_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">update_factory</a>(...) -> FactoryResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.update_factory(
+    factory_id="factory_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**color:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**icon:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**key:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[FactoryStatus]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">activate_factory</a>(...) -> FactoryResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.activate_factory(
+    factory_id="factory_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_factory_agent_sessions</a>(...) -> ListPageAgentSessionListItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_factory_agent_sessions(
+    factory_id="factory_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**since:** `typing.Optional[datetime.datetime]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**include_subagents:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_factory_agent_session</a>(...) -> AgentSessionListItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_factory_agent_session(
+    factory_id="factory_id",
+    session_name="session_name",
+    sandbox_id="sandbox_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**session_name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sandbox_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**session_path:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_factory_agent_session_events</a>(...) -> ListPageAgentSessionEventResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_factory_agent_session_events(
+    factory_id="factory_id",
+    session_name="session_name",
+    sandbox_id="sandbox_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**session_name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sandbox_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**session_path:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**include_descendants:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**since:** `typing.Optional[datetime.datetime]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_factory_agent_turn</a>(...) -> FactoryAgentTurnResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_factory_agent_turn(
+    factory_id="factory_id",
+    turn_id="turn_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**turn_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_factory_job_runs</a>(...) -> ListPageJobRunListItem</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_factory_job_runs(
+    factory_id="factory_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**include:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**job_name:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_at:** `typing.Optional[TimestampRange]` — created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**q:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_factory_job_run_facets</a>(...) -> FacetsResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_factory_job_run_facets(
+    factory_id="factory_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fields:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**job_name:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_at:** `typing.Optional[TimestampRange]` — created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**q:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_factory_job_run_by_id</a>(...) -> JobRunResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_factory_job_run_by_id(
+    factory_id="factory_id",
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_factory_resource_jobs</a>(...) -> ListPageJobListItem</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_factory_resource_jobs(
+    factory_id="factory_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_scoped_factory_job</a>(...) -> JobResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_scoped_factory_job(
+    factory_id="factory_id",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">delete_scoped_factory_job</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.delete_scoped_factory_job(
+    factory_id="factory_id",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">deploy_scoped_factory_job</a>(...) -> JobVersionResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo, JobManifestInput, JobSection, RunSectionInput, TaskInput, TaskStepInput
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.deploy_scoped_factory_job(
+    factory_id="factory_id",
+    name="name",
+    manifest=JobManifestInput(
+        job=JobSection(
+            name="name",
+        ),
+        run=RunSectionInput(
+            tasks=[
+                TaskInput(
+                    name="name",
+                    steps=[
+                        TaskStepInput()
+                    ],
+                )
+            ],
+        ),
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `JobDeployRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_scoped_factory_job_runs</a>(...) -> ListPageJobRunListItem</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_scoped_factory_job_runs(
+    factory_id="factory_id",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">trigger_scoped_factory_job_run</a>(...) -> JobRunResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.trigger_scoped_factory_job_run(
+    factory_id="factory_id",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `JobRunCreate` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_scoped_factory_job_run</a>(...) -> JobRunResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_scoped_factory_job_run(
+    factory_id="factory_id",
+    name="name",
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">stop_scoped_factory_job_run</a>(...) -> JobRunResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.stop_scoped_factory_job_run(
+    factory_id="factory_id",
+    name="name",
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `JobRunStopRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_scoped_factory_job_schedule</a>(...) -> JobScheduleResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_scoped_factory_job_schedule(
+    factory_id="factory_id",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">delete_scoped_factory_job_schedule</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.delete_scoped_factory_job_schedule(
+    factory_id="factory_id",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">validate_scoped_factory_job_manifest</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo, JobManifestInput, JobSection, RunSectionInput, TaskInput, TaskStepInput
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.validate_scoped_factory_job_manifest(
+    factory_id="factory_id",
+    name="name",
+    manifest=JobManifestInput(
+        job=JobSection(
+            name="name",
+        ),
+        run=RunSectionInput(
+            tasks=[
+                TaskInput(
+                    name="name",
+                    steps=[
+                        TaskStepInput()
+                    ],
+                )
+            ],
+        ),
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `JobDeployRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_scoped_factory_job_versions</a>(...) -> ListPageJobVersionResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_scoped_factory_job_versions(
+    factory_id="factory_id",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_scoped_factory_job_version</a>(...) -> JobVersionResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_scoped_factory_job_version(
+    factory_id="factory_id",
+    name="name",
+    version_id="version_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**version_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_factory_knowledge</a>(...) -> ListPageKnowledgeItemListResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_factory_knowledge(
+    factory_id="factory_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**level:** `typing.Optional[KnowledgeLevel]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**type:** `typing.Optional[KnowledgeLevel]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**tag:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**repository:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**q:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort:** `typing.Optional[ListFactoryKnowledgeRequestSort]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**include:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">create_factory_knowledge</a>(...) -> KnowledgeItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.create_factory_knowledge(
+    factory_id="factory_id",
+    slug="slug",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `KnowledgeItemCreate` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_factory_knowledge_facets</a>(...) -> FacetsResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_factory_knowledge_facets(
+    factory_id="factory_id",
+    fields=[
+        "fields"
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fields:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_factory_knowledge_tags</a>(...) -> FacetsResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_factory_knowledge_tags(
+    factory_id="factory_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">create_factory_knowledge_media</a>(...) -> KnowledgeItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.create_factory_knowledge_media(
+    factory_id="factory_id",
+    file="example_file",
+    item="item",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `core.File` — Media file
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**item:** `str` — JSON metadata for the knowledge item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_factory_knowledge</a>(...) -> KnowledgeItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_factory_knowledge(
+    factory_id="factory_id",
+    identifier="identifier",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">delete_factory_knowledge</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.delete_factory_knowledge(
+    factory_id="factory_id",
+    identifier="identifier",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">update_factory_knowledge</a>(...) -> KnowledgeItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.update_factory_knowledge(
+    factory_id="factory_id",
+    identifier="identifier",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `KnowledgeItemUpdate` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_factory_knowledge_content</a>(...) -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_factory_knowledge_content(
+    factory_id="factory_id",
+    identifier="identifier",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">put_factory_knowledge_content</a>(...) -> KnowledgeItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.put_factory_knowledge_content(
+    factory_id="factory_id",
+    identifier="identifier",
+    file="example_file",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `core.File` — Replacement content
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">restore_factory_knowledge_version</a>(...) -> KnowledgeItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.restore_factory_knowledge_version(
+    factory_id="factory_id",
+    identifier="identifier",
+    version_number=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `KnowledgeRestoreRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_factory_knowledge_versions</a>(...) -> ListPageKnowledgeVersionListResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_factory_knowledge_versions(
+    factory_id="factory_id",
+    identifier="identifier",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort:** `typing.Optional[ListFactoryKnowledgeVersionsRequestSort]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**include:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_factory_knowledge_version</a>(...) -> KnowledgeVersionResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_factory_knowledge_version(
+    factory_id="factory_id",
+    identifier="identifier",
+    version_number=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**version_number:** `int` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_factory_knowledge_version_content</a>(...) -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_factory_knowledge_version_content(
+    factory_id="factory_id",
+    identifier="identifier",
+    version_number=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**version_number:** `int` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_factory_line_runs_across_lines</a>(...) -> ListPageLineRunSummary</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_factory_line_runs_across_lines(
+    factory_id="factory_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**include:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**line_name:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_at:** `typing.Optional[TimestampRange]` — created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**q:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_factory_resource_line_run_facets</a>(...) -> FacetsResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_factory_resource_line_run_facets(
+    factory_id="factory_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fields:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**line_name:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_at:** `typing.Optional[TimestampRange]` — created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**q:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_scoped_factory_line_run</a>(...) -> LineRunDetail</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_scoped_factory_line_run(
+    factory_id="factory_id",
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">ask_scoped_factory_line_run</a>(...) -> LineRunDetail</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.ask_scoped_factory_line_run(
+    factory_id="factory_id",
+    run_id="run_id",
+    message="message",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineRunAskRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">cancel_scoped_factory_line_run</a>(...) -> LineRunDetail</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.cancel_scoped_factory_line_run(
+    factory_id="factory_id",
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineRunControlRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_scoped_factory_line_run_debug</a>(...) -> LineRunDebugResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_scoped_factory_line_run_debug(
+    factory_id="factory_id",
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_scoped_factory_line_run_events</a>(...) -> ListPageLineEventResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_scoped_factory_line_run_events(
+    factory_id="factory_id",
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**include:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**event_types:** `typing.Optional[typing.List[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">retry_scoped_factory_line_run</a>(...) -> LineRunDetail</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.retry_scoped_factory_line_run(
+    factory_id="factory_id",
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">steer_scoped_factory_line_run</a>(...) -> LineRunDetail</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.steer_scoped_factory_line_run(
+    factory_id="factory_id",
+    run_id="run_id",
+    stage_name="stage_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineRunSteerRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">stop_scoped_factory_line_run</a>(...) -> LineRunDetail</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.stop_scoped_factory_line_run(
+    factory_id="factory_id",
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineRunControlRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_factory_resource_lines</a>(...) -> ListPageLineResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_factory_resource_lines(
+    factory_id="factory_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_scoped_factory_line</a>(...) -> LineResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_scoped_factory_line(
+    factory_id="factory_id",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">delete_scoped_factory_line</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.delete_scoped_factory_line(
+    factory_id="factory_id",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">update_scoped_factory_line</a>(...) -> LineResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.update_scoped_factory_line(
+    factory_id="factory_id",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineUpdate` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">deploy_scoped_factory_line</a>(...) -> LineVersionResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo, LineManifestInput, LineSection, LineStage, LineManifestInputTrigger_IntegrationTrigger, IntegrationTriggerSectionInputSelector_Github
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.deploy_scoped_factory_line(
+    factory_id="factory_id",
+    name="name",
+    manifest=LineManifestInput(
+        line=LineSection(
+            name="name",
+        ),
+        stages=[
+            LineStage(
+                id="id",
+                job="job",
+            )
+        ],
+        trigger=LineManifestInputTrigger_IntegrationTrigger(
+            name="name",
+            provider="provider",
+            selector=IntegrationTriggerSectionInputSelector_Github(),
+        ),
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineDeployRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_scoped_factory_line_runs</a>(...) -> ListPageLineRunSummary</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_scoped_factory_line_runs(
+    factory_id="factory_id",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">trigger_scoped_factory_line_run</a>(...) -> LineRunDetail</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.trigger_scoped_factory_line_run(
+    factory_id="factory_id",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineRunCreate` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">get_scoped_factory_line_schedule</a>(...) -> LineScheduleResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.get_scoped_factory_line_schedule(
+    factory_id="factory_id",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">upsert_scoped_factory_line_schedule</a>(...) -> LineScheduleResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.upsert_scoped_factory_line_schedule(
+    factory_id="factory_id",
+    name="name",
+    cron="cron",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineScheduleUpdate` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">delete_scoped_factory_line_schedule</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.delete_scoped_factory_line_schedule(
+    factory_id="factory_id",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">validate_scoped_factory_line_manifest</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo, LineManifestInput, LineSection, LineStage, LineManifestInputTrigger_IntegrationTrigger, IntegrationTriggerSectionInputSelector_Github
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.validate_scoped_factory_line_manifest(
+    factory_id="factory_id",
+    name="name",
+    manifest=LineManifestInput(
+        line=LineSection(
+            name="name",
+        ),
+        stages=[
+            LineStage(
+                id="id",
+                job="job",
+            )
+        ],
+        trigger=LineManifestInputTrigger_IntegrationTrigger(
+            name="name",
+            provider="provider",
+            selector=IntegrationTriggerSectionInputSelector_Github(),
+        ),
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineDeployRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factories.<a href="src/islo/factories/client.py">list_scoped_factory_line_versions</a>(...) -> ListPageLineVersionResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factories.list_scoped_factory_line_versions(
+    factory_id="factory_id",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Machines
+<details><summary><code>client.machines.<a href="src/islo/machines/client.py">list_factory_machines</a>(...) -> ListPageMachineResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.machines.list_factory_machines(
+    factory="factory",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.machines.<a href="src/islo/machines/client.py">create_factory_machine</a>(...) -> MachineResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.machines.create_factory_machine(
+    factory="factory",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**capabilities:** `typing.Optional[typing.List[MachineCreateCapabilitiesItem]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**disk_gb:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**environment:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**gateway_profile:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**lifecycle:** `typing.Optional[LifecyclePolicy]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**memory_mb:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**repos:** `typing.Optional[typing.List[ControlPlaneGitSource]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schedule:** `typing.Optional[MachineSchedule]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**vcpus:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.machines.<a href="src/islo/machines/client.py">get_factory_machine</a>(...) -> MachineResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.machines.get_factory_machine(
+    factory="factory",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.machines.<a href="src/islo/machines/client.py">delete_factory_machine</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.machines.delete_factory_machine(
+    factory="factory",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.machines.<a href="src/islo/machines/client.py">update_factory_machine</a>(...) -> MachineResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.machines.update_factory_machine(
+    factory="factory",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**capabilities:** `typing.Optional[typing.List[MachineUpdateCapabilitiesItem]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**disk_gb:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**environment:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**gateway_profile:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**lifecycle:** `typing.Optional[LifecyclePolicy]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**memory_mb:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**repos:** `typing.Optional[typing.List[ControlPlaneGitSource]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schedule:** `typing.Optional[MachineSchedule]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**vcpus:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.machines.<a href="src/islo/machines/client.py">build_factory_machine</a>(...) -> MachineResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.machines.build_factory_machine(
+    factory="factory",
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**factory:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## factory
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_line_runs</a>(...) -> ListPageLineRunSummary</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.list_factory_line_runs()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**offset:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort:** `typing.Optional[str]` — Sort order. Allowed: -created_at, created_at
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**include:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**line_name:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_at:** `typing.Optional[TimestampRange]` — created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**q:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_line_run_facets</a>(...) -> FacetsResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.list_factory_line_run_facets(
+    fields=[
+        "fields"
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**fields:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` — Facet fields to return (e.g. line_name, status)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**line_name:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_at:** `typing.Optional[TimestampRange]` — created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**q:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">get_factory_line_run</a>(...) -> LineRunDetail</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.get_factory_line_run(
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">ask_factory_line_run</a>(...) -> LineRunDetail</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.ask_factory_line_run(
+    run_id="run_id",
+    message="message",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineRunAskRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">cancel_factory_line_run</a>(...) -> LineRunDetail</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.cancel_factory_line_run(
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineRunControlRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">get_factory_line_run_debug</a>(...) -> LineRunDebugResponse</code></summary>
 <dl>
 <dd>
 
@@ -775,7 +7354,7 @@ client.credits.get_credit_balance()
 <dl>
 <dd>
 
-Return the integration providers available to connect from Islo, including the supported authentication methods and connection scopes.
+Per-stage and per-step diagnostics for one line run, including the last failed stage attempt's first failing step, each step's exit code and output tails, and the sandbox environment each stage ran in.
 </dd>
 </dl>
 </dd>
@@ -795,10 +7374,1192 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.integrations.list_integration_providers()
+client.factory.get_factory_line_run_debug(
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_line_run_events</a>(...) -> ListPageLineEventResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.list_factory_line_run_events(
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**include:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**event_types:** `typing.Optional[typing.List[str]]` — Restrict the timeline to these event types
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">retry_factory_line_run</a>(...) -> LineRunDetail</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.retry_factory_line_run(
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">steer_factory_line_run</a>(...) -> LineRunDetail</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.steer_factory_line_run(
+    run_id="run_id",
+    stage_name="stage_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineRunSteerRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">stop_factory_line_run</a>(...) -> LineRunDetail</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.stop_factory_line_run(
+    run_id="run_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**run_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineRunControlRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_lines</a>(...) -> ListPageLineResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.list_factory_lines()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">get_factory_line</a>(...) -> LineResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.get_factory_line(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">delete_factory_line</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.delete_factory_line(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">update_factory_line</a>(...) -> LineResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.update_factory_line(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineUpdate` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">deploy_factory_line</a>(...) -> LineVersionResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo, LineManifestInput, LineSection, LineStage, LineManifestInputTrigger_IntegrationTrigger, IntegrationTriggerSectionInputSelector_Github
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.deploy_factory_line(
+    name="name",
+    manifest=LineManifestInput(
+        line=LineSection(
+            name="name",
+        ),
+        stages=[
+            LineStage(
+                id="id",
+                job="job",
+            )
+        ],
+        trigger=LineManifestInputTrigger_IntegrationTrigger(
+            name="name",
+            provider="provider",
+            selector=IntegrationTriggerSectionInputSelector_Github(),
+        ),
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineDeployRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_line_runs_for_line</a>(...) -> ListPageLineRunSummary</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.list_factory_line_runs_for_line(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">trigger_factory_line_run</a>(...) -> LineRunDetail</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.trigger_factory_line_run(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineRunCreate` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">get_factory_line_schedule</a>(...) -> LineScheduleResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.get_factory_line_schedule(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">upsert_factory_line_schedule</a>(...) -> LineScheduleResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.upsert_factory_line_schedule(
+    name="name",
+    cron="cron",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineScheduleUpdate` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">delete_factory_line_schedule</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.delete_factory_line_schedule(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">validate_factory_line_manifest</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo, LineManifestInput, LineSection, LineStage, LineManifestInputTrigger_IntegrationTrigger, IntegrationTriggerSectionInputSelector_Github
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.validate_factory_line_manifest(
+    name="name",
+    manifest=LineManifestInput(
+        line=LineSection(
+            name="name",
+        ),
+        stages=[
+            LineStage(
+                id="id",
+                job="job",
+            )
+        ],
+        trigger=LineManifestInputTrigger_IntegrationTrigger(
+            name="name",
+            provider="provider",
+            selector=IntegrationTriggerSectionInputSelector_Github(),
+        ),
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `LineDeployRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_line_versions</a>(...) -> ListPageLineVersionResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.factory.list_factory_line_versions(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## gateway-profiles
+<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">list_gateway_profiles</a>() -> ListPageGatewayProfileResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.gateway_profiles.list_gateway_profiles()
 
 ```
 </dd>
@@ -826,7 +8587,7 @@ client.integrations.list_integration_providers()
 </dl>
 </details>
 
-<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">list_integration_triggers</a>() -> TriggerCatalogListResponse</code></summary>
+<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">create_gateway_profile</a>(...) -> GatewayProfileResponse</code></summary>
 <dl>
 <dd>
 
@@ -844,10 +8605,773 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.integrations.list_integration_triggers()
+client.gateway_profiles.create_gateway_profile(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cloud_role:** `typing.Optional[str]` — Cloud role public ID (UUID)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**default_action:** `typing.Optional[GatewayAction]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**description:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**integration_policy:** `typing.Optional[GatewayProfileCreateIntegrationPolicy]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**internet_enabled:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_default:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">get_gateway_profile</a>(...) -> GatewayProfileDetailResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.gateway_profiles.get_gateway_profile(
+    profile_id="profile_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**profile_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">delete_gateway_profile</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.gateway_profiles.delete_gateway_profile(
+    profile_id="profile_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**profile_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">update_gateway_profile</a>(...) -> GatewayProfileResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.gateway_profiles.update_gateway_profile(
+    profile_id="profile_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**profile_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cloud_role:** `typing.Optional[str]` — Cloud role public ID (UUID), empty string to unset
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**default_action:** `typing.Optional[GatewayAction]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**description:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**integration_policy:** `typing.Optional[GatewayProfileUpdateIntegrationPolicy]` — Omit to leave unchanged; send {"mode": "all"} to allow all integrations
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**internet_enabled:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_default:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">create_gateway_rule</a>(...) -> GatewayRuleResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.gateway_profiles.create_gateway_rule(
+    profile_id="profile_id",
+    host_pattern="host_pattern",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**profile_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**host_pattern:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**action:** `typing.Optional[GatewayAction]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**auth_strategy:** `typing.Optional[AuthStrategySchema]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**content_filter:** `typing.Optional[GatewayRuleCreateContentFilter]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**methods:** `typing.Optional[typing.List[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**path_pattern:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**priority:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**provider_key:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**rate_limit_rpm:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">reorder_gateway_rules</a>(...) -> typing.List[GatewayRuleResponse]</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo, RuleReorderItem
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.gateway_profiles.reorder_gateway_rules(
+    profile_id="profile_id",
+    rules=[
+        RuleReorderItem(
+            priority=1,
+            rule_id="rule_id",
+        )
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**profile_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**rules:** `typing.List[RuleReorderItem]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">delete_gateway_rule</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.gateway_profiles.delete_gateway_rule(
+    profile_id="profile_id",
+    rule_id="rule_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**profile_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**rule_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">update_gateway_rule</a>(...) -> GatewayRuleResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.gateway_profiles.update_gateway_rule(
+    profile_id="profile_id",
+    rule_id="rule_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**profile_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**rule_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**action:** `typing.Optional[GatewayAction]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**auth_strategy:** `typing.Optional[AuthStrategySchema]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**content_filter:** `typing.Optional[GatewayRuleUpdateContentFilter]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**host_pattern:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**methods:** `typing.Optional[typing.List[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**path_pattern:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**priority:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**provider_key:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**rate_limit_rpm:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## inference
+<details><summary><code>client.inference.<a href="src/islo/inference/client.py">list_inference_models</a>() -> InferenceModelsResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.inference.list_inference_models()
 
 ```
 </dd>
@@ -875,75 +9399,8 @@ client.integrations.list_integration_triggers()
 </dl>
 </details>
 
-<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">get_integration_trigger</a>(...) -> TriggerCatalogItem</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.integrations.get_integration_trigger(
-    provider="provider",
-    trigger_name="trigger_name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**provider:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**trigger_name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">list_integrations</a>() -> IntegrationListResponse</code></summary>
+## integrations
+<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">list_integrations</a>() -> ListPageIntegrationStatus</code></summary>
 <dl>
 <dd>
 
@@ -983,6 +9440,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1014,7 +9472,7 @@ client.integrations.list_integrations()
 </dl>
 </details>
 
-<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">list_custom_services</a>() -> CustomServicesResponse</code></summary>
+<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">list_custom_services</a>() -> ListPageCustomService</code></summary>
 <dl>
 <dd>
 
@@ -1052,6 +9510,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1120,6 +9579,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1176,13 +9636,13 @@ client.integrations.create_custom_service(
 <dl>
 <dd>
 
-Disconnect a custom integration by its Descope app ID.
+Disconnect a custom integration by its stable provider slug.
 
-Authorization is by deterministic-ID prefix: only apps whose ID matches
-``cust-{tenant-prefix}-`` are accepted, which scopes the operation to the
-caller's workspace without a DB lookup. ``scope`` selects which side's
-tokens to revoke (per-user vs tenant-wide); ``delete_app=true`` removes
-the Descope app entirely (affects every user in the workspace).
+The provider is resolved only within the authenticated tenant's custom
+service catalog, so callers cannot target another workspace. ``scope`` selects
+which side's tokens to revoke (per-user vs tenant-wide);
+``delete_app=true`` removes the Descope app entirely (affects every user in
+the workspace).
 </dd>
 </dl>
 </dd>
@@ -1202,11 +9662,12 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
 client.integrations.disconnect_custom_integration(
-    descope_app_id="descope_app_id",
+    provider="provider",
 )
 
 ```
@@ -1223,7 +9684,7 @@ client.integrations.disconnect_custom_integration(
 <dl>
 <dd>
 
-**descope_app_id:** `str` 
+**provider:** `str` 
     
 </dd>
 </dl>
@@ -1240,6 +9701,413 @@ client.integrations.disconnect_custom_integration(
 <dd>
 
 **delete_app:** `typing.Optional[bool]` — Also remove the Descope outbound app entirely (affects every user in this workspace)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">list_integration_providers</a>() -> ListPageIntegrationProvider</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Return the integration providers available to connect from Islo, including the supported authentication methods and connection scopes.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.integrations.list_integration_providers()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">list_integration_trigger_events</a>(...) -> TriggerEventPage</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.integrations.list_integration_trigger_events()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort:** `typing.Optional[ListIntegrationTriggerEventsRequestSort]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**provider:** `typing.Optional[typing.List[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**event_name:** `typing.Optional[typing.List[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**invocation_status:** `typing.Optional[typing.List[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**outcome:** `typing.Optional[typing.List[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**received_at:** `typing.Optional[TimestampRange]` — received_at range. Operators: gte, gt, lte, lt. Serialized as received_at[gte]=…&received_at[lt]=…
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">get_integration_trigger_event</a>(...) -> TriggerEventDetail</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.integrations.get_integration_trigger_event(
+    event_id="event_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**event_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">list_integration_triggers</a>() -> ListPageTriggerCatalogItem</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.integrations.list_integration_triggers()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">list_connected_integration_triggers</a>() -> ListPageTriggerCatalogItem</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.integrations.list_connected_integration_triggers()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">get_integration_trigger</a>(...) -> TriggerCatalogItem</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.integrations.get_integration_trigger(
+    provider="provider",
+    trigger_name="trigger_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**provider:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**trigger_name:** `str` 
     
 </dd>
 </dl>
@@ -1293,6 +10161,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1371,6 +10240,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -1428,7 +10298,8 @@ client.integrations.disconnect_integration(
 </dl>
 </details>
 
-<details><summary><code>client.integrations.<a href="src/islo/integrations/client.py">list_connected_integration_triggers</a>() -> TriggerCatalogListResponse</code></summary>
+## JobRuns
+<details><summary><code>client.job_runs.<a href="src/islo/job_runs/client.py">list_all_job_runs</a>(...) -> ListPageJobRunListItem</code></summary>
 <dl>
 <dd>
 
@@ -1446,863 +10317,11 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.integrations.list_connected_integration_triggers()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## gateway-profiles
-<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">list_gateway_profiles</a>() -> typing.List[GatewayProfileResponse]</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.gateway_profiles.list_gateway_profiles()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">create_gateway_profile</a>(...) -> GatewayProfileResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.gateway_profiles.create_gateway_profile(
-    name="name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**description:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**default_action:** `typing.Optional[GatewayAction]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**internet_enabled:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_default:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cloud_role:** `typing.Optional[str]` — Cloud role public ID (UUID)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**integration_policy:** `typing.Optional[GatewayProfileCreateIntegrationPolicy]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">get_gateway_profile</a>(...) -> GatewayProfileDetailResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.gateway_profiles.get_gateway_profile(
-    profile_id="profile_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**profile_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">delete_gateway_profile</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.gateway_profiles.delete_gateway_profile(
-    profile_id="profile_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**profile_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">update_gateway_profile</a>(...) -> GatewayProfileResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.gateway_profiles.update_gateway_profile(
-    profile_id="profile_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**profile_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**name:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**description:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**default_action:** `typing.Optional[GatewayAction]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**internet_enabled:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_default:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cloud_role:** `typing.Optional[str]` — Cloud role public ID (UUID), empty string to unset
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**integration_policy:** `typing.Optional[GatewayProfileUpdateIntegrationPolicy]` — Omit to leave unchanged; send {"mode": "all"} to allow all integrations
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">create_gateway_rule</a>(...) -> GatewayRuleResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.gateway_profiles.create_gateway_rule(
-    profile_id="profile_id",
-    host_pattern="host_pattern",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**profile_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**host_pattern:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**path_pattern:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**methods:** `typing.Optional[typing.List[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**rate_limit_rpm:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**auth_strategy:** `typing.Optional[AuthStrategySchema]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**content_filter:** `typing.Optional[GatewayRuleCreateContentFilter]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**priority:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**action:** `typing.Optional[GatewayAction]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**provider_key:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">delete_gateway_rule</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.gateway_profiles.delete_gateway_rule(
-    profile_id="profile_id",
-    rule_id="rule_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**profile_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**rule_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">update_gateway_rule</a>(...) -> GatewayRuleResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.gateway_profiles.update_gateway_rule(
-    profile_id="profile_id",
-    rule_id="rule_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**profile_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**rule_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**priority:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**host_pattern:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**path_pattern:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**methods:** `typing.Optional[typing.List[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**action:** `typing.Optional[GatewayAction]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**rate_limit_rpm:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**provider_key:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**auth_strategy:** `typing.Optional[AuthStrategySchema]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**content_filter:** `typing.Optional[GatewayRuleUpdateContentFilter]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.gateway_profiles.<a href="src/islo/gateway_profiles/client.py">reorder_gateway_rules</a>(...) -> typing.List[GatewayRuleResponse]</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo, RuleReorderItem
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.gateway_profiles.reorder_gateway_rules(
-    profile_id="profile_id",
-    rules=[
-        RuleReorderItem(
-            rule_id="rule_id",
-            priority=1,
-        )
-    ],
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**profile_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**rules:** `typing.List[RuleReorderItem]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Environments
-<details><summary><code>client.environments.<a href="src/islo/environments/client.py">list_environments</a>(...) -> typing.List[EnvironmentListItem]</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.environments.list_environments()
+client.job_runs.list_all_job_runs()
 
 ```
 </dd>
@@ -2334,58 +10353,7 @@ client.environments.list_environments()
 <dl>
 <dd>
 
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.environments.<a href="src/islo/environments/client.py">create_environment</a>(...) -> EnvironmentResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.environments.create_environment(
-    name="name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `str` 
+**cursor:** `typing.Optional[str]` 
     
 </dd>
 </dl>
@@ -2393,7 +10361,7 @@ client.environments.create_environment(
 <dl>
 <dd>
 
-**is_default:** `typing.Optional[bool]` 
+**sort:** `typing.Optional[str]` — Sort order. Allowed: -created_at, created_at
     
 </dd>
 </dl>
@@ -2401,7 +10369,39 @@ client.environments.create_environment(
 <dl>
 <dd>
 
-**entries:** `typing.Optional[typing.List[EnvironmentCreateEntriesItem]]` 
+**include:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**job_name:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_at:** `typing.Optional[TimestampRange]` — created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**q:** `typing.Optional[str]` 
     
 </dd>
 </dl>
@@ -2421,7 +10421,7 @@ client.environments.create_environment(
 </dl>
 </details>
 
-<details><summary><code>client.environments.<a href="src/islo/environments/client.py">get_environment</a>(...) -> EnvironmentResponse</code></summary>
+<details><summary><code>client.job_runs.<a href="src/islo/job_runs/client.py">list_job_run_facets</a>(...) -> FacetsResponse</code></summary>
 <dl>
 <dd>
 
@@ -2439,11 +10439,14 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.environments.get_environment(
-    environment_ref="environment_ref",
+client.job_runs.list_job_run_facets(
+    fields=[
+        "fields"
+    ],
 )
 
 ```
@@ -2460,7 +10463,39 @@ client.environments.get_environment(
 <dl>
 <dd>
 
-**environment_ref:** `str` 
+**fields:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` — Facet fields to return (e.g. job_name, status)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**job_name:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**created_at:** `typing.Optional[TimestampRange]` — created_at range. Operators: gte, gt, lte, lt. Serialized as created_at[gte]=…&created_at[lt]=…
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**q:** `typing.Optional[str]` 
     
 </dd>
 </dl>
@@ -2480,7 +10515,7 @@ client.environments.get_environment(
 </dl>
 </details>
 
-<details><summary><code>client.environments.<a href="src/islo/environments/client.py">delete_environment</a>(...)</code></summary>
+<details><summary><code>client.job_runs.<a href="src/islo/job_runs/client.py">get_job_run_by_id</a>(...) -> JobRunResponse</code></summary>
 <dl>
 <dd>
 
@@ -2498,11 +10533,12 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.environments.delete_environment(
-    environment_ref="environment_ref",
+client.job_runs.get_job_run_by_id(
+    run_id="run_id",
 )
 
 ```
@@ -2519,887 +10555,7 @@ client.environments.delete_environment(
 <dl>
 <dd>
 
-**environment_ref:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.environments.<a href="src/islo/environments/client.py">update_environment</a>(...) -> EnvironmentResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.environments.update_environment(
-    environment_ref="environment_ref",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**environment_ref:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**name:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_default:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**entries:** `typing.Optional[typing.List[EnvironmentUpdateEntriesItem]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.environments.<a href="src/islo/environments/client.py">set_default_environment</a>(...) -> EnvironmentResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.environments.set_default_environment(
-    environment_ref="environment_ref",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**environment_ref:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## CloudRoles
-<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">list_cloud_roles</a>(...) -> typing.List[CloudRoleResponse]</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.cloud_roles.list_cloud_roles()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**type:** `typing.Optional[CloudRoleType]` — Filter by role type
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">create_cloud_role</a>(...) -> CloudRoleResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.cloud_roles.create_cloud_role(
-    provider="aws",
-    role_arn="role_arn",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**provider:** `CloudProvider` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**role_arn:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**type:** `typing.Optional[CloudRoleType]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**session_duration_seconds:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">get_cloud_role</a>(...) -> CloudRoleResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.cloud_roles.get_cloud_role(
-    role_id="role_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**role_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">delete_cloud_role</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.cloud_roles.delete_cloud_role(
-    role_id="role_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**role_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.cloud_roles.<a href="src/islo/cloud_roles/client.py">update_cloud_role</a>(...) -> CloudRoleResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.cloud_roles.update_cloud_role(
-    role_id="role_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**role_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**role_arn:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**session_duration_seconds:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_enabled:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## inference
-<details><summary><code>client.inference.<a href="src/islo/inference/client.py">list_inference_models</a>() -> InferenceModelsResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.inference.list_inference_models()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## ContainerRegistries
-<details><summary><code>client.container_registries.<a href="src/islo/container_registries/client.py">list_container_registries</a>() -> typing.List[ContainerRegistryResponse]</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.container_registries.list_container_registries()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.container_registries.<a href="src/islo/container_registries/client.py">create_container_registry</a>(...) -> ContainerRegistryResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.container_registries.create_container_registry(
-    provider="ecr",
-    registry_host="registry_host",
-    cloud_role_id="cloud_role_id",
-    region="region",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**provider:** `RegistryProvider` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**registry_host:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cloud_role_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**region:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**repository_prefixes:** `typing.Optional[typing.List[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.container_registries.<a href="src/islo/container_registries/client.py">get_container_registry</a>(...) -> ContainerRegistryResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.container_registries.get_container_registry(
-    id="id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.container_registries.<a href="src/islo/container_registries/client.py">delete_container_registry</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.container_registries.delete_container_registry(
-    id="id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.container_registries.<a href="src/islo/container_registries/client.py">update_container_registry</a>(...) -> ContainerRegistryResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.container_registries.update_container_registry(
-    id="id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**repository_prefixes:** `typing.Optional[typing.List[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cloud_role_id:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_enabled:** `typing.Optional[bool]` 
+**run_id:** `str` 
     
 </dd>
 </dl>
@@ -3420,7 +10576,7 @@ client.container_registries.update_container_registry(
 </details>
 
 ## jobs
-<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">validate_job_manifest</a>(...)</code></summary>
+<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">list_jobs</a>(...) -> ListPageJobListItem</code></summary>
 <dl>
 <dd>
 
@@ -3433,31 +10589,83 @@ client.container_registries.update_container_registry(
 <dd>
 
 ```python
-from islo import Islo, JobManifestInput, JobSection, RunSectionInput, TaskInput, TaskStepInput
+from islo import Islo
 from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.jobs.validate_job_manifest(
+client.jobs.list_jobs()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">get_job</a>(...) -> JobResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.jobs.get_job(
     name="name",
-    manifest=JobManifestInput(
-        job=JobSection(
-            name="name",
-        ),
-        run=RunSectionInput(
-            tasks=[
-                TaskInput(
-                    name="name",
-                    steps=[
-                        TaskStepInput()
-                    ],
-                )
-            ],
-        ),
-    ),
 )
 
 ```
@@ -3482,7 +10690,59 @@ client.jobs.validate_job_manifest(
 <dl>
 <dd>
 
-**request:** `JobDeployRequest` 
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">delete_job</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.jobs.delete_job(
+    name="name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
     
 </dd>
 </dl>
@@ -3520,6 +10780,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -3584,7 +10845,7 @@ client.jobs.deploy_job(
 </dl>
 </details>
 
-<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">get_job</a>(...) -> JobResponse</code></summary>
+<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">list_job_runs</a>(...) -> ListPageJobRunListItem</code></summary>
 <dl>
 <dd>
 
@@ -3602,332 +10863,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.jobs.get_job(
-    name="name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">delete_job</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.jobs.delete_job(
-    name="name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">list_jobs</a>(...) -> typing.List[JobListItem]</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.jobs.list_jobs()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**limit:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**offset:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">list_job_versions</a>(...) -> typing.List[JobVersionResponse]</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.jobs.list_job_versions(
-    name="name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**limit:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**offset:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">get_job_version</a>(...) -> JobVersionResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.jobs.get_job_version(
-    name="name",
-    version_id="version_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**version_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">list_job_runs</a>(...) -> typing.List[JobRunListItem]</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -3965,7 +10901,7 @@ client.jobs.list_job_runs(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[int]` 
+**cursor:** `typing.Optional[str]` 
     
 </dd>
 </dl>
@@ -4003,6 +10939,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4032,23 +10969,7 @@ client.jobs.trigger_job_run(
 <dl>
 <dd>
 
-**version_id:** `typing.Optional[str]` — Deployed version to run; defaults to latest
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**region:** `typing.Optional[str]` — Compute region override
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**params:** `typing.Optional[typing.Dict[str, typing.Any]]` — Run-time parameter values (validated against [job.params])
+**request:** `JobRunCreate` 
     
 </dd>
 </dl>
@@ -4086,6 +11007,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4154,6 +11076,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4192,7 +11115,7 @@ client.jobs.stop_job_run(
 <dl>
 <dd>
 
-**reason:** `typing.Optional[str]` 
+**request:** `JobRunStopRequest` 
     
 </dd>
 </dl>
@@ -4230,6 +11153,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4289,6 +11213,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -4330,8 +11255,7 @@ client.jobs.delete_job_schedule(
 </dl>
 </details>
 
-## JobRuns
-<details><summary><code>client.job_runs.<a href="src/islo/job_runs/client.py">list_all_job_runs</a>(...) -> typing.List[JobRunListItem]</code></summary>
+<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">validate_job_manifest</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -4344,167 +11268,31 @@ client.jobs.delete_job_schedule(
 <dd>
 
 ```python
-from islo import Islo
+from islo import Islo, JobManifestInput, JobSection, RunSectionInput, TaskInput, TaskStepInput
 from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.job_runs.list_all_job_runs()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**limit:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**offset:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**status:** `typing.Optional[JobRunStatus]` — Filter by run status
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.job_runs.<a href="src/islo/job_runs/client.py">get_job_run_by_id</a>(...) -> JobRunResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.job_runs.get_job_run_by_id(
-    run_id="run_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**run_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## factory
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">validate_factory_line_manifest</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo, LineManifestInput, LineSection, LineStage
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.factory.validate_factory_line_manifest(
+client.jobs.validate_job_manifest(
     name="name",
-    manifest=LineManifestInput(
-        line=LineSection(
+    manifest=JobManifestInput(
+        job=JobSection(
             name="name",
         ),
-        trigger={
-            "type": "integration_trigger",
-            "provider": "provider",
-            "name": "name",
-            "selector": {
-                "provider": "github"
-            }
-        },
-        stages=[
-            LineStage(
-                id="id",
-                job="job",
-            )
-        ],
+        run=RunSectionInput(
+            tasks=[
+                TaskInput(
+                    name="name",
+                    steps=[
+                        TaskStepInput()
+                    ],
+                )
+            ],
+        ),
     ),
 )
 
@@ -4530,7 +11318,7 @@ client.factory.validate_factory_line_manifest(
 <dl>
 <dd>
 
-**request:** `LineDeployRequest` 
+**request:** `JobDeployRequest` 
     
 </dd>
 </dl>
@@ -4550,93 +11338,7 @@ client.factory.validate_factory_line_manifest(
 </dl>
 </details>
 
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">deploy_factory_line</a>(...) -> LineVersionResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo, LineManifestInput, LineSection, LineStage
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.factory.deploy_factory_line(
-    name="name",
-    manifest=LineManifestInput(
-        line=LineSection(
-            name="name",
-        ),
-        trigger={
-            "type": "integration_trigger",
-            "provider": "provider",
-            "name": "name",
-            "selector": {
-                "provider": "github"
-            }
-        },
-        stages=[
-            LineStage(
-                id="id",
-                job="job",
-            )
-        ],
-    ),
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request:** `LineDeployRequest` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_lines</a>(...) -> typing.List[LineResponse]</code></summary>
+<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">list_job_versions</a>(...) -> ListPageJobVersionResponse</code></summary>
 <dl>
 <dd>
 
@@ -4654,201 +11356,11 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.factory.list_factory_lines()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**limit:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**offset:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">get_factory_line</a>(...) -> LineResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.factory.get_factory_line(
-    name="name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">update_factory_line</a>(...) -> LineResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.factory.update_factory_line(
-    name="name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**status:** `typing.Optional[LineUpdateStatus]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_line_versions</a>(...) -> typing.List[LineVersionResponse]</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.factory.list_factory_line_versions(
+client.jobs.list_job_versions(
     name="name",
 )
 
@@ -4882,7 +11394,7 @@ client.factory.list_factory_line_versions(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[int]` 
+**cursor:** `typing.Optional[str]` 
     
 </dd>
 </dl>
@@ -4902,7 +11414,7 @@ client.factory.list_factory_line_versions(
 </dl>
 </details>
 
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_line_runs_for_line</a>(...) -> typing.List[LineRunSummary]</code></summary>
+<details><summary><code>client.jobs.<a href="src/islo/jobs/client.py">get_job_version</a>(...) -> JobVersionResponse</code></summary>
 <dl>
 <dd>
 
@@ -4920,10 +11432,1127 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.factory.list_factory_line_runs_for_line(
+client.jobs.get_job_version(
+    name="name",
+    version_id="version_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**version_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## knowledge
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">list_knowledge</a>(...) -> ListPageKnowledgeItemListResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.list_knowledge()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**level:** `typing.Optional[KnowledgeLevel]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**type:** `typing.Optional[KnowledgeLevel]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**tag:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**repository:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**q:** `typing.Optional[str]` — Search identifier or body text
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort:** `typing.Optional[ListKnowledgeRequestSort]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**include:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">create_knowledge</a>(...) -> KnowledgeItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.create_knowledge(
+    slug="slug",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request:** `KnowledgeItemCreate` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">list_knowledge_facets</a>(...) -> FacetsResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.list_knowledge_facets(
+    fields=[
+        "fields"
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**fields:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">list_knowledge_tags</a>() -> FacetsResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.list_knowledge_tags()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">create_knowledge_media</a>(...) -> KnowledgeItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.create_knowledge_media(
+    file="example_file",
+    item="item",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**file:** `core.File` — Media file
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**item:** `str` — JSON metadata for the knowledge item
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">get_knowledge</a>(...) -> KnowledgeItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.get_knowledge(
+    identifier="identifier",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">delete_knowledge</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.delete_knowledge(
+    identifier="identifier",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">update_knowledge</a>(...) -> KnowledgeItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.update_knowledge(
+    identifier="identifier",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `KnowledgeItemUpdate` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">get_knowledge_content</a>(...) -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.get_knowledge_content(
+    identifier="identifier",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">put_knowledge_content</a>(...) -> KnowledgeItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.put_knowledge_content(
+    identifier="identifier",
+    file="example_file",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `core.File` — Replacement content
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">restore_knowledge_version</a>(...) -> KnowledgeItemResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.restore_knowledge_version(
+    identifier="identifier",
+    version_number=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `KnowledgeRestoreRequest` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">list_knowledge_versions</a>(...) -> ListPageKnowledgeVersionListResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.list_knowledge_versions(
+    identifier="identifier",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sort:** `typing.Optional[ListKnowledgeVersionsRequestSort]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**include:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">get_knowledge_version</a>(...) -> KnowledgeVersionResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.get_knowledge_version(
+    identifier="identifier",
+    version_number=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**version_number:** `int` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.knowledge.<a href="src/islo/knowledge/client.py">get_knowledge_version_content</a>(...) -> typing.Any</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.knowledge.get_knowledge_version_content(
+    identifier="identifier",
+    version_number=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**identifier:** `str` — Unique lowercase identifier (letters, digits, hyphens). Set at creation and cannot be changed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**version_number:** `int` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## SandboxTemplates
+<details><summary><code>client.sandbox_templates.<a href="src/islo/sandbox_templates/client.py">list_sandbox_templates</a>(...) -> ListPageTemplateListItem</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandbox_templates.list_sandbox_templates()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cursor:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sandbox_templates.<a href="src/islo/sandbox_templates/client.py">create_sandbox_template</a>(...) -> TemplateResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandbox_templates.create_sandbox_template(
     name="name",
 )
 
@@ -4949,7 +12578,7 @@ client.factory.list_factory_line_runs_for_line(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[int]` 
+**disk_gb:** `typing.Optional[int]` 
     
 </dd>
 </dl>
@@ -4957,7 +12586,63 @@ client.factory.list_factory_line_runs_for_line(
 <dl>
 <dd>
 
-**offset:** `typing.Optional[int]` 
+**environment_name:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**gateway_profile_name:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**init:** `typing.Optional[TemplateCreateInit]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**lifecycle:** `typing.Optional[LifecyclePolicy]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**memory_mb:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**snapshot_name:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sources:** `typing.Optional[typing.List[ControlPlaneGitSource]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**vcpus:** `typing.Optional[int]` 
     
 </dd>
 </dl>
@@ -4977,7 +12662,7 @@ client.factory.list_factory_line_runs_for_line(
 </dl>
 </details>
 
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">trigger_factory_line_run</a>(...) -> LineRunDetail</code></summary>
+<details><summary><code>client.sandbox_templates.<a href="src/islo/sandbox_templates/client.py">get_sandbox_template</a>(...) -> TemplateResponse</code></summary>
 <dl>
 <dd>
 
@@ -4995,10 +12680,11 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.factory.trigger_factory_line_run(
+client.sandbox_templates.get_sandbox_template(
     name="name",
 )
 
@@ -5024,38 +12710,6 @@ client.factory.trigger_factory_line_run(
 <dl>
 <dd>
 
-**version_id:** `typing.Optional[str]` — Deployed line version to run; defaults to latest
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**region:** `typing.Optional[str]` — Compute region override
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**params:** `typing.Optional[typing.Dict[str, typing.Any]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**trigger_payload:** `typing.Optional[typing.Dict[str, typing.Any]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -5068,7 +12722,7 @@ client.factory.trigger_factory_line_run(
 </dl>
 </details>
 
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">list_factory_line_runs</a>(...) -> typing.List[LineRunSummary]</code></summary>
+<details><summary><code>client.sandbox_templates.<a href="src/islo/sandbox_templates/client.py">delete_sandbox_template</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -5086,10 +12740,13 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.factory.list_factory_line_runs()
+client.sandbox_templates.delete_sandbox_template(
+    name="name",
+)
 
 ```
 </dd>
@@ -5105,31 +12762,7 @@ client.factory.list_factory_line_runs()
 <dl>
 <dd>
 
-**limit:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**offset:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**status:** `typing.Optional[str]` — Filter by run status
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**line_name:** `typing.Optional[str]` — Filter by line name
+**name:** `str` 
     
 </dd>
 </dl>
@@ -5149,7 +12782,7 @@ client.factory.list_factory_line_runs()
 </dl>
 </details>
 
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">get_factory_line_run</a>(...) -> LineRunDetail</code></summary>
+<details><summary><code>client.sandbox_templates.<a href="src/islo/sandbox_templates/client.py">update_sandbox_template</a>(...) -> TemplateResponse</code></summary>
 <dl>
 <dd>
 
@@ -5167,11 +12800,12 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.factory.get_factory_line_run(
-    run_id="run_id",
+client.sandbox_templates.update_sandbox_template(
+    name="name",
 )
 
 ```
@@ -5188,7 +12822,79 @@ client.factory.get_factory_line_run(
 <dl>
 <dd>
 
-**run_id:** `str` 
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**disk_gb:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**environment_name:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**gateway_profile_name:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**init:** `typing.Optional[TemplateUpdateInit]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**lifecycle:** `typing.Optional[LifecyclePolicy]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**memory_mb:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**snapshot_name:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sources:** `typing.Optional[typing.List[ControlPlaneGitSource]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**vcpus:** `typing.Optional[int]` 
     
 </dd>
 </dl>
@@ -5208,7 +12914,77 @@ client.factory.get_factory_line_run(
 </dl>
 </details>
 
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">get_factory_line_run_debug</a>(...) -> LineRunDebugResponse</code></summary>
+<details><summary><code>client.sandbox_templates.<a href="src/islo/sandbox_templates/client.py">get_sandbox_template_version</a>(...) -> TemplateResponse</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from islo import Islo
+from islo.environment import IsloEnvironment
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+    environment=IsloEnvironment.PRODUCTION,
+)
+
+client.sandbox_templates.get_sandbox_template_version(
+    name="name",
+    version_number=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**version_number:** `int` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## tenants
+<details><summary><code>client.tenants.<a href="src/islo/tenants/client.py">list_tenant_compute_regions</a>() -> ListPageComputeRegionResponse</code></summary>
 <dl>
 <dd>
 
@@ -5220,7 +12996,7 @@ client.factory.get_factory_line_run(
 <dl>
 <dd>
 
-Per-stage and per-step diagnostics for one line run, including the last failed stage attempt's first failing step, each step's exit code and output tails, and the sandbox environment each stage ran in.
+Return the compute regions the authenticated tenant may use, including the API and WebSocket base URLs for each region.
 </dd>
 </dl>
 </dd>
@@ -5240,12 +13016,11 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
-client.factory.get_factory_line_run_debug(
-    run_id="run_id",
-)
+client.tenants.list_tenant_compute_regions()
 
 ```
 </dd>
@@ -5257,276 +13032,6 @@ client.factory.get_factory_line_run_debug(
 
 <dl>
 <dd>
-
-<dl>
-<dd>
-
-**run_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">get_factory_line_schedule</a>(...) -> LineScheduleResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.factory.get_factory_line_schedule(
-    name="name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">upsert_factory_line_schedule</a>(...) -> LineScheduleResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.factory.upsert_factory_line_schedule(
-    name="name",
-    cron="cron",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cron:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**timezone:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**enabled:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.factory.<a href="src/islo/factory/client.py">delete_factory_line_schedule</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.factory.delete_factory_line_schedule(
-    name="name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## ComputeEvents
-<details><summary><code>client.compute_events.<a href="src/islo/compute_events/client.py">get_compute_event</a>(...) -> ComputeEventDetailResponse</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from islo import Islo
-from islo.environment import IsloEnvironment
-
-client = Islo(
-    api_key="<token>",
-    environment=IsloEnvironment.PRODUCTION,
-)
-
-client.compute_events.get_compute_event(
-    command_id="command_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**command_id:** `str` 
-    
-</dd>
-</dl>
 
 <dl>
 <dd>
@@ -5576,6 +13081,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -5703,6 +13209,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -5902,6 +13409,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -5975,6 +13483,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6048,6 +13557,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6121,6 +13631,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6194,6 +13705,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6278,6 +13790,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6362,6 +13875,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6444,6 +13958,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6526,6 +14041,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6617,6 +14133,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6699,6 +14216,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6790,6 +14308,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6863,6 +14382,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -6936,6 +14456,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7009,6 +14530,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7131,6 +14653,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7213,6 +14736,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7287,6 +14811,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7360,6 +14885,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7450,6 +14976,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7533,6 +15060,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7612,6 +15140,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7693,6 +15222,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7766,6 +15296,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7840,6 +15371,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -7898,27 +15430,26 @@ Create a tenant-scoped incoming webhook receiver. The receiver URL accepts exter
 <dd>
 
 ```python
-from islo import Islo, IncomingWebhookAuthZero
+from islo import Islo, IncomingWebhookAuthZero, IncomingWebhookAuthZeroAuthType, IdempotencyConfig_Header, IncomingWebhookTarget_FixedSandboxName
 from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
 client.webhooks.create_incoming_webhook(
     auth=IncomingWebhookAuthZero(
-        auth_type="none",
+        auth_type=IncomingWebhookAuthZeroAuthType.NONE,
     ),
-    idempotency={
-        "source": "header",
-        "name": "name"
-    },
+    idempotency=IdempotencyConfig_Header(
+        name="name",
+    ),
     name="name",
-    target={
-        "target_type": "fixed_sandbox_name",
-        "sandbox_name": "sandbox_name"
-    },
+    target=IncomingWebhookTarget_FixedSandboxName(
+        sandbox_name="sandbox_name",
+    ),
 )
 
 ```
@@ -8027,6 +15558,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -8100,6 +15632,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -8173,6 +15706,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -8294,6 +15828,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 
@@ -8407,6 +15942,7 @@ from islo.environment import IsloEnvironment
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
     environment=IsloEnvironment.PRODUCTION,
 )
 

@@ -8,14 +8,14 @@ from ..core.pydantic_utilities import UniversalBaseModel
 
 
 class ContainerRegistryResponse(UniversalBaseModel):
+    cloud_role_id: str
+    created_at: typing.Optional[dt.datetime] = None
     id: str
+    is_enabled: bool
     provider: str
+    region: str
     registry_host: str
     repository_prefixes: typing.List[str]
-    cloud_role_id: str
-    region: str
-    is_enabled: bool
-    created_at: typing.Optional[dt.datetime] = None
     updated_at: typing.Optional[dt.datetime] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

@@ -18,6 +18,7 @@ The Islo Python library provides convenient access to the Islo APIs from Python.
 - [Environments](#environments)
 - [Async Client](#async-client)
 - [Exception Handling](#exception-handling)
+- [Pagination](#pagination)
 - [Advanced](#advanced)
   - [Access Raw Response Data](#access-raw-response-data)
   - [Retries](#retries)
@@ -139,16 +140,15 @@ A full reference for this library is available [here](https://github.com/islo-la
 Instantiate and use the client with the following:
 
 ```python
-from islo import Islo
+from islo import Islo, ByoSourceKind
 
 client = Islo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
 )
 
-client.knowledge.create_knowledge(
-    slug="slug",
-    level="episodic",
-    body="body",
+client.byo.start_byo_inference_setup(
+    source_kind=ByoSourceKind.DATABRICKS,
 )
 ```
 
@@ -176,14 +176,13 @@ from islo import AsyncIslo
 
 client = AsyncIslo(
     api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
 )
 
 
 async def main() -> None:
-    await client.knowledge.create_knowledge(
-        slug="slug",
-        level="episodic",
-        body="body",
+    await client.byo.start_byo_inference_setup(
+        source_kind=ByoSourceKind.DATABRICKS,
     )
 
 
@@ -199,10 +198,34 @@ will be thrown.
 from islo.core.api_error import ApiError
 
 try:
-    client.knowledge.create_knowledge(...)
+    client.byo.start_byo_inference_setup(...)
 except ApiError as e:
     print(e.status_code)
     print(e.body)
+```
+
+## Pagination
+
+Paginated requests will return a `SyncPager` or `AsyncPager`, which can be used as generators for the underlying object.
+
+```python
+from islo import Islo
+
+client = Islo(
+    api_key="<token>",
+    api_version="<X-Islo-Api-Version>",
+)
+
+client.environments.list_environments()
+```
+
+```python
+# You can also iterate through pages and access the typed response per page
+pager = client.environments.list_environments(...)
+for page in pager.iter_pages():
+    print(page.response)  # access the typed response for each page
+    for item in page:
+        print(item)
 ```
 
 ## Advanced
@@ -216,7 +239,7 @@ The `.with_raw_response` property returns a "raw" client that can be used to acc
 from islo import Islo
 
 client = Islo(...)
-response = client.knowledge.with_raw_response.create_knowledge(...)
+response = client.byo.with_raw_response.start_byo_inference_setup(...)
 print(response.headers)  # access the response headers
 print(response.status_code)  # access the response status code
 print(response.data)  # access the underlying object
@@ -228,16 +251,26 @@ The SDK is instrumented with automatic retries with exponential backoff. A reque
 as the request is deemed retryable and the number of retry attempts has not grown larger than the configured
 retry limit (default: 2).
 
-A request is deemed retryable when any of the following HTTP status codes is returned:
+Which status codes are retried depends on the `retryStatusCodes` generator configuration:
 
+**`legacy`** (current default): retries on
 - [408](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/408) (Timeout)
+- [409](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409) (Conflict)
 - [429](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) (Too Many Requests)
-- [5XX](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500) (Internal Server Errors)
+- [5XX](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#server_error_responses) (All server errors, including 500)
+
+**`recommended`**: retries on
+- [408](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/408) (Timeout)
+- [409](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409) (Conflict)
+- [429](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) (Too Many Requests)
+- [502](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502) (Bad Gateway)
+- [503](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503) (Service Unavailable)
+- [504](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/504) (Gateway Timeout)
 
 Use the `max_retries` request option to configure this behavior.
 
 ```python
-client.knowledge.create_knowledge(..., request_options={
+client.byo.start_byo_inference_setup(..., request_options={
     "max_retries": 1
 })
 ```
@@ -252,8 +285,8 @@ from islo import Islo
 client = Islo(..., timeout=20.0)
 
 # Override timeout for a specific method
-client.knowledge.create_knowledge(..., request_options={
-    "timeout_in_seconds": 1
+client.byo.start_byo_inference_setup(..., request_options={
+    "timeout": 1
 })
 ```
 

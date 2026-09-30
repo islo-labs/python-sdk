@@ -8,16 +8,17 @@ from .job_param_spec import JobParamSpec
 
 
 class JobSection(UniversalBaseModel):
+    description: typing.Optional[str] = None
     name: str = pydantic.Field()
     """
     Job name; must match jobs/<name>/ and deploy path
     """
 
-    version: typing.Optional[str] = None
-    description: typing.Optional[str] = None
     params: typing.Optional[typing.Dict[str, typing.Optional[JobParamSpec]]] = pydantic.Field(default=None)
     """
     Declared run parameters. Reference as {{name}} in manifest strings (substitution and undeclared-reference checks walk the whole manifest, not only step fields). Reserved: {{run_id}}.
     """
+
+    version: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

@@ -12,13 +12,13 @@ from .conditional_transition_output_params_value import ConditionalTransitionOut
 
 
 class ConditionalTransitionOutput(UniversalBaseModel):
-    id: str
     from_: typing_extensions.Annotated[str, FieldMetadata(alias="from"), pydantic.Field(alias="from")]
-    to: str
-    when: "LineConditionOutput"
+    id: str
     label: typing.Optional[str] = None
     max_iterations: typing.Optional[int] = None
     params: typing.Optional[typing.Dict[str, ConditionalTransitionOutputParamsValue]] = None
+    to: str
+    when: "LineConditionOutput"
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 

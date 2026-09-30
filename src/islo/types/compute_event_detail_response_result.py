@@ -12,13 +12,14 @@ from .json_value import JsonValue
 
 class ComputeEventDetailResponseResult_Agent(UniversalBaseModel):
     type: typing.Literal["agent"] = "agent"
-    mode: typing.Optional[str] = None
-    harness: typing.Optional[str] = None
-    status: typing.Optional[str] = None
-    outcome: typing.Optional[str] = None
     agent_session_id: typing.Optional[str] = None
+    harness: typing.Optional[str] = None
+    mode: typing.Optional[str] = None
+    model: typing.Optional[str] = None
+    outcome: typing.Optional[str] = None
     output_text: typing.Optional[str] = None
     outputs: typing.Optional[typing.Dict[str, typing.Optional[JsonValue]]] = None
+    status: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 
@@ -32,10 +33,10 @@ class ComputeEventDetailResponseResult_Empty(UniversalBaseModel):
 class ComputeEventDetailResponseResult_Exec(UniversalBaseModel):
     type: typing.Literal["exec"] = "exec"
     exec_id: typing.Optional[str] = None
-    status: typing.Optional[str] = None
     exit_code: typing.Optional[int] = None
-    stdout: typing.Optional[str] = None
+    status: typing.Optional[str] = None
     stderr: typing.Optional[str] = None
+    stdout: typing.Optional[str] = None
     truncated: typing.Optional[bool] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)

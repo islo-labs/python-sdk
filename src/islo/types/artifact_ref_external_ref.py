@@ -7,6 +7,7 @@ import typing
 import pydantic
 import typing_extensions
 from ..core.pydantic_utilities import UniversalBaseModel
+from .display_hint import DisplayHint
 from .islo_knowledge_item_external_ref_kind import IsloKnowledgeItemExternalRefKind
 from .slack_message_external_ref_kind import SlackMessageExternalRefKind
 from .url_external_ref_kind import UrlExternalRefKind
@@ -18,12 +19,12 @@ class ArtifactRefExternalRef_Github(UniversalBaseModel):
     """
 
     provider: typing.Literal["github"] = "github"
+    id: typing.Optional[str] = None
     kind: str
+    node_id: typing.Optional[str] = None
+    number: typing.Optional[int] = None
     owner: typing.Optional[str] = None
     repo: typing.Optional[str] = None
-    number: typing.Optional[int] = None
-    node_id: typing.Optional[str] = None
-    id: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 
@@ -40,17 +41,32 @@ class ArtifactRefExternalRef_Islo(UniversalBaseModel):
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 
 
+class ArtifactRefExternalRef_Jira(UniversalBaseModel):
+    """
+    Stable provider-specific identity
+    """
+
+    provider: typing.Literal["jira"] = "jira"
+    id: typing.Optional[str] = None
+    key: typing.Optional[str] = None
+    kind: typing.Optional[str] = None
+    project: typing.Optional[str] = None
+    site: typing.Optional[str] = None
+
+    model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
+
+
 class ArtifactRefExternalRef_Linear(UniversalBaseModel):
     """
     Stable provider-specific identity
     """
 
     provider: typing.Literal["linear"] = "linear"
-    kind: typing.Optional[str] = None
     id: typing.Optional[str] = None
     identifier: typing.Optional[str] = None
-    team: typing.Optional[str] = None
     issue_id: typing.Optional[str] = None
+    kind: typing.Optional[str] = None
+    team: typing.Optional[str] = None
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
 
@@ -61,8 +77,8 @@ class ArtifactRefExternalRef_Slack(UniversalBaseModel):
     """
 
     provider: typing.Literal["slack"] = "slack"
-    kind: typing.Optional[SlackMessageExternalRefKind] = None
     channel: str
+    kind: typing.Optional[SlackMessageExternalRefKind] = None
     ts: str
 
     model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)
@@ -74,6 +90,7 @@ class ArtifactRefExternalRef_Url(UniversalBaseModel):
     """
 
     provider: typing.Literal["url"] = "url"
+    display_hint: typing.Optional[DisplayHint] = None
     kind: typing.Optional[UrlExternalRefKind] = None
     url: str
 
@@ -84,6 +101,7 @@ ArtifactRefExternalRef = typing_extensions.Annotated[
     typing.Union[
         ArtifactRefExternalRef_Github,
         ArtifactRefExternalRef_Islo,
+        ArtifactRefExternalRef_Jira,
         ArtifactRefExternalRef_Linear,
         ArtifactRefExternalRef_Slack,
         ArtifactRefExternalRef_Url,
