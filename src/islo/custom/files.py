@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import asyncio
 import io
+import math
 import os
 import tarfile
 import typing
@@ -205,15 +207,35 @@ async def async_upload_file(
 
     base_url, headers = await _async_get_client_internals(client)
     async with httpx.AsyncClient() as http:
-        with open(local, "rb") as f:
-            response = await http.post(
-                f"{base_url}/sandboxes/{sandbox_name}/files",
-                params={"path": remote_path},
-                headers=headers,
-                files={"file": (local.name, f)},
-                timeout=timeout,
-            )
-    response.raise_for_status()
+        for attempt in range(6):
+            try:
+                # Open afresh on each attempt so the multipart body starts at byte zero.
+                with open(local, "rb") as f:
+                    response = await http.post(
+                        f"{base_url}/sandboxes/{sandbox_name}/files",
+                        params={"path": remote_path},
+                        headers=headers,
+                        files={"file": (local.name, f)},
+                        timeout=timeout,
+                    )
+            except httpx.TransportError:
+                if attempt == 5:
+                    raise
+                await asyncio.sleep(min(2**attempt, 30))
+                continue
+
+            if response.status_code != 429 or attempt == 5:
+                response.raise_for_status()
+                return
+
+            retry_after = response.headers.get("Retry-After")
+            try:
+                delay = float(retry_after) if retry_after is not None else 0
+            except ValueError:
+                delay = 0
+            if not math.isfinite(delay) or delay <= 0:
+                delay = min(2**attempt, 30)
+            await asyncio.sleep(delay)
 
 
 async def async_download_file(
