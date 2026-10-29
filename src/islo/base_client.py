@@ -11,6 +11,7 @@ from .core.logging import LogConfig, Logger
 from .environment import IsloEnvironment
 
 if typing.TYPE_CHECKING:
+    from .agents.client import AgentsClient, AsyncAgentsClient
     from .cloud_roles.client import AsyncCloudRolesClient, CloudRolesClient
     from .compute_events.client import AsyncComputeEventsClient, ComputeEventsClient
     from .container_registries.client import AsyncContainerRegistriesClient, ContainerRegistriesClient
@@ -104,6 +105,7 @@ class BaseIslo:
         self._jobs: typing.Optional[JobsClient] = None
         self._job_runs: typing.Optional[JobRunsClient] = None
         self._factory: typing.Optional[FactoryClient] = None
+        self._agents: typing.Optional[AgentsClient] = None
         self._compute_events: typing.Optional[ComputeEventsClient] = None
         self._sandboxes: typing.Optional[SandboxesClient] = None
         self._shares: typing.Optional[SharesClient] = None
@@ -205,6 +207,14 @@ class BaseIslo:
 
             self._factory = FactoryClient(client_wrapper=self._client_wrapper)
         return self._factory
+
+    @property
+    def agents(self):
+        if self._agents is None:
+            from .agents.client import AgentsClient  # noqa: E402
+
+            self._agents = AgentsClient(client_wrapper=self._client_wrapper)
+        return self._agents
 
     @property
     def compute_events(self):
@@ -326,6 +336,7 @@ class AsyncBaseIslo:
         self._jobs: typing.Optional[AsyncJobsClient] = None
         self._job_runs: typing.Optional[AsyncJobRunsClient] = None
         self._factory: typing.Optional[AsyncFactoryClient] = None
+        self._agents: typing.Optional[AsyncAgentsClient] = None
         self._compute_events: typing.Optional[AsyncComputeEventsClient] = None
         self._sandboxes: typing.Optional[AsyncSandboxesClient] = None
         self._shares: typing.Optional[AsyncSharesClient] = None
@@ -427,6 +438,14 @@ class AsyncBaseIslo:
 
             self._factory = AsyncFactoryClient(client_wrapper=self._client_wrapper)
         return self._factory
+
+    @property
+    def agents(self):
+        if self._agents is None:
+            from .agents.client import AsyncAgentsClient  # noqa: E402
+
+            self._agents = AsyncAgentsClient(client_wrapper=self._client_wrapper)
+        return self._agents
 
     @property
     def compute_events(self):

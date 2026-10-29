@@ -89,6 +89,7 @@ class TestIsloClient:
         }
 
         assert public_resource_clients == {
+            "agents",
             "cloud_roles",
             "compute_events",
             "container_registries",
